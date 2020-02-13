@@ -12,6 +12,7 @@ from django.test import TestCase
 from common.alert_utils import BatchedEmailErrors
 from frontend.models import EmailMessage
 from frontend.models import Measure
+from frontend.models import PCN
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.views.bookmark_utils import BadAlertImageError
 from frontend.tests.test_bookmark_utils import _makeContext
@@ -464,6 +465,24 @@ class AllEnglandAlertTestCase(ApiTestBase):
         call_command(CMD_NAME)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [bookmark.user.email])
+
+
+class PCNAlertTestCase(ApiTestBase):
+
+    fixtures = ApiTestBase.fixtures + ["ppusavings", "functional-measures"]
+
+    def test_pcn_alerts_sent(self):
+        """Create a PCN bookmark, send alerts, and make sure an email is sent
+        to correct user, and that its contents mention PCNs
+
+        """
+        factory = DataFactory()
+        pcn = PCN.objects.get(pk="E00000011")
+        bookmark = factory.create_org_bookmark(pcn)
+        call_command(CMD_NAME)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [bookmark.user.email])
+        self.assertIn("PCN", mail.outbox[0].body)
 
 
 def call_mocked_command(context, mock_finder, **opts):

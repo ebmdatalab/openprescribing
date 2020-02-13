@@ -99,9 +99,9 @@ class Command(BaseCommand):
             Q(user__is_active=True)
             & ~Q(user__emailmessage__tags__contains=["measures", now_month])
             &
-            # Only include bookmarks for either a practice or pct: when both
-            # are NULL this indicates an All England or PCN bookmark
-            (Q(practice__isnull=False) | Q(pct__isnull=False))
+            # Only include bookmarks for either a practice or pct or PCN: when all
+            # are NULL this indicates an All England bookmark
+            (Q(practice__isnull=False) | Q(pct__isnull=False) | Q(pcn__isnull=False))
         )
         if options["recipient_email"] and (
             options["ccg"] or options["practice"] or options["pcn"]

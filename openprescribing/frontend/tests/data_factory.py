@@ -203,6 +203,8 @@ class DataFactory(object):
         if org is None:
             # All England
             pass
+        elif isinstance(org, PCN):
+            kwargs["pcn"] = org
         elif isinstance(org, PCT):
             kwargs["pct"] = org
         elif isinstance(org, Practice):
