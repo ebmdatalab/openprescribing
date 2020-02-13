@@ -81,6 +81,7 @@ class GetBookmarksTestCase(TestCase):
             recipient_email="s@s.com",
             ccg="03V",
             practice="P87629",
+            pcn=None,
             recipient_email_file=None,
             skip_email_file=None,
         )

@@ -122,7 +122,7 @@ class TestSpendingViews(TestCase):
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
 
         url = "/practice/{}/concessions/".format(self.practice.code)
-        data = {"email": "alice@example.com", "practice": self.practice.code}
+        data = {"email": "alice@example.com", "practice_id": self.practice.code}
         response = self.client.post(url, data, follow=True)
         self.assertContains(response, "alerts about NCSO concessions for Practice 5")
 

@@ -39,6 +39,7 @@ from frontend.forms import BookmarkListForm
 from frontend.forms import FeedbackForm
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
+from frontend.forms import NCSOConcessionBookmarkForm
 from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Chemical
 from frontend.models import EmailMessage
@@ -1122,7 +1123,7 @@ def bookmarks(request, key):
 BOOKMARK_CLS_TO_FORM_CLS = {
     OrgBookmark: OrgBookmarkForm,
     SearchBookmark: SearchBookmarkForm,
-    NCSOConcessionBookmark: OrgBookmarkForm,
+    NCSOConcessionBookmark: NCSOConcessionBookmarkForm,
 }
 
 
@@ -1159,19 +1160,7 @@ def _get_or_create_bookmark(request, bookmark_cls):
     form.full_clean()
     email = form.cleaned_data["email"].lower()
     user, _ = User.objects.get_or_create(username=email, defaults={"email": email})
-    bookmark_args = {k: v for k, v in form.cleaned_data.items() if k != "email" and v}
-
-    # Earlier versions of the OrgBookmarkForm used eg "pct" instead of
-    # "pct_id".  If a user has loaded an old version of the page and submits
-    # the form, we need to pass the correct arguments to get_or_create(),
-    # otherwise an all-england bookmark will be created.
-    #
-    # This can be removed after a few days.
-
-    for k in ["pct", "practice", "pcn"]:
-        if k in request.POST:
-            bookmark_args[k + "_id"] = request.POST[k]
-
+    bookmark_args = {k: v or None for k, v in form.cleaned_data.items() if k != "email"}
     bookmark, _ = bookmark_cls.objects.get_or_create(user=user, **bookmark_args)
     return bookmark
 
