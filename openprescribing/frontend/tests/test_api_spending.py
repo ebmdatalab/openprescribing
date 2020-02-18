@@ -16,6 +16,10 @@ from dmd.models import VMPP
 import numpy as np
 
 
+def _parse_json_response(response):
+    return json.loads(response.content.decode("utf8"))
+
+
 class TestAPISpendingViewsTariff(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ["dmd-subset", "tariff", "ncso-concessions"]
 
@@ -651,7 +655,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         data["format"] = "json"
         url = self.api_prefix + "/ghost_generics/"
         rsp = self.client.get(url, data, follow=True)
-        return json.loads(rsp.content)
+        return _parse_json_response(rsp)
 
     def _practice_savings_for_ccg(self, ccg, expected):
         practices_in_ccg = [x.code for x in ccg.practice_set.all()]
@@ -785,7 +789,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         data["format"] = "json"
         url = self.api_prefix + "/price_per_unit/"
         rsp = self.client.get(url, data, follow=True)
-        return json.loads(rsp.content)
+        return _parse_json_response(rsp)
 
     def _expected_results(self, ids):
         expected = [
@@ -979,7 +983,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(len(data["series"]), 1)  # Only Trandate prescribed
         self.assertEqual(len([x for x in data if x[1]]), 3)
 
@@ -988,7 +992,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAB&date=2000-01-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(len(data["series"]), 0)
 
     def test_highlight(self):
@@ -996,7 +1000,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         # N.B. This is the mean of a *single* value; although there
         # are two values in the raw data, one is trimmed as it is
         # outside the 99th percentile
@@ -1007,7 +1011,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertIsNone(data["plotline"])
 
     def test_focus(self):
@@ -1016,7 +1020,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&highlight=03V&focus=1"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(
             data,
             {
@@ -1040,7 +1044,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(
             data,
             {
@@ -1074,7 +1078,7 @@ class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         # Expecting the total to be quite different
         self.assertEqual(data["plotline"], 0.0315505963832243)
         # Bendroflumethiazide and Trandate:
@@ -1085,5 +1089,5 @@ class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(data["plotline"], 0.0325)
