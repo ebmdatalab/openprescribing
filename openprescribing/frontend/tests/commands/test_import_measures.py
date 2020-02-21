@@ -31,7 +31,10 @@ from frontend.models import (
     STP,
     RegionalTeam,
 )
-from frontend.management.commands.import_measures import load_measure_defs
+from frontend.management.commands.import_measures import (
+    load_measure_defs,
+    build_bnf_codes_query_from_filter,
+)
 from gcutils.bigquery import Client
 from matrixstore.tests.contextmanagers import (
     patched_global_matrixstore_from_data_factory,
@@ -56,6 +59,7 @@ class ImportMeasuresTests(TestCase):
         create_import_log()
         create_organisations(random)
         upload_ccgs_and_practices()
+        upload_presentations()
         cls.prescriptions = upload_prescribing(random.randint)
         cls.practice_stats = upload_practice_statistics(random.randint)
         cls.factory = build_factory()
@@ -129,7 +133,7 @@ class ImportMeasuresTests(TestCase):
         # set.
         m = Measure.objects.get(id="coproxamol")
         self.assertEqual(m.numerator_bnf_codes, ["0407010Q0AAAAAA"])
-        self.assertEqual(m.denominator_bnf_codes, [])
+        self.assertEqual(m.denominator_bnf_codes, None)
 
         # Check that analyse_url has been set.
         querystring = m.analyse_url.split("#")[1]
@@ -374,6 +378,20 @@ class ImportMeasuresTests(TestCase):
             self.assertAlmostEqual(mv.cost_savings["10"], series["cost_saving_10"])
 
 
+class BuildMeasureSQLTests(TestCase):
+    def test_build_bnf_codes_query_from_filter(self):
+        filter_ = [
+            "010101 # Everything in 1.1.1",
+            "~010101000BBABA0 # Langdales_Cinnamon Tab",
+            "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
+        ]
+
+        self.assertEqual(
+            build_bnf_codes_query_from_filter(filter_),
+            "SELECT bnf_code FROM {hscic}.presentation WHERE (bnf_code LIKE '010101%') AND NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')",
+        )
+
+
 class ImportMeasuresDefinitionsOnlyTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -389,8 +407,12 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
             with patch(
                 "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
             ) as get_num_or_denom_bnf_codes:
-                get_num_or_denom_bnf_codes.return_value = []
-                call_command("import_measures", definitions_only=True)
+                with patch(
+                    "frontend.management.commands.import_measures.get_bnf_codes"
+                ) as get_bnf_codes:
+                    get_num_or_denom_bnf_codes.return_value = []
+                    get_bnf_codes.return_value = []
+                    call_command("import_measures", definitions_only=True)
 
         measure = Measure.objects.get(id="desogestrel")
         self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
@@ -401,6 +423,7 @@ class CheckMeasureDefinitionsTests(TestCase):
     def setUpTestData(cls):
         create_import_log()
         set_up_bq()
+        upload_presentations()
 
     def test_check_definition(self):
         upload_dummy_prescribing(["0703021Q0AAAAAA", "0703021Q0BBAAAA"])
@@ -538,6 +561,7 @@ def set_up_bq():
     client.get_or_create_table(
         "practice_statistics", schemas.PRACTICE_STATISTICS_SCHEMA
     )
+    client.get_or_create_table("presentation", schemas.PRESENTATION_SCHEMA)
 
 
 def upload_dummy_prescribing(bnf_codes):
@@ -643,6 +667,28 @@ def upload_ccgs_and_practices():
     )
     table = Client("hscic").get_table("practices")
     table.insert_rows_from_pg(Practice, schemas.PRACTICE_SCHEMA)
+
+
+def upload_presentations():
+    """Upload presentations to BQ."""
+
+    table = Client("hscic").get_table("presentation")
+
+    presentations = [
+        ("0703021Q0AAAAAA", "Desogestrel_Tab 75mcg"),
+        ("0703021Q0BBAAAA", "Cerazette_Tab 75mcg"),
+        ("076543210AAAAAA", "Etynodiol Diacet_Tab 500mcg"),
+        ("0407010Q0AAAAAA", "Co-Proxamol_Tab 32.5mg/325mg"),
+        ("0904010AUBBAAAA", "Mrs Crimble's_G/F W/F Cheese Bites Orig"),
+    ]
+
+    with tempfile.NamedTemporaryFile("wt") as f:
+        writer = csv.writer(f)
+        for presentation in presentations:
+            row = presentation + (None, None)
+            writer.writerow(row)
+        f.seek(0)
+        table.insert_rows_from_csv(f.name, schemas.PRESENTATION_SCHEMA)
 
 
 def upload_prescribing(randint):

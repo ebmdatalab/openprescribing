@@ -659,8 +659,9 @@ class Measure(models.Model):
     numerator_from = models.TextField()
     numerator_where = models.TextField()
     numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    numerator_bnf_codes_filter = ArrayField(models.CharField(max_length=16), null=True)
     numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
-    numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
+    numerator_bnf_codes = ArrayField(models.CharField(max_length=15), null=True)
 
     denominator_type = models.CharField(max_length=20)
     denominator_short = models.CharField(max_length=100)
@@ -668,8 +669,11 @@ class Measure(models.Model):
     denominator_from = models.TextField()
     denominator_where = models.TextField()
     denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    denominator_bnf_codes_filter = ArrayField(
+        models.CharField(max_length=16), null=True
+    )
     denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
-    denominator_bnf_codes = ArrayField(models.CharField(max_length=15))
+    denominator_bnf_codes = ArrayField(models.CharField(max_length=15), null=True)
 
     def __str__(self):
         return self.name
