@@ -636,7 +636,6 @@ class Measure(models.Model):
     title = models.CharField(max_length=500)
     description = models.TextField()
     why_it_matters = models.TextField(null=True, blank=True)
-    numerator_short = models.CharField(max_length=100, null=True, blank=True)
     tags = ArrayField(models.CharField(max_length=30), blank=True)
     tags_focus = ArrayField(
         models.CharField(max_length=30),
@@ -648,26 +647,29 @@ class Measure(models.Model):
         ),
     )
     include_in_alerts = models.BooleanField(default=True)
-    denominator_short = models.CharField(max_length=100, null=True, blank=True)
-    numerator_type = models.CharField(max_length=20)
-    numerator_from = models.TextField()
-    numerator_where = models.TextField()
-    numerator_columns = models.TextField()
-    denominator_type = models.CharField(max_length=20)
-    denominator_from = models.TextField()
-    denominator_where = models.TextField()
-    denominator_columns = models.TextField()
     url = models.URLField(null=True, blank=True)
     is_percentage = models.NullBooleanField()
     is_cost_based = models.NullBooleanField()
     low_is_good = models.NullBooleanField()
-    numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
-    numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
-    numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
-    denominator_bnf_codes = ArrayField(models.CharField(max_length=15))
-    denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
-    denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
     analyse_url = models.CharField(max_length=5000, null=True)
+
+    numerator_type = models.CharField(max_length=20)
+    numerator_short = models.CharField(max_length=100, null=True, blank=True)
+    numerator_columns = models.TextField()
+    numerator_from = models.TextField()
+    numerator_where = models.TextField()
+    numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
+
+    denominator_type = models.CharField(max_length=20)
+    denominator_short = models.CharField(max_length=100, null=True, blank=True)
+    denominator_columns = models.TextField()
+    denominator_from = models.TextField()
+    denominator_where = models.TextField()
+    denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    denominator_bnf_codes = ArrayField(models.CharField(max_length=15))
 
     def __str__(self):
         return self.name
