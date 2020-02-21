@@ -654,7 +654,7 @@ class Measure(models.Model):
     analyse_url = models.CharField(max_length=5000, null=True)
 
     numerator_type = models.CharField(max_length=20)
-    numerator_short = models.CharField(max_length=100, null=True, blank=True)
+    numerator_short = models.CharField(max_length=100)
     numerator_columns = models.TextField()
     numerator_from = models.TextField()
     numerator_where = models.TextField()
@@ -663,7 +663,7 @@ class Measure(models.Model):
     numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
 
     denominator_type = models.CharField(max_length=20)
-    denominator_short = models.CharField(max_length=100, null=True, blank=True)
+    denominator_short = models.CharField(max_length=100)
     denominator_columns = models.TextField()
     denominator_from = models.TextField()
     denominator_where = models.TextField()
