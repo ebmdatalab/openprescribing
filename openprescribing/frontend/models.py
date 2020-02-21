@@ -649,8 +649,6 @@ class Measure(models.Model):
     )
     include_in_alerts = models.BooleanField(default=True)
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
     numerator_type = models.CharField(max_length=20)
     numerator_from = models.TextField()
     numerator_where = models.TextField()

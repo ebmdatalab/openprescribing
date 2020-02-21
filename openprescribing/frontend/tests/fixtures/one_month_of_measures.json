@@ -335,8 +335,6 @@
         "core"
       ],
       "tags_focus": ["baz", "foo"],
-      "start_date": null,
-      "end_date": null,
       "url": null,
       "is_percentage": true,
       "is_cost_based": true,
@@ -367,8 +365,6 @@
         "core"
       ],
       "tags_focus": ["baz", "foo"],
-      "start_date": null,
-      "end_date": null,
       "url": null,
       "is_percentage": true,
       "is_cost_based": true,
