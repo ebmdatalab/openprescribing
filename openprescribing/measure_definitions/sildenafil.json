@@ -65,8 +65,7 @@
     "AND bnf_code NOT LIKE '0704050Z0AAACAC%'",
     "AND bnf_code NOT LIKE '0704050R0AAAAAA%'",
     "AND bnf_code NOT LIKE '0704050R0AAABAB%'",
-    "AND bnf_code NOT LIKE '0704050R0AAADAD%'",
-    "AND month >= '{three_months_ago}'"
+    "AND bnf_code NOT LIKE '0704050R0AAADAD%'"
   ],
   "denominator_type": "bnf_items",
   "denominator_where": [
