@@ -6,6 +6,8 @@
   "description": [
     "Cost of gluten-free products per 1000 patients"
   ],
+  "numerator_short": "Gluten-free products cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Gluten-free products are available on prescription for patients who have a biopsy-confirmed diagnosis of coeliac disease. ",
     "These products are also now available to purchase, e.g. from supermarkets, and many NHS areas are considering stopping or ",
@@ -15,17 +17,15 @@
     "Please note this list now excludes low-protein products which are also catagorised by dm+d and NHSBSA as being gluten-free, as",
     "these products have different indications for ACBS use."
   ],
-  "numerator_short": "Gluten-free products cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "core",
     "cost",
     "nutrition"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "(",

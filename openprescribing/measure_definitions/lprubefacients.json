@@ -6,18 +6,14 @@
   "description": [
     "Cost of rubefacients per 1000 patients"
   ],
+  "numerator_short": "Rubefacients cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Rubifacients deep heat rubs and ointments are used to provide pain relief in musculoskeletal conditions. ",
     "However, the BNF states that <a href='https://bnf.nice.org.uk/treatment-summary/soft-tissue-disorders.html'>the evidence ",
     "available does not support the use of topical rubefacients in acute or chronic musculoskeletal pain</a>. ",
     "This measure excludes topical NSAIDs and Capsaicin as per NHS England guidance."
   ],
-  "numerator_short": "Rubefacients cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "efficacy",
@@ -25,6 +21,10 @@
     "lowpriority",
     "pain"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",

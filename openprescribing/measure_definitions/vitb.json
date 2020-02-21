@@ -8,6 +8,8 @@
     "Prescribing of vitamin B complex (normal and strong tablets)",
     "as a percentage of prescribing of vitamin B and thiamine tablets"
   ],
+  "numerator_short": "Vitamin B complex items",
+  "denominator_short": "Vitamin B complex and thiamine items",
   "why_it_matters": [
     "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol ",
     "disorders. However, the latest position statment from the Regional Medicines Optimisation Committee (RMOC) ",
@@ -37,17 +39,15 @@
     "</ul>",
     "<p>Please see our other measure: <a href='https://openprescribing.net/measure/vitbper1000/'> Vitamin B per 1000 patients.</a></p>"
   ],
-  "numerator_short": "Vitamin B complex items",
-  "denominator_short": "Vitamin B complex and thiamine items",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "efficacy",
     "nice",
     "cost"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_where": [
     "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
@@ -60,17 +60,17 @@
     "bnf_code LIKE '0906026M0%AF' OR --Thiamine HCl_Tab 50mg \n",
     "bnf_code LIKE '0906026M0%AG'    --Thiamine HCl_tab 100mg"
   ],
-  "date_reviewed": [
-    "2020-02-03"
-  ],
-  "next_review": [
-    "2022-02-03"
-  ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
   "checked_by": [
     "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "date_reviewed": [
+    "2020-02-03"
+  ],
+  "next_review": [
+    "2022-02-03"
   ],
   "measure_complexity": [
     "low"

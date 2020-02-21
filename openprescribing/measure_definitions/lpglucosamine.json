@@ -6,16 +6,12 @@
   "description": [
     "Cost of glucosamine and chondroitin per 1000 patients"
   ],
+  "numerator_short": "Glucosamine and chondroitin cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Glucosamine and chondroitin are nutrition supplements which are taken to improve pain associated with osteoarthritis. ",
     "However, there is little evidence of benefit and <a href='https://www.nice.org.uk/guidance/cg177/chapter/1-Recommendations#nutraceuticals'>NICE do not recommend their use in osteoarthritis</a>. "
   ],
-  "numerator_short": "Glucosamine and chondroitin cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "efficacy",
@@ -23,9 +19,13 @@
     "lowpriority",
     "nice"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
-  "bnf_code LIKE '1001050A0%' OR     --Glucosamine Hydrochloride (Rheumatic) \n",
+    "bnf_code LIKE '1001050A0%' OR     --Glucosamine Hydrochloride (Rheumatic) \n",
     "bnf_code LIKE '1001050B0%'   OR --Glucosamine Sulf (Rheumatic) (brands and generic) \n",
     "bnf_code = '091200000AADGDG' OR --Glucosamine Sulf_Tab 500mg \n",
     "bnf_code = '091200000AADIDI' OR --Glucosamine Sulf_Tab 750mg \n",

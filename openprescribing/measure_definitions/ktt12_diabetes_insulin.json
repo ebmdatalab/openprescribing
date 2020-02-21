@@ -7,24 +7,24 @@
     "Number of prescription items for long-acting human analogue insulins as a percentage of the total number ",
     "of prescription items for all long-acting and intermediate acting insulins excluding biphasic insulins."
   ],
+  "numerator_short": "Selected items",
+  "denominator_short": "Selected items",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/ng28/chapter/1-Recommendations'>NICE recommend that</a> for patients with type 2 ",
     "diabetes requiring insulin, 'neutral protamine Hagedorn' (NPH) insulin is the preferred starting therapy with insulin, and ",
     "that the more expensive long-acting insulin analogues (detemir and insulin glargine) can be considered as an alternative ",
     "in certain circumstances. "
   ],
-  "numerator_short": "Selected items",
-  "denominator_short": "Selected items",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "core",
     "cost",
     "diabetes",
     "nice"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_where": [
     "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",

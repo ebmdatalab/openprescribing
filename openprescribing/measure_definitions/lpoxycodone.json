@@ -6,16 +6,12 @@
   "description": [
     "Cost of oxycodone and naloxone combination per 1000 patients"
   ],
+  "numerator_short": "Oxycodone and naloxone combination cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Oxycodone is an opioid analgesic used to treat severe pain. Naloxone is added to reduce constipation.  ",
     "The combination product is expensive, and the benefit is unclear."
   ],
-  "numerator_short": "Oxycodone and naloxone combination cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "iif",
@@ -23,6 +19,10 @@
     "opioids",
     "pain"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "bnf_code LIKE '0407020AF%' --Oxycodone HCl/Naloxone HCl"

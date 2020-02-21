@@ -9,22 +9,22 @@
     "as a percentage of prescribing of all PPIs.",
     "See the <a href='https://docs.google.com/spreadsheets/d/1VEvnh3iBUk4vjn6iHO5ax0e3YMJyXaWGZpWl0DD8VS4/edit#gid=1417276769'>full list of BNF codes used in this measure</a>."
   ],
+  "numerator_short": "High-cost PPIs quantity",
+  "denominator_short": "All included PPIs quantity",
   "why_it_matters": [
     "Proton-pump inhibitors (PPIs) have been generic for several years, and the generic is significantly cheaper than the branded product. ",
     "Therefore the vast majority of patients can be prescribed the generic"
   ],
-  "numerator_short": "High-cost PPIs quantity",
-  "denominator_short": "All included PPIs quantity",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "core",
     "cost",
     "gastrointestinal",
     "generic"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_quantity",
   "numerator_where": [
     "bnf_code IN ( \n",
@@ -56,7 +56,7 @@
     "'0103050R0BCAAAB', --Pantoloc Control_Tab E/C 20mg \n",
     "'0103050T0BBAAAA', --Pariet_Tab E/C 10mg \n",
     "'0103050T0BBABAB') --Pariet_Tab E/C 20mg"
-],
+  ],
   "denominator_type": "bnf_quantity",
   "denominator_where": [
     "bnf_code LIKE '0103050E0%AA' OR --Esomeprazole_Tab E/C 20mg (brands and generic) \n",
@@ -80,5 +80,5 @@
     "bnf_code LIKE '0103050R0%AB' OR --Pantoprazole_Tab E/C 20mg (brands and generic) \n",
     "bnf_code LIKE '0103050T0%AA' OR --Rabeprazole Sod_Tab E/C 10mg (brands and generic) \n",
     "bnf_code LIKE '0103050T0%AB'    --Rabeprazole Sod_Tab E/C 20mg (brands and generic)"
-]
+  ]
 }

@@ -1,14 +1,16 @@
 {
-"name": "Seven Day Prescribing for Long Term Conditions",
-	"title": [
-		"Seven Day Prescribing for Long Term Conditions"
-	],
-	"description": [
-		"Total quantity where a prescription is for seven tablets or",
-		"capsules of common LTC medicines as a proportion of all tablets or capsules for common LTC medicines "
-	],
-	"why_it_matters": [
-	  "There is no current consensus on durations of prescriptions across the NHS and prescribers are advised that they should write a ",
+  "name": "Seven Day Prescribing for Long Term Conditions",
+  "title": [
+    "Seven Day Prescribing for Long Term Conditions"
+  ],
+  "description": [
+    "Total quantity where a prescription is for seven tablets or",
+    "capsules of common LTC medicines as a proportion of all tablets or capsules for common LTC medicines "
+  ],
+  "numerator_short": "seven day quantities",
+  "denominator_short": "total quantities",
+  "why_it_matters": [
+    "There is no current consensus on durations of prescriptions across the NHS and prescribers are advised that they should write a ",
     "prescription for a duration that is clinically appropriate. ",
     "The <a href='https://www.bma.org.uk/advice/employment/gp-practices/service-provision/prescribing/prescribing-in-general-practice'>",
     "British Medical Association reports</a> growing requests to prescribe seven day quantities of medicines to fund supply of ",
@@ -32,58 +34,50 @@
     "measure definition notebook</a> and <a href='https://ebmdatalab.net/new-measure-seven-day-prescribing-for-long-term-conditions/'>",
     "on our blog</a>."
   ],
-	"numerator_short": "seven day quantities",
-	"denominator_short": "total quantities",
-	"url": null,
-	"is_percentage": true,
-	"is_cost_based": false,
-	"low_is_good": true,
-	"tags": [
-		"core",
-		"safety",
-		"greenernhs"
-	],
-	"numerator_type": "custom",
-	"numerator_columns": [
-		"SUM(total_quantity) AS numerator"
-	],
-	"numerator_from": "{hscic}.raw_prescribing_normalised",
-	"numerator_where": [
-		"quantity_per_item=7",
-		"AND",
-		"(",
-		"bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
-		"bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
-		"bnf_code LIKE '0212000Y0%' OR ##simvastatin \n",
-		"bnf_code LIKE '0602010V0%' OR ##levothyroxine \n",
-		"bnf_code LIKE '0206020A0%') ##amlodipine \n",
-		"AND",
-		"(",
-		"bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
-		")"
-	],
-	"denominator_type": "custom",
-	"denominator_columns": [
-		"SUM(total_quantity) AS denominator"
-	],
-	"denominator_from": "{hscic}.raw_prescribing_normalised",
-	"denominator_where": [
-		"(",
-		"bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
-		"bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
-		"bnf_code LIKE '0212000Y0%' OR ##simvastatin \n",
-		"bnf_code LIKE '0602010V0%' OR ##levothyroxine \n",
-		"bnf_code LIKE '0206020A0%') ##amlodipine \n",
-		"AND",
-		"(",
-		"bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
-		")"
-	],
-"date_reviewed": [
-    "2019-10-09"
+  "tags": [
+    "core",
+    "safety",
+    "greenernhs"
   ],
-  "next_review": [
-    "2020-10-09"
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(total_quantity) AS numerator"
+  ],
+  "numerator_from": "{hscic}.raw_prescribing_normalised",
+  "numerator_where": [
+    "quantity_per_item=7",
+    "AND",
+    "(",
+    "bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
+    "bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
+    "bnf_code LIKE '0212000Y0%' OR ##simvastatin \n",
+    "bnf_code LIKE '0602010V0%' OR ##levothyroxine \n",
+    "bnf_code LIKE '0206020A0%') ##amlodipine \n",
+    "AND",
+    "(",
+    "bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
+    ")"
+  ],
+  "denominator_type": "custom",
+  "denominator_columns": [
+    "SUM(total_quantity) AS denominator"
+  ],
+  "denominator_from": "{hscic}.raw_prescribing_normalised",
+  "denominator_where": [
+    "(",
+    "bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
+    "bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
+    "bnf_code LIKE '0212000Y0%' OR ##simvastatin \n",
+    "bnf_code LIKE '0602010V0%' OR ##levothyroxine \n",
+    "bnf_code LIKE '0206020A0%') ##amlodipine \n",
+    "AND",
+    "(",
+    "bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
+    ")"
   ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"
@@ -91,10 +85,16 @@
   "checked_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
-  "measure_complexity": [
-    "low"
+  "date_reviewed": [
+    "2019-10-09"
+  ],
+  "next_review": [
+    "2020-10-09"
   ],
   "measure_notebook_url": [
     "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions.ipynb"
+  ],
+  "measure_complexity": [
+    "low"
   ]
 }

@@ -6,6 +6,8 @@
   "description": [
     "Prescribing of vitamin B complex (normal and strong tablets) per 1000 registered patients"
   ],
+  "numerator_short": "Vitamin B complex items",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol disorders. ",
     "A recent position statment from the Regional Medicines Optimisation Committee (RMOC) ",
@@ -13,7 +15,7 @@
     "states that:</a></p>",
     "<ul>",
     "<li>Due to a lack of evidence on their efficacy and safety, vitamin B complex preparations (vitamin B compound and ",
-    "vitamin B compound strong tablets) should not be prescribed for prevention of Wernicke’s Encephalopathy (WE) in alcoholism</li>",
+    "vitamin B compound strong tablets) should not be prescribed for prevention of Wernicke\u2019s Encephalopathy (WE) in alcoholism</li>",
     "<li>Vitamin B complex preparations should not be prescribed for preventing deficiency or for maintenance treatment following",
     "treatment for deficiency.</li>",
     "<li>Vitamin B complex preparations should not be prescribed as dietary supplements. Patients who wish to use them for dietary ",
@@ -27,40 +29,37 @@
     "<p>The RMOC advice is to review all existing patients prescribed vitamin B complex preparations with a view to stopping treatment ",
     "in all but exceptional circumstances, such as in those patients with a medically diagnosed deficiency due to lifelong or ",
     "chronic condition, or following surgery that results in malabsorption."
-    
   ],
-  "numerator_short": "Vitamin B complex items",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "core",
     "efficacy",
     "nice"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_where": [
     "bnf_code LIKE '0906027G0%' --Vit B Compound"
   ],
   "denominator_type": "list_size",
-  "date_reviewed": [
-    "2020-01-15"
-  ],
-  "next_review": [
-    ""
-  ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
   "checked_by": [
     "brian.mackenna@phc.ox.ac.uk"
   ],
-  "measure_complexity": [
-    "low"
+  "date_reviewed": [
+    "2020-01-15"
+  ],
+  "next_review": [
+    ""
   ],
   "measure_notebook_url": [
     "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Vitamin%20B/New%20Measure%20-%20Vitamin%20B%20per%201000%20patients.ipynb"
+  ],
+  "measure_complexity": [
+    "low"
   ]
 }

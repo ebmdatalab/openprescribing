@@ -8,6 +8,8 @@
     "Items of low and medium intensity statins ",
     "as a percentage of items of all statins."
   ],
+  "numerator_short": "Low and medium intensity statin items",
+  "denominator_short": "All statins items",
   "why_it_matters": [
     "2014 NICE guidance on <a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations#lipid-modification-therapy-for-the-primary-and-secondary-prevention-of-cvd-2'>primary and secondary lipid modification</a>",
     "recommends the use of a high-intensity statin (i.e. one that reduces LDL cholesterol by 40% or more) with a low acquisition cost. ",
@@ -15,18 +17,16 @@
     "<a href='https://www.nice.org.uk/guidance/cg181/chapter/appendix-a-grouping-of-statins'>here</a>.  Please note, we have excluded ",
     "liquid preparations from this measure."
   ],
-  "numerator_short": "Low and medium intensity statin items",
-  "denominator_short": "All statins items",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "cardiovascular",
     "core",
     "efficacy",
     "nice"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_where": [
     "SUBSTR(bnf_code,1,9) IN (",
@@ -62,19 +62,19 @@
     "'0212000Y0') --Simvastatin \n",
     "AND (bnf_name LIKE '%_Tab %' or bnf_name LIKE '%Cap %') --only tabs and caps \n"
   ],
- "date_reviewed": [
-    "2019-07-30"
-  ],
-  "next_review": [
-    "2020-07-30"
-  ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
   "checked_by": [
     "brian.mackenna@phc.ox.ac.uk"
   ],
+  "date_reviewed": [
+    "2019-07-30"
+  ],
+  "next_review": [
+    "2020-07-30"
+  ],
   "measure_complexity": [
     "low"
-    ]
+  ]
 }

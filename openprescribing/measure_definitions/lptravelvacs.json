@@ -6,23 +6,23 @@
   "description": [
     "Cost of travel vaccines per 1000 patients"
   ],
+  "numerator_short": "Travel vaccines cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "There are seven vaccines - Hepatitis B, Japanese Encephalitis, Meningitis ACWY, Yellow Fever, Tick-borne encephalitis, ",
-    "Rabies and Bacillus Calmette–Guérin (BCG) - which are not supposed to be prescribed by practices on the NHS when exclusively ",
+    "Rabies and Bacillus Calmette\u2013Gu\u00e9rin (BCG) - which are not supposed to be prescribed by practices on the NHS when exclusively ",
     "given for travel purposes. ",
     "Sometimes GP practices supply them in error for travel"
   ],
-  "numerator_short": "Travel vaccines cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "iif",
     "lowpriority"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",

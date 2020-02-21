@@ -6,23 +6,23 @@
   "description": [
     "Cost of herbal medicines per 1000 patients"
   ],
+  "numerator_short": "Herbal medicines cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Under a Traditional Herbal Registration there is no requirement to prove scientifically that a product works, ",
     "the registration is based on longstanding use of the product as a traditional medicine, and therefore there is ",
     "a lack of robust evidence of clinical effectiveness for these products."
   ],
-  "numerator_short": "Herbal medicines cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "efficacy",
     "iif",
     "lowpriority"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "custom",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator"

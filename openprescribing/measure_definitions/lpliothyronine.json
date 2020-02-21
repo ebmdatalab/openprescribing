@@ -6,40 +6,40 @@
   "description": [
     "Cost of liothyronine per 1000 patients"
   ],
+  "numerator_short": "Liothyronine cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Liothyronine is used to treat an underactive thyroid. It has a very high cost and limited evidence. ",
     "It is sometimes used in combination with levothyroxine in products. Most patients can have symptoms controlled ",
     "on much cheaper levothyroxine. ",
     "The manufacturer has been the subject of a Competition and Markets Authority investigation."
   ],
-  "numerator_short": "Liothyronine cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "iif",
     "lowpriority"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "bnf_code LIKE '0602010M0%' OR --Liothyronine Sodium  \n",
     "bnf_code LIKE '0602010Z0%'    --Levothyroxine Sodium & Liothyronine"
   ],
   "denominator_type": "list_size",
-  "date_reviewed": [
-    "2019-07-30"
-  ],
-  "next_review": [
-    "2020-07-30"
-  ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
   "checked_by": [
     "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "date_reviewed": [
+    "2019-07-30"
+  ],
+  "next_review": [
+    "2020-07-30"
   ],
   "measure_complexity": [
     "low"

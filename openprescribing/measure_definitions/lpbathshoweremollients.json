@@ -6,24 +6,24 @@
   "description": [
     "Bath and Shower emollients per 1000 patients"
   ],
-  "why_it_matters": [
-  "The <a href='https://www.bmj.com/content/361/bmj.k1332'>BATHE study</a>",
-  "found that there was no evidence",
-  "of clinical benefit for using bath and shower emollients in the standard management of childhood eczema. ",
-  "‘Leave-on’ emollient moisturisers can still be used for treating eczema and these emollients can still be used as soap substitutes."
-  ],
-  "numerator_short": "Bath and Shower emollients cost (£)",
+  "numerator_short": "Bath and Shower emollients cost (\u00a3)",
   "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
+  "why_it_matters": [
+    "The <a href='https://www.bmj.com/content/361/bmj.k1332'>BATHE study</a>",
+    "found that there was no evidence",
+    "of clinical benefit for using bath and shower emollients in the standard management of childhood eczema. ",
+    "\u2018Leave-on\u2019 emollient moisturisers can still be used for treating eczema and these emollients can still be used as soap substitutes."
+  ],
   "tags": [
     "cost",
     "iif",
     "lowpriority",
     "efficacy"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "(bnf_code LIKE '130201100%' OR        --Emollient Bath & Shower Preparation \n",

@@ -3,23 +3,23 @@
   "title": [
     "Prescribing for Cow's Milk Protein Allergy (CMPA) per listed patients aged 0-4"
   ],
-  "why_it_matters": [
-    "Prescribing for Cow's Milk Protein Allergy is increasing. Milk formulas are expensive, and should be reviewed ",
-    "regularly to ensure that they are still required, particularly when Amino Acid Formula (AAF) products are used."
-    ],
   "description": [
     "Cost of milk formulas for Cow's Milk Protein Allergy (CMPA) per listed patients aged 0-4"
   ],
-  "numerator_short": "AAF cost (£)",
+  "numerator_short": "AAF cost (\u00a3)",
   "denominator_short": "Listed patients aged 0-4",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": true,
+  "why_it_matters": [
+    "Prescribing for Cow's Milk Protein Allergy is increasing. Milk formulas are expensive, and should be reviewed ",
+    "regularly to ensure that they are still required, particularly when Amino Acid Formula (AAF) products are used."
+  ],
   "tags": [
     "nutrition",
     "core"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "custom",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator"
@@ -36,22 +36,22 @@
   "denominator_where": [
     "1 = 1"
   ],
-  "date_reviewed": [
-    "2019-03-25"
-  ],
-  "next_review": [
-    "2019-10-01"
-  ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
   "checked_by": [
     "brian.mackenna@phc.ox.ac.uk"
   ],
-  "measure_complexity": [
-    "high"
+  "date_reviewed": [
+    "2019-03-25"
+  ],
+  "next_review": [
+    "2019-10-01"
   ],
   "measure_notebook_url": [
     "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/New%20Measure%20-%20Cow's%20Milk%20Protein%20Allergy.ipynb"
+  ],
+  "measure_complexity": [
+    "high"
   ]
 }

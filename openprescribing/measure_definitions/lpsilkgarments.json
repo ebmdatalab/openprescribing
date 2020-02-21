@@ -6,6 +6,8 @@
   "description": [
     "Silk Garments per 1000 patients"
   ],
+  "numerator_short": "Silk Garments (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Silk Garments are knitted, medical grade silk clothing which are sometimes used ",
     "as an adjunct to normal treatment for severe eczema and allergic skin conditions. ",
@@ -13,18 +15,16 @@
     "<a href='https://www.nottingham.ac.uk/research/groups/cebd/projects/clothes/index.aspx'> CLOTHES trial</a> ",
     "concluded that using silk garments for the management of eczema is unlikely to be cost-effective for the NHS."
   ],
-  "numerator_short": "Silk Garments (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "iif",
     "lowpriority",
     "efficacy"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "bnf_code LIKE '2020%' --Silk Garments"

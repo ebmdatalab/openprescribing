@@ -6,22 +6,22 @@
   "description": [
     "Cost of homeopathy per 1000 patients"
   ],
+  "numerator_short": "Homeopathy cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "In 2010 House of Commons Science and Technology Committee found that the use of homeopathy was ",
     "<a href='https://publications.parliament.uk/pa/cm200910/cmselect/cmsctech/45/4504.htm#a18'>not evidence-based, and any benefits to patients was due to placebo effect</a>. "
   ],
-  "numerator_short": "Homeopathy cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "efficacy",
     "iif",
     "lowpriority"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "bnf_code LIKE '190203%' --Other Homeopathic Preps"

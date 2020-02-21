@@ -6,16 +6,12 @@
   "description": [
     "Cost of co-proxamol per 1000 patients"
   ],
+  "numerator_short": "Co-proxamol cost (\u00a3)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Co-proxamol is a painkiller which was withdrawn in 2005 due to safety concerns.  All marketing authorisations were cancelled at the end of 2007. ",
-    "There remains some prescribing of co-proxamol (which is now unlicensed) at a cost of over £100 per box."
+    "There remains some prescribing of co-proxamol (which is now unlicensed) at a cost of over \u00a3100 per box."
   ],
-  "numerator_short": "Co-proxamol cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "iif",
@@ -23,6 +19,10 @@
     "pain",
     "safety"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "(bnf_code LIKE '0407010Q0%') --Co-Proxamol (Dextroprop HCl/Paracet) "

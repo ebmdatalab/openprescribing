@@ -8,22 +8,22 @@
     "Items prescribed for topical treatment of fungal nail infections ",
     "per 1000 patients"
   ],
+  "numerator_short": "Topical antifungal items",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "These treatments have <a href='http://www.bad.org.uk/for-the-public/patient-information-leaflets/fungal-infections-of-the-nails'>a ",
     "low cure rate</a>, and treatment is required for three to six months.",
     "Consideration should be given as to whether this is an effective treatment."
   ],
-  "numerator_short": "Topical antifungal items",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "core",
     "efficacy",
     "infections"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_where": [
     "(",
