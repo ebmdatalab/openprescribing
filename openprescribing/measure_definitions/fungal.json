@@ -25,11 +25,9 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "(",
-    "bnf_code LIKE '1310020A0%' OR --Amorolfine Hydrochloride \n",
-    "bnf_code LIKE '1310020T0%AA' --Tioconazole_Medic Nail Lacquer 283mg/ml (branded and generic) \n",
-    ")"
+  "numerator_bnf_codes_filter": [
+    "1310020A0 # Amorolfine Hydrochloride",
+    "1310020T0%AA # Tioconazole_Medic Nail Lacquer 283mg/ml (branded and generic)"
   ],
   "denominator_type": "list_size"
 }

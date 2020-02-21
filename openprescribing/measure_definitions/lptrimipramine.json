@@ -25,8 +25,8 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '0403010Y0%' --Trimipramine Maleate"
+  "numerator_bnf_codes_filter": [
+    "0403010Y0 # Trimipramine Maleate"
   ],
   "denominator_type": "list_size"
 }

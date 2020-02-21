@@ -25,11 +25,11 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_quantity",
-  "numerator_where": [
-    "bnf_code LIKE '0703021Q0B%' --Desogestrel (all brands)"
+  "numerator_bnf_codes_filter": [
+    "0703021Q0B # Desogestrel (all brands)"
   ],
   "denominator_type": "bnf_quantity",
-  "denominator_where": [
-    "bnf_code LIKE '0703021Q0%' --Desogestrel (brand and generic)"
+  "denominator_bnf_codes_filter": [
+    "0703021Q0 # Desogestrel (brand and generic)"
   ]
 }

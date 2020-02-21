@@ -28,20 +28,20 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0501013K0%' OR --Co-Amoxiclav \n",
-    "bnf_code LIKE '0501021%' OR --Cephalosporins \n",
-    "bnf_code LIKE '050112%'     --Quinolones"
+  "numerator_bnf_codes_filter": [
+    "0501013K0 # Co-Amoxiclav",
+    "0501021 # Cephalosporins",
+    "050112 # Quinolones"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code LIKE '050101%' OR  --Penicillins \n",
-    "bnf_code LIKE '0501021%' OR --Cephalosporins \n",
-    "bnf_code LIKE '050103%' OR  --Tetracyclines \n",
-    "bnf_code LIKE '050105%' OR  --Macrolides \n",
-    "bnf_code LIKE '050108%' OR  --Sulfonamides And Trimethoprim \n",
-    "bnf_code LIKE '050111%' OR  --Metronidazole, Tinidazole & Ornidazole \n",
-    "bnf_code LIKE '050112%' OR  --Quinolones \n",
-    "bnf_code LIKE '050113%'     --Urinary-Tract Infections"
+  "denominator_bnf_codes_filter": [
+    "050101 # Penicillins",
+    "0501021 # Cephalosporins",
+    "050103 # Tetracyclines",
+    "050105 # Macrolides",
+    "050108 # Sulfonamides And Trimethoprim",
+    "050111 # Metronidazole, Tinidazole & Ornidazole",
+    "050112 # Quinolones",
+    "050113 # Urinary-Tract Infections"
   ]
 }

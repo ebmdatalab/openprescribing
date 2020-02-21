@@ -29,15 +29,13 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "SUBSTR(bnf_code,1,6) IN ('100101') --Non-Steroidal Anti-Inflammatory Drugs \n",
-    "AND (SUBSTR(bnf_code,1,9) NOT IN (",
-    "'1001010J0', --Ibuprofen \n",
-    "'1001010P0') --Naproxen \n",
-    ")"
+  "numerator_bnf_codes_filter": [
+    "100101 # Non-Steroidal Anti-Inflammatory Drugs",
+    "~1001010J0 # Ibuprofen",
+    "~1001010P0 # Naproxen"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "SUBSTR(bnf_code,1,6) IN ('100101') --Non-Steroidal Anti-Inflammatory Drugs"
+  "denominator_bnf_codes_filter": [
+    "100101 # Non-Steroidal Anti-Inflammatory Drugs"
   ]
 }

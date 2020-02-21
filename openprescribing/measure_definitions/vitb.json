@@ -49,16 +49,16 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
-    "bnf_code LIKE '0906027G0%AB'    --Vit B Co Strong_Tab)"
+  "numerator_bnf_codes_filter": [
+    "0906027G0%AA # Vit B Co_Tab",
+    "0906027G0%AB # Vit B Co Strong_Tab)"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
-    "bnf_code LIKE '0906027G0%AB' OR --Vit B Co Strong_Tab) \n",
-    "bnf_code LIKE '0906026M0%AF' OR --Thiamine HCl_Tab 50mg \n",
-    "bnf_code LIKE '0906026M0%AG'    --Thiamine HCl_tab 100mg"
+  "denominator_bnf_codes_filter": [
+    "0906027G0%AA # Vit B Co_Tab",
+    "0906027G0%AB # Vit B Co Strong_Tab)",
+    "0906026M0%AF # Thiamine HCl_Tab 50mg",
+    "0906026M0%AG # Thiamine HCl_tab 100mg"
   ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"

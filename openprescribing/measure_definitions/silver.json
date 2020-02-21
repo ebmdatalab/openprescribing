@@ -26,12 +26,13 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "(bnf_code like '20%' AND --Dressings \n",
-    "(bnf_name LIKE '%Silv%' OR bnf_name LIKE '% Ag %')) --dressings with either Silv or Ag in the name"
+  "numerator_bnf_codes_query": [
+    "SELECT bnf_code FROM {hscic}.presentation",
+    "WHERE bnf_code like '20%' --Dressings \n",
+    "  AND (name LIKE '%Silv%' OR name LIKE '% Ag %') --dressings with either Silv or Ag in the name"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code like '20%' --Dressings"
+  "denominator_bnf_codes_filter": [
+    "20 # Dressings"
   ]
 }

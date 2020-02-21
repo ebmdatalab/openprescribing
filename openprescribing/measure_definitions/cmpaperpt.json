@@ -20,13 +20,11 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "custom",
-  "numerator_columns": [
-    "SUM(actual_cost) AS numerator"
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
-  "numerator_where": [
-    "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
+  "numerator_type": "bnf_cost",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.cmpa_products",
+    "WHERE type != 'exclude'"
   ],
   "denominator_type": "custom",
   "denominator_columns": [

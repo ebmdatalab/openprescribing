@@ -23,17 +23,15 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_quantity",
-  "numerator_where": [
-    "bnf_code LIKE '1106000__B%' --Treatment of Glaucoma (branded) \n",
-    "AND (",
-    "bnf_code NOT LIKE '1106000B0B%' AND --Diamox \n",
-    "bnf_code NOT LIKE '1106000C0B%') --Diamox (Parent)"
+  "numerator_bnf_codes_filter": [
+    "1106000__B # Treatment of Glaucoma (branded)",
+    "~1106000B0B # Diamox",
+    "~1106000C0B # Diamox (Parent)"
   ],
   "denominator_type": "bnf_quantity",
-  "denominator_where": [
-    "bnf_code LIKE '1106000%' --Treatment of Glaucoma (branded and generic) \n",
-    "AND ",
-    "(bnf_code NOT LIKE '1106000B0%' AND --Acetazolamide (branded and generic) \n",
-    "bnf_code NOT LIKE '1106000C0%') --Acetazolamide (Parent) (branded and generic)"
+  "denominator_bnf_codes_filter": [
+    "1106000 # Treatment of Glaucoma (branded and generic)",
+    "~1106000B0 # Acetazolamide (branded and generic)",
+    "~1106000C0 # Acetazolamide (Parent) (branded and generic)"
   ]
 }

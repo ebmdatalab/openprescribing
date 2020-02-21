@@ -23,8 +23,8 @@
   "is_cost_based": false,
   "low_is_good": null,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0408010AE%' --Pregabalin"
+  "numerator_bnf_codes_filter": [
+    "0408010AE # Pregabalin"
   ],
   "denominator_type": "list_size"
 }

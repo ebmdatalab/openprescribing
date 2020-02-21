@@ -26,21 +26,21 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0407010F0%AC' OR --Co-Codamol Eff_Tab 8mg/500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010F0%AF' OR --Co-Codamol Eff_Tab 30mg/500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010H0%AQ'    --Paracet_Tab Solb 500mg (brands and generic)"
+  "numerator_bnf_codes_filter": [
+    "0407010F0%AC # Co-Codamol Eff_Tab 8mg/500mg (brands and generic)",
+    "0407010F0%AF # Co-Codamol Eff_Tab 30mg/500mg (brands and generic)",
+    "0407010H0%AQ # Paracet_Tab Solb 500mg (brands and generic)"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code LIKE '0407010F0%AA' OR --Co-Codamol_Tab 8mg/500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010F0%AB' OR --Co-Codamol_Cap 8mg/500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010F0%AC' OR --Co-Codamol Eff_Tab 8mg/500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010F0%AD' OR --Co-Codamol_Cap 30mg/500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010F0%AF' OR --Co-Codamol Eff_Tab 30mg/500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010F0%AH' OR --Co-Codamol_Tab 30mg/500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010H0%AA' OR --Paracet_Cap 500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010H0%AM' OR --Paracet_Tab 500mg (brands and generic) \n",
-    "bnf_code LIKE '0407010H0%AQ'    --Paracet_Tab Solb 500mg (brands and generic)"
+  "denominator_bnf_codes_filter": [
+    "0407010F0%AA # Co-Codamol_Tab 8mg/500mg (brands and generic)",
+    "0407010F0%AB # Co-Codamol_Cap 8mg/500mg (brands and generic)",
+    "0407010F0%AC # Co-Codamol Eff_Tab 8mg/500mg (brands and generic)",
+    "0407010F0%AD # Co-Codamol_Cap 30mg/500mg (brands and generic)",
+    "0407010F0%AF # Co-Codamol Eff_Tab 30mg/500mg (brands and generic)",
+    "0407010F0%AH # Co-Codamol_Tab 30mg/500mg (brands and generic)",
+    "0407010H0%AA # Paracet_Cap 500mg (brands and generic)",
+    "0407010H0%AM # Paracet_Tab 500mg (brands and generic)",
+    "0407010H0%AQ # Paracet_Tab Solb 500mg (brands and generic)"
   ]
 }

@@ -25,12 +25,12 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '040702040%'        --Tramadol Hydrochloride \n",
-    "AND bnf_code != '040702040AAAAAA' --Tramadol Hcl_Cap 50mg"
+  "numerator_bnf_codes_filter": [
+    "040702040 # Tramadol Hydrochloride",
+    "~040702040AAAAAA # Tramadol Hcl_Cap 50mg"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code like '040702040%' --Tramadol Hydrochloride"
+  "denominator_bnf_codes_filter": [
+    "040702040 # Tramadol Hydrochloride"
   ]
 }

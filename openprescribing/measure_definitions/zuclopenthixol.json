@@ -28,13 +28,13 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "(bnf_code LIKE '040201010%') --acetate "
+  "numerator_bnf_codes_filter": [
+    "040201010 # acetate"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "(bnf_code LIKE '040201010%') OR --acetate \n",
-    "(bnf_code LIKE '0402020Z0%')  --decanoate"
+  "denominator_bnf_codes_filter": [
+    "040201010 # acetate",
+    "0402020Z0 # decanoate"
   ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"

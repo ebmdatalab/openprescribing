@@ -40,8 +40,8 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0906027G0%' --Vit B Compound"
+  "numerator_bnf_codes_filter": [
+    "0906027G0 # Vit B Compound"
   ],
   "denominator_type": "list_size",
   "authored_by": [

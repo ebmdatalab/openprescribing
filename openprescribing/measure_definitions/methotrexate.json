@@ -26,12 +26,12 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '1001030U0%AC' --Methotrexate_Tab 10mg"
+  "numerator_bnf_codes_filter": [
+    "1001030U0%AC # Methotrexate_Tab 10mg"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code LIKE '1001030U0%AB' OR --Methotrexate_Tab 10mg \n",
-    "bnf_code LIKE '1001030U0%AC'    --Methotrexate_Tab 2.5mg"
+  "denominator_bnf_codes_filter": [
+    "1001030U0%AB # Methotrexate_Tab 10mg",
+    "1001030U0%AC # Methotrexate_Tab 2.5mg"
   ]
 }

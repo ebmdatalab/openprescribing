@@ -24,8 +24,8 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '0407020AF%' --Oxycodone HCl/Naloxone HCl"
+  "numerator_bnf_codes_filter": [
+    "0407020AF # Oxycodone HCl/Naloxone HCl"
   ],
   "denominator_type": "list_size"
 }

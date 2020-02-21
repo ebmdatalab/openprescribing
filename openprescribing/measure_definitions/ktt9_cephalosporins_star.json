@@ -26,10 +26,10 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0501013K0%' OR --Co-Amoxiclav \n",
-    "bnf_code LIKE '0501021%' OR --Cephalosporins \n",
-    "bnf_code LIKE '050112%'     --Quinolones"
+  "numerator_bnf_codes_filter": [
+    "0501013K0 # Co-Amoxiclav",
+    "0501021 # Cephalosporins",
+    "050112 # Quinolones"
   ],
   "denominator_type": "star_pu_antibiotics"
 }

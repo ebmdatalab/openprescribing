@@ -25,9 +25,9 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '0212000AB%' OR --Omega-3-Acid Ethyl Esters \n",
-    "bnf_code LIKE '0212000V0%'    --Omega-3 Marine Triglycerides"
+  "numerator_bnf_codes_filter": [
+    "0212000AB # Omega-3-Acid Ethyl Esters",
+    "0212000V0 # Omega-3 Marine Triglycerides"
   ],
   "denominator_type": "list_size"
 }

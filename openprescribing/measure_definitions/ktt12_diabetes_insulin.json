@@ -26,25 +26,23 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",
-    "'0601012V0', --Insulin Glargine \n",
-    "'0601012X0', --Insulin Detemir \n",
-    "'0601012Z0' --Insulin Degludec \n",
+  "numerator_bnf_codes_filter": [
+    "0601012V0 # Insulin Glargine",
+    "0601012X0 # Insulin Detemir",
+    "0601012Z0 # Insulin Degludec",
     ")"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",
-    "'060101200', --Other Intermed&Long-Acting Insulin Preps \n",
-    "'0601012G0', --Insulin Zinc Suspension \n",
-    "'0601012L0', --Insulin Zinc Suspension (Amorphous) \n",
-    "'0601012N0', --Insulin Zinc Suspension (Crystalline) \n",
-    "'0601012S0', --Isophane Insulin \n",
-    "'0601012U0', --Protamine Zinc Insulin \n",
-    "'0601012V0', --Insulin Glargine \n",
-    "'0601012X0', --Insulin Detemir \n",
-    "'0601012Z0'  --Insulin Degludec \n",
+  "denominator_bnf_codes_filter": [
+    "060101200 # Other Intermed&Long-Acting Insulin Preps",
+    "0601012G0 # Insulin Zinc Suspension",
+    "0601012L0 # Insulin Zinc Suspension (Amorphous)",
+    "0601012N0 # Insulin Zinc Suspension (Crystalline)",
+    "0601012S0 # Isophane Insulin",
+    "0601012U0 # Protamine Zinc Insulin",
+    "0601012V0 # Insulin Glargine",
+    "0601012X0 # Insulin Detemir",
+    "0601012Z0 # Insulin Degludec",
     ")"
   ]
 }

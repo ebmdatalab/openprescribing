@@ -23,10 +23,10 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '040702040%AU' OR --Tramadol HCl/Paracet_Tab 37.5mg/325mg (brands and generic) \n",
-    "bnf_code LIKE '040702040%BA' OR --Tramadol/Paracet_Tab Eff 37.5/325mg S/F (brands and generic) \n",
-    "bnf_code LIKE '040702040%BC'    --Tramadol/Paracet_Tab Eff 37.5/325mg S/F"
+  "numerator_bnf_codes_filter": [
+    "040702040%AU # Tramadol HCl/Paracet_Tab 37.5mg/325mg (brands and generic)",
+    "040702040%BA # Tramadol/Paracet_Tab Eff 37.5/325mg S/F (brands and generic)",
+    "040702040%BC # Tramadol/Paracet_Tab Eff 37.5/325mg S/F"
   ],
   "denominator_type": "list_size"
 }

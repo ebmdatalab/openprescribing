@@ -28,7 +28,8 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
+  "numerator_bnf_codes_query": [
+    "SELECT bnf_code FROM {hscic}.presentation WHERE",
     "SUBSTR(bnf_code,1,9) IN (",
     "'0212000AA', --Rosuvastatin Calcium \n",
     "'0212000AC', --Simvastatin & Ezetimibe \n",
@@ -37,7 +38,7 @@
     "'0212000M0', --Fluvastatin Sodium \n",
     "'0212000X0', --Pravastatin Sodium \n",
     "'0212000Y0') --Simvastatin \n",
-    "AND (bnf_name LIKE '%_Tab %' or bnf_name LIKE '%Cap %') --only tabs and caps \n",
+    "AND (name LIKE '%_Tab %' or name LIKE '%Cap %') --only tabs and caps \n",
     "AND (concat(SUBSTR(bnf_code,1,9),SUBSTR(bnf_code,-2,2)) NOT IN (\n",
     "'0212000AAAA',  --Rosuvastatin Calc_Tab 10mg (brand, generic) \n",
     "'0212000AAAB',  --Rosuvastatin Calc_Tab 20mg (brand, generic) \n",
@@ -51,7 +52,8 @@
     "'0212000ACAC')) --Simvastatin/Ezetimibe_Tab 80mg/10mg (brand, generic) \n"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
+  "denominator_bnf_codes_query": [
+    "SELECT bnf_code FROM {hscic}.presentation WHERE",
     "SUBSTR(bnf_code,1,9) IN (",
     "'0212000AA', --Rosuvastatin Calcium \n",
     "'0212000AC', --Simvastatin & Ezetimibe \n",
@@ -60,7 +62,7 @@
     "'0212000M0', --Fluvastatin Sodium \n",
     "'0212000X0', --Pravastatin Sodium \n",
     "'0212000Y0') --Simvastatin \n",
-    "AND (bnf_name LIKE '%_Tab %' or bnf_name LIKE '%Cap %') --only tabs and caps \n"
+    "AND (name LIKE '%_Tab %' or name LIKE '%Cap %') --only tabs and caps \n"
   ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"

@@ -23,14 +23,7 @@
   "is_percentage": false,
   "is_cost_based": true,
   "low_is_good": true,
-  "numerator_type": "custom",
-  "numerator_columns": [
-    "SUM(actual_cost) AS numerator"
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard p INNER JOIN (SELECT DISTINCT bnf_code FROM ebmdatalab.measures.vw__herbal_list) r ON p.bnf_code = r.bnf_code",
-  "numerator_where": [
-    "1 = 1"
-  ],
+  "numerator_type": "bnf_cost",
   "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM ebmdatalab.measures.vw__herbal_list",
   "denominator_type": "list_size"
 }

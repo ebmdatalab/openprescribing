@@ -31,29 +31,25 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code IN (",
-    "  SELECT DISTINCT(bnf_code)",
-    "  FROM {measures}.dmd_objs_with_form_route",
-    "  WHERE form_route = 'pressurizedinhalation.inhalation'",
-    "  AND bnf_code LIKE '03%' ",
-    "  AND bnf_code NOT LIKE '0301011R0%' ",
-    "  AND bnf_name NOT LIKE '%Respimat%' ",
-    "  AND bnf_code NOT LIKE '0301040X0AA%' ",
-    "  AND bnf_code NOT LIKE '0301011Z0AA%' ",
-    "  AND bnf_code NOT LIKE '0301020Q0AAACAC' ",
-    "  AND bnf_code NOT LIKE '0301020Q0AAAEAE' ",
-    ")"
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.dmd_objs_with_form_route",
+    "WHERE form_route = 'pressurizedinhalation.inhalation'",
+    "AND bnf_code LIKE '03%' ",
+    "AND bnf_code NOT LIKE '0301011R0%' ",
+    "AND bnf_name NOT LIKE '%Respimat%' ",
+    "AND bnf_code NOT LIKE '0301040X0AA%' ",
+    "AND bnf_code NOT LIKE '0301011Z0AA%' ",
+    "AND bnf_code NOT LIKE '0301020Q0AAACAC' ",
+    "AND bnf_code NOT LIKE '0301020Q0AAAEAE'"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code IN (",
-    "  SELECT DISTINCT(bnf_code)",
-    "  FROM {measures}.dmd_objs_with_form_route",
-    "  WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
-    "  AND bnf_code LIKE '03%' ",
-    "  AND bnf_code NOT LIKE '0301011R0%' ",
-    ")"
+  "denominator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.dmd_objs_with_form_route",
+    "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
+    "AND bnf_code LIKE '03%' ",
+    "AND bnf_code NOT LIKE '0301011R0%'"
   ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"

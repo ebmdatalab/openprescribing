@@ -26,8 +26,8 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '1502010J0%EL' --Lido_Medic Plastr 5% (brands and generic)"
+  "numerator_bnf_codes_filter": [
+    "1502010J0%EL # Lido_Medic Plastr 5% (brands and generic)"
   ],
   "denominator_type": "list_size"
 }

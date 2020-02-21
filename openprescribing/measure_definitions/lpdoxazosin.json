@@ -22,9 +22,9 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '0205040D0%AQ' OR --Doxazosin Mesil_Tab 4mg M/R (brands and generic) \n",
-    "bnf_code LIKE '0205040D0%AR'     --Doxazosin Mesil_Tab 8mg M/R (brands and generic)"
+  "numerator_bnf_codes_filter": [
+    "0205040D0%AQ # Doxazosin Mesil_Tab 4mg M/R (brands and generic)",
+    "0205040D0%AR # Doxazosin Mesil_Tab 8mg M/R (brands and generic)"
   ],
   "denominator_type": "list_size"
 }

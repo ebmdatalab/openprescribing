@@ -24,15 +24,14 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",
-    "'0802040X0', --Bacillus Calmette-Guerin (B.C.G.) \n",
-    "'1404000AA', --Tick-Borne Encephalitis Vaccine \n",
-    "'1404000AB', --Japanese Encephalitis Vaccine \n",
-    "'1404000G0', --Hepatitis B \n",
-    "'1404000N0', --Rabies \n",
-    "'1404000U0', --Yellow Fever \n",
-    "'1404000X0') --Meningococcal A + C + W135 + Y Vaccine"
+  "numerator_bnf_codes_filter": [
+    "0802040X0 # Bacillus Calmette-Guerin (B.C.G.)",
+    "1404000AA # Tick-Borne Encephalitis Vaccine",
+    "1404000AB # Japanese Encephalitis Vaccine",
+    "1404000G0 # Hepatitis B",
+    "1404000N0 # Rabies",
+    "1404000U0 # Yellow Fever",
+    "1404000X0 # Meningococcal A + C + W135 + Y Vaccine"
   ],
   "denominator_type": "list_size"
 }

@@ -26,8 +26,8 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "(bnf_code LIKE '0203020D0%') --Amiodarone "
+  "numerator_bnf_codes_filter": [
+    "0203020D0 # Amiodarone"
   ],
   "denominator_type": "list_size"
 }

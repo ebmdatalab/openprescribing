@@ -21,8 +21,8 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_quantity",
-  "numerator_where": [
-    "bnf_code LIKE '0206020M0%'"
+  "numerator_bnf_codes_filter": [
+    "0206020M0 # Nimodipine"
   ],
   "denominator_type": "list_size",
   "authored_by": [

@@ -23,12 +23,12 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0501080W0%' --Trimethoprim"
+  "numerator_bnf_codes_filter": [
+    "0501080W0 # Trimethoprim"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code LIKE '0501130R0%' OR --Nitrofurantoin \n",
-    "bnf_code LIKE '0501080W0%'    --Trimethoprim"
+  "denominator_bnf_codes_filter": [
+    "0501130R0 # Nitrofurantoin",
+    "0501080W0 # Trimethoprim"
   ]
 }

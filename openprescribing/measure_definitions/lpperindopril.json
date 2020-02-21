@@ -25,9 +25,9 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '0205051Y0%' OR --Perindopril Arginine \n",
-    "bnf_code LIKE '0205051Z0%'    --Perindopril Arginine with Diuretic"
+  "numerator_bnf_codes_filter": [
+    "0205051Y0 # Perindopril Arginine",
+    "0205051Z0 # Perindopril Arginine with Diuretic"
   ],
   "denominator_type": "list_size"
 }

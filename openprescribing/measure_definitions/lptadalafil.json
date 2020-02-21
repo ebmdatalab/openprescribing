@@ -25,9 +25,9 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '0704050R0%AC' OR --Tadalafil_Tab 2.5mg (brands and generic) \n",
-    "bnf_code LIKE '0704050R0%AD'    --Tadalafil_Tab 5mg (brands and generic)) "
+  "numerator_bnf_codes_filter": [
+    "0704050R0%AC # Tadalafil_Tab 2.5mg (brands and generic)",
+    "0704050R0%AD # Tadalafil_Tab 5mg (brands and generic))"
   ],
   "denominator_type": "list_size"
 }

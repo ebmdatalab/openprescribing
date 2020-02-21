@@ -26,11 +26,11 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0204000AB%AB' --Nebivolol_Tab 2.5mg (brands and generic)"
+  "numerator_bnf_codes_filter": [
+    "0204000AB%AB # Nebivolol_Tab 2.5mg (brands and generic)"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code like '0204000AB%' --Nebivolol"
+  "denominator_bnf_codes_filter": [
+    "0204000AB # Nebivolol"
   ]
 }

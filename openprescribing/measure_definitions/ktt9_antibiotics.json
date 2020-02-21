@@ -26,8 +26,8 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "SUBSTR(bnf_code, 1, 4) IN ('0501') --Antibacterial Drugs"
+  "numerator_bnf_codes_filter": [
+    "0501 # Antibacterial Drugs"
   ],
   "denominator_type": "star_pu_antibiotics"
 }
