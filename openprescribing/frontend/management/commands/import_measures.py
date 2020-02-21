@@ -284,62 +284,57 @@ def create_or_update_measure(measure_def, end_date):
             v[k] = val.strip()
 
     try:
-        measure = Measure.objects.get(id=measure_id)
+        m = Measure.objects.get(id=measure_id)
     except Measure.DoesNotExist:
-        measure = Measure(id=measure_id)
+        m = Measure(id=measure_id)
 
-    measure.title = v["title"]
-    measure.description = v["description"]
-    measure.why_it_matters = v["why_it_matters"]
-    measure.name = v["name"]
-    measure.tags = v["tags"]
-    measure.tags_focus = v.get("tags_focus", [])
-    measure.title = v["title"]
-    measure.description = v["description"]
-    measure.numerator_short = v["numerator_short"]
-    measure.denominator_short = v["denominator_short"]
-    measure.numerator_type = v["numerator_type"]
-    measure.numerator_from = v.get("numerator_from")
-    measure.numerator_where = v.get("numerator_where")
-    measure.numerator_columns = v.get("numerator_columns")
-    measure.denominator_type = v["denominator_type"]
-    measure.denominator_from = v.get("denominator_from")
-    measure.denominator_where = v.get("denominator_where")
-    measure.denominator_columns = v.get("denominator_columns")
-    measure.url = v["url"]
-    measure.is_cost_based = v["is_cost_based"]
-    measure.is_percentage = v["is_percentage"]
-    measure.low_is_good = v["low_is_good"]
-    measure.numerator_bnf_codes_query = v.get("numerator_bnf_codes_query")
-    measure.numerator_is_list_of_bnf_codes = v.get(
-        "numerator_is_list_of_bnf_codes", True
-    )
-    measure.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
-    if (
-        measure.denominator_from
-        and "normalised_prescribing_standard" in measure.denominator_from
-    ):
-        measure.denominator_is_list_of_bnf_codes = v.get(
+    m.title = v["title"]
+    m.description = v["description"]
+    m.why_it_matters = v["why_it_matters"]
+    m.name = v["name"]
+    m.tags = v["tags"]
+    m.tags_focus = v.get("tags_focus", [])
+    m.title = v["title"]
+    m.description = v["description"]
+    m.numerator_short = v["numerator_short"]
+    m.denominator_short = v["denominator_short"]
+    m.numerator_type = v["numerator_type"]
+    m.numerator_from = v.get("numerator_from")
+    m.numerator_where = v.get("numerator_where")
+    m.numerator_columns = v.get("numerator_columns")
+    m.denominator_type = v["denominator_type"]
+    m.denominator_from = v.get("denominator_from")
+    m.denominator_where = v.get("denominator_where")
+    m.denominator_columns = v.get("denominator_columns")
+    m.url = v["url"]
+    m.is_cost_based = v["is_cost_based"]
+    m.is_percentage = v["is_percentage"]
+    m.low_is_good = v["low_is_good"]
+    m.numerator_bnf_codes_query = v.get("numerator_bnf_codes_query")
+    m.numerator_is_list_of_bnf_codes = v.get("numerator_is_list_of_bnf_codes", True)
+    m.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
+    if m.denominator_from and "normalised_prescribing_standard" in m.denominator_from:
+        m.denominator_is_list_of_bnf_codes = v.get(
             "denominator_is_list_of_bnf_codes", True
         )
     else:
-        measure.denominator_is_list_of_bnf_codes = False
+        m.denominator_is_list_of_bnf_codes = False
 
     for num_or_denom in ["numerator", "denominator"]:
-        for k, val in build_num_or_denom_fields(measure, num_or_denom).items():
-            setattr(measure, k, val)
+        for k, val in build_num_or_denom_fields(m, num_or_denom).items():
+            setattr(m, k, val)
         setattr(
-            measure,
+            m,
             "{}_bnf_codes".format(num_or_denom),
-            get_num_or_denom_bnf_codes(measure, num_or_denom, end_date),
+            get_num_or_denom_bnf_codes(m, num_or_denom, end_date),
         )
 
     if not v.get("no_analyse_url"):
-        measure.analyse_url = build_analyse_url(measure)
+        m.analyse_url = build_analyse_url(m)
 
-    measure.save()
+    m.save()
 
-    return measure
+    return m
 
 
 def build_analyse_url(measure):
