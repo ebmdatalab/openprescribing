@@ -1001,9 +1001,9 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = _parse_json_response(response)
-        # N.B. This is the mean of a *single* value; although there
-        # are two values in the raw data, one is trimmed as it is
-        # outside the 99th percentile
+        # N.B. This is the mean of a *single* value; although there are two
+        # values in the raw data one is ignored as it belongs to a
+        # non-setting-4 practice
         self.assertEqual(data["plotline"], 0.0325)
 
     def test_code_without_matches(self):
