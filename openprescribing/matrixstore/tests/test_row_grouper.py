@@ -69,16 +69,15 @@ class TestGrouper(SimpleTestCase):
         """
         test_cases = product(self.get_group_definitions(), self.get_matrices())
         for (group_name, group_definition), (matrix_name, matrix) in test_cases:
-            # Use `subTest` when we upgrade to Python 3
-            # with self.subTest(matrix=matrix_name, group=group_name):
-            row_grouper = RowGrouper(group_definition)
-            grouped_matrix = row_grouper.sum(matrix)
-            values = to_list_of_lists(grouped_matrix)
-            # Calculate the same dict the boring way using pure Python
-            expected_values = self.sum_rows_by_group(group_definition, matrix)
-            # We need to round floats to account for differences between
-            # numpy and Python float rounding
-            self.assertEqual(round_floats(values), round_floats(expected_values))
+            with self.subTest(matrix=matrix_name, group=group_name):
+                row_grouper = RowGrouper(group_definition)
+                grouped_matrix = row_grouper.sum(matrix)
+                values = to_list_of_lists(grouped_matrix)
+                # Calculate the same dict the boring way using pure Python
+                expected_values = self.sum_rows_by_group(group_definition, matrix)
+                # We need to round floats to account for differences between
+                # numpy and Python float rounding
+                self.assertEqual(round_floats(values), round_floats(expected_values))
 
     def test_sum_one_group_with_all_group_and_matrix_type_combinations(self):
         """
@@ -87,20 +86,21 @@ class TestGrouper(SimpleTestCase):
         """
         test_cases = product(self.get_group_definitions(), self.get_matrices())
         for (group_name, group_definition), (matrix_name, matrix) in test_cases:
-            # Use `subTest` when we upgrade to Python 3
-            # with self.subTest(matrix=matrix_name, group=group_name):
-            row_grouper = RowGrouper(group_definition)
-            # Calculate sums for all groups the boring way using pure Python
-            expected_values = self.sum_rows_by_group(group_definition, matrix)
-            # Check the `sum_one_group` gives the expected answer for all groups
-            for offset, group_id in enumerate(row_grouper.ids):
-                expected_value = expected_values[offset]
-                value = row_grouper.sum_one_group(matrix, group_id)
-                # We need to round floats to account for differences between
-                # numpy and Python float rounding
-                self.assertEqual(
-                    round_floats(value.tolist()), round_floats(expected_value)
-                )
+            with self.subTest(matrix=matrix_name, group=group_name):
+                row_grouper = RowGrouper(group_definition)
+                # Calculate sums for all groups the boring way using pure
+                # Python
+                expected_values = self.sum_rows_by_group(group_definition, matrix)
+                # Check the `sum_one_group` gives the expected answer for all
+                # groups
+                for offset, group_id in enumerate(row_grouper.ids):
+                    expected_value = expected_values[offset]
+                    value = row_grouper.sum_one_group(matrix, group_id)
+                    # We need to round floats to account for differences
+                    # between numpy and Python float rounding
+                    self.assertEqual(
+                        round_floats(value.tolist()), round_floats(expected_value)
+                    )
 
     def sum_rows_by_group(self, group_definition, matrix):
         """

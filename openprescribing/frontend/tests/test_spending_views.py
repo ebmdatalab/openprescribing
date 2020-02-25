@@ -65,34 +65,31 @@ class TestSpendingViews(TestCase):
             (None, "all_england"),
         ]
         for entity, entity_type in entities:
-            # When we switch to Python 3 we should use the subTest method to
-            # make test failures clearer:
-            # https://docs.python.org/3/library/unittest.html#subtests
-            # with self.subTest(entity=entity, entity_type=entity_type):
-            self.validate_ncso_spending_for_entity(
-                entity,
-                entity_type,
-                len(self.months),
-                current_month=parse_date(self.months[-1]).date(),
-            )
-            self.validate_ncso_spending_breakdown_for_entity(
-                entity, entity_type, parse_date(self.months[0]).date()
-            )
-            self.validate_ncso_spending_breakdown_for_entity(
-                entity, entity_type, parse_date(self.months[-1]).date()
-            )
+            with self.subTest(entity=entity, entity_type=entity_type):
+                self.validate_ncso_spending_for_entity(
+                    entity,
+                    entity_type,
+                    len(self.months),
+                    current_month=parse_date(self.months[-1]).date(),
+                )
+                self.validate_ncso_spending_breakdown_for_entity(
+                    entity, entity_type, parse_date(self.months[0]).date()
+                )
+                self.validate_ncso_spending_breakdown_for_entity(
+                    entity, entity_type, parse_date(self.months[-1]).date()
+                )
 
     def validate_ncso_spending_for_entity(self, *args, **kwargs):
-        # with self.subTest(function='_ncso_spending_for_entity'):
-        results = ncso_spending_for_entity(*args, **kwargs)
-        expected = recalculate_ncso_spending_for_entity(*args, **kwargs)
-        self.assertEqual(round_floats(results), round_floats(expected))
+        with self.subTest(function="_ncso_spending_for_entity"):
+            results = ncso_spending_for_entity(*args, **kwargs)
+            expected = recalculate_ncso_spending_for_entity(*args, **kwargs)
+            self.assertEqual(round_floats(results), round_floats(expected))
 
     def validate_ncso_spending_breakdown_for_entity(self, *args, **kwargs):
-        # with self.subTest(function='_ncso_spending_breakdown_for_entity'):
-        results = ncso_spending_breakdown_for_entity(*args, **kwargs)
-        expected = recalculate_ncso_spending_breakdown_for_entity(*args, **kwargs)
-        self.assertEqual(round_floats(results), round_floats(expected))
+        with self.subTest(function="_ncso_spending_breakdown_for_entity"):
+            results = ncso_spending_breakdown_for_entity(*args, **kwargs)
+            expected = recalculate_ncso_spending_breakdown_for_entity(*args, **kwargs)
+            self.assertEqual(round_floats(results), round_floats(expected))
 
     def test_spending_views(self):
         # Basic smoketest which just checks that the view loads OK and has
@@ -106,13 +103,13 @@ class TestSpendingViews(TestCase):
             "/all-england/concessions/",
         ]
         for url in urls:
-            # with self.subTest(url=url):
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-            ctx = response.context
-            self.assertEqual(
-                ctx["breakdown_date"].strftime("%Y-%m-%d"), self.months[-1]
-            )
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+                ctx = response.context
+                self.assertEqual(
+                    ctx["breakdown_date"].strftime("%Y-%m-%d"), self.months[-1]
+                )
 
     def test_alert_signup(self):
         factory = DataFactory()
