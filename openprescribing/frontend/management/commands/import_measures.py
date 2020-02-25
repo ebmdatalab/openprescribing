@@ -327,16 +327,12 @@ def create_or_update_measure(measure_def, end_date):
 
         m.numerator_from = "{hscic}.normalised_prescribing_standard"
 
-        if "numerator_bnf_codes_filter" in v:
-            assert "numerator_bnf_codes_query" not in v
-            m.numerator_bnf_codes_filter = v["numerator_bnf_codes_filter"]
-            m.numerator_bnf_codes_query = build_bnf_codes_query_from_filter(
-                m.numerator_bnf_codes_filter
-            )
-        else:
-            m.numerator_bnf_codes_query = v["numerator_bnf_codes_query"]
+        m.numerator_bnf_codes_filter = v.get("numerator_bnf_codes_filter")
+        m.numerator_bnf_codes_query = v.get("numerator_bnf_codes_query")
+        m.numerator_bnf_codes = get_bnf_codes(
+            m.numerator_bnf_codes_query, m.numerator_bnf_codes_filter
+        )
 
-        m.numerator_bnf_codes = get_bnf_codes(m.numerator_bnf_codes_query)
         m.numerator_where = build_where(m.numerator_bnf_codes)
         m.numerator_is_list_of_bnf_codes = True
 
@@ -384,16 +380,12 @@ def create_or_update_measure(measure_def, end_date):
 
         m.denominator_from = "{hscic}.normalised_prescribing_standard"
 
-        if "denominator_bnf_codes_filter" in v:
-            assert "denominator_bnf_codes_query" not in v
-            m.denominator_bnf_codes_filter = v["denominator_bnf_codes_filter"]
-            m.denominator_bnf_codes_query = build_bnf_codes_query_from_filter(
-                m.denominator_bnf_codes_filter
-            )
-        else:
-            m.denominator_bnf_codes_query = v["denominator_bnf_codes_query"]
+        m.denominator_bnf_codes_filter = v.get("denominator_bnf_codes_filter")
+        m.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
+        m.denominator_bnf_codes = get_bnf_codes(
+            m.denominator_bnf_codes_query, m.denominator_bnf_codes_filter
+        )
 
-        m.denominator_bnf_codes = get_bnf_codes(m.denominator_bnf_codes_query)
         m.denominator_where = build_where(m.denominator_bnf_codes)
         m.denominator_is_list_of_bnf_codes = True
 
@@ -405,7 +397,66 @@ def create_or_update_measure(measure_def, end_date):
     return m
 
 
-def build_bnf_codes_query_from_filter(filter_):
+def get_bnf_codes(base_query, filter_):
+    """Return list of BNF codes used to caluclate measure numerator/denominator
+    values.
+
+    At least one of `base_query` and `filter_` must not be None.
+
+    `base_query` is a query to be run against BigQuery.  It should return
+    results with a single column called `bnf_code`.
+
+    `filter_` is a list of BNF code filters, which have one of the following
+    forms:
+
+      * a BNF code (eg 0501015P0AAABAB)
+      * a BNF code prefix (eg 0501015P0)
+      * a string including a SQL wildcard (eg 0501015P0%AB)
+
+    Each filter can be negated by being prefixed with a ~.
+
+    If both `base_query` and `filter_` are not None, the results of
+    `base_query` are filtered by the filters specified in `filter_`.
+
+    If `base_query` is None, all BNF codes are filtered by the filters
+    specified in `filter_`.
+
+    If `filter_` is None, the results of `base_query` are not filtered.
+    """
+
+    assert base_query or filter_
+
+    query = build_bnf_codes_query(base_query, filter_)
+    results = Client().query(query)
+
+    # Before 2017, the published prescribing data included trailing spaces in
+    # certain BNF codes.  We strip those here.  See #2447.
+    bnf_codes = {row[0].strip() for row in results.rows}
+
+    return sorted(bnf_codes & get_all_bnf_codes())
+
+
+def build_bnf_codes_query(base_query, filter_):
+    if base_query is None:
+        base_query = "SELECT bnf_code FROM {hscic}.presentation"
+
+    if filter_ is None:
+        query = base_query
+    else:
+        where_clause = build_bnf_codes_query_where(filter_)
+        query = """
+        WITH subquery AS ({})
+        SELECT bnf_code
+        FROM subquery
+        WHERE {}
+        """.format(
+            base_query, where_clause
+        )
+
+    return query
+
+
+def build_bnf_codes_query_where(filter_):
     includes = []
     excludes = []
 
@@ -421,7 +472,7 @@ def build_bnf_codes_query_from_filter(filter_):
     if excludes:
         where_clause += " AND NOT (" + " OR ".join(excludes) + ")"
 
-    return "SELECT bnf_code FROM {hscic}.presentation WHERE " + where_clause
+    return where_clause
 
 
 def build_bnf_codes_query_fragment(element):
@@ -440,16 +491,6 @@ def build_bnf_codes_query_fragment(element):
         fragment = "bnf_code LIKE '{}%'"
 
     return fragment.format(element)
-
-
-def get_bnf_codes(query):
-    results = Client().query(query)
-
-    # Before 2017, the published prescribing data included trailing spaces in
-    # certain BNF codes.  We strip those here.  See #2447.
-    bnf_codes = {row[0].strip() for row in results.rows}
-
-    return sorted(bnf_codes & get_all_bnf_codes())
 
 
 def build_where(bnf_codes):

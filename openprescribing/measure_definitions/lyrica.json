@@ -29,10 +29,16 @@
   "low_is_good": true,
   "numerator_type": "bnf_quantity",
   "numerator_bnf_codes_query": [
-    "SELECT bnf_code FROM {hscic}.presentation WHERE bnf_code LIKE '0408010AEBB%' AND name LIKE '%_Cap%'--Lyrica capsules"
+    "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '%_Cap%'"
+  ],
+  "numerator_bnf_codes_filter": [
+    "0408010AEBB # Lyrica"
   ],
   "denominator_type": "bnf_quantity",
   "denominator_bnf_codes_query": [
-    "SELECT bnf_code FROM {hscic}.presentation WHERE bnf_code LIKE '0408010AE%' AND name LIKE '%_Cap%' --Pregabablin capsules(brands and generic)"
+    "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '%_Cap%'"
+  ],
+  "denominator_bnf_codes_filter": [
+    "0408010AE # Pregabablin capsules(brands and generic)"
   ]
 }

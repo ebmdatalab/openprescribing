@@ -33,7 +33,7 @@ from frontend.models import (
 )
 from frontend.management.commands.import_measures import (
     load_measure_defs,
-    build_bnf_codes_query_from_filter,
+    build_bnf_codes_query,
 )
 from gcutils.bigquery import Client
 from matrixstore.tests.contextmanagers import (
@@ -379,17 +379,43 @@ class ImportMeasuresTests(TestCase):
 
 
 class BuildMeasureSQLTests(TestCase):
-    def test_build_bnf_codes_query_from_filter(self):
+    def test_build_bnf_codes_Query(self):
+        base_query = "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '% Tab'"
         filter_ = [
             "010101 # Everything in 1.1.1",
             "~010101000BBABA0 # Langdales_Cinnamon Tab",
             "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
         ]
 
-        self.assertEqual(
-            build_bnf_codes_query_from_filter(filter_),
-            "SELECT bnf_code FROM {hscic}.presentation WHERE (bnf_code LIKE '010101%') AND NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')",
-        )
+        expected_sql = """
+        WITH subquery AS (SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '% Tab')
+        SELECT bnf_code
+        FROM subquery
+        WHERE (bnf_code LIKE '010101%') AND NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
+        """
+
+        self.assertEqual(build_bnf_codes_query(base_query, filter_), expected_sql)
+
+    def test_build_bnf_codes_query_without_base_query(self):
+        filter_ = [
+            "010101 # Everything in 1.1.1",
+            "~010101000BBABA0 # Langdales_Cinnamon Tab",
+            "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
+        ]
+
+        expected_sql = """
+        WITH subquery AS (SELECT bnf_code FROM {hscic}.presentation)
+        SELECT bnf_code
+        FROM subquery
+        WHERE (bnf_code LIKE '010101%') AND NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
+        """
+
+        self.assertEqual(build_bnf_codes_query(None, filter_), expected_sql)
+
+    def test_build_bnf_codes_query_without_filter(self):
+        base_query = "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '% Tab'"
+
+        self.assertEqual(build_bnf_codes_query(base_query, None), base_query)
 
 
 class ImportMeasuresDefinitionsOnlyTests(TestCase):
