@@ -6,7 +6,7 @@
   "description": [
     "Cost of omega-3 fatty acid compounds per 1000 patients"
   ],
-  "numerator_short": "Omega-3 cost (\u00a3)",
+  "numerator_short": "Omega-3 cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Omega-3 fatty acid compounds are licensed to treat elevated triglycerides, but evidence of benefit is weak. ",

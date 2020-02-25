@@ -6,7 +6,7 @@
   "description": [
     "Cost of Aliskiren per 1000 patients"
   ],
-  "numerator_short": "Aliskiren cost (\u00a3)",
+  "numerator_short": "Aliskiren cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/cg127/evidence'> NICE hypertension guidance states</a> there is insufficient",

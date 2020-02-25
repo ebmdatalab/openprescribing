@@ -6,7 +6,7 @@
   "description": [
     "Total cost per 1,000 registered patients for all NHS England low priority treatments"
   ],
-  "numerator_short": "cost (\u00a3)",
+  "numerator_short": "cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "NHS England have recently published a <a href='https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/'>number of areas which should not be routinely prescribed in primary care</a> (updated June 2019).",

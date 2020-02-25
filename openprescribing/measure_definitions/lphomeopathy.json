@@ -6,7 +6,7 @@
   "description": [
     "Cost of homeopathy per 1000 patients"
   ],
-  "numerator_short": "Homeopathy cost (\u00a3)",
+  "numerator_short": "Homeopathy cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "In 2010 House of Commons Science and Technology Committee found that the use of homeopathy was ",

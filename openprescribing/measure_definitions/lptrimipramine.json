@@ -6,7 +6,7 @@
   "description": [
     "Cost of trimipramine per 1000 patients"
   ],
-  "numerator_short": "Trimipramine cost (\u00a3)",
+  "numerator_short": "Trimipramine cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Trimipramine is an older tricyclic antidepressant. The cost has increased significantly recently, ",

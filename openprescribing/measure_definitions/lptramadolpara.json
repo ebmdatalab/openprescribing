@@ -6,7 +6,7 @@
   "description": [
     "Cost of paracetamol and tramadol combination per 1000 patients"
   ],
-  "numerator_short": "Paracetamol and tramadol combination cost (\u00a3)",
+  "numerator_short": "Paracetamol and tramadol combination cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Prescribing the combination product of paracetamol and tramadol costs more than prescribing the preparations separately. ",

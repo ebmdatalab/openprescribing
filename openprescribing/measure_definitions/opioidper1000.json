@@ -4,7 +4,7 @@
     "high dose opioid items per 1000 patients"
   ],
   "description": [
-    "Opioids with likely daily dose of \u2265120mg morphine equivalence per 1000 patients"
+    "Opioids with likely daily dose of ≥120mg morphine equivalence per 1000 patients"
   ],
   "numerator_short": "High dose opioid items",
   "denominator_short": "1000 patients",
@@ -13,9 +13,9 @@
     "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
     "and the risk of harm increases significantly above 120mg morphine (or equivalent) per day, without much increase in benefit. ",
     "We have assumed that if a patient is on regular doses of 120mg morphine a day or above that they are likely to have also had ",
-    "additional opioids for breakthrough pain.  This is why we have set the threshold at \u2265120mg morphine equivalence per day. ",
+    "additional opioids for breakthrough pain.  This is why we have set the threshold at ≥120mg morphine equivalence per day. ",
     "The calculations are based on likely doses of long acting, regular opioids, for example morphine sulphate tablets or ",
-    "fentanyl patches. For example, we have assumed that MST 60mg tablets are \u201chigh dose\u201d, as they are usually taken as one tablet ",
+    "fentanyl patches. For example, we have assumed that MST 60mg tablets are “high dose”, as they are usually taken as one tablet ",
     "twice daily (120mg daily dose), whereas MST 30mg are not, as the daily dose is 60mg. ",
     "We have not included preparations used for breakthrough pain, e.g. Oramorph, or opioid injections which tend to be ",
     "used more commonly in palliative care.  We have calculated morphine equivalencies using ",

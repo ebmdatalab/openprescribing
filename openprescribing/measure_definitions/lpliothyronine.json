@@ -6,7 +6,7 @@
   "description": [
     "Cost of liothyronine per 1000 patients"
   ],
-  "numerator_short": "Liothyronine cost (\u00a3)",
+  "numerator_short": "Liothyronine cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Liothyronine is used to treat an underactive thyroid. It has a very high cost and limited evidence. ",

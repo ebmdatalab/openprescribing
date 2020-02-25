@@ -6,7 +6,7 @@
   "description": [
     "Cost of Amiodarone per 1000 patients"
   ],
-  "numerator_short": "Amiodarone cost (\u00a3)",
+  "numerator_short": "Amiodarone cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Amiodarone is used to treat severe cardiac rhythm disorders but also has the potential to cause severe toxicity and side-effects",

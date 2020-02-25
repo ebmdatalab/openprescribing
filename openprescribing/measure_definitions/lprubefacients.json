@@ -6,7 +6,7 @@
   "description": [
     "Cost of rubefacients per 1000 patients"
   ],
-  "numerator_short": "Rubefacients cost (\u00a3)",
+  "numerator_short": "Rubefacients cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Rubifacients deep heat rubs and ointments are used to provide pain relief in musculoskeletal conditions. ",

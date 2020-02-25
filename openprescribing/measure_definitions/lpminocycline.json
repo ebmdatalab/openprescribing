@@ -6,7 +6,7 @@
   "description": [
     "Minocycline per 1000 patients"
   ],
-  "numerator_short": "Minocycline cost (\u00a3)",
+  "numerator_short": "Minocycline cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Minocycline is mainly used for acne, however there are various safety risks associated with its use. ",

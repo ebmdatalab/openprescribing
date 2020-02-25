@@ -6,7 +6,7 @@
   "description": [
     "Cost of perindopril arginine per 1000 patients"
   ],
-  "numerator_short": "Perindopril arginine cost (\u00a3)",
+  "numerator_short": "Perindopril arginine cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Perindopril arginine is an ACE inhibitor used in heart failure, hypertension, diabetic nephropathy ",

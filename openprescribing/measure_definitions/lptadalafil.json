@@ -6,7 +6,7 @@
   "description": [
     "Cost of tadalafil once daily per 1000 patients"
   ],
-  "numerator_short": "Tadalafil once daily cost (\u00a3)",
+  "numerator_short": "Tadalafil once daily cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Tadalafil is a drug similar to sildenafil (Viagra), used for erectile dysfunction.  There is no evidence that taking the low ",

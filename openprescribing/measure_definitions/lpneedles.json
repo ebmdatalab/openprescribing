@@ -4,14 +4,14 @@
     "Cost per 1000 registered patients"
   ],
   "description": [
-    "Cost of higher cost (\u2265\u00a35/box) insulin pen needles per 1000 patients"
+    "Cost of higher cost (≥£5/box) insulin pen needles per 1000 patients"
   ],
-  "numerator_short": "Higher cost pen needles cost (\u00a3)",
+  "numerator_short": "Higher cost pen needles cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Insulin pen needles range in price between approximately \u00a33.95 to \u00a330.00 per box. There is no evidence that suggests ",
+    "Insulin pen needles range in price between approximately £3.95 to £30.00 per box. There is no evidence that suggests ",
     "that there are any significant differences between brands of needles, although there are reommendations about length of needle. ",
-    "NHS England is promoting the use of lower cost needles, i.e. those under \u00a35 per box, which are already in widespread use across the NHS. "
+    "NHS England is promoting the use of lower cost needles, i.e. those under £5 per box, which are already in widespread use across the NHS. "
   ],
   "tags": [
     "cost",

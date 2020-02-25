@@ -6,7 +6,7 @@
   "description": [
     "Cost of lidocaine plasters per 1000 patients"
   ],
-  "numerator_short": "Lidocaine plasters cost (\u00a3)",
+  "numerator_short": "Lidocaine plasters cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Lidocaine plasters as licensed for treatment of post herpetic neuralgia, which is a complication of shingles. ",

@@ -6,7 +6,7 @@
   "description": [
     "Toothpaste prescribing cost per 1000 patients"
   ],
-  "numerator_short": "Toothpaste cost (\u00a3)",
+  "numerator_short": "Toothpaste cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "OpenPrescribing currently has data on GP prescriptions and does not have information on NHS dentists' prescribing.",
