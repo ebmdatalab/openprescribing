@@ -1,4 +1,5 @@
 from collections import defaultdict, OrderedDict
+import hashlib
 
 import numpy
 import scipy.sparse
@@ -64,6 +65,11 @@ class RowGrouper(object):
             )
         else:
             self._single_row_groups_selector = None
+        # `cache_key` is used to identify the state of this RowGrouper for
+        # caching purposes i.e.  RowGrouper instances should have the same
+        # cache_key if and only if they have same group configuration
+        hashobj = hashlib.md5(str(self._group_selectors).encode("utf8"))
+        self.cache_key = hashobj.digest()
 
     def sum(self, matrix, group_ids=None):
         """

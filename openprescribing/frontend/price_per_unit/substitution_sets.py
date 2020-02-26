@@ -16,6 +16,7 @@ kind of substitution (see FORMULATION_SWAPS_FILE).
 """
 import csv
 from collections import defaultdict
+import hashlib
 import os.path
 import re
 
@@ -46,6 +47,28 @@ class SubstitutionSet:
         # description of the formulation swaps involved e.g 'Tab / Cap'. If no
         # formulation changes are involved then this is None.
         self.formulation_swaps = formulation_swaps
+        # `cache_key` is used to identify the state of this SubstitutionSet for
+        # caching purposes i.e.  SubstitutionSet instances should have the same
+        # cache_key if and only if they have same list of presentations
+        hashobj = hashlib.md5(str(self.presentations).encode("utf8"))
+        self.cache_key = hashobj.digest()
+
+
+class DictWithCacheID(dict):
+    """
+    Dict subclass which adds a `cache_key` attribute which is just the hash of
+    the cache_keys of its values
+    """
+
+    cache_key = None
+
+    def __new__(cls, items):
+        instance = dict.__new__(cls, items)
+        hashobj = hashlib.md5()
+        for key, value in items:
+            hashobj.update(value.cache_key)
+        instance.cache_key = hashobj.digest()
+        return instance
 
 
 # Create a memoize decorator (i.e. a decorator which caches the return value
@@ -112,7 +135,7 @@ GENERIC_SUB_PARAGRAPHS = {
 def get_substitution_sets():
     bnf_codes = [row[0] for row in get_db().query("SELECT bnf_code FROM presentation")]
     substitution_sets = get_substitution_sets_from_bnf_codes(bnf_codes)
-    return {s.id: s for s in substitution_sets}
+    return DictWithCacheID([(s.id, s) for s in substitution_sets])
 
 
 def get_substitution_sets_from_bnf_codes(bnf_codes):
@@ -135,7 +158,7 @@ def get_substitution_sets_from_bnf_codes(bnf_codes):
             presentations=sorted(presentations),
             formulation_swaps=swap_descriptions.get(code),
         )
-        for code, presentations in presentation_sets.items()
+        for code, presentations in sorted(presentation_sets.items())
         # There's no point in a substitution set with only one member
         if len(presentations) > 1
     ]
