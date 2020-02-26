@@ -1,21 +1,22 @@
 import datetime
-import re
 
 from django.db import connection
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
-from common.utils import namedtuplefetchall
 from common.utils import nhs_titlecase
 from common.utils import ppu_sql
-from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import Presentation
 from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
+from frontend.price_per_unit.prescribing_breakdown import (
+    get_prescribing,
+    get_ppu_breakdown,
+    get_mean_ppu,
+)
 from matrixstore.db import get_db, get_row_grouper
 
 from . import view_utils as utils
@@ -32,42 +33,12 @@ class NotValid(APIException):
 def _valid_or_latest_date(date):
     if date:
         try:
-            date = datetime.datetime.strptime(date, "%Y-%m-%d")
+            date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
         except ValueError:
             raise NotValid("%s is not a valid date" % date)
     else:
         date = ImportLog.objects.latest_in_category("prescribing").current_at
     return date
-
-
-def _build_conditions_and_patterns(code, focus):
-    if not re.match(r"[A-Z0-9]{15}", code):
-        raise NotValid("%s is not a valid code" % code)
-
-    # flatten and uniquify the list of codes
-    extra_codes = set()
-    for mapping in GenericCodeMapping.objects.filter(
-        Q(from_code=code) | Q(to_code=code)
-    ):
-        extra_codes.add(mapping.from_code)
-        extra_codes.add(mapping.to_code)
-
-    patterns = ["%s____%s" % (code[:9], code[13:15])]
-    for extra_code in extra_codes:
-        if extra_code.endswith("%"):
-            pattern = extra_code
-        else:
-            pattern = "%s____%s" % (extra_code[:9], extra_code[13:15])
-        patterns.append(pattern)
-    conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
-    conditions = "AND (%s) " % conditions
-    if focus:
-        if len(focus) == 3:
-            conditions += "AND (pct_id = %s)"
-        else:
-            conditions += "AND (practice_id = %s)"
-        patterns.append(focus)
-    return conditions, patterns
 
 
 def _get_org_or_404(org_code, org_type=None):
@@ -84,82 +55,56 @@ def _get_org_or_404(org_code, org_type=None):
 
 @api_view(["GET"])
 def bubble(request, format=None):
-    """Returns data relating to price-per-unit, in a format suitable for
+    """
+    Returns data relating to price-per-unit, in a format suitable for
     use in Highcharts bubble chart.
-
     """
     code = request.query_params.get("bnf_code", "")
     date = _valid_or_latest_date(request.query_params.get("date", None))
     highlight = request.query_params.get("highlight", None)
     focus = request.query_params.get("focus", None) and highlight
-    conditions, patterns = _build_conditions_and_patterns(code, focus)
-    rounded_ppus_cte_sql = (
-        "WITH rounded_ppus AS (SELECT presentation_code, "
-        "COALESCE(frontend_presentation.name, 'unknown') "
-        "AS presentation_name, "
-        "quantity, net_cost, practice_id, pct_id, "
-        "ROUND(CAST(net_cost/NULLIF(quantity, 0) AS numeric), 2) AS ppu "
-        "FROM frontend_prescription "
-        "LEFT JOIN frontend_presentation "
-        "ON frontend_prescription.presentation_code = "
-        "frontend_presentation.bnf_code "
-        "LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
-        "WHERE processing_date = %s "
-        "AND setting = 4 " + conditions + ") "
-    )
-    binned_ppus_sql = rounded_ppus_cte_sql + (
-        ", binned_ppus AS (SELECT presentation_code, presentation_name, ppu, "
-        "SUM(quantity) AS quantity "
-        "FROM rounded_ppus "
-        "GROUP BY presentation_code, presentation_name, ppu) "
-    )
-    ordered_ppus_sql = binned_ppus_sql + (
-        "SELECT *, "
-        "SUM(ppu * quantity) OVER (PARTITION BY presentation_code) "
-        " / SUM(quantity) OVER (PARTITION BY presentation_code)"
-        "     AS mean_ppu "
-        "FROM binned_ppus "
-        "ORDER BY mean_ppu, presentation_name, ppu"
-    )
-    mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
-        "SELECT SUM(net_cost)/SUM(quantity) FROM rounded_ppus "
-    )
-    params = [date] + patterns
-    with connection.cursor() as cursor:
-        cursor.execute(ordered_ppus_sql, params)
-        series = []
-        categories = []
-        pos = 0
-        for result in namedtuplefetchall(cursor):
-            if result.presentation_name not in [x["name"] for x in categories]:
-                pos += 1
-                is_generic = False
-                if result.presentation_code[9:11] == "AA":
-                    is_generic = True
-                categories.append(
-                    {"name": result.presentation_name, "is_generic": is_generic}
-                )
 
+    if highlight:
+        highlight_org_id = highlight
+        highlight_org_type = (
+            "standard_ccg" if len(highlight_org_id) == 3 else "practice"
+        )
+    else:
+        highlight_org_type = "all_standard_practices"
+        highlight_org_id = None
+
+    if focus:
+        org_type = highlight_org_type
+        org_id = highlight_org_id
+    else:
+        org_type = "all_standard_practices"
+        org_id = None
+
+    prescribing = get_prescribing(code, str(date))
+    ppu_breakdown = get_ppu_breakdown(prescribing, org_type, org_id)
+    mean_ppu = get_mean_ppu(prescribing, highlight_org_type, highlight_org_id)
+
+    categories = []
+    series = []
+
+    for n, presentation in enumerate(ppu_breakdown):
+        categories.append(
+            {"name": presentation["name"], "is_generic": presentation["is_generic"]}
+        )
+        for ppu_value, quantity_at_ppu in presentation["quantity_at_each_ppu"]:
             series.append(
                 {
-                    "x": pos,
-                    "y": result.ppu,
-                    "z": result.quantity,
-                    "mean_ppu": result.mean_ppu,
-                    "name": result.presentation_name,
+                    "x": n + 1,
+                    "y": ppu_value / 100,
+                    "z": quantity_at_ppu,
+                    "name": presentation["name"],
+                    "mean_ppu": presentation["mean_ppu"] / 100,
                 }
             )
-        if highlight:
-            params.append(highlight)
-            if len(highlight) == 3:
-                mean_ppu_for_entity_sql += "WHERE pct_id = %s "
-            else:
-                mean_ppu_for_entity_sql += "WHERE practice_id = %s "
-        cursor.execute(mean_ppu_for_entity_sql, params)
-        plotline = cursor.fetchone()[0]
-        return Response(
-            {"plotline": plotline, "series": series, "categories": categories}
-        )
+
+    return Response(
+        {"plotline": mean_ppu / 100, "series": series, "categories": categories}
+    )
 
 
 @api_view(["GET"])
