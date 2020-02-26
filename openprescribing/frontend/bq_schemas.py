@@ -137,18 +137,6 @@ BNF_SCHEMA = build_schema(
     ("presentation_code", "STRING"),
 )
 
-PPU_SAVING_SCHEMA = build_schema(
-    ("date", "TIMESTAMP"),
-    ("bnf_code", "STRING"),
-    ("lowest_decile", "FLOAT"),
-    ("quantity", "INTEGER"),
-    ("price_per_unit", "FLOAT"),
-    ("possible_savings", "FLOAT"),
-    ("formulation_swap", "STRING"),
-    ("pct_id", "STRING"),
-    ("practice_id", "STRING"),
-)
-
 RAW_PRESCRIBING_SCHEMA = build_schema(
     ("Regional_Office_Name", "STRING"),
     ("Regional_Office_Code", "STRING"),
@@ -219,10 +207,4 @@ def ccgs_transform(row):
         row[4] = "%s 00:00:00" % row[4]
     if row[5]:
         row[5] = "%s 00:00:00" % row[5]
-    return row
-
-
-def ppu_savings_transform(row):
-    if row[0]:
-        row[0] = "%s 00:00:00" % row[0]
     return row
