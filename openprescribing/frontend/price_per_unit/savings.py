@@ -49,7 +49,7 @@ def get_savings_for_orgs(generic_code, date, org_type, org_ids):
     substitution_set = get_substitution_sets()[generic_code]
 
     quantities, net_costs = get_quantities_and_net_costs_at_date(
-        substitution_set.presentations, date
+        get_db(), substitution_set, date
     )
 
     group_by_org = get_row_grouper(org_type)
@@ -60,9 +60,20 @@ def get_savings_for_orgs(generic_code, date, org_type, org_ids):
     net_costs_for_orgs = group_by_org.sum(net_costs, org_ids)
     ppu_for_orgs = net_costs_for_orgs / quantities_for_orgs
 
-    target_ppu = get_target_ppu(quantities, net_costs)
-    practice_level_savings = get_savings(quantities, net_costs, target_ppu)
-    savings_for_orgs = group_by_org.sum(practice_level_savings, org_ids)
+    target_ppu = get_target_ppu(
+        quantities,
+        net_costs,
+        group_by_org=get_row_grouper(CONFIG_TARGET_PEER_GROUP),
+        target_centile=CONFIG_TARGET_CENTILE,
+    )
+    practice_savings = get_savings(
+        quantities,
+        net_costs,
+        target_ppu,
+        min_saving=CONFIG_MIN_SAVINGS_FOR_ORG_TYPE["practice"],
+    )
+
+    savings_for_orgs = group_by_org.sum(practice_savings, org_ids)
     min_threshold = CONFIG_MIN_SAVINGS_FOR_ORG_TYPE[org_type]
 
     results = [
@@ -89,13 +100,31 @@ def get_total_savings_for_org(date, org_type, org_id):
     """
     Get total available savings through presentation switches for the given org
     """
-    totals = get_total_savings_for_org_type(date, org_type)
     group_by_org = get_row_grouper(org_type)
+    totals = get_total_savings_for_org_type(
+        db=get_db(),
+        substitution_sets=get_substitution_sets(),
+        date=date,
+        group_by_org=group_by_org,
+        min_saving=CONFIG_MIN_SAVINGS_FOR_ORG_TYPE[org_type],
+        practice_group_by_org=get_row_grouper(CONFIG_TARGET_PEER_GROUP),
+        target_centile=CONFIG_TARGET_CENTILE,
+        practice_min_saving=CONFIG_MIN_SAVINGS_FOR_ORG_TYPE["practice"],
+    )
     offset = group_by_org.offsets[org_id]
     return totals[offset, 0] / 100
 
 
-def get_total_savings_for_org_type(date, org_type):
+def get_total_savings_for_org_type(
+    db,
+    substitution_sets,
+    date,
+    group_by_org,
+    min_saving,
+    practice_group_by_org,
+    target_centile,
+    practice_min_saving,
+):
     """
     Return a matrix giving total savings for all orgs of a given type
 
@@ -103,18 +132,27 @@ def get_total_savings_for_org_type(date, org_type):
     much better caching behaviour to calculate savings for all orgs of a given
     type together in a single, cacheable matrix than it does to do them one by
     one.
+
+    Because we want this function to be cacheable it needs to touch no global
+    state and have eveything passed into it, hence the slightly convoluted call
+    signature.
     """
-    group_by_org = get_row_grouper(org_type)
-    min_threshold = CONFIG_MIN_SAVINGS_FOR_ORG_TYPE[org_type]
     totals = None
-    for substitution_set in get_substitution_sets().values():
+    for substitution_set in substitution_sets.values():
         quantities, net_costs = get_quantities_and_net_costs_at_date(
-            substitution_set.presentations, date
+            db, substitution_set, date
         )
-        target_ppu = get_target_ppu(quantities, net_costs)
-        practice_level_savings = get_savings(quantities, net_costs, target_ppu)
-        savings_for_orgs = group_by_org.sum(practice_level_savings)
-        savings_above_threshold = savings_for_orgs >= min_threshold
+        target_ppu = get_target_ppu(
+            quantities,
+            net_costs,
+            group_by_org=practice_group_by_org,
+            target_centile=target_centile,
+        )
+        practice_savings = get_savings(
+            quantities, net_costs, target_ppu, min_saving=practice_min_saving
+        )
+        savings_for_orgs = group_by_org.sum(practice_savings)
+        savings_above_threshold = savings_for_orgs >= min_saving
         if totals is None:
             totals = zeros_like(savings_for_orgs)
         numpy.add(totals, savings_for_orgs, out=totals, where=savings_above_threshold)
@@ -122,24 +160,23 @@ def get_total_savings_for_org_type(date, org_type):
     return totals
 
 
-def get_target_ppu(quantities, net_costs):
+def get_target_ppu(quantities, net_costs, group_by_org, target_centile):
     """
-    Calculate the price-per-unit achieved by the practice at the target centile
+    Calculate the price-per-unit achieved by the organisation (as defined by
+    `group_by_org`) at the target centile
     """
-    group_by_org = get_row_grouper(CONFIG_TARGET_PEER_GROUP)
     quantities = group_by_org.sum(quantities)
     net_costs = group_by_org.sum(net_costs)
     ppu = net_costs / quantities
-    target_ppu = numpy.nanpercentile(ppu, axis=0, q=CONFIG_TARGET_CENTILE)
+    target_ppu = numpy.nanpercentile(ppu, axis=0, q=target_centile)
     return target_ppu
 
 
-def get_savings(quantities, net_costs, target_ppu):
+def get_savings(quantities, net_costs, target_ppu, min_saving):
     """
     For a given target price-per-unit calculate how much would be saved by each
     practice if they had achieved that price-per-unit
     """
-    min_saving = CONFIG_MIN_SAVINGS_FOR_ORG_TYPE["practice"]
     target_costs = quantities * target_ppu
     savings = net_costs - target_costs
     # Remove all savings that are under the minimum threshold (which includes
@@ -150,12 +187,12 @@ def get_savings(quantities, net_costs, target_ppu):
     return savings
 
 
-def get_quantities_and_net_costs_at_date(bnf_codes, date):
+def get_quantities_and_net_costs_at_date(db, substitution_set, date):
     """
     Sum quantities and net costs over the supplied list of BNF codes for just
     the specified date.
     """
-    db = get_db()
+    bnf_codes = substitution_set.presentations
     date_column = db.date_offsets[date]
     date_slice = slice(date_column, date_column + 1)
 
