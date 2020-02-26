@@ -1,5 +1,3 @@
-import datetime
-
 from django.db import connection
 from django.shortcuts import get_object_or_404
 
@@ -8,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
 from common.utils import nhs_titlecase
-from frontend.models import ImportLog
 from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
 from frontend.price_per_unit.prescribing_breakdown import (
     get_prescribing,
@@ -32,17 +29,6 @@ class NotValid(APIException):
     default_detail = "The code you provided is not valid"
 
 
-def _valid_or_latest_date(date):
-    if date:
-        try:
-            date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-        except ValueError:
-            raise NotValid("%s is not a valid date" % date)
-    else:
-        date = ImportLog.objects.latest_in_category("prescribing").current_at
-    return date
-
-
 def _get_org_or_404(org_code, org_type=None):
     if not org_type and org_code:
         org_type = "ccg" if len(org_code) == 3 else "practice"
@@ -62,9 +48,11 @@ def bubble(request, format=None):
     use in Highcharts bubble chart.
     """
     code = request.query_params.get("bnf_code", "")
-    date = _valid_or_latest_date(request.query_params.get("date", None))
+    date = request.query_params.get("date")
     highlight = request.query_params.get("highlight", None)
     focus = request.query_params.get("focus", None) and highlight
+    if not date:
+        raise NotValid("You must supply a date")
 
     if highlight:
         highlight_org_id = highlight
@@ -82,7 +70,7 @@ def bubble(request, format=None):
         org_type = "all_standard_practices"
         org_id = None
 
-    prescribing = get_prescribing(code, str(date))
+    prescribing = get_prescribing(code, date)
     ppu_breakdown = get_ppu_breakdown(prescribing, org_type, org_id)
     mean_ppu = get_mean_ppu(prescribing, highlight_org_type, highlight_org_id)
 
@@ -177,9 +165,9 @@ def price_per_unit(request, format=None):
                 entity_codes = [entity_code]
 
     if bnf_code:
-        results = get_savings_for_orgs(bnf_code, str(date), entity_type, entity_codes)
+        results = get_savings_for_orgs(bnf_code, date, entity_type, entity_codes)
     else:
-        results = get_all_savings_for_orgs(str(date), entity_type, entity_codes)
+        results = get_all_savings_for_orgs(date, entity_type, entity_codes)
 
     # Fetch the names of all the orgs involved and prepare to reformat the
     # response to match the old API
