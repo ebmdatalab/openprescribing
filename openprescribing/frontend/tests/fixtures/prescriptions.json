@@ -251,5 +251,18 @@
             "pct": "03V",
             "practice": "K83059"
         }
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000015,
+        "fields": {
+            "presentation_code": "0202010B0AAACAZ",
+            "total_items": 1,
+            "actual_cost": 1.56,
+            "quantity": 26,
+            "processing_date": "2013-04-01",
+            "pct": "03V",
+            "practice": "C84001"
+        }
     }
 ]
