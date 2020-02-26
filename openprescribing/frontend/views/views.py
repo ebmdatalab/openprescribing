@@ -772,7 +772,7 @@ def measure_for_all_entities(request, measure, entity_type):
 
 @handle_bad_request
 def practice_price_per_unit(request, code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     practice = get_object_or_404(Practice, code=code)
     context = {
         "entity": practice,
@@ -788,7 +788,7 @@ def practice_price_per_unit(request, code):
 
 @handle_bad_request
 def ccg_price_per_unit(request, code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     ccg = get_object_or_404(PCT, code=code)
     context = {
         "entity": ccg,
@@ -804,7 +804,7 @@ def ccg_price_per_unit(request, code):
 
 @handle_bad_request
 def all_england_price_per_unit(request):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     context = {
         "entity_name": "NHS England",
         "entity_name_and_status": "NHS England",
@@ -819,7 +819,7 @@ def all_england_price_per_unit(request):
 
 @handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     if len(entity_code) == 3:
         entity = get_object_or_404(PCT, code=entity_code)
@@ -854,7 +854,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 
 @handle_bad_request
 def all_england_price_per_unit_by_presentation(request, bnf_code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
 
     params = {
@@ -1491,7 +1491,6 @@ def _home_page_context_for_entity(request, entity):
         context["entity_price_per_unit_url"] = "{}_price_per_unit".format(
             entity_type.lower()
         )
-        context["date"] = _specified_or_last_date(request, "ppu")
         context["possible_savings"] = _total_savings(entity, context["date"])
         context["entity_ghost_generics_url"] = "{}_ghost_generics".format(
             entity_type.lower()
