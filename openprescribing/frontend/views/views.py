@@ -1140,7 +1140,7 @@ def _handle_bookmark_post(request, bookmark_cls):
     """
 
     bookmark = _get_or_create_bookmark(request, bookmark_cls)
-    _send_alert_signup_confirmation(bookmark.user)
+    _send_alert_signup_confirmation(bookmark)
     _add_confirmation_message(request, bookmark)
     return redirect(bookmark.dashboard_url())
 
@@ -1165,12 +1165,14 @@ def _get_or_create_bookmark(request, bookmark_cls):
     return bookmark
 
 
-def _send_alert_signup_confirmation(user):
+def _send_alert_signup_confirmation(bookmark):
     """Send email confirming that user has signed up for alert."""
 
+    user = bookmark.user
     subject = "[OpenPrescribing] Your OpenPrescribing alert subscription"
     context = {
         "user": user,
+        "bookmark": bookmark,
         "unsubscribe_link": settings.GRAB_HOST
         + reverse("bookmarks", kwargs={"key": user.profile.key}),
     }
