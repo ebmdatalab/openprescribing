@@ -1028,12 +1028,14 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
                     {
                         "y": 0.09,
                         "x": 1,
-                        "z": 32.0,
-                        "name": "Chlortalidone_Tab 50mg",
-                        "mean_ppu": 0.09,
+                        "z": 32,
+                        "name": "Chlortalidone 50mg tablets",
+                        "mean_ppu": 0.08875,
                     }
                 ],
-                "categories": [{"is_generic": True, "name": "Chlortalidone_Tab 50mg"}],
+                "categories": [
+                    {"is_generic": True, "name": "Chlortalidone 50mg tablets"}
+                ],
                 "plotline": 0.08875,
             },
         )
@@ -1052,19 +1054,21 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
                     {
                         "y": 0.09,
                         "x": 1,
-                        "z": 32.0,
-                        "name": "Chlortalidone_Tab 50mg",
+                        "z": 32,
+                        "name": "Chlortalidone 50mg tablets",
                         "mean_ppu": 0.098,
                     },
                     {
                         "y": 0.1,
                         "x": 1,
-                        "z": 128.0,
-                        "name": "Chlortalidone_Tab 50mg",
+                        "z": 128,
+                        "name": "Chlortalidone 50mg tablets",
                         "mean_ppu": 0.098,
                     },
                 ],
-                "categories": [{"is_generic": True, "name": "Chlortalidone_Tab 50mg"}],
+                "categories": [
+                    {"is_generic": True, "name": "Chlortalidone 50mg tablets"}
+                ],
                 "plotline": 0.08875,
             },
         )
