@@ -1,7 +1,7 @@
 import numpy
 
 from matrixstore.db import get_db, get_row_grouper
-from matrixstore.matrix_ops import get_submatrix
+from matrixstore.matrix_ops import get_submatrix, zeros_like
 from matrixstore.sql_functions import MatrixSum
 
 from .substitution_sets import get_substitution_sets
@@ -83,6 +83,43 @@ def get_savings_for_orgs(generic_code, date, org_type, org_ids):
 
     results.sort(key=lambda i: i["possible_savings"], reverse=True)
     return results
+
+
+def get_total_savings_for_org(date, org_type, org_id):
+    """
+    Get total available savings through presentation switches for the given org
+    """
+    totals = get_total_savings_for_org_type(date, org_type)
+    group_by_org = get_row_grouper(org_type)
+    offset = group_by_org.offsets[org_id]
+    return totals[offset, 0] / 100
+
+
+def get_total_savings_for_org_type(date, org_type):
+    """
+    Return a matrix giving total savings for all orgs of a given type
+
+    This duplicates some of the logic in `get_savings_for_orgs` but it gives us
+    much better caching behaviour to calculate savings for all orgs of a given
+    type together in a single, cacheable matrix than it does to do them one by
+    one.
+    """
+    group_by_org = get_row_grouper(org_type)
+    min_threshold = CONFIG_MIN_SAVINGS_FOR_ORG_TYPE[org_type]
+    totals = None
+    for substitution_set in get_substitution_sets().values():
+        quantities, net_costs = get_quantities_and_net_costs_at_date(
+            substitution_set.presentations, date
+        )
+        target_ppu = get_target_ppu(quantities, net_costs)
+        practice_level_savings = get_savings(quantities, net_costs, target_ppu)
+        savings_for_orgs = group_by_org.sum(practice_level_savings)
+        savings_above_threshold = savings_for_orgs >= min_threshold
+        if totals is None:
+            totals = zeros_like(savings_for_orgs)
+        numpy.add(totals, savings_for_orgs, out=totals, where=savings_above_threshold)
+    assert totals is not None
+    return totals
 
 
 def get_target_ppu(quantities, net_costs):
