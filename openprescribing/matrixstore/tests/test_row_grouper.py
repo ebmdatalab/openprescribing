@@ -84,13 +84,34 @@ class TestGrouper(SimpleTestCase):
         for (group_name, group_definition), (matrix_name, matrix) in test_cases:
             with self.subTest(matrix=matrix_name, group=group_name):
                 row_grouper = RowGrouper(group_definition)
-                grouped_matrix = row_grouper.sum(matrix)
-                values = to_list_of_lists(grouped_matrix)
-                # Calculate the same dict the boring way using pure Python
-                expected_values = self.sum_rows_by_group(group_definition, matrix)
-                # We need to round floats to account for differences between
-                # numpy and Python float rounding
-                self.assertEqual(round_floats(values), round_floats(expected_values))
+
+                # Test summing all groups (the default if no groups specified)
+                with self.subTest(group_ids=None):
+                    grouped_matrix = row_grouper.sum(matrix)
+                    values = to_list_of_lists(grouped_matrix)
+                    # Calculate the same dict the boring way using pure Python
+                    expected_values = self.sum_rows_by_group(group_definition, matrix)
+                    # We need to round floats to account for differences
+                    # between numpy and Python float rounding
+                    self.assertEqual(
+                        round_floats(values), round_floats(expected_values)
+                    )
+
+                # Test summing just specific groups by getting the last two
+                # group ids in reverse order
+                group_ids = row_grouper.ids[-1:-3:-1]
+                with self.subTest(group_ids=group_ids):
+                    grouped_matrix = row_grouper.sum(matrix, group_ids)
+                    values = to_list_of_lists(grouped_matrix)
+                    # Calculate the same dict the boring way using pure Python
+                    expected_values = self.sum_rows_by_group(
+                        group_definition, matrix, group_ids
+                    )
+                    # We need to round floats to account for differences
+                    # between numpy and Python float rounding
+                    self.assertEqual(
+                        round_floats(values), round_floats(expected_values)
+                    )
 
     def test_sum_one_group_with_all_group_and_matrix_type_combinations(self):
         """
@@ -134,7 +155,7 @@ class TestGrouper(SimpleTestCase):
                         value = row_grouper.get_group(matrix, group_id)
                         self.assertEqual(to_list_of_lists(value), expected_value)
 
-    def sum_rows_by_group(self, group_definition, matrix):
+    def sum_rows_by_group(self, group_definition, matrix, group_ids=None):
         """
         Given a group definition and a matrix, calculate the column-wise totals
         for each group (just like `row_grouper.sum` would do)
@@ -148,8 +169,11 @@ class TestGrouper(SimpleTestCase):
             for column_offset in range(self.columns):
                 value = matrix[row_offset, column_offset]
                 group_totals[group_id][column_offset] += value
-        # Return the group totals as a list of lists, sorted by group_id
-        return [row for (group_id, row) in sorted(group_totals.items())]
+        # If group IDs aren't supplied then we want all groups in lexical order
+        if group_ids is None:
+            group_ids = sorted(group_totals.keys())
+        # Return the group totals as a list of lists
+        return [group_totals[group_id] for group_id in group_ids]
 
     def get_group(self, group_definition, matrix, group_id):
         """

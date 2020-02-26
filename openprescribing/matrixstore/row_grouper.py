@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 import numpy
 import scipy.sparse
@@ -49,34 +49,59 @@ class RowGrouper(object):
         self.offsets = {
             group_id: group_offset for (group_offset, group_id) in enumerate(self.ids)
         }
-        self._group_selectors = [numpy.array(groups[group_id]) for group_id in self.ids]
+        # Maps group ID to the numpy object which selects the rows of that group
+        self._group_selectors = OrderedDict(
+            [(group_id, numpy.array(groups[group_id])) for group_id in self.ids]
+        )
         # Where each group contains only one row (which is the case whenever
         # we're working with practice level data) there's a much faster path we
         # can take where we just pull out the relevant rows using a single
         # selector. (We need the `groups` check to ensure there is at least one
         # group as this selector can't handle the empty case.)
-        if groups and all(len(group) == 1 for group in self._group_selectors):
+        if groups and all(len(group) == 1 for group in self._group_selectors.values()):
             self._single_row_groups_selector = numpy.array(
-                [rows[0] for rows in self._group_selectors]
+                [rows[0] for rows in self._group_selectors.values()]
             )
         else:
             self._single_row_groups_selector = None
 
-    def sum(self, matrix):
+    def sum(self, matrix, group_ids=None):
         """
         Sum rows of matrix column-wise, according to their group
+
+        Where `group_ids` is specified, return the sums for just those groups
+        in the specified order.  Where `group_ids` is None, return the sums for
+        all groups in lexical order by ID.
 
         Returns a matrix of shape:
 
             (number_of_groups X columns_in_original_matrix)
+
         """
         # Fast path for the "each group contains only one row" case
         if self._single_row_groups_selector is not None:
-            return matrix[self._single_row_groups_selector]
+            # Extra fast path for when all groups are requested
+            if group_ids is None:
+                return matrix[self._single_row_groups_selector]
+            # Otherwise build a selector containing just the rows we want
+            else:
+                row_selector = numpy.array(
+                    [self._group_selectors[group_id][0] for group_id in group_ids]
+                )
+                return matrix[row_selector]
+
+        # If we can't take the fast path then build a list of row selectors for
+        # each group we want
+        if group_ids is not None:
+            row_selectors = [self._group_selectors[group_id] for group_id in group_ids]
+        else:
+            row_selectors = self._group_selectors.values()
+
         # Initialise an array to contain the output
-        rows = len(self._group_selectors)
+        rows = len(row_selectors)
         columns = matrix.shape[1]
         grouped_output = numpy.empty((rows, columns), dtype=matrix.dtype)
+
         # This is awkward. We always want to return an `ndarray` even if the
         # input type is `matrix`. But where the input is a `matrix` the `out`
         # argument to `numpy.sum` below must be a `matrix` also. So we need a
@@ -87,11 +112,12 @@ class RowGrouper(object):
             output_view = numpy.asmatrix(grouped_output)
         else:
             output_view = grouped_output
-        for group_offset, rows_selector in enumerate(self._group_selectors):
+
+        for row_offset, row_selector in enumerate(row_selectors):
             # Get the rows to be summed
-            row_group = matrix[rows_selector]
+            row_group = matrix[row_selector]
             # Sum them and write the result into the output array
-            numpy.sum(row_group, axis=0, out=output_view[group_offset])
+            numpy.sum(row_group, axis=0, out=output_view[row_offset])
         return grouped_output
 
     def sum_one_group(self, matrix, group_id):
@@ -101,7 +127,7 @@ class RowGrouper(object):
 
         Returns a 1-dimensional array of size: columns_in_original_matrix
         """
-        row_selector = self._group_selectors[self.offsets[group_id]]
+        row_selector = self._group_selectors[group_id]
         row_group = matrix[row_selector]
         group_sum = numpy.sum(row_group, axis=0)
         # See `is_matrix` docstring for more detail here
@@ -119,7 +145,7 @@ class RowGrouper(object):
 
             (number_of_rows_in_group X columns_in_original_matrix)
         """
-        row_selector = self._group_selectors[self.offsets[group_id]]
+        row_selector = self._group_selectors[group_id]
         group = matrix[row_selector]
         # See `is_matrix` docstring for more detail here
         if is_matrix(group):
