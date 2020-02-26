@@ -183,15 +183,6 @@ Run migrations:
 
     python manage.py migrate
 
-
-## Example data
-
-You can load a small set of example data (which should be enough to get
-the site to run locally) by running:
-
-    ./manage.py load_development_data
-
-
 ## Sampling live data
 
 You can copy everything from the production server, if you want, but
