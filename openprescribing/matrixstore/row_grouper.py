@@ -110,6 +110,22 @@ class RowGrouper(object):
         else:
             return group_sum
 
+    def get_group(self, matrix, group_id):
+        """
+        Get the individual rows belonging to a particular group without summing
+        them
+
+        Returns a matrix of shape:
+
+            (number_of_rows_in_group X columns_in_original_matrix)
+        """
+        row_selector = self._group_selectors[self.offsets[group_id]]
+        group = matrix[row_selector]
+        # See `is_matrix` docstring for more detail here
+        if is_matrix(group):
+            group = group.todense().A
+        return group
+
 
 def is_matrix(value):
     """

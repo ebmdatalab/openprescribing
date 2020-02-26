@@ -50,6 +50,19 @@ class TestGrouper(SimpleTestCase):
         group_sum = row_grouper.sum_one_group(matrix, "even")
         self.assertEqual(group_sum.tolist(), [4, 6, 8, 10])
 
+    def test_basic_get_group(self):
+        """
+        Test fetching members for a single group on a matrix which is small
+        enough to verify the results by hand
+        """
+        group_definition = [(0, "even"), (1, "odd"), (2, "even"), (3, "odd")]
+        rows = [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7]]
+        matrix = numpy.array(rows)
+        row_grouper = RowGrouper(group_definition)
+        group = row_grouper.get_group(matrix, "even")
+        expected = [[1, 2, 3, 4], [3, 4, 5, 6]]
+        self.assertEqual(to_list_of_lists(group), expected)
+
     def test_empty_group_produces_empty_matrix(self):
         """
         Test the empty group edge case
@@ -102,6 +115,25 @@ class TestGrouper(SimpleTestCase):
                         round_floats(value.tolist()), round_floats(expected_value)
                     )
 
+    def test_get_group_with_all_group_and_matrix_type_combinations(self):
+        """
+        Tests the `get_group` method with every combination of group type
+        and matrix type
+        """
+        test_cases = product(self.get_group_definitions(), self.get_matrices())
+        for (group_name, group_definition), (matrix_name, matrix) in test_cases:
+            with self.subTest(matrix=matrix_name, group=group_name):
+                row_grouper = RowGrouper(group_definition)
+                for group_id in row_grouper.ids:
+                    with self.subTest(group_id=group_id):
+                        # Get the group members the boring way using pure
+                        # Python
+                        expected_value = self.get_group(
+                            group_definition, matrix, group_id
+                        )
+                        value = row_grouper.get_group(matrix, group_id)
+                        self.assertEqual(to_list_of_lists(value), expected_value)
+
     def sum_rows_by_group(self, group_definition, matrix):
         """
         Given a group definition and a matrix, calculate the column-wise totals
@@ -118,6 +150,21 @@ class TestGrouper(SimpleTestCase):
                 group_totals[group_id][column_offset] += value
         # Return the group totals as a list of lists, sorted by group_id
         return [row for (group_id, row) in sorted(group_totals.items())]
+
+    def get_group(self, group_definition, matrix, group_id):
+        """
+        Given a group definition, a matrix and a group id return all rows in
+        the matrix which below to the specified group in their original order
+        """
+        selected_row_offsets = []
+        for row_offset, this_group_id in group_definition:
+            if group_id == this_group_id:
+                selected_row_offsets.append(row_offset)
+        selected_rows = []
+        for row_offset in sorted(selected_row_offsets):
+            row = [matrix[row_offset, j] for j in range(self.columns)]
+            selected_rows.append(row)
+        return selected_rows
 
     def get_matrices(self):
         for sparse, integer in product([True, False], repeat=2):
