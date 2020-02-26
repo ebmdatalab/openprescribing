@@ -27,13 +27,23 @@ class TestGrouper(SimpleTestCase):
         Test grouping and summing on a matrix which is small enough to verify
         the results by hand
         """
+        # fmt: off
         group_definition = [(0, "even"), (1, "odd"), (2, "even"), (3, "odd")]
-        rows = [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7]]
+        rows = [
+            [1, 2, 3, 4],
+            [2, 3, 4, 5],
+            [3, 4, 5, 6],
+            [4, 5, 6, 7]
+        ]
+        expected_value = [
+            [4, 6, 8, 10],
+            [6, 8, 10, 12]
+        ]
+        # fmt: on
         matrix = numpy.array(rows)
         row_grouper = RowGrouper(group_definition)
         grouped_matrix = row_grouper.sum(matrix)
         value = to_list_of_lists(grouped_matrix)
-        expected_value = [[4, 6, 8, 10], [6, 8, 10, 12]]
         self.assertEqual(value, expected_value)
         self.assertEqual(row_grouper.ids, ["even", "odd"])
         self.assertEqual(row_grouper.offsets, {"even": 0, "odd": 1})
@@ -43,25 +53,43 @@ class TestGrouper(SimpleTestCase):
         Test summing for a single group on a matrix which is small enough to
         verify the results by hand
         """
+        # fmt: off
         group_definition = [(0, "even"), (1, "odd"), (2, "even"), (3, "odd")]
-        rows = [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7]]
+        rows = [
+            [1, 2, 3, 4],
+            [2, 3, 4, 5],
+            [3, 4, 5, 6],
+            [4, 5, 6, 7]
+        ]
+        expected_value = [4, 6, 8, 10]
+        # fmt: on
         matrix = numpy.array(rows)
         row_grouper = RowGrouper(group_definition)
         group_sum = row_grouper.sum_one_group(matrix, "even")
-        self.assertEqual(group_sum.tolist(), [4, 6, 8, 10])
+        self.assertEqual(group_sum.tolist(), expected_value)
 
     def test_basic_get_group(self):
         """
         Test fetching members for a single group on a matrix which is small
         enough to verify the results by hand
         """
+        # fmt: off
         group_definition = [(0, "even"), (1, "odd"), (2, "even"), (3, "odd")]
-        rows = [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7]]
+        rows = [
+            [1, 2, 3, 4],
+            [2, 3, 4, 5],
+            [3, 4, 5, 6],
+            [4, 5, 6, 7]
+        ]
+        expected_value = [
+            [1, 2, 3, 4],
+            [3, 4, 5, 6]
+        ]
+        # fmt: on
         matrix = numpy.array(rows)
         row_grouper = RowGrouper(group_definition)
         group = row_grouper.get_group(matrix, "even")
-        expected = [[1, 2, 3, 4], [3, 4, 5, 6]]
-        self.assertEqual(to_list_of_lists(group), expected)
+        self.assertEqual(to_list_of_lists(group), expected_value)
 
     def test_empty_group_produces_empty_matrix(self):
         """
