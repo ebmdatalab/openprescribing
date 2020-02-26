@@ -962,18 +962,6 @@ class Profile(models.Model):
     emails_opened = models.IntegerField(default=0)
     emails_clicked = models.IntegerField(default=0)
 
-    def most_recent_bookmark(self):
-        bookmarks = [
-            bookmark
-            for bookmark in [
-                self.user.orgbookmark_set.last(),
-                self.user.searchbookmark_set.last(),
-                self.user.ncsoconcessionbookmark_set.last(),
-            ]
-            if bookmark
-        ]
-        return sorted(bookmarks, key=lambda x: x.created_at)[-1]
-
 
 class EmailMessageManager(models.Manager):
     def create_from_message(self, msg):
