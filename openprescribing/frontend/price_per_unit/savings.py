@@ -1,5 +1,6 @@
 import numpy
 
+from matrixstore.cachelib import memoize
 from matrixstore.db import get_db, get_row_grouper
 from matrixstore.matrix_ops import get_submatrix, zeros_like
 from matrixstore.sql_functions import MatrixSum
@@ -115,6 +116,9 @@ def get_total_savings_for_org(date, org_type, org_id):
     return totals[offset, 0] / 100
 
 
+# Increment the version number if the logic of this function changes such that
+# the same inputs no longer produce the same outputs
+@memoize(version=1)
 def get_total_savings_for_org_type(
     db,
     substitution_sets,
@@ -187,6 +191,9 @@ def get_savings(quantities, net_costs, target_ppu, min_saving):
     return savings
 
 
+# Increment the version number if the logic of this function changes such that
+# the same inputs no longer produce the same outputs
+@memoize(version=1)
 def get_quantities_and_net_costs_at_date(db, substitution_set, date):
     """
     Sum quantities and net costs over the supplied list of BNF codes for just
