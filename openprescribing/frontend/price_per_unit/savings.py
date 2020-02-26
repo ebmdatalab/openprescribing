@@ -15,13 +15,7 @@ CONFIG_TARGET_CENTILE = 10
 # Note this is "standard_practice" rather than "practice" as we only want to
 # include setting 4 practices (i.e. ordinary GP practices)
 CONFIG_TARGET_PEER_GROUP = "standard_practice"
-
-# Savings are calculated in two stages: first at the practice level, and then
-# aggregated up into organisation savings. At both stages we apply a minimum
-# threshold such that savings below that threshold are treated as zero. This is
-# particularly important at practice level as it prevents "negative savings"
-# from practices already performing better than the target PPU.
-# (Note: all values in pence)
+# Note: all values in pence
 CONFIG_MIN_SAVINGS_FOR_ORG_TYPE = {
     "practice": 10 * 100,
     "ccg": 200 * 100,
@@ -34,15 +28,18 @@ def get_all_savings_for_orgs(date, org_type, org_ids):
     """
     Get all available savings through presentation switches for the given orgs
     """
+    min_saving = CONFIG_MIN_SAVINGS_FOR_ORG_TYPE[org_type]
     results = []
     for generic_code in get_substitution_sets().keys():
-        savings = get_savings_for_orgs(generic_code, date, org_type, org_ids)
+        savings = get_savings_for_orgs(
+            generic_code, date, org_type, org_ids, min_saving=min_saving
+        )
         results.extend(savings)
     results.sort(key=lambda i: i["possible_savings"], reverse=True)
     return results
 
 
-def get_savings_for_orgs(generic_code, date, org_type, org_ids):
+def get_savings_for_orgs(generic_code, date, org_type, org_ids, min_saving=1):
     """
     Get available savings for the given orgs within a particular class of
     substitutable presentations
@@ -67,15 +64,9 @@ def get_savings_for_orgs(generic_code, date, org_type, org_ids):
         group_by_org=get_row_grouper(CONFIG_TARGET_PEER_GROUP),
         target_centile=CONFIG_TARGET_CENTILE,
     )
-    practice_savings = get_savings(
-        quantities,
-        net_costs,
-        target_ppu,
-        min_saving=CONFIG_MIN_SAVINGS_FOR_ORG_TYPE["practice"],
-    )
+    practice_savings = get_savings(quantities, net_costs, target_ppu)
 
     savings_for_orgs = group_by_org.sum(practice_savings, org_ids)
-    min_threshold = CONFIG_MIN_SAVINGS_FOR_ORG_TYPE[org_type]
 
     results = [
         {
@@ -90,7 +81,7 @@ def get_savings_for_orgs(generic_code, date, org_type, org_ids):
             "name": substitution_set.name,
         }
         for offset, org_id in enumerate(org_ids)
-        if savings_for_orgs[offset, 0] >= min_threshold
+        if savings_for_orgs[offset, 0] >= min_saving
     ]
 
     results.sort(key=lambda i: i["possible_savings"], reverse=True)
@@ -110,7 +101,6 @@ def get_total_savings_for_org(date, org_type, org_id):
         min_saving=CONFIG_MIN_SAVINGS_FOR_ORG_TYPE[org_type],
         practice_group_by_org=get_row_grouper(CONFIG_TARGET_PEER_GROUP),
         target_centile=CONFIG_TARGET_CENTILE,
-        practice_min_saving=CONFIG_MIN_SAVINGS_FOR_ORG_TYPE["practice"],
     )
     offset = group_by_org.offsets[org_id]
     return totals[offset, 0] / 100
@@ -127,7 +117,6 @@ def get_total_savings_for_org_type(
     min_saving,
     practice_group_by_org,
     target_centile,
-    practice_min_saving,
 ):
     """
     Return a matrix giving total savings for all orgs of a given type
@@ -152,9 +141,7 @@ def get_total_savings_for_org_type(
             group_by_org=practice_group_by_org,
             target_centile=target_centile,
         )
-        practice_savings = get_savings(
-            quantities, net_costs, target_ppu, min_saving=practice_min_saving
-        )
+        practice_savings = get_savings(quantities, net_costs, target_ppu)
         savings_for_orgs = group_by_org.sum(practice_savings)
         savings_above_threshold = savings_for_orgs >= min_saving
         if totals is None:
@@ -176,18 +163,16 @@ def get_target_ppu(quantities, net_costs, group_by_org, target_centile):
     return target_ppu
 
 
-def get_savings(quantities, net_costs, target_ppu, min_saving):
+def get_savings(quantities, net_costs, target_ppu):
     """
     For a given target price-per-unit calculate how much would be saved by each
     practice if they had achieved that price-per-unit
     """
     target_costs = quantities * target_ppu
     savings = net_costs - target_costs
-    # Remove all savings that are under the minimum threshold (which includes
-    # any negative savings from practices already achieving better than the
-    # target)
-    savings_under_threshold = savings < min_saving
-    savings[savings_under_threshold] = 0
+    # Replace any negative savings (i.e. practices already performing better
+    # than the target) with zero savings
+    numpy.clip(savings, a_min=0, a_max=None, out=savings)
     return savings
 
 
