@@ -114,6 +114,13 @@ class NCSOConcessionBookmarkAdmin(admin.ModelAdmin):
 
 class EmailMessageInline(admin.TabularInline):
     model = EmailMessage
+    readonly_fields = fields = (
+        "message_id",
+        "to",
+        "subject",
+        "tags",
+        "created_at",
+    )
 
 
 @admin.register(User)
