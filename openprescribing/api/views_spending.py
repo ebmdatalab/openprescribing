@@ -8,14 +8,16 @@ from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
 from common.utils import nhs_titlecase
-from common.utils import ppu_sql
 from frontend.models import ImportLog
-from frontend.models import Presentation
 from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
 from frontend.price_per_unit.prescribing_breakdown import (
     get_prescribing,
     get_ppu_breakdown,
     get_mean_ppu,
+)
+from frontend.price_per_unit.savings import (
+    get_savings_for_orgs,
+    get_all_savings_for_orgs,
 )
 from matrixstore.db import get_db, get_row_grouper
 
@@ -113,12 +115,12 @@ def bubble(request, format=None):
 
 @api_view(["GET"])
 def price_per_unit(request, format=None):
-    """Returns price per unit data for presentations and practices or
-    CCGs
-
     """
-    entity_code = request.query_params.get("entity_code")
-    entity_type = request.query_params.get("entity_type")
+    Returns price per unit data for presentations and practices or
+    CCGs
+    """
+    entity_code = request.query_params.get("entity_code", "")
+    entity_type = request.query_params.get("entity_type", "").lower()
     date = request.query_params.get("date")
     bnf_code = request.query_params.get("bnf_code")
     aggregate = bool(request.query_params.get("aggregate"))
@@ -129,73 +131,126 @@ def price_per_unit(request, format=None):
             "You must supply a value for entity_code or bnf_code, or set the "
             "aggregate flag"
         )
+    if not entity_type:
+        entity_type = "ccg" if len(entity_code) == 3 else "practice"
 
-    params = {"date": date}
     filename = date
-
     if bnf_code:
-        params["bnf_code"] = bnf_code
-        get_object_or_404(Presentation, pk=bnf_code)
         filename += "-%s" % bnf_code
-
     if entity_code:
-        entity = _get_org_or_404(entity_code, entity_type)
-        params["entity_code"] = entity_code
         filename += "-%s" % entity_code
-        if not entity_type:
-            if isinstance(entity, PCT):
-                entity_type = "CCG"
-            else:
-                entity_type = "practice"
 
-    extra_conditions = ""
+    # This not a particularly orthogonal API. Below we're just replicating the
+    # logic of the original API which we can think about simplifying later.
+    #
+    # Handle the special All England case
+    if aggregate:
+        # If we're not looking at a specific code then we want to aggregate all
+        # practices together
+        if not bnf_code:
+            entity_type = "all_standard_practices"
+            entity_codes = [None]
+        # Otherwise we want the results over all CCGs
+        else:
+            entity_type = "ccg"
+            entity_codes = get_row_grouper(entity_type).ids
+    else:
+        # If we don't specify a particular org then we want all orgs of that
+        # type
+        if not entity_code:
+            entity_codes = get_row_grouper(entity_type).ids
+        else:
+            # When looking at a specific BNF code for a specific CCG we
+            # actually want the results over its practices
+            if entity_type == "ccg" and bnf_code:
+                entity_type = "practice"
+                practices = Practice.objects.filter(ccg_id=entity_code, setting=4)
+                # Remove any practice codes with no associated prescribing
+                prescribing_practice_codes = get_row_grouper("practice").offsets.keys()
+                entity_codes = [
+                    code
+                    for code in practices.values_list("code", flat=True)
+                    if code in prescribing_practice_codes
+                ]
+            # Otherwise we should just show the specified org
+            else:
+                entity_codes = [entity_code]
 
     if bnf_code:
-        extra_conditions += """
-        AND {ppusavings_table}.bnf_code = %(bnf_code)s"""
-
-    if entity_code:
-        if isinstance(entity, Practice):
-            extra_conditions += """
-        AND {ppusavings_table}.practice_id = %(entity_code)s"""
-        else:
-            extra_conditions += """
-        AND {ppusavings_table}.pct_id = %(entity_code)s"""
-
-            if bnf_code:
-                extra_conditions += """
-        AND {ppusavings_table}.practice_id IS NOT NULL"""
-            else:
-                extra_conditions += """
-        AND {ppusavings_table}.practice_id IS NULL"""
+        results = get_savings_for_orgs(bnf_code, str(date), entity_type, entity_codes)
     else:
-        if entity_type == "practice":
-            extra_conditions += """
-                AND {ppusavings_table}.practice_id IS NOT NULL"""
-        elif entity_type == "CCG":
-            extra_conditions += """
-                AND {ppusavings_table}.practice_id IS NULL"""
+        results = get_all_savings_for_orgs(str(date), entity_type, entity_codes)
 
-    sql = ppu_sql(conditions=extra_conditions)
+    # Fetch the names of all the orgs involved and prepare to reformat the
+    # response to match the old API
+    if entity_type == "practice":
+        org_id_field = "practice"
+        org_name_field = "practice_name"
+        org_names = {
+            code: nhs_titlecase(name)
+            for (code, name) in Practice.objects.filter(
+                code__in=entity_codes
+            ).values_list("code", "name")
+        }
+    elif entity_type == "ccg":
+        org_id_field = "pct"
+        org_name_field = "pct_name"
+        org_names = {
+            code: nhs_titlecase(name)
+            for (code, name) in PCT.objects.filter(code__in=entity_codes).values_list(
+                "code", "name"
+            )
+        }
+    elif entity_type == "all_standard_practices":
+        org_id_field = "pct"
+        org_name_field = "pct_name"
+        org_names = {None: "NHS England"}
+    else:
+        raise ValueError(entity_type)
 
-    if aggregate:
-        sql = _aggregate_ppu_sql(sql, entity_type)
+    # All BNF codes which had a price concession that month
+    concession_codes = set(_get_concession_bnf_codes(date))
 
-    with connection.cursor() as cursor:
-        cursor.execute(sql, params)
-        results = utils.dictfetchall(cursor)
-
-    for result in results:
-        if result["practice_name"] is not None:
-            result["practice_name"] = nhs_titlecase(result["practice_name"])
-        if result["pct_name"] is not None:
-            result["pct_name"] = nhs_titlecase(result["pct_name"])
+    # Reformat response to match the old API
+    for row in results:
+        org_id = row.pop("org_id")
+        row[org_id_field] = org_id
+        row[org_name_field] = org_names[org_id]
+        row["price_concession"] = row["presentation"] in concession_codes
 
     response = Response(results)
     if request.accepted_renderer.format == "csv":
         filename = "%s-ppd.csv" % (filename)
         response["content-disposition"] = "attachment; filename=%s" % filename
     return response
+
+
+def _get_concession_bnf_codes(date):
+    """
+    Return list of BNF codes to which NCSO price concessions were applied in
+    the given month.
+
+    Note that because concessions are defined at the product-pack level and BNF
+    codes refer to products it's possible that the same BNF code may be
+    returned multiple times.
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT
+              dmd_vmpp.bnf_code AS bnf_code
+            FROM
+              dmd_vmpp
+            JOIN
+              frontend_ncsoconcession AS ncso
+            ON
+              dmd_vmpp.vppid = ncso.vmpp_id
+            WHERE
+              ncso.date = %(date)s
+            """,
+            {"date": date},
+        )
+        return cursor.fetchall()
 
 
 @api_view(["GET"])
@@ -292,50 +347,6 @@ def ghost_generics(request, format=None):
         filename = "%s.csv" % (filename)
         response["content-disposition"] = "attachment; filename=%s" % filename
     return response
-
-
-def _aggregate_ppu_sql(original_sql, entity_type):
-    """
-    Takes a PPU SQL query and modifies it to return savings aggregated over all
-    the entities (CCGs or practices) in the original query
-    """
-    entity_name = "'NHS England'"
-
-    return """
-        WITH cte AS ({original_sql})
-        SELECT
-          -- Fields we're grouping by
-          date,
-          presentation,
-
-          -- Fields we aggregate over
-          SUM(quantity) AS quantity,
-          SUM(price_per_unit * quantity) / SUM(quantity) AS price_per_unit,
-          SUM(possible_savings) AS possible_savings,
-
-          -- Fixed value fields
-          NULL AS pct,
-          {pct_name} as pct_name,
-          NULL AS practice,
-          {practice_name} AS practice_name,
-
-          -- These fields relate to the presentation and so they ought to
-          -- have a fixed value throughout the group. However Postgres
-          -- doesn't know this, so we need to tell it how to aggregate
-          -- these fields. In most cases we just use the modal value.
-          MAX(lowest_decile) AS lowest_decile,
-          MODE() WITHIN GROUP (ORDER BY formulation_swap)
-            AS formulation_swap,
-          MODE() WITHIN GROUP (ORDER BY price_concession)
-            AS price_concession,
-          MODE() WITHIN GROUP (ORDER BY name) AS name
-        FROM cte
-        GROUP BY date, presentation
-        """.format(
-        original_sql=original_sql,
-        pct_name=entity_name if entity_type == "CCG" else "NULL",
-        practice_name="NULL" if entity_type == "CCG" else entity_name,
-    )
 
 
 @api_view(["GET"])
