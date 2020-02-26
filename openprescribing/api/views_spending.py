@@ -103,7 +103,11 @@ def bubble(request, format=None):
             )
 
     return Response(
-        {"plotline": mean_ppu / 100, "series": series, "categories": categories}
+        {
+            "plotline": mean_ppu / 100 if mean_ppu is not None else None,
+            "series": series,
+            "categories": categories,
+        }
     )
 
 

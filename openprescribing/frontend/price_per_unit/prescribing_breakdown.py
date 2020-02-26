@@ -20,9 +20,18 @@ def get_prescribing(generic_code, date):
             ...
         }
     """
-    bnf_codes = get_substitution_sets()[generic_code].presentations
+    # If the supplied code doesn't represent a substitution set just show
+    # prescribing for that single BNF code
+    try:
+        bnf_codes = get_substitution_sets()[generic_code].presentations
+    except KeyError:
+        bnf_codes = [generic_code]
+
     db = get_db()
-    date_column = db.date_offsets[date]
+    try:
+        date_column = db.date_offsets[date]
+    except KeyError:
+        return {}
     date_slice = slice(date_column, date_column + 1)
 
     results = db.query(
@@ -94,4 +103,7 @@ def get_mean_ppu(prescribing, org_type, org_id):
     for quantities, net_costs in prescribing.values():
         total_quantity += group_by_org.sum_one_group(quantities, org_id)[0]
         total_net_cost += group_by_org.sum_one_group(net_costs, org_id)[0]
-    return total_net_cost / total_quantity
+    if total_quantity > 0:
+        return total_net_cost / total_quantity
+    else:
+        return None
