@@ -79,10 +79,9 @@ memoize = lru_cache(maxsize=None)
 
 # The below file defines groups of generics of different formulations which we
 # believe can be substituted for each other (e.g tramadol tablets and
-# capsules). The canonical version is maintained as a Google Sheet at:
-#  https://docs.google.com/spreadsheets/d/e/
-#  2PACX-1vSsTrjEdRekkcR0H8myL8RwP3XKg2YvTgQwGb5ypNei0IYn4ofrayVZJibLfN
-#  _lnpm6Q9qu_t0yXU5Z/pub?gid=1784930737&single=true&output=csv
+# capsules). The canonical version is maintained as a Google Sheet. The process
+# for updating this, and a link to the sheet itself, can be found at:
+# https://github.com/ebmdatalab/price-per-dose/issues/11
 #
 # The local copy can be updated using the command:
 #   curl -L https://tinyurl.com/uwzg8qc > frontend/price_per_unit/formulation_swaps.csv
@@ -122,10 +121,10 @@ EXCLUSIONS_RE = re.compile(
 )
 
 
-# These are BNF code prefixes where all presentations within the sub-paragraph
-# can be considered substitutable. See
+# These are BNF code prefixes where we consider the entire set of chemicals
+# with that prefix to be substitutable. See:
 # https://github.com/ebmdatalab/price-per-dose/issues/1.
-GENERIC_SUB_PARAGRAPHS = {
+GENERIC_CHEMICALS = {
     "0601060U0": "Urine Testing Reagents",
     "0601060D0": "Glucose Blood Testing Reagents",
 }
@@ -166,9 +165,9 @@ def get_substitution_sets_from_bnf_codes(bnf_codes):
 
 def get_names_for_bnf_codes(bnf_codes):
     names = Presentation.names_for_bnf_codes(list(bnf_codes))
-    # Add in names for our invented BNF codes which represent their entire BNF
-    # sub-paragraph
-    for sub_para, name in GENERIC_SUB_PARAGRAPHS.items():
+    # Add in names for our invented BNF codes which represent a generic
+    # chemical
+    for sub_para, name in GENERIC_CHEMICALS.items():
         names[sub_para + "AAA0A0"] = name
     return names
 
@@ -184,32 +183,32 @@ def generic_equivalent_for_bnf_code(bnf_code):
     # Exclude BNF codes where we have identified an issue
     if EXCLUSIONS_RE.match(bnf_code):
         return
-    sub_paragraph_and_chemical = bnf_code[0:9]
+    chemical = bnf_code[0:9]
     generic_strength_and_formulation = bnf_code[13:15]
     has_generic_equivalent = generic_strength_and_formulation != "A0"
-    if has_generic_equivalent or sub_paragraph_and_chemical in GENERIC_SUB_PARAGRAPHS:
-        return "{0}AA{1}{1}".format(
-            sub_paragraph_and_chemical, generic_strength_and_formulation
-        )
+    if has_generic_equivalent or chemical in GENERIC_CHEMICALS:
+        return "{0}AA{1}{1}".format(chemical, generic_strength_and_formulation)
 
 
 def get_formulation_swaps(filename):
     """
     Reads a "formulation swaps" CSV file and returns a pair of dicts:
 
-        swaps: maps generic BNF codes to alternative generic BNF codes (which
+        swaps: Maps generic BNF codes to alternative generic BNF codes (which
                would usually be of a different formulation) to which they
-               should be considered equivalent
+               should be considered equivalent. We refer to the alternative
+               code as the "primary" as it is the code we use to stand in for
+               the entire group.
 
-        swap_descriptions: maps generic BNF codes to a short text description
+        swap_descriptions: Maps primary BNF codes to a short text description
                            of the formulation changes involved e.g for tablets
-                           and capsules we'd have "Tabs / Caps"
+                           and capsules we'd have "Tabs / Caps".
     """
     swaps = {}
     swap_descriptions = {}
     for codes, formulations in read_formulation_swaps_file(filename):
-        # We use the lexically smallest code from a group of equivalent
-        # generics to represent the group
+        # We (arbitrarily) use the lexically smallest code from a group of
+        # equivalent generics to represent the group
         primary_code = sorted(codes)[0]
         for code in codes:
             swaps[code] = primary_code
@@ -223,22 +222,22 @@ def read_formulation_swaps_file(filename):
     Reads a "formulation swaps" CSV file and yields groups of substitutable
     generic presentations as tuples of the form:
 
-        ([<list of generic BNF codes], [<list of formulations>])
+        ([<list of generic BNF codes], {<set of formulations>})
 
     For instance, Tramadol tablets and capsules are distinct generic
     presentations, but are almost always substitutable for each other so the
     response might include:
 
         # 100mg tablets and capsules
-        (['040702040AAACAC', '040702040AAAHAH'], ['Tab', 'Cap'])
+        (['040702040AAACAC', '040702040AAAHAH'], {'Tab', 'Cap'})
 
         # 200mg tablets and capsules
-        (['040702040AAAEAE', '040702040AAAJAJ'], ['Tab', 'Cap'])
+        (['040702040AAAEAE', '040702040AAAJAJ'], {'Tab', 'Cap'})
 
     The swaps file must be manually curated to ensure that the substitutions
     are clinically sensible.
     """
-    with open(filename, "rt") as handle:
+    with open(filename) as handle:
         data = list(csv.DictReader(handle))
     code_pairs = []
     formulations = {}
@@ -259,9 +258,9 @@ def read_formulation_swaps_file(filename):
     # "B and C are equivalent" then we can handle this correctly.
     for code_group in groups_from_pairs(code_pairs):
         # Get the unique formulations involved in this group
-        formulations_for_group = [
-            f for f in set(map(formulations.get, code_group)) if f
-        ]
+        formulations_for_group = {
+            formulations[code] for code in code_group if formulations.get(code)
+        }
         yield code_group, formulations_for_group
 
 

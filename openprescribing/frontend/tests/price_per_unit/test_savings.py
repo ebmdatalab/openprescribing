@@ -54,7 +54,9 @@ class PricePerUnitSavingsTest(TestCase):
             factory.presentations, factory.practices, factory.months
         )
 
-        # Copy these objects to the database
+        # The DataFactory creates data that can be written to the MatrixStore
+        # but doesn't automatically create anything in the database, so we do
+        # that manually here
         ccg = PCT.objects.create(name="CCG1", code="ABC", org_type="CCG")
         for practice in factory.practices:
             Practice.objects.create(

@@ -15,11 +15,15 @@ CONFIG_TARGET_CENTILE = 10
 # Note this is "standard_practice" rather than "practice" as we only want to
 # include setting 4 practices (i.e. ordinary GP practices)
 CONFIG_TARGET_PEER_GROUP = "standard_practice"
-# Note: all values in pence
+# Any savings below these limits are ignored when calculating the total
+# available savings for an organisation. This is to avoid including savings
+# that can only be achieved by making lots of tiny savings over a large number
+# of presentations. (Note: all values in pence.)
 CONFIG_MIN_SAVINGS_FOR_ORG_TYPE = {
     "practice": 10 * 100,
     "ccg": 200 * 100,
-    # Picked somewhat arbitrarily based on the CCG limit
+    # This is the limit for All England savings, picked somewhat arbitrarily
+    # based on the CCG limit
     "all_standard_practices": 50000 * 100,
 }
 
@@ -127,8 +131,8 @@ def get_total_savings_for_org_type(
     one.
 
     Because we want this function to be cacheable it needs to touch no global
-    state and have eveything passed into it, hence the slightly convoluted call
-    signature.
+    state or configuration and have eveything passed into it, hence the
+    slightly convoluted call signature.
     """
     totals = None
     for substitution_set in substitution_sets.values():

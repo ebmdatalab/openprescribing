@@ -356,10 +356,10 @@ CACHES = {
         # effectively disables the fan-out behaviour. See:
         # http://www.grantjenks.com/docs/diskcache/tutorial.html#fanoutcache
         "SHARDS": 1,
-        # In the event that a write does get blocked this timeout etermines how
-        # long to wait before giving up and just not writing the value to the
-        # cache. It's by no means a disaster if this happens: we'll just cache
-        # the value the next time round.
+        # In the event that a write does get blocked this timeout determines
+        # how long to wait before giving up and just not writing the value to
+        # the cache. It's by no means a disaster if this happens: we'll just
+        # cache the value the next time round.
         "DATABASE_TIMEOUT": 0.1,
         "OPTIONS": {
             "size_limit": cache_size_limit,
@@ -369,7 +369,10 @@ CACHES = {
             # we can get it to store values of any size in SQLite. By also
             # raising SQLite's memory-map limit to something large we can then
             # access all these values via memory-mapping (just as we do with
-            # the MatrixStore) which gives us much better performance.
+            # the MatrixStore). This gives us much better I/O performance when
+            # reading from the cache. Possibly this comes at the expense of
+            # worse write performance, but we're not particularly worried about
+            # that.
             "disk_min_file_size": cache_size_limit,
             "sqlite_mmap_size": cache_size_limit,
         },

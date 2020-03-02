@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
 from common.utils import nhs_titlecase
-from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
+from frontend.models import Practice, PCT, STP, RegionalTeam, PCN, NCSOConcession
 from frontend.price_per_unit.prescribing_breakdown import (
     get_prescribing,
     get_ppu_breakdown,
@@ -217,28 +217,12 @@ def _get_concession_bnf_codes(date):
     """
     Return list of BNF codes to which NCSO price concessions were applied in
     the given month.
-
-    Note that because concessions are defined at the product-pack level and BNF
-    codes refer to products it's possible that the same BNF code may be
-    returned multiple times.
     """
-    with connection.cursor() as cursor:
-        cursor.execute(
-            """
-            SELECT
-              dmd_vmpp.bnf_code AS bnf_code
-            FROM
-              dmd_vmpp
-            JOIN
-              frontend_ncsoconcession AS ncso
-            ON
-              dmd_vmpp.vppid = ncso.vmpp_id
-            WHERE
-              ncso.date = %(date)s
-            """,
-            {"date": date},
-        )
-        return cursor.fetchall()
+    return (
+        NCSOConcession.objects.filter(date=date, vmpp__isnull=False)
+        .values_list("vmpp__bnf_code", flat=True)
+        .distinct()
+    )
 
 
 @api_view(["GET"])
