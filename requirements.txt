@@ -19,7 +19,7 @@ cssutils==1.0.2           # via premailer
 decorator==4.4.2          # via networkx
 django-anymail[mailgun]==7.0.0  # via -r requirements.in (line 11)
 django-cors-headers==3.2.1  # via -r requirements.in (line 12)
-django-crispy-forms==1.8.1  # via -r requirements.in (line 13)
+django-crispy-forms==1.9.0  # via -r requirements.in (line 13)
 django-debug-toolbar-template-timings==0.9  # via -r requirements.in (line 57)
 django-debug-toolbar==2.2  # via -r requirements.in (line 56), django-debug-toolbar-template-timings
 django-dotenv==1.4.2      # via -r requirements.in (line 14)
