@@ -6,18 +6,14 @@
   "description": [
     "Minocycline per 1000 patients"
   ],
+  "numerator_short": "Minocycline cost (£)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Minocycline is mainly used for acne, however there are various safety risks associated with its use. ",    
+    "Minocycline is mainly used for acne, however there are various safety risks associated with its use. ",
     "<a href='https://cks.nice.org.uk/acne-vulgaris#!prescribinginfosub:10'>NICE CKS advises</a> ",
     "Minocycline is not recommended for use in acne as it is associated with an increased risk of adverse effects such as drug-",
     "induced lupus, skin pigmentation and hepatitis."
- ],
-  "numerator_short": "Minocycline cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
+  ],
   "tags": [
     "antimicrobial",
     "cost",
@@ -25,10 +21,14 @@
     "lowpriority",
     "nice",
     "safety"
-   ],
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '0501030P0%' --Minocycline Hydrochloride"
+  "numerator_bnf_codes_filter": [
+    "0501030P0 # Minocycline Hydrochloride"
   ],
   "denominator_type": "list_size"
 }

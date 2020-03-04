@@ -6,6 +6,8 @@
   "description": [
     "Toothpaste prescribing cost per 1000 patients"
   ],
+  "numerator_short": "Toothpaste cost (£)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "OpenPrescribing currently has data on GP prescriptions and does not have information on NHS dentists' prescribing.",
     "Dentists are best placed to assess, prescribe and monitor dental problems, and it is recommended that they should",
@@ -16,41 +18,33 @@
     "<p><b>Please note that this is an experimental measure. We would be grateful for any feedback at",
     "<a href='mailto:feedback@openprescribing.net?Subject=Toothpaste%20Measure'>feedback@openprescribing.net</a>.</b></p>"
   ],
-  "numerator_short": "Toothpaste cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "core",
     "cost"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code IN (",
-    "  SELECT DISTINCT(bnf_code)",
-    "  FROM {measures}.dmd_objs_with_form_route",
-    "  WHERE form_route = 'paste.dental'",
-    ")"
-      ],
+  "numerator_bnf_codes_query": "SELECT DISTINCT(bnf_code) FROM {measures}.dmd_objs_with_form_route WHERE form_route = 'paste.dental'",
   "denominator_type": "list_size",
-  "date_reviewed": [
-    "2019-09-30"
-  ],
-  "next_review": [
-    "2020-09-30"
-  ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"
   ],
   "checked_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
-  "measure_complexity": [
-    "low"
+  "date_reviewed": [
+    "2019-09-30"
+  ],
+  "next_review": [
+    "2020-09-30"
   ],
   "measure_notebook_url": [
     "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Toothpaste/Toothpaste.ipynb"
+  ],
+  "measure_complexity": [
+    "low"
   ]
 }

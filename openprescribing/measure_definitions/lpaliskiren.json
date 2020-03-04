@@ -6,28 +6,28 @@
   "description": [
     "Cost of Aliskiren per 1000 patients"
   ],
+  "numerator_short": "Aliskiren cost (£)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/cg127/evidence'> NICE hypertension guidance states</a> there is insufficient",
     "evidence of its effectiveness to determine its suitability for use in resistant hypertension.",
     "Whilst aliskiren has shown comparable efficacy to other antihypertensive agents in terms of blood ",
     "pressure reduction, its effects on mortality and long-term morbidity are currently unknown."
-    ],
-  "numerator_short": "Aliskiren cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
+  ],
   "tags": [
     "cost",
     "cardiovascular",
     "iif",
-    "lowpriority",    
+    "lowpriority",
     "nice"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "(bnf_code LIKE '0205053A0%') --Aliskiren  "
+  "numerator_bnf_codes_filter": [
+    "0205053A0 # Aliskiren"
   ],
   "denominator_type": "list_size"
 }

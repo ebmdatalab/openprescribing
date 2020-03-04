@@ -6,37 +6,37 @@
   "description": [
     "Bath and Shower emollients per 1000 patients"
   ],
-  "why_it_matters": [
-  "The <a href='https://www.bmj.com/content/361/bmj.k1332'>BATHE study</a>",
-  "found that there was no evidence",
-  "of clinical benefit for using bath and shower emollients in the standard management of childhood eczema. ",
-  "‘Leave-on’ emollient moisturisers can still be used for treating eczema and these emollients can still be used as soap substitutes."
-  ],
   "numerator_short": "Bath and Shower emollients cost (£)",
   "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
+  "why_it_matters": [
+    "The <a href='https://www.bmj.com/content/361/bmj.k1332'>BATHE study</a>",
+    "found that there was no evidence",
+    "of clinical benefit for using bath and shower emollients in the standard management of childhood eczema. ",
+    "‘Leave-on’ emollient moisturisers can still be used for treating eczema and these emollients can still be used as soap substitutes."
+  ],
   "tags": [
     "cost",
     "iif",
     "lowpriority",
     "efficacy"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "(bnf_code LIKE '130201100%' OR        --Emollient Bath & Shower Preparation \n",
-    "bnf_code LIKE '1302011L0%' OR         --Light Liquid Paraffin \n",
-    "bnf_code = '21220000128' OR           --Hydromol Bath & Shower Emollient 350ml (App) \n",
-    "bnf_code = '21220000129' OR           --Hydromol Bath & Shower Emollient 500ml (App) \n",
-    "bnf_code = '21220000130' OR           --Hydromol Bath & Shower Emollient 1L (App) \n",
-    "bnf_code = '21220000209' OR           --QV Bath Oil \n",
-    "bnf_code = '21220000217' OR           --Zeroneum Bath Add \n",
-    "bnf_code = '21220000227' OR           --Zerolatum Bath Add \n",
-    "bnf_code = '21220000229')             --LPL 63.4 Bath Add and Emollient \n",
-    "AND (bnf_code NOT LIKE '130201100%AJ' --Soya Oil_Liq 83.35% (brands and generics) \n",
-    "AND bnf_code NOT LIKE '130201100%AM') -- Aq_Crm (brands and generics))"
+  "numerator_bnf_codes_filter": [
+    "130201100 # Emollient Bath & Shower Preparation",
+    "~130201100%AJ # Soya Oil_Liq 83.35% (brands and generics)",
+    "~130201100%AM # Aq_Crm (brands and generics))",
+    "1302011L0 # Light Liquid Paraffin",
+    "21220000128 # Hydromol Bath & Shower Emollient 350ml (App)",
+    "21220000129 # Hydromol Bath & Shower Emollient 500ml (App)",
+    "21220000130 # Hydromol Bath & Shower Emollient 1L (App)",
+    "21220000209 # QV Bath Oil",
+    "21220000217 # Zeroneum Bath Add",
+    "21220000227 # Zerolatum Bath Add",
+    "21220000229 # LPL 63.4 Bath Add and Emollient"
   ],
   "denominator_type": "list_size"
 }

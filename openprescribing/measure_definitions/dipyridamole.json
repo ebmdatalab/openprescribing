@@ -7,6 +7,8 @@
     "Total items for dipyridamole (as dipyridamole or dipyridamole/aspirin combination),",
     "as a proportion of total items of dipyridamole, dipyridamole/aspirin combination and clopidogrel"
   ],
+  "numerator_short": "Dipyridamole-containing items",
+  "denominator_short": "Total items",
   "why_it_matters": [
     "Although the <a href='https://www.nice.org.uk/guidance/TA210'>2010 NICE Technology Appraisal </a>",
     "recommends dipyridamole for the prevention of further occlusive events in patients who have had a Transient Ischaemic Attack (TIA), ",
@@ -20,31 +22,25 @@
     "- aspirin 75mg daily should be used if both clopidogrel and modified-release dipyridamole are contraindicated or not tolerated; ",
     "- modified-release dipyridamole 200 mg twice daily should be used if both clopidogrel and aspirin are contraindicated or not tolerated."
   ],
-  "numerator_short": "Dipyridamole-containing items",
-  "denominator_short": "Total items",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "cardiovascular",
     "core",
     "efficacy",
     "nice"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "(",
-    "bnf_code LIKE '0209000L0%' OR --Dipyridamole \n",
-    "bnf_code LIKE '0209000V0%' --Dipyridamole & Aspirin \n",
-    ")"
+  "numerator_bnf_codes_filter": [
+    "0209000L0 # Dipyridamole",
+    "0209000V0 # Dipyridamole & Aspirin"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "(",
-    "bnf_code LIKE '0209000C0%' OR --Clopidogrel \n",
-    "bnf_code LIKE '0209000L0%' OR --Dipyridamole \n",
-    "bnf_code LIKE '0209000V0%' --Dipyridamole & Aspirin \n",
-    ")"
+  "denominator_bnf_codes_filter": [
+    "0209000C0 # Clopidogrel",
+    "0209000L0 # Dipyridamole",
+    "0209000V0 # Dipyridamole & Aspirin"
   ]
 }

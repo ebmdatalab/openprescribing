@@ -31,7 +31,7 @@ from gcutils.bigquery import Client
 
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
-from frontend.utils.bnf_hierarchy import simplify_bnf_codes
+from frontend.utils.bnf_hierarchy import get_all_bnf_codes, simplify_bnf_codes
 
 from google.api_core.exceptions import BadRequest
 
@@ -262,6 +262,7 @@ def arrays_to_strings(measure_def):
         "denominator_columns",
         "denominator_where",
         "numerator_bnf_codes_query",
+        "denominator_bnf_codes_query",
     ]
 
     for field in fields_to_convert:
@@ -284,62 +285,217 @@ def create_or_update_measure(measure_def, end_date):
             v[k] = val.strip()
 
     try:
-        measure = Measure.objects.get(id=measure_id)
+        m = Measure.objects.get(id=measure_id)
     except Measure.DoesNotExist:
-        measure = Measure(id=measure_id)
+        m = Measure(id=measure_id)
 
-    measure.title = v["title"]
-    measure.description = v["description"]
-    measure.why_it_matters = v["why_it_matters"]
-    measure.name = v["name"]
-    measure.tags = v["tags"]
-    measure.tags_focus = v.get("tags_focus", [])
-    measure.title = v["title"]
-    measure.description = v["description"]
-    measure.numerator_short = v["numerator_short"]
-    measure.denominator_short = v["denominator_short"]
-    measure.numerator_type = v["numerator_type"]
-    measure.numerator_from = v.get("numerator_from")
-    measure.numerator_where = v.get("numerator_where")
-    measure.numerator_columns = v.get("numerator_columns")
-    measure.denominator_type = v["denominator_type"]
-    measure.denominator_from = v.get("denominator_from")
-    measure.denominator_where = v.get("denominator_where")
-    measure.denominator_columns = v.get("denominator_columns")
-    measure.url = v["url"]
-    measure.is_cost_based = v["is_cost_based"]
-    measure.is_percentage = v["is_percentage"]
-    measure.low_is_good = v["low_is_good"]
-    measure.numerator_bnf_codes_query = v.get("numerator_bnf_codes_query")
-    measure.numerator_is_list_of_bnf_codes = v.get(
-        "numerator_is_list_of_bnf_codes", True
-    )
-    measure.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
-    if (
-        measure.denominator_from
-        and "normalised_prescribing_standard" in measure.denominator_from
-    ):
-        measure.denominator_is_list_of_bnf_codes = v.get(
-            "denominator_is_list_of_bnf_codes", True
-        )
+    m.title = v["title"]
+    m.description = v["description"]
+    m.why_it_matters = v["why_it_matters"]
+    m.name = v["name"]
+    m.tags = v["tags"]
+    m.tags_focus = v.get("tags_focus", [])
+    m.title = v["title"]
+    m.description = v["description"]
+    m.numerator_short = v["numerator_short"]
+    m.denominator_short = v["denominator_short"]
+    m.url = v["url"]
+    m.is_cost_based = v["is_cost_based"]
+    m.is_percentage = v["is_percentage"]
+    m.low_is_good = v["low_is_good"]
+
+    m.numerator_type = v["numerator_type"]
+
+    if m.numerator_type == "custom":
+        m.numerator_columns = v["numerator_columns"]
+        m.numerator_from = v["numerator_from"]
+        m.numerator_where = v["numerator_where"]
+        m.numerator_bnf_codes_query = v.get("numerator_bnf_codes_query")
+        m.numerator_is_list_of_bnf_codes = v.get("numerator_is_list_of_bnf_codes", True)
+        if m.numerator_is_list_of_bnf_codes:
+            m.numerator_bnf_codes = get_num_or_denom_bnf_codes(m, "numerator", end_date)
+
     else:
-        measure.denominator_is_list_of_bnf_codes = False
+        if m.numerator_type == "bnf_items":
+            m.numerator_columns = "SUM(items) AS numerator"
+        elif m.numerator_type == "bnf_quantity":
+            m.numerator_columns = "SUM(quantity) AS numerator"
+        elif m.numerator_type == "bnf_cost":
+            m.numerator_columns = "SUM(actual_cost) AS numerator"
+        else:
+            assert False, measure_id
 
-    for num_or_denom in ["numerator", "denominator"]:
-        for k, val in build_num_or_denom_fields(measure, num_or_denom).items():
-            setattr(measure, k, val)
-        setattr(
-            measure,
-            "{}_bnf_codes".format(num_or_denom),
-            get_num_or_denom_bnf_codes(measure, num_or_denom, end_date),
+        m.numerator_from = "{hscic}.normalised_prescribing_standard"
+
+        m.numerator_bnf_codes_filter = v.get("numerator_bnf_codes_filter")
+        m.numerator_bnf_codes_query = v.get("numerator_bnf_codes_query")
+        m.numerator_bnf_codes = get_bnf_codes(
+            m.numerator_bnf_codes_query, m.numerator_bnf_codes_filter
         )
+
+        m.numerator_where = build_where(m.numerator_bnf_codes)
+        m.numerator_is_list_of_bnf_codes = True
+
+    m.denominator_type = v["denominator_type"]
+
+    if m.denominator_type == "custom":
+        m.denominator_columns = v["denominator_columns"]
+        m.denominator_from = v["denominator_from"]
+        m.denominator_where = v["denominator_where"]
+        m.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
+        if (
+            m.denominator_from
+            and "normalised_prescribing_standard" in m.denominator_from
+        ):
+            m.denominator_is_list_of_bnf_codes = v.get(
+                "denominator_is_list_of_bnf_codes", True
+            )
+        else:
+            m.denominator_is_list_of_bnf_codes = False
+        m.denominator_bnf_codes = get_num_or_denom_bnf_codes(m, "denominator", end_date)
+
+    elif m.denominator_type == "list_size":
+        m.denominator_columns = "SUM(total_list_size / 1000.0) AS denominator"
+        m.denominator_from = "{hscic}.practice_statistics"
+        m.denominator_where = "1 = 1"
+        m.denominator_bnf_codes_query = None
+        m.denominator_is_list_of_bnf_codes = False
+
+    elif m.denominator_type == "star_pu_antibiotics":
+        m.denominator_columns = "CAST(JSON_EXTRACT(MAX(star_pu), '$.oral_antibacterials_item') AS FLOAT64) AS denominator"
+        m.denominator_from = "{hscic}.practice_statistics"
+        m.denominator_where = "1 = 1"
+        m.denominator_bnf_codes_query = None
+        m.denominator_is_list_of_bnf_codes = False
+
+    else:
+        if m.denominator_type == "bnf_items":
+            m.denominator_columns = "SUM(items) AS denominator"
+        elif m.denominator_type == "bnf_quantity":
+            m.denominator_columns = "SUM(quantity) AS denominator"
+        elif m.denominator_type == "bnf_cost":
+            m.denominator_columns = "SUM(actual_cost) AS denominator"
+        else:
+            assert False, measure_id
+
+        m.denominator_from = "{hscic}.normalised_prescribing_standard"
+
+        m.denominator_bnf_codes_filter = v.get("denominator_bnf_codes_filter")
+        m.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
+        m.denominator_bnf_codes = get_bnf_codes(
+            m.denominator_bnf_codes_query, m.denominator_bnf_codes_filter
+        )
+
+        m.denominator_where = build_where(m.denominator_bnf_codes)
+        m.denominator_is_list_of_bnf_codes = True
 
     if not v.get("no_analyse_url"):
-        measure.analyse_url = build_analyse_url(measure)
+        m.analyse_url = build_analyse_url(m)
 
-    measure.save()
+    m.save()
 
-    return measure
+    return m
+
+
+def get_bnf_codes(base_query, filter_):
+    """Return list of BNF codes used to caluclate measure numerator/denominator
+    values.
+
+    At least one of `base_query` and `filter_` must not be None.
+
+    `base_query` is a query to be run against BigQuery.  It should return
+    results with a single column called `bnf_code`.
+
+    `filter_` is a list of BNF code filters, which have one of the following
+    forms:
+
+      * a BNF code (eg 0501015P0AAABAB)
+      * a BNF code prefix (eg 0501015P0)
+      * a string including a SQL wildcard (eg 0501015P0%AB)
+
+    Each filter can be negated by being prefixed with a ~.
+
+    If both `base_query` and `filter_` are not None, the results of
+    `base_query` are filtered by the filters specified in `filter_`.
+
+    If `base_query` is None, all BNF codes are filtered by the filters
+    specified in `filter_`.
+
+    If `filter_` is None, the results of `base_query` are not filtered.
+    """
+
+    assert base_query or filter_
+
+    query = build_bnf_codes_query(base_query, filter_)
+    results = Client().query(query)
+
+    # Before 2017, the published prescribing data included trailing spaces in
+    # certain BNF codes.  We strip those here.  See #2447.
+    bnf_codes = {row[0].strip() for row in results.rows}
+
+    return sorted(bnf_codes & get_all_bnf_codes())
+
+
+def build_bnf_codes_query(base_query, filter_):
+    if base_query is None:
+        base_query = "SELECT bnf_code FROM {hscic}.presentation"
+
+    if filter_ is None:
+        query = base_query
+    else:
+        where_clause = build_bnf_codes_query_where(filter_)
+        query = """
+        WITH subquery AS ({})
+        SELECT bnf_code
+        FROM subquery
+        WHERE {}
+        """.format(
+            base_query, where_clause
+        )
+
+    return query
+
+
+def build_bnf_codes_query_where(filter_):
+    includes = []
+    excludes = []
+
+    for element in filter_:
+        element = element.split("#")[0].strip()
+        if element[0] == "~":
+            excludes.append(build_bnf_codes_query_fragment(element[1:]))
+        else:
+            includes.append(build_bnf_codes_query_fragment(element))
+
+    where_clause = "(" + " OR ".join(includes) + ")"
+
+    if excludes:
+        where_clause += " AND NOT (" + " OR ".join(excludes) + ")"
+
+    return where_clause
+
+
+def build_bnf_codes_query_fragment(element):
+    if element[:2] <= "19":
+        # this is a drug
+        full_code_length = 15
+    else:
+        # this is an appliance
+        full_code_length = 11
+
+    if "%" in element:
+        fragment = "bnf_code LIKE '{}'"
+    elif len(element) == full_code_length:
+        fragment = "bnf_code = '{}'"
+    else:
+        fragment = "bnf_code LIKE '{}%'"
+
+    return fragment.format(element)
+
+
+def build_where(bnf_codes):
+    bnf_code_sql_fragment = ", ".join('"{}"'.format(bnf_code) for bnf_code in bnf_codes)
+    return "bnf_code IN ({})".format(bnf_code_sql_fragment)
 
 
 def build_analyse_url(measure):
@@ -430,71 +586,6 @@ def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
     # Before 2017, the published prescribing data included trailing spaces in
     # certain BNF codes.  We strip those here.  See #2447.
     return sorted({row[0].strip() for row in results.rows})
-
-
-def build_num_or_denom_fields(measure, num_or_denom):
-    def full_attr_name(attr):
-        return num_or_denom + "_" + attr
-
-    def get_measure_attr(attr):
-        return getattr(measure, full_attr_name(attr))
-
-    type_ = getattr(measure, num_or_denom + "_type")
-
-    if type_ == "custom":
-        columns = get_measure_attr("columns")
-        from_ = get_measure_attr("from")
-        where = get_measure_attr("where")
-        is_list_of_bnf_codes = get_measure_attr("is_list_of_bnf_codes")
-        bnf_codes_query = get_measure_attr("bnf_codes_query")
-
-    elif type_ == "bnf_items":
-        columns = "SUM(items) AS {}".format(num_or_denom)
-        from_ = "{hscic}.normalised_prescribing_standard"
-        where = get_measure_attr("where")
-        is_list_of_bnf_codes = True
-        bnf_codes_query = None
-
-    elif type_ == "bnf_quantity":
-        columns = "SUM(quantity) AS {}".format(num_or_denom)
-        from_ = "{hscic}.normalised_prescribing_standard"
-        where = get_measure_attr("where")
-        is_list_of_bnf_codes = True
-        bnf_codes_query = None
-
-    elif type_ == "bnf_cost":
-        columns = "SUM(actual_cost) AS {}".format(num_or_denom)
-        from_ = "{hscic}.normalised_prescribing_standard"
-        where = get_measure_attr("where")
-        is_list_of_bnf_codes = True
-        bnf_codes_query = None
-
-    elif type_ == "list_size":
-        assert num_or_denom == "denominator"
-        columns = "SUM(total_list_size / 1000.0) AS denominator"
-        from_ = "{hscic}.practice_statistics"
-        where = "1 = 1"
-        is_list_of_bnf_codes = False
-        bnf_codes_query = None
-
-    elif type_ == "star_pu_antibiotics":
-        assert num_or_denom == "denominator"
-        columns = "CAST(JSON_EXTRACT(MAX(star_pu), '$.oral_antibacterials_item') AS FLOAT64) AS denominator"
-        from_ = "{hscic}.practice_statistics"
-        where = "1 = 1"
-        is_list_of_bnf_codes = False
-        bnf_codes_query = None
-
-    else:
-        assert False, type_
-
-    return {
-        full_attr_name("columns"): columns,
-        full_attr_name("from"): from_,
-        full_attr_name("where"): where,
-        full_attr_name("bnf_codes_query"): bnf_codes_query,
-        full_attr_name("is_list_of_bnf_codes"): is_list_of_bnf_codes,
-    }
 
 
 class MeasureCalculation(object):

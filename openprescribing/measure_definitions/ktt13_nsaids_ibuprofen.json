@@ -8,6 +8,8 @@
     "as a percentage of the total number of prescription items",
     "for all NSAIDs."
   ],
+  "numerator_short": "NSAID items (excl naproxen and ibuprofen)",
+  "denominator_short": "NSAID items",
   "why_it_matters": [
     "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, including COX-2 inhibitors and some ",
     "'traditional' NSAIDS, for their effects on the stomach, kidneys and the risk of blood clots.  ",
@@ -15,12 +17,6 @@
     "as ibuprofen and naproxen are two of the drugs with a lower level of risk,</a> doctors should prescribe these to patients ",
     "before trying the others."
   ],
-  "numerator_short": "NSAID items (excl naproxen and ibuprofen)",
-  "denominator_short": "NSAID items",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "cardiovascular",
     "core",
@@ -28,16 +24,18 @@
     "pain",
     "safety"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "SUBSTR(bnf_code,1,6) IN ('100101') --Non-Steroidal Anti-Inflammatory Drugs \n",
-    "AND (SUBSTR(bnf_code,1,9) NOT IN (",
-    "'1001010J0', --Ibuprofen \n",
-    "'1001010P0') --Naproxen \n",
-    ")"
+  "numerator_bnf_codes_filter": [
+    "100101 # Non-Steroidal Anti-Inflammatory Drugs",
+    "~1001010J0 # Ibuprofen",
+    "~1001010P0 # Naproxen"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "SUBSTR(bnf_code,1,6) IN ('100101') --Non-Steroidal Anti-Inflammatory Drugs"
+  "denominator_bnf_codes_filter": [
+    "100101 # Non-Steroidal Anti-Inflammatory Drugs"
   ]
 }

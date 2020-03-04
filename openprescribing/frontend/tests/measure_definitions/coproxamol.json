@@ -28,10 +28,8 @@
     "safety"
   ],
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "(",
-    "bnf_code LIKE '0407010Q0%' -- Co-Proxamol (Dextroprop HCl/Paracet) (brand and generic) \n",
-    ")"
+  "numerator_bnf_codes_filter": [
+    "0407010Q0 # Co-Proxamol (Dextroprop HCl/Paracet) (brand and generic)"
   ],
   "denominator_type": "list_size"
 }

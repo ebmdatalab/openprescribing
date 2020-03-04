@@ -6,6 +6,8 @@
   "description": [
     "Prescribing of pregabalin (total mg) per 1000 patients"
   ],
+  "numerator_short": "Total pregabalin prescribed (in miligrams)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Pregabalin is a relatively new drug, which is increasingly used in neuropathic and other types of pain. ",
     "Also its costs have reduced recently, its use is rising increasingly rapidly in the NHS. ",
@@ -13,17 +15,15 @@
     "This measure shows the total amount in miligrams of pregabalin prescribed.  ",
     "There is an additional measure showing numbers of prescriptions on our measures page."
   ],
-  "numerator_short": "Total pregabalin prescribed (in miligrams)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": null,
   "tags": [
     "core",
     "pain",
     "safety"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
   "numerator_type": "custom",
   "numerator_columns": [
     "SUM(lyrica_mg) AS numerator"

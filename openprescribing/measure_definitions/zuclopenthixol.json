@@ -6,6 +6,8 @@
   "description": [
     "Number of items for zuclopenthixol acetate items as a proportion of all injectable zuclopenthixol items"
   ],
+  "numerator_short": "Zuclopenthixol Acetate Items",
+  "denominator_short": "All injectable zuclopenthixol items",
   "why_it_matters": [
     "The <a href='https://bnf.nice.org.uk/drug/zuclopenthixol-acetate.html'> BNF has a safety warning advising that</a>",
     "zuclopenthixol <b>acetate</b> should only be used in hospitals as it is a relatively short-acting antipsychotic.",
@@ -17,30 +19,22 @@
     "and you can read more about the measure ",
     "<a href='https://ebmdatalab.net/zuclopenthixol-acetate-a-new-kind-of-measure-on-openprescribing/'>on our blog</a>.</p>"
   ],
-  "numerator_short": "Zuclopenthixol Acetate Items",
-  "denominator_short": "All injectable zuclopenthixol items",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "mentalhealth",
     "safety"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "(bnf_code LIKE '040201010%') --acetate "
-      ],
-  "denominator_type": "bnf_items",
-  "denominator_where": [
-    "(bnf_code LIKE '040201010%') OR --acetate \n",
-    "(bnf_code LIKE '0402020Z0%')  --decanoate"
-      ],
-  "date_reviewed": [
-    "2019-10-09"
+  "numerator_bnf_codes_filter": [
+    "040201010 # acetate"
   ],
-  "next_review": [
-    "2020-10-09"
+  "denominator_type": "bnf_items",
+  "denominator_bnf_codes_filter": [
+    "040201010 # acetate",
+    "0402020Z0 # decanoate"
   ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"
@@ -48,10 +42,16 @@
   "checked_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
-  "measure_complexity": [
-    "low"
+  "date_reviewed": [
+    "2019-10-09"
+  ],
+  "next_review": [
+    "2020-10-09"
   ],
   "measure_notebook_url": [
     "https://github.com/ebmdatalab/jupyter-notebooks/tree/master/new_measures/Zuclopenthixol"
+  ],
+  "measure_complexity": [
+    "low"
   ]
 }

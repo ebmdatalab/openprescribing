@@ -8,34 +8,30 @@
     "as a proportion of total items of all ciclosporin and tacrolimus items",
     "(0802020G0 and 0802020T0)."
   ],
+  "numerator_short": "Generic ciclosporin and tacrolimus items",
+  "denominator_short": "Ciclosporin and tacrolimus items",
   "why_it_matters": [
     "It is recommended for both <a href='https://bnf.nice.org.uk/drug/ciclosporin.html#prescribingAndDispensingInformations'> ciclosporin </a>",
     "and  <a href='https://bnf.nice.org.uk/drug/tacrolimus.html#importantSafetyInformations'> tacrolimus </a>",
     "that patients are prescribed and dispensed by brand name, to reduce the problems of patients switching formulations. "
   ],
-  "numerator_short": "Generic ciclosporin and tacrolimus items",
-  "denominator_short": "Ciclosporin and tacrolimus items",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "core",
     "generic",
     "safety"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "(",
-    "bnf_code LIKE '0802020G0AA%' OR --Ciclosporin (Systemic) (generic) \n",
-    "bnf_code LIKE '0802020T0AA%'  --Tacrolimus (Systemic) (generic) \n",
-    ")"
+  "numerator_bnf_codes_filter": [
+    "0802020G0AA # Ciclosporin (Systemic) (generic)",
+    "0802020T0AA # Tacrolimus (Systemic) (generic)"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "(",
-    "bnf_code LIKE '0802020G0%' OR --Ciclosporin (Systemic) (brand and generic) \n",
-    "bnf_code LIKE '0802020T0%'  --Tacrolimus (Systemic) (brand and generic) \n",
-    ")"
+  "denominator_bnf_codes_filter": [
+    "0802020G0 # Ciclosporin (Systemic) (brand and generic)",
+    "0802020T0 # Tacrolimus (Systemic) (brand and generic)"
   ]
 }
