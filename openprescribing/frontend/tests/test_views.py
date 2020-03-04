@@ -12,18 +12,8 @@ from django.core.management import call_command
 from django.http import QueryDict
 from django.test import TestCase, SimpleTestCase, override_settings
 
-from frontend.models import (
-    EmailMessage,
-    OrgBookmark,
-    SearchBookmark,
-    ImportLog,
-    PCT,
-    Practice,
-    MeasureValue,
-    Measure,
-)
+from frontend.models import EmailMessage, OrgBookmark, SearchBookmark, Measure
 from frontend.views.views import BadRequestError, _get_measure_tag_filter, cached
-from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
 class TestAlertViews(TestCase):
@@ -168,19 +158,21 @@ class TestAlertViews(TestCase):
         self.assertEqual(bookmark.pcn.code, "PCN0001")
 
 
-@copy_fixtures_to_matrixstore
 class TestFrontendHomepageViews(TestCase):
-    fixtures = [
-        "practices",
-        "orgs",
-        "one_month_of_measures",
-        "importlog",
-        "dmd-subset",
-        "prescriptions",
-    ]
+    fixtures = ["practices", "orgs", "one_month_of_measures", "importlog", "dmd-subset"]
 
-    def setUp(self):
-        ImportLog.objects.create(category="prescribing", current_at="2014-11-01")
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        patcher = mock.patch("frontend.views.views.get_total_savings_for_org")
+        mocked = patcher.start()
+        mocked.return_value = 0
+        cls.patcher = patcher
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.patcher.stop()
+        super().tearDownClass()
 
     def test_call_regional_team_homepage(self):
         response = self.client.get("/regional-team/Y01/")
@@ -231,19 +223,13 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(response.context["entity"].code, "C84001")
         self.assertEqual(response.context["entity_type"], "practice")
         self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        doc = pq(response.content)
+        title = doc("h1")
+        self.assertEqual(title.text(), "Larwood Surgery")
 
 
-@copy_fixtures_to_matrixstore
 class TestFrontendViews(TestCase):
-    fixtures = [
-        "chemicals",
-        "sections",
-        "orgs",
-        "practices",
-        "prescriptions",
-        "measures",
-        "importlog",
-    ]
+    fixtures = ["chemicals", "sections", "orgs", "practices", "measures", "importlog"]
 
     def test_call_view_homepage(self):
         response = self.client.get("")
@@ -355,22 +341,6 @@ class TestFrontendViews(TestCase):
         ccgs = doc("a.ccg")
         self.assertEqual(len(ccgs), 2)
 
-    def test_call_view_ccg_section(self):
-        MeasureValue.objects.create(
-            pct=PCT.objects.get(code="03V"),
-            measure=Measure.objects.first(),
-            month="2015-09-01",
-            percentile=0.5,
-        )
-        response = self.client.get("/ccg/03V/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "entity_home_page.html")
-        doc = pq(response.content)
-        title = doc("h1")
-        self.assertEqual(title.text(), "NHS Corby")
-        practices = doc(".practice-list li")
-        self.assertEqual(len(practices), 2)
-
     def test_ccg_homepage_redirects_with_tags_query(self):
         response = self.client.get("/ccg/03V/?tags=lowpriority")
         self.assertEqual(response.status_code, 302)
@@ -400,29 +370,6 @@ class TestFrontendViews(TestCase):
         response = self.client.get("/pcn/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "all_pcns.html")
-
-    def test_call_view_practice_section(self):
-        MeasureValue.objects.create(
-            practice=Practice.objects.get(code="P87629"),
-            measure=Measure.objects.first(),
-            month="2015-09-01",
-            percentile=0.5,
-        )
-        response = self.client.get("/practice/P87629/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "entity_home_page.html")
-        doc = pq(response.content)
-        title = doc("h1")
-        self.assertEqual(title.text(), "1/ST Andrews Medical Practice")
-        lead = doc("#intro p:first")
-        self.assertEqual(
-            lead.text(),
-            (
-                "Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET "
-                "ECCLES, MANCHESTER, M30 0NU"
-            ),
-        )
-        lead = doc(".lead:last")
 
     def test_practice_homepage_redirects_with_tags_query(self):
         response = self.client.get("/practice/P87629/?tags=lowpriority")
