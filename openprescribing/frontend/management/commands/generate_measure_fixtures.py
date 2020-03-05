@@ -130,10 +130,8 @@ class Command(BaseCommand):
         # import_measures uses this ImportLog to work out which months it
         # should import data.
         ImportLog.objects.create(category="prescribing", current_at="2018-08-01")
-
-        # Practice and CCG homepages need this to work out which PPU savings to
-        # show.
-        ImportLog.objects.create(category="ppu", current_at="2018-08-01")
+        # The practice, CCG etc dashboards use this date
+        ImportLog.objects.create(category="dashboard_data", current_at="2018-08-01")
 
         # Set up BQ, and upload STPs, CCGs, Practices.
         Client("measures").create_dataset()
