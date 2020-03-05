@@ -8,38 +8,37 @@
     "Total cost of prescriptions for bile acid sequestrants, fibrates, nicotinic acid, and omega-3 fatty acid compounds ",
     "per 1000 registered patients"
   ],
+  "numerator_short": "Cost of selected items (£)",
+  "denominator_short": "100 patients",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations'>NICE guidance suggests</a> that, for the vast ",
     "majority of people who need treatment for high cholesterol, these drugs should not be used. ",
     "There is no evidence that omega 3 fatty acids reduce the chances of patients getting cardiovascular disease."
   ],
-  "numerator_short": "Cost of selected items (£)",
-  "denominator_short": "100 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cardiovascular",
     "core",
     "efficacy",
     "nice"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",    
-    "'021200010', --Ciprofibrate \n",
-    "'0212000A0', --Acipimox \n",
-    "'0212000AB', --Omega-3-Acid Ethyl Esters \n",
-    "'0212000AD', --Colesevelam Hydrochloride \n",
-    "'0212000AE', --Nicotinic Acid/Laropiprant \n",
-    "'0212000D0', --Bezafibrate \n",
-    "'0212000F0', --Colestyramine \n",
-    "'0212000K0', --Colestipol Hydrochloride \n",
-    "'0212000P0', --Fenofibrate \n",
-    "'0212000Q0', --Gemfibrozil \n",
-    "'0212000U0', --Nicotinic Acid \n",
-    "'0212000V0') --Omega-3 Marine Triglycerides"
- ],
+  "numerator_bnf_codes_filter": [
+    "021200010 # Ciprofibrate",
+    "0212000A0 # Acipimox",
+    "0212000AB # Omega-3-Acid Ethyl Esters",
+    "0212000AD # Colesevelam Hydrochloride",
+    "0212000AE # Nicotinic Acid/Laropiprant",
+    "0212000D0 # Bezafibrate",
+    "0212000F0 # Colestyramine",
+    "0212000K0 # Colestipol Hydrochloride",
+    "0212000P0 # Fenofibrate",
+    "0212000Q0 # Gemfibrozil",
+    "0212000U0 # Nicotinic Acid",
+    "0212000V0 # Omega-3 Marine Triglycerides"
+  ],
   "denominator_type": "list_size"
 }

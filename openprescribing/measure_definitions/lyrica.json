@@ -8,6 +8,8 @@
     "Total quantity of Lyrica capsules,",
     "as a proportion of total capsules of pregabalin."
   ],
+  "numerator_short": "Lyrica capsules quantity",
+  "denominator_short": "Pregabalin capsules quantity",
   "why_it_matters": [
     "<a href='https://www.england.nhs.uk/wp-content/uploads/2015/03/pregabalin-guidance.pdf'>In 2015 NHS England were ",
     "required to recommend to GPs that when used for pain</a> pregabalin should be prescribed as the branded product Lyrica, ",
@@ -16,23 +18,27 @@
     "product fell sharply in August 2017, and practices should now follow normal practice for prescribing, i.e. ",
     "usually prescribe by the generic name."
   ],
-  "numerator_short": "Lyrica capsules quantity",
-  "denominator_short": "Pregabalin capsules quantity",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "core",
     "cost",
     "pain"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_quantity",
-  "numerator_where": [
-    "bnf_code LIKE '0408010AEBB%' AND bnf_name LIKE '%_Cap%'--Lyrica capsules"
+  "numerator_bnf_codes_query": [
+    "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '%_Cap%'"
+  ],
+  "numerator_bnf_codes_filter": [
+    "0408010AEBB # Lyrica"
   ],
   "denominator_type": "bnf_quantity",
-  "denominator_where": [
-    "bnf_code LIKE '0408010AE%' AND bnf_name LIKE '%_Cap%' --Pregabablin capsules(brands and generic)"
+  "denominator_bnf_codes_query": [
+    "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '%_Cap%'"
+  ],
+  "denominator_bnf_codes_filter": [
+    "0408010AE # Pregabablin capsules(brands and generic)"
   ]
 }

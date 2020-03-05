@@ -6,6 +6,8 @@
   "description": [
     "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol"
   ],
+  "numerator_short": "MDI (Total Items)",
+  "denominator_short": "Total Inhalers",
   "why_it_matters": [
     "The NHS has <a href='https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf'>committed",
     "to reducing its carbon footprint by 51% by 2025</a> to meet the target in the Climate Change Act, including a shift to dry powdered",
@@ -15,14 +17,8 @@
     "produced a inhaler decision aid</a> to faciltiate discussion about inhaler options. ",
     "<p>You can read more about this measure ",
     "<a href='https://ebmdatalab.net/new-measure-inhalers-and-the-environment/'>on our blog</a>, ",
-    "including the rationale for excluding salbutamol." 
+    "including the rationale for excluding salbutamol."
   ],
-  "numerator_short": "MDI (Total Items)",
-  "denominator_short": "Total Inhalers",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "core",
     "greenernhs",
@@ -30,36 +26,34 @@
     "nice",
     "respiratory"
   ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code IN (",
-    "  SELECT DISTINCT(bnf_code)",
-    "  FROM {measures}.dmd_objs_with_form_route",
-    "  WHERE form_route = 'pressurizedinhalation.inhalation'",
-    "  AND bnf_code LIKE '03%' ",
-    "  AND bnf_code NOT LIKE '0301011R0%' ",
-    "  AND bnf_name NOT LIKE '%Respimat%' ",
-    "  AND bnf_code NOT LIKE '0301040X0AA%' ",
-    "  AND bnf_code NOT LIKE '0301011Z0AA%' ",
-    "  AND bnf_code NOT LIKE '0301020Q0AAACAC' ",
-    "  AND bnf_code NOT LIKE '0301020Q0AAAEAE' ",
-    ")"
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.dmd_objs_with_form_route",
+    "WHERE form_route = 'pressurizedinhalation.inhalation'",
+    "AND bnf_name NOT LIKE '%Respimat%'"
+  ],
+  "numerator_bnf_codes_filter": [
+    "03",
+    "~0301011R0%",
+    "~0301040X0AA",
+    "~0301011Z0AA",
+    "~0301020Q0AAACAC",
+    "~0301020Q0AAAEAE"
   ],
   "denominator_type": "bnf_items",
-  "denominator_where": [
-    "bnf_code IN (",
-    "  SELECT DISTINCT(bnf_code)",
-    "  FROM {measures}.dmd_objs_with_form_route",
-    "  WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
-    "  AND bnf_code LIKE '03%' ",
-    "  AND bnf_code NOT LIKE '0301011R0%' ",
-    ")"
+  "denominator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.dmd_objs_with_form_route",
+    "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')"
   ],
-  "date_reviewed": [
-    "2019-11-19"
-  ],
-  "next_review": [
-    "2020-06-19"
+  "denominator_bnf_codes_filter": [
+    "03",
+    "~0301011R0"
   ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"
@@ -67,10 +61,16 @@
   "checked_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
-  "measure_complexity": [
-    "medium"
+  "date_reviewed": [
+    "2019-11-19"
+  ],
+  "next_review": [
+    "2020-06-19"
   ],
   "measure_notebook_url": [
     "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Enviromental%20Inhalers/Environmental%20Inhalers.ipynb"
+  ],
+  "measure_complexity": [
+    "medium"
   ]
 }

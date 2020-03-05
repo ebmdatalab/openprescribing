@@ -6,6 +6,8 @@
   "description": [
     "Total opioid prescribing (as oral morphine equivalence) per 1000 patients"
   ],
+  "numerator_short": "Total opioids prescribed (in OME mg)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
     "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
@@ -17,18 +19,16 @@
     "<p> We have written a paper about the increase in opioid prescribing in England since 1999, which can be found in",
     "<i><a href= 'https://www.thelancet.com/journals/lanpsy/article/PIIS2215-0366(18)30471-1'>The Lancet Psychiatry</a></i>."
   ],
-  "numerator_short": "Total opioids prescribed (in OME mg)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": null,
   "tags": [
     "core",
     "opioids",
     "pain",
     "safety"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
   "numerator_type": "custom",
   "numerator_columns": [
     "SUM(total_ome) AS numerator"

@@ -479,12 +479,15 @@ class TestMeasureDefinitionViews(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        # We have to patch this function as otherwise the measure import
+        # We have to patch these functions as otherwise the measure import
         # process tries to query BigQuery to get a list of matching BNF codes
-        fn = "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
-        with mock.patch(fn) as get_bnf_codes:
-            get_bnf_codes.return_value = []
-            call_command("import_measures", definitions_only=True)
+        fn1 = "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
+        fn2 = "frontend.management.commands.import_measures.get_bnf_codes"
+        with mock.patch(fn1) as get_num_or_denom_bnf_codes:
+            with mock.patch(fn2) as get_bnf_codes:
+                get_num_or_denom_bnf_codes.return_value = []
+                get_bnf_codes.return_value = []
+                call_command("import_measures", definitions_only=True)
 
     def test_can_load_all_measure_definition_pages(self):
         measure_ids = list(Measure.objects.values_list("id", flat=True))
