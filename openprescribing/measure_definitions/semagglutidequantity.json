@@ -21,6 +21,8 @@
 	"low_is_good": true,
 	"tags": [
 		"core",
+		"cost",
+		"diabetes",
 		"safety"
 	],
 	"numerator_type": "custom",
@@ -42,10 +44,10 @@
 		"bnf_code LIKE '0601023AW%' --Semaglutide"
 	],
 "date_reviewed": [
-    "2019-11-21"
+    "2020-05-03"
   ],
   "next_review": [
-    "2019-11-21"
+    "2020-11-21"
   ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
