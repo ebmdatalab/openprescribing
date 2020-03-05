@@ -147,8 +147,8 @@ class Command(BaseCommand):
         bnf_codes = []
 
         for ix in range(5):
-            numerator_where = ("bnf_code LIKE '0{}01%'".format(ix),)
-            denominator_where = ("bnf_code LIKE '0{}%'".format(ix),)
+            numerator_bnf_codes_filter = ["0{}01".format(ix)]
+            denominator_bnf_codes_filter = ["0{}".format(ix)]
 
             if ix in [0, 1]:
                 measure_id = "core_{}".format(ix)
@@ -166,8 +166,8 @@ class Command(BaseCommand):
                 name = "LP omnibus measure"
                 tags = ["core"]
                 tags_focus = ["lowpriority"]
-                numerator_where = ("bnf_code LIKE '0201%' OR bnf_code LIKE'0301%'",)
-                denominator_where = ("bnf_code LIKE '02%' OR bnf_code LIKE'03%'",)
+                numerator_bnf_codes_filter = ["0201", "0301"]
+                denominator_bnf_codes_filter = ["02", "03"]
 
             measure_definition = {
                 "name": name,
@@ -177,10 +177,10 @@ class Command(BaseCommand):
                 "url": "http://example.com/measure-{}".format(measure_id),
                 "numerator_short": "Numerator for {}".format(measure_id),
                 "numerator_type": "bnf_quantity",
-                "numerator_where": numerator_where,
+                "numerator_bnf_codes_filter": numerator_bnf_codes_filter,
                 "denominator_short": "Denominator for {}".format(measure_id),
                 "denominator_type": "bnf_quantity",
-                "denominator_where": denominator_where,
+                "denominator_bnf_codes_filter": denominator_bnf_codes_filter,
                 "is_cost_based": True,
                 "is_percentage": True,
                 "low_is_good": True,
@@ -294,6 +294,17 @@ class Command(BaseCommand):
                 quantity=row[11],
                 processing_date=row[12][:10],
             )
+
+        # Upload presentations to BigQuery: the new measures system requires them
+        table = client.get_or_create_table("presentation", schemas.PRESENTATION_SCHEMA)
+        with tempfile.NamedTemporaryFile(mode="wt", encoding="utf8", newline="") as f:
+            writer = csv.DictWriter(
+                f, [field.name for field in schemas.PRESENTATION_SCHEMA]
+            )
+            for bnf_code in bnf_codes:
+                writer.writerow({"bnf_code": bnf_code})
+            f.seek(0)
+            table.insert_rows_from_csv(f.name, schemas.PRESENTATION_SCHEMA)
 
         # In production, normalised_prescribing_standard is actually a view,
         # but for the tests it's much easier to set it up as a normal table.
