@@ -62,6 +62,7 @@
     "bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
     ")"
   ],
+  "numerator_is_list_of_bnf_codes": false,
   "denominator_type": "custom",
   "denominator_columns": [
     "SUM(total_quantity) AS denominator"
@@ -79,6 +80,7 @@
     "bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
     ")"
   ],
+  "denominator_is_list_of_bnf_codes": false,
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"
   ],
