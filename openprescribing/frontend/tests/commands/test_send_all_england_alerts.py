@@ -8,7 +8,7 @@ from frontend.tests.data_factory import DataFactory
 
 class CommandTestCase(ApiTestBase):
 
-    fixtures = ApiTestBase.fixtures + ["functional-measures"]
+    fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     @classmethod
     def setUpTestData(cls):

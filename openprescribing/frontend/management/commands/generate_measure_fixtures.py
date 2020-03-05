@@ -1,4 +1,4 @@
-# This task generates the fixtures in frontend/tests/fixtures/functional-measures.json.
+# This task generates the fixtures in frontend/tests/fixtures/functional-measures-dont-edit.json.
 # The generated data includes Practices and all their parent organisations,
 # Measures, MeasureValues, and MeasureGlobals.
 #
@@ -306,6 +306,6 @@ class Command(BaseCommand):
 
         # Dump the fixtures.
         fixture_path = os.path.join(
-            "frontend", "tests", "fixtures", "functional-measures.json"
+            "frontend", "tests", "fixtures", "functional-measures-dont-edit.json"
         )
         call_command("dumpdata", "frontend", indent=2, output=fixture_path)

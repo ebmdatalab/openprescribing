@@ -30,7 +30,7 @@ MEASURE_LP_2_ANALYSE_URL = "/analyse/#numIds=0201&denomIds=02&measure=lp_2"
 class MeasuresTests(SeleniumTestCase):
     maxDiff = None
 
-    fixtures = ["functional-measures"]
+    fixtures = ["functional-measures-dont-edit"]
 
     # These methods override the default behaviour of loading and flushing
     # fixtures for each test method and instead load them once for the test
