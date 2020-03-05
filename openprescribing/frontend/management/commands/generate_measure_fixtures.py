@@ -266,7 +266,7 @@ class Command(BaseCommand):
         )
 
         # Upload prescribing_rows to normalised_prescribing_standard.
-        with tempfile.NamedTemporaryFile() as f:
+        with tempfile.NamedTemporaryFile(mode="wt", encoding="utf8", newline="") as f:
             writer = csv.writer(f)
             for row in prescribing_rows:
                 writer.writerow(row)
