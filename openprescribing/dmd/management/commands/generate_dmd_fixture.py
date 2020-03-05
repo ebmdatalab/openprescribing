@@ -8,11 +8,12 @@ have foreign keys to, such as UnitOfMeasure or VTM.
 """
 
 from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import BaseCommand
 from django.db.models.fields.related import ForeignKey
-from django.db.models.fields.reverse_related import ManyToOneRel
+from django.db.models.fields.reverse_related import ManyToOneRel, OneToOneRel
 
-from dmd.models import VMP, VMPP, AMP, AMPP
+from dmd.models import VMP, VMPP, AMP, AMPP, GTIN
 
 
 class Command(BaseCommand):
@@ -23,7 +24,7 @@ class Command(BaseCommand):
         parser.add_argument("--include-reverse-relations", action="store_true")
 
     def handle(self, *args, **kwargs):
-        classes_we_care_about = (VMP, VMPP, AMP, AMPP)
+        classes_we_care_about = (VMP, VMPP, AMP, AMPP, GTIN)
         ids = kwargs["ids"]
         objs = []
         for cls in classes_we_care_about:
@@ -42,9 +43,15 @@ class Command(BaseCommand):
                     and isinstance(f, ManyToOneRel)
                     and f.related_model in classes_we_care_about
                 ):
-                    related_objs = getattr(obj, f.get_accessor_name()).all()
-                    for related_obj in related_objs:
-                        if related_obj not in objs:
-                            objs.append(related_obj)
+                    if isinstance(f, OneToOneRel):
+                        try:
+                            objs.append(getattr(obj, f.get_accessor_name()))
+                        except ObjectDoesNotExist:
+                            pass
+                    else:
+                        related_objs = getattr(obj, f.get_accessor_name()).all()
+                        for related_obj in related_objs:
+                            if related_obj not in objs:
+                                objs.append(related_obj)
 
         print(serializers.serialize("json", objs, indent=2))

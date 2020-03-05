@@ -16,6 +16,8 @@ def search(q, obj_types, include):
     results = search_by_term(q, obj_types, include)
     if not results:
         results = search_by_snomed_code(q)
+    if not results:
+        results = search_by_gtin(q)
     return results
 
 
@@ -57,6 +59,20 @@ def search_by_snomed_code(q):
         return [{"cls": cls, "objs": [obj]}]
 
     return []
+
+
+def search_by_gtin(q):
+    try:
+        int(q)
+    except ValueError:
+        return []
+
+    try:
+        obj = AMPP.objects.get(gtin__gtin=q)
+    except AMPP.DoesNotExist:
+        return []
+
+    return [{"cls": AMPP, "objs": [obj]}]
 
 
 def advanced_search(cls, search, include):

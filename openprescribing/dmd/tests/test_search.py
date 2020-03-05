@@ -20,6 +20,9 @@ class TestSearch(TestCase):
     def test_by_snomed_code(self):
         self.assertSearchResults({"q": "318412000"}, {VMP: [318412000]})
 
+    def test_by_gtin(self):
+        self.assertSearchResults({"q": "5036850012349"}, {AMPP: [1389011000001108]})
+
     def test_by_term(self):
         self.assertSearchResults(
             {"q": "sanofi"}, {AMP: [632811000001105], AMPP: [1389011000001108]}
