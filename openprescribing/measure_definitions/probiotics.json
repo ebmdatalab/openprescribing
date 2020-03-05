@@ -36,8 +36,8 @@
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
    "091104000BBNMA0 # vsl",
-   "091104000BBNVAO # vivomix caps",
-   "091104000BBNUAO # vivomix powder sachet"
+   "091104000BBNVA0 # vivomix caps",
+   "091104000BBNUA0 # vivomix powder sachet"
   ],
   "denominator_type": "list_size",
   "authored_by": [
