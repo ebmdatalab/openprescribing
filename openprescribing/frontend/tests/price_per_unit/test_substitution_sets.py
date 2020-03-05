@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from frontend.price_per_unit.substitution_sets import (
     get_substitution_sets_from_bnf_codes,
+    groups_from_pairs,
 )
 
 PRESENTATIONS = {
@@ -56,3 +57,20 @@ class SubstitutionSetsTest(TestCase):
 
     def test_substituting_glucose_test_strips(self):
         self.assertSubstitutable("finetest_test_strips", "element_test_strips")
+
+
+class GroupsFromPairsTest(TestCase):
+    def test_groups_from_pairs(self):
+        # fmt: off
+        pairs = [
+            (1, 2),
+            (3, 4),
+            (5, 6),
+            (1, 3),
+        ]
+        expected_groups = [
+            [1, 2, 3, 4],
+            [5, 6]
+        ]
+        # fmt: on
+        self.assertEqual(list(groups_from_pairs(pairs)), expected_groups)
