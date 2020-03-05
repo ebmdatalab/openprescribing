@@ -133,16 +133,15 @@ GENERIC_CHEMICALS = {
 @memoize
 def get_substitution_sets():
     bnf_codes = [row[0] for row in get_db().query("SELECT bnf_code FROM presentation")]
-    substitution_sets = get_substitution_sets_from_bnf_codes(bnf_codes)
-    return DictWithCacheID([(s.id, s) for s in substitution_sets])
+    return get_substitution_sets_from_bnf_codes(bnf_codes, FORMULATION_SWAPS_FILE)
 
 
-def get_substitution_sets_from_bnf_codes(bnf_codes):
+def get_substitution_sets_from_bnf_codes(bnf_codes, formulation_swaps_file):
     """
-    Given a list of BNF codes return a list of SubstitutionSets over those BNF
-    codes
+    Given a list of BNF codes and a formulation swaps file return a list of
+    SubstitutionSets over those BNF codes
     """
-    swaps, swap_descriptions = get_formulation_swaps(FORMULATION_SWAPS_FILE)
+    swaps, swap_descriptions = get_formulation_swaps(formulation_swaps_file)
     presentation_sets = defaultdict(list)
     for bnf_code in bnf_codes:
         generic_code = generic_equivalent_for_bnf_code(bnf_code)
@@ -150,7 +149,7 @@ def get_substitution_sets_from_bnf_codes(bnf_codes):
             generic_code = swaps.get(generic_code, generic_code)
             presentation_sets[generic_code].append(bnf_code)
     names = get_names_for_bnf_codes(presentation_sets.keys())
-    return [
+    substitution_sets = [
         SubstitutionSet(
             id=code,
             name=names.get(code, "unknown"),
@@ -161,14 +160,15 @@ def get_substitution_sets_from_bnf_codes(bnf_codes):
         # There's no point in a substitution set with only one member
         if len(presentations) > 1
     ]
+    return DictWithCacheID([(s.id, s) for s in substitution_sets])
 
 
 def get_names_for_bnf_codes(bnf_codes):
     names = Presentation.names_for_bnf_codes(list(bnf_codes))
     # Add in names for our invented BNF codes which represent a generic
     # chemical
-    for sub_para, name in GENERIC_CHEMICALS.items():
-        names[sub_para + "AAA0A0"] = name
+    for chemical, name in GENERIC_CHEMICALS.items():
+        names[chemical + "AAA0A0"] = name
     return names
 
 
