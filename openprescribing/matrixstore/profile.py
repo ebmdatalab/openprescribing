@@ -2,13 +2,16 @@
 Basic profiling code for working out where we're spending our time
 
 Invoke with:
-./manage.py shell -c 'from frontend.price_per_unit.profile import profile; profile()'
+./manage.py shell -c 'from matrixstore.profile import profile; profile()'
+
+Currently set up to profile the PPU spending code, but easy to adapt to profile
+other functions
 """
 from cProfile import Profile
 import datetime
 import time
 
-from .savings import get_all_savings_for_orgs
+from frontend.price_per_unit.savings import get_all_savings_for_orgs
 
 
 def test():

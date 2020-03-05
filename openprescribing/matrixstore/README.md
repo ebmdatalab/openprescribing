@@ -236,3 +236,13 @@ Or specify a particular filename:
 ```sh
 ./manage.py matrixstore_set_live --filename matrixstore_2019-02_2019-04-18--18-59_063873dd6fda7f46.sqlite
 ```
+
+
+## Profiling MatrixStore code
+
+Intuition turns out to be a poor guide to performance with the
+MatrixStore: operations which we might expect to be particularly fast or
+slow are not always so. There is a basic [profiling script](./profile.py)
+which helps in testing these assumptions. The
+[snakeviz](https://jiffyclub.github.io/snakeviz/) package provides a
+nice way of visualising the resulting `.prof` files.
