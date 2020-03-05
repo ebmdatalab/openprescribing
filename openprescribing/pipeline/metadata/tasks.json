@@ -260,7 +260,8 @@
         "dependencies": [
             "upload_to_bigquery",
             "import_measure_definitions",
-            "create_bq_measure_views"
+            "create_bq_measure_views",
+            "publish_matrixstore"
         ]
     },
     "refresh_views": {
