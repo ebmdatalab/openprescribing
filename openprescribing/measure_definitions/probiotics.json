@@ -34,11 +34,10 @@
     "nutrition"
   ],
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-   "bnf_code IN (\n",
-   "'091104000BBNMA0', -- vsl \n",
-   "'091104000BBNVAO', --vivomix caps \n",
-   "'091104000BBNUAO') --vivomix powder sachet \n"
+  "numerator_bnf_codes_filter": [
+   "091104000BBNMA0 # vsl",
+   "091104000BBNVAO # vivomix caps",
+   "091104000BBNUAO # vivomix powder sachet"
   ],
   "denominator_type": "list_size",
   "authored_by": [
