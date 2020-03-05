@@ -197,15 +197,18 @@ class Command(BaseCommand):
             bnf_codes.append("0{}0000000000000".format(ix))
             bnf_codes.append("0{}0100000000000".format(ix))
 
-        # Generate random prescribing data. We don't currently save this all to
-        # the database as it would make the fixture too big and isn't needed.
-        # But we do save a single row because the MatrixStore gets unhappy if
-        # it has no data at all to work with.
+        # Generate random prescribing data. We don't currently save this to the
+        # database as it would make the fixture too big and isn't needed.
+        # Later we create the minimal prescribing needed by the MatrixStore.
         prescribing_rows = []
 
+        timestamps = [
+            "2018-0{}-01 00:00:00 UTC".format(month)
+            for month in [1, 2, 3, 4, 5, 6, 7, 8]
+        ]
+
         for practice_ix, practice in enumerate(Practice.objects.all()):
-            for month in [1, 2, 3, 4, 5, 6, 7, 8]:
-                timestamp = "2018-0{}-01 00:00:00 UTC".format(month)
+            for month, timestamp in enumerate(timestamps, start=1):
 
                 # 0 <= practice_ix <= 15; 1 <= month <= 8
                 item_ratio = (22 + practice_ix - 2 * month + randint(-5, 5)) / 43.0
@@ -245,9 +248,42 @@ class Command(BaseCommand):
 
                     prescribing_rows.append(row)
 
-        # We only import the first row into Postgres for now as we just need
-        # someting to keep the MatrixStore happy
-        for row in prescribing_rows[:1]:
+        # Create the minimal amount of prescribing necessary for the
+        # MatrixStore to build and for the PPU calculation to work
+        # successfully. This means at least one prescription for a branded
+        # presentation and its generic equivalent.
+        for bnf_code in ["0601022B0AAASAS", "0601022B0BJADAS"]:
+            bnf_codes.append(bnf_code)
+
+            practice = Practice.objects.all()[0]
+            timestamp = timestamps[-1]
+            # It doesn't really matter what these values are but it's nice for
+            # them to be both predictable and different
+            items = len(bnf_codes)
+            quantity = 50 * len(bnf_codes)
+            net_cost = 10 * len(bnf_codes) + 1000
+            actual_cost = net_cost * 0.93
+
+            row = [
+                "sha",  # This value doesn't matter.
+                practice.ccg.regional_team_id,
+                practice.ccg.stp_id,
+                practice.ccg_id,
+                practice.pcn_id,
+                practice.code,
+                bnf_code,
+                "bnf_name",  # This value doesn't matter
+                items,
+                net_cost,
+                actual_cost,
+                quantity,
+                timestamp,
+            ]
+            prescribing_rows.append(row)
+
+            # Unlike the measure prescribing we created earlier this
+            # prescribing needs to be written to the database so it gets
+            # included in the fixture we create
             Prescription.objects.create(
                 practice_id=row[5],
                 pct_id=row[3],
