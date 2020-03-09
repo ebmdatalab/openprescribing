@@ -18,7 +18,6 @@ copy_all = [
     "django_migrations",
     "auth_user",
     "frontend_chemical",
-    "frontend_genericcodemapping",
     "frontend_importlog",
     "frontend_measure",
     "frontend_measureglobal",
@@ -48,7 +47,6 @@ copy_sample = {
     "frontend_measurevalue": "pct_id = '{}'",
     "frontend_prescription": "pct_id = '{}'",
     "frontend_practicestatistics": "pct_id = '{}'",
-    "frontend_ppusaving": "pct_id = '{}'",
 }
 
 tables_to_sample = ["frontend_prescription"]

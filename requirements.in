@@ -8,6 +8,7 @@
 
 backports.csv
 beautifulsoup4
+diskcache
 django-anymail[mailgun]
 django-cors-headers
 django-crispy-forms
@@ -40,10 +41,6 @@ scipy
 titlecase
 tqdm
 xlrd
-
-# redis
-django-redis
-hiredis
 
 # test requirements
 coverage

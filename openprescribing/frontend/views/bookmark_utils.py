@@ -38,7 +38,7 @@ from frontend.views.views import (
     all_england_low_priority_total,
     all_england_low_priority_savings,
     all_england_measure_savings,
-    all_england_ppu_savings,
+    get_total_savings_for_org,
 )
 
 GRAB_CMD = (
@@ -870,7 +870,7 @@ def make_all_england_email(bookmark, tag=None):
     # CCG level. We use CCG at present for performance reasons but we may want
     # to switch in future.
     entity_type = "CCG"
-    ppu_savings = cached(all_england_ppu_savings, entity_type, date)
+    ppu_savings = get_total_savings_for_org(str(date), "all_standard_practices", None)
     measure_savings = cached(all_england_measure_savings, entity_type, date)
     low_priority_savings = cached(all_england_low_priority_savings, entity_type, date)
     low_priority_total = cached(all_england_low_priority_total, entity_type, date)

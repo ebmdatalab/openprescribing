@@ -1,20 +1,20 @@
 from django.core import mail
 from django.core.management import call_command
 
-from frontend.models import PPUSaving, ImportLog
+from frontend.models import ImportLog, MeasureGlobal
 from frontend.tests.test_api_spending import ApiTestBase
 from frontend.tests.data_factory import DataFactory
 
 
 class CommandTestCase(ApiTestBase):
 
-    fixtures = ApiTestBase.fixtures + ["ppusavings", "functional-measures"]
+    fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     @classmethod
     def setUpTestData(cls):
         super(CommandTestCase, cls).setUpTestData()
-        max_ppu_date = PPUSaving.objects.order_by("-date")[0].date
-        ImportLog.objects.create(current_at=max_ppu_date, category="dashboard_data")
+        max_measure_date = MeasureGlobal.objects.order_by("-month")[0].month
+        ImportLog.objects.create(current_at=max_measure_date, category="dashboard_data")
 
     def test_send_alerts(self):
         factory = DataFactory()

@@ -33,7 +33,8 @@ class DataFactory(object):
         return months
 
     def create_practice(self):
-        practice = {"code": "ABC{:03}".format(self.next_id())}
+        i = self.next_id()
+        practice = {"code": "ABC{:03}".format(i), "name": "Practice {}".format(i)}
         self.practices.append(practice)
         return practice
 

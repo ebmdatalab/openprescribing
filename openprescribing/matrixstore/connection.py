@@ -7,8 +7,15 @@ from .sql_functions import MatrixSum
 
 
 class MatrixStore(object):
-    def __init__(self, sqlite_connection):
+    def __init__(self, sqlite_connection, filename=":memory:"):
         self.connection = sqlite_connection
+        # `cache_key` attributes are used to identify the state of an object for
+        # caching purposes. Because we create MatrixStore files with unique
+        # names, and because they are immutable once created, we can simply use
+        # their names for this purpose. Of course this falls apart for
+        # in-memory databases, but since we only ever use these in testing with
+        # caching disabled we can live with this.
+        self.cache_key = filename.encode("utf8")
         # For easier debugging of custom SQL functions written in Python
         sqlite3.enable_callback_tracebacks(True)
         # LIKE queries must be case-sensitive in order to use an index
@@ -40,7 +47,11 @@ class MatrixStore(object):
         # We can't use parameter substitution in PRAGMA statements so we use
         # `format` and force to an integer
         connection.execute("PRAGMA mmap_size={:d}".format(size + 1024 * 1024))
-        return cls(connection)
+        # Record the name of the current file, first resolving any symlinks.
+        # These files are generated with unique names which we can use as part
+        # of a cache key
+        filename = os.path.basename(os.path.realpath(path))
+        return cls(connection, filename=filename)
 
     def query(self, sql, params=()):
         for row in self.connection.cursor().execute(sql, params):

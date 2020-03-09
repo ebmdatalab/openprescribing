@@ -1,4 +1,4 @@
-# This task generates the fixtures in frontend/tests/fixtures/functional-measures.json.
+# This task generates the fixtures in frontend/tests/fixtures/functional-measures-dont-edit.json.
 # The generated data includes Practices and all their parent organisations,
 # Measures, MeasureValues, and MeasureGlobals.
 #
@@ -130,10 +130,8 @@ class Command(BaseCommand):
         # import_measures uses this ImportLog to work out which months it
         # should import data.
         ImportLog.objects.create(category="prescribing", current_at="2018-08-01")
-
-        # Practice and CCG homepages need this to work out which PPU savings to
-        # show.
-        ImportLog.objects.create(category="ppu", current_at="2018-08-01")
+        # The practice, CCG etc dashboards use this date
+        ImportLog.objects.create(category="dashboard_data", current_at="2018-08-01")
 
         # Set up BQ, and upload STPs, CCGs, Practices.
         Client("measures").create_dataset()
@@ -149,8 +147,8 @@ class Command(BaseCommand):
         bnf_codes = []
 
         for ix in range(5):
-            numerator_where = ("bnf_code LIKE '0{}01%'".format(ix),)
-            denominator_where = ("bnf_code LIKE '0{}%'".format(ix),)
+            numerator_bnf_codes_filter = ["0{}01".format(ix)]
+            denominator_bnf_codes_filter = ["0{}".format(ix)]
 
             if ix in [0, 1]:
                 measure_id = "core_{}".format(ix)
@@ -168,8 +166,8 @@ class Command(BaseCommand):
                 name = "LP omnibus measure"
                 tags = ["core"]
                 tags_focus = ["lowpriority"]
-                numerator_where = ("bnf_code LIKE '0201%' OR bnf_code LIKE'0301%'",)
-                denominator_where = ("bnf_code LIKE '02%' OR bnf_code LIKE'03%'",)
+                numerator_bnf_codes_filter = ["0201", "0301"]
+                denominator_bnf_codes_filter = ["02", "03"]
 
             measure_definition = {
                 "name": name,
@@ -179,10 +177,10 @@ class Command(BaseCommand):
                 "url": "http://example.com/measure-{}".format(measure_id),
                 "numerator_short": "Numerator for {}".format(measure_id),
                 "numerator_type": "bnf_quantity",
-                "numerator_where": numerator_where,
+                "numerator_bnf_codes_filter": numerator_bnf_codes_filter,
                 "denominator_short": "Denominator for {}".format(measure_id),
                 "denominator_type": "bnf_quantity",
-                "denominator_where": denominator_where,
+                "denominator_bnf_codes_filter": denominator_bnf_codes_filter,
                 "is_cost_based": True,
                 "is_percentage": True,
                 "low_is_good": True,
@@ -199,15 +197,18 @@ class Command(BaseCommand):
             bnf_codes.append("0{}0000000000000".format(ix))
             bnf_codes.append("0{}0100000000000".format(ix))
 
-        # Generate random prescribing data. We don't currently save this all to
-        # the database as it would make the fixture too big and isn't needed.
-        # But we do save a single row because the MatrixStore gets unhappy if
-        # it has no data at all to work with.
+        # Generate random prescribing data. We don't currently save this to the
+        # database as it would make the fixture too big and isn't needed.
+        # Later we create the minimal prescribing needed by the MatrixStore.
         prescribing_rows = []
 
+        timestamps = [
+            "2018-0{}-01 00:00:00 UTC".format(month)
+            for month in [1, 2, 3, 4, 5, 6, 7, 8]
+        ]
+
         for practice_ix, practice in enumerate(Practice.objects.all()):
-            for month in [1, 2, 3, 4, 5, 6, 7, 8]:
-                timestamp = "2018-0{}-01 00:00:00 UTC".format(month)
+            for month, timestamp in enumerate(timestamps, start=1):
 
                 # 0 <= practice_ix <= 15; 1 <= month <= 8
                 item_ratio = (22 + practice_ix - 2 * month + randint(-5, 5)) / 43.0
@@ -247,9 +248,42 @@ class Command(BaseCommand):
 
                     prescribing_rows.append(row)
 
-        # We only import the first row into Postgres for now as we just need
-        # someting to keep the MatrixStore happy
-        for row in prescribing_rows[:1]:
+        # Create the minimal amount of prescribing necessary for the
+        # MatrixStore to build and for the PPU calculation to work
+        # successfully. This means at least one prescription for a branded
+        # presentation and its generic equivalent.
+        for bnf_code in ["0601022B0AAASAS", "0601022B0BJADAS"]:
+            bnf_codes.append(bnf_code)
+
+            practice = Practice.objects.all()[0]
+            timestamp = timestamps[-1]
+            # It doesn't really matter what these values are but it's nice for
+            # them to be both predictable and different
+            items = len(bnf_codes)
+            quantity = 50 * len(bnf_codes)
+            net_cost = 10 * len(bnf_codes) + 1000
+            actual_cost = net_cost * 0.93
+
+            row = [
+                "sha",  # This value doesn't matter.
+                practice.ccg.regional_team_id,
+                practice.ccg.stp_id,
+                practice.ccg_id,
+                practice.pcn_id,
+                practice.code,
+                bnf_code,
+                "bnf_name",  # This value doesn't matter
+                items,
+                net_cost,
+                actual_cost,
+                quantity,
+                timestamp,
+            ]
+            prescribing_rows.append(row)
+
+            # Unlike the measure prescribing we created earlier this
+            # prescribing needs to be written to the database so it gets
+            # included in the fixture we create
             Prescription.objects.create(
                 practice_id=row[5],
                 pct_id=row[3],
@@ -261,6 +295,17 @@ class Command(BaseCommand):
                 processing_date=row[12][:10],
             )
 
+        # Upload presentations to BigQuery: the new measures system requires them
+        table = client.get_or_create_table("presentation", schemas.PRESENTATION_SCHEMA)
+        with tempfile.NamedTemporaryFile(mode="wt", encoding="utf8", newline="") as f:
+            writer = csv.DictWriter(
+                f, [field.name for field in schemas.PRESENTATION_SCHEMA]
+            )
+            for bnf_code in bnf_codes:
+                writer.writerow({"bnf_code": bnf_code})
+            f.seek(0)
+            table.insert_rows_from_csv(f.name, schemas.PRESENTATION_SCHEMA)
+
         # In production, normalised_prescribing_standard is actually a view,
         # but for the tests it's much easier to set it up as a normal table.
         table = client.get_or_create_table(
@@ -268,7 +313,7 @@ class Command(BaseCommand):
         )
 
         # Upload prescribing_rows to normalised_prescribing_standard.
-        with tempfile.NamedTemporaryFile() as f:
+        with tempfile.NamedTemporaryFile(mode="wt", encoding="utf8", newline="") as f:
             writer = csv.writer(f)
             for row in prescribing_rows:
                 writer.writerow(row)
@@ -306,6 +351,6 @@ class Command(BaseCommand):
 
         # Dump the fixtures.
         fixture_path = os.path.join(
-            "frontend", "tests", "fixtures", "functional-measures.json"
+            "frontend", "tests", "fixtures", "functional-measures-dont-edit.json"
         )
         call_command("dumpdata", "frontend", indent=2, output=fixture_path)

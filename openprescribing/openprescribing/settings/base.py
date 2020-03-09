@@ -330,25 +330,54 @@ SLACK_SENDING_ACTIVE = True
 
 ENABLE_CACHING = utils.get_env_setting_bool("ENABLE_CACHING", default=False)
 
-redis_url = utils.get_env_setting("REDIS_URL", default="")
 
-if redis_url:
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": redis_url,
-            "OPTIONS": {
-                # This C-based parser is much faster than the default pure
-                # Python one
-                "PARSER_CLASS": "redis.connection.HiredisParser"
-            },
-        }
+# Total on-disk size of the cache. We want _some_ limit here so it doesn't grow
+# without bound, but I don't think we need to be too fussy about exactly what
+# it is as we're not short on disk space.  For reference, a month's worth of
+# cached PPU data is about 850MB.
+cache_size_limit = 16 * 1024 ** 3
+
+CACHES = {
+    "default": {
+        # See: https://github.com/grantjenks/python-diskcache
+        "BACKEND": "diskcache.DjangoCache",
+        "LOCATION": utils.get_env_setting(
+            "DISKCACHE_PATH", default=join(REPO_ROOT, "diskcache")
+        ),
+        # How long to cache values for by default (we want "forever")
+        "TIMEOUT": None,
+        # DiskCache uses a "fan-out" system to prevent simultaneous writers
+        # from blocking each other (readers are never blocked). This involves
+        # splitting the cache into multiple shards (8 by default).  However
+        # this seems to have a noticeable impact on performance and given that
+        # our workload is extremely light on writes (the first few requests
+        # after a new data load will do a whole batch of writes and then
+        # nothing) we don't really need this. Setting the shard count to 1
+        # effectively disables the fan-out behaviour. See:
+        # http://www.grantjenks.com/docs/diskcache/tutorial.html#fanoutcache
+        "SHARDS": 1,
+        # In the event that a write does get blocked this timeout determines
+        # how long to wait before giving up and just not writing the value to
+        # the cache. It's by no means a disaster if this happens: we'll just
+        # cache the value the next time round.
+        "DATABASE_TIMEOUT": 0.1,
+        "OPTIONS": {
+            "size_limit": cache_size_limit,
+            # By default DiskCache writes larger values to individual files on
+            # disk and just uses SQLite for the index and to store smaller
+            # values. However by bumping the below limit up to something huge
+            # we can get it to store values of any size in SQLite. By also
+            # raising SQLite's memory-map limit to something large we can then
+            # access all these values via memory-mapping (just as we do with
+            # the MatrixStore). This gives us much better I/O performance when
+            # reading from the cache. Possibly this comes at the expense of
+            # worse write performance, but we're not particularly worried about
+            # that.
+            "disk_min_file_size": cache_size_limit,
+            "sqlite_mmap_size": cache_size_limit,
+        },
     }
-else:
-    # The dummy cache backend implements all the usual methods but never
-    # actually does any caching so it's perfect for development when you always
-    # want fresh values
-    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+}
 
 
 # The git sha of the currently running version of the code (will be empty in
@@ -361,9 +390,9 @@ if source_commit_id:
 
 
 # Guard against invalid configurations
-if ENABLE_CACHING and (not redis_url or not source_commit_id):
+if ENABLE_CACHING and not source_commit_id:
     raise ImproperlyConfigured(
-        "If ENABLE_CACHING is True then REDIS_URL and SOURCE_COMMIT_ID must be set"
+        "If ENABLE_CACHING is True then SOURCE_COMMIT_ID must be set"
     )
 
 

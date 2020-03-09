@@ -10,6 +10,7 @@
 # edited by hand!
 
 from collections import defaultdict
+from urllib import parse
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.management import call_command
@@ -30,7 +31,7 @@ MEASURE_LP_2_ANALYSE_URL = "/analyse/#numIds=0201&denomIds=02&measure=lp_2"
 class MeasuresTests(SeleniumTestCase):
     maxDiff = None
 
-    fixtures = ["functional-measures"]
+    fixtures = ["functional-measures-dont-edit"]
 
     # These methods override the default behaviour of loading and flushing
     # fixtures for each test method and instead load them once for the test
@@ -62,9 +63,9 @@ class MeasuresTests(SeleniumTestCase):
         element = base_element.find_element_by_css_selector(css_selector)
         a_element = element.find_element_by_tag_name("a")
         self.assertEqual(a_element.text, exp_text)
-        self.assertEqual(
-            a_element.get_attribute("href"), self.live_server_url + exp_path
-        )
+        href = _normalize_url(a_element.get_attribute("href"))
+        expected_href = _normalize_url(self.live_server_url + exp_path)
+        self.assertEqual(href, expected_href)
 
     def _verify_num_elements(self, base_element, css_selector, exp_num):
         self.assertEqual(
@@ -2009,3 +2010,20 @@ def _get_cost_savings(measure_values, rollup_by=None, target_percentile=50):
         if mean_percentile > target_percentile:
             total_savings += sum(all_savings[rollup_id])
     return total_savings
+
+
+def _normalize_url(url):
+    """
+    Return the URL with query parameters (including query parameters set in the
+    fragment) in lexical order by key
+    """
+    parsed = parse.urlparse(url)
+    if parsed.query:
+        parsed_query = parse.parse_qsl(parsed.query)
+        query = parse.urlencode(sorted(parsed_query))
+        parsed = parsed._replace(query=query)
+    if "=" in parsed.fragment and "&" in parsed.fragment:
+        parsed_fragment = parse.parse_qsl(parsed.fragment)
+        fragment = parse.urlencode(sorted(parsed_fragment))
+        parsed = parsed._replace(fragment=fragment)
+    return parse.urlunparse(parsed)

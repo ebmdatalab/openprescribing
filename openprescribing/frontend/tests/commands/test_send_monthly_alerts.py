@@ -454,7 +454,7 @@ class SearchEmailTestCase(TestCase):
 
 class AllEnglandAlertTestCase(ApiTestBase):
 
-    fixtures = ApiTestBase.fixtures + ["ppusavings", "functional-measures"]
+    fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     def test_all_england_alerts_sent(self):
         factory = DataFactory()
@@ -469,7 +469,7 @@ class AllEnglandAlertTestCase(ApiTestBase):
 
 class PCNAlertTestCase(ApiTestBase):
 
-    fixtures = ApiTestBase.fixtures + ["ppusavings", "functional-measures"]
+    fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     def test_pcn_alerts_sent(self):
         """Create a PCN bookmark, send alerts, and make sure an email is sent

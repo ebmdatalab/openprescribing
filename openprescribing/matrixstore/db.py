@@ -41,15 +41,13 @@ def get_row_grouper(org_type):
     """
     # Get the mapping from practice codes to IDs of groups
     if org_type == "practice":
-        # For practice level data we just map each practice code to itself. The
-        # means that we're not really doing any "grouping" in a meaningful
-        # sense, but it simplifies the code by keeping things consistent
-        mapping = {
-            practice_code: practice_code
-            for practice_code in get_db().practice_offsets.keys()
-        }
+        mapping = _practice_to_practice_map()
+    elif org_type == "standard_practice":
+        mapping = _practice_to_standard_practice_map()
     elif org_type == "ccg":
         mapping = _practice_to_ccg_map()
+    elif org_type == "standard_ccg":
+        mapping = _standard_practice_to_ccg_map()
     elif org_type == "pcn":
         mapping = _practice_to_pcn_map()
     elif org_type == "stp":
@@ -57,7 +55,9 @@ def get_row_grouper(org_type):
     elif org_type == "regional_team":
         mapping = _practice_to_regional_team_map()
     elif org_type == "all_practices":
-        mapping = _all_practices_map()
+        mapping = _group_all(_practice_to_practice_map())
+    elif org_type == "all_standard_practices":
+        mapping = _group_all(_practice_to_standard_practice_map())
     else:
         raise ValueError("Unhandled org_type: " + org_type)
     return RowGrouper(
@@ -67,9 +67,41 @@ def get_row_grouper(org_type):
     )
 
 
+def _practice_to_practice_map():
+    # For practice level data we just map each practice code to itself. This
+    # means that we're not really doing any "grouping" in a meaningful sense,
+    # but it simplifies the code by keeping things consistent.
+    return {
+        practice_code: practice_code
+        for practice_code in get_db().practice_offsets.keys()
+    }
+
+
+def _practice_to_standard_practice_map():
+    # Again we map practices to themselves, but this time only standard GP
+    # practices which belong to a CCG
+    return {
+        practice_code: practice_code
+        for practice_code in Practice.objects.filter(
+            setting=4, ccg__org_type="CCG"
+        ).values_list("code", flat=True)
+    }
+
+
 def _practice_to_ccg_map():
+    # Map practices to their CCGs including non-standard (i.e. not setting 4)
+    # practices
     return dict(
         Practice.objects.filter(ccg__org_type="CCG").values_list("code", "ccg_id")
+    )
+
+
+def _standard_practice_to_ccg_map():
+    # Map practices to their CCGs but only include standard practices
+    return dict(
+        Practice.objects.filter(ccg__org_type="CCG", setting=4).values_list(
+            "code", "ccg_id"
+        )
     )
 
 
@@ -95,15 +127,9 @@ def _practice_to_regional_team_map():
     )
 
 
-def _all_practices_map():
+def _group_all(mapping):
     """
-    Maps every practice (standard GP practices and others) which belongs to a
-    CCG to a single group, which we give of ID of None as it doesn't really
-    need an ID
+    Maps every practice contained in the supplied mapping to a single entity,
+    which we give an ID of None as it doesn't really need an ID
     """
-    return {
-        code: None
-        for code in Practice.objects.filter(ccg__org_type="CCG").values_list(
-            "code", flat=True
-        )
-    }
+    return {practice_code: None for practice_code in mapping.keys()}

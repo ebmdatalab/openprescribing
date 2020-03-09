@@ -16,7 +16,6 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.urls import get_resolver
-from django.db import connection
 from django.db.models import Avg, Sum
 from django.http import Http404
 from django.http import HttpResponse
@@ -32,8 +31,6 @@ from dateutil.relativedelta import relativedelta
 
 from common.utils import parse_date
 from gcutils.bigquery import interpolate_sql
-from api.view_utils import dictfetchall
-from common.utils import ppu_sql
 from dmd.models import VMP
 from frontend.forms import BookmarkListForm
 from frontend.forms import FeedbackForm
@@ -62,6 +59,7 @@ from frontend.views.spending_utils import (
     ncso_spending_breakdown_for_entity,
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
 )
+from frontend.price_per_unit.savings import get_total_savings_for_org
 
 
 logger = logging.getLogger(__name__)
@@ -339,9 +337,9 @@ def all_england(request):
     tag_filter = _get_measure_tag_filter(request.GET)
     entity_type = request.GET.get("entity_type", "CCG")
     date = _specified_or_last_date(request, "dashboard_data")
+    ppu_savings = get_total_savings_for_org(str(date), "all_standard_practices", None)
     # We cache the results of these expensive function calls which only change
     # when `date` changes
-    ppu_savings = cached(all_england_ppu_savings, entity_type, date)
     measure_savings = cached(all_england_measure_savings, entity_type, date)
     low_priority_savings = cached(all_england_low_priority_savings, entity_type, date)
     low_priority_total = cached(all_england_low_priority_total, entity_type, date)
@@ -772,7 +770,7 @@ def measure_for_all_entities(request, measure, entity_type):
 
 @handle_bad_request
 def practice_price_per_unit(request, code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     practice = get_object_or_404(Practice, code=code)
     context = {
         "entity": practice,
@@ -788,7 +786,7 @@ def practice_price_per_unit(request, code):
 
 @handle_bad_request
 def ccg_price_per_unit(request, code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     ccg = get_object_or_404(PCT, code=code)
     context = {
         "entity": ccg,
@@ -804,7 +802,7 @@ def ccg_price_per_unit(request, code):
 
 @handle_bad_request
 def all_england_price_per_unit(request):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     context = {
         "entity_name": "NHS England",
         "entity_name_and_status": "NHS England",
@@ -819,7 +817,7 @@ def all_england_price_per_unit(request):
 
 @handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     if len(entity_code) == 3:
         entity = get_object_or_404(PCT, code=entity_code)
@@ -854,7 +852,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 
 @handle_bad_request
 def all_england_price_per_unit_by_presentation(request, bnf_code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
 
     params = {
@@ -1364,23 +1362,6 @@ def _specified_or_last_date(request, category):
     return date
 
 
-def _total_savings(entity, date):
-    conditions = " "
-    if isinstance(entity, PCT):
-        conditions += "AND {ppusavings_table}.pct_id = %(entity_code)s "
-        conditions += "AND {ppusavings_table}.practice_id IS NULL "
-    elif isinstance(entity, Practice):
-        conditions += "AND {ppusavings_table}.practice_id = %(entity_code)s "
-    sql = ppu_sql(conditions=conditions)
-    sql = (
-        "SELECT SUM(possible_savings) " "AS total_savings FROM ({}) all_savings"
-    ).format(sql)
-    params = {"date": date, "entity_code": entity.pk}
-    with connection.cursor() as cursor:
-        cursor.execute(sql, params)
-        return dictfetchall(cursor)[0]["total_savings"]
-
-
 def _home_page_context_for_entity(request, entity):
     prescribing_date = ImportLog.objects.latest_in_category("prescribing").current_at
     six_months_ago = prescribing_date - relativedelta(months=6)
@@ -1491,8 +1472,9 @@ def _home_page_context_for_entity(request, entity):
         context["entity_price_per_unit_url"] = "{}_price_per_unit".format(
             entity_type.lower()
         )
-        context["date"] = _specified_or_last_date(request, "ppu")
-        context["possible_savings"] = _total_savings(entity, context["date"])
+        context["possible_savings"] = get_total_savings_for_org(
+            str(context["date"]), _org_type_for_entity(entity), entity.pk
+        )
         context["entity_ghost_generics_url"] = "{}_ghost_generics".format(
             entity_type.lower()
         )
@@ -1632,31 +1614,6 @@ def _build_panel_measures_url(
 def _build_org_location_url(entity):
     params = {"org_type": _org_type_for_entity(entity), "q": entity.code}
     return _build_api_url("org_location", params)
-
-
-def all_england_ppu_savings(entity_type, date):
-    conditions = " "
-    if entity_type == "CCG":
-        conditions += "AND {ppusavings_table}.pct_id IS NOT NULL "
-        conditions += "AND {ppusavings_table}.practice_id IS NULL "
-    elif entity_type == "practice":
-        conditions += "AND {ppusavings_table}.practice_id IS NOT NULL "
-    else:
-        raise BadRequestError("Unknown entity type: {}".format(entity_type))
-    sql = ppu_sql(conditions=conditions)
-    sql = (
-        "SELECT SUM(possible_savings) " "AS total_savings FROM ({}) all_savings"
-    ).format(sql)
-    params = {"date": date}
-    with connection.cursor() as cursor:
-        cursor.execute(sql, params)
-        savings = dictfetchall(cursor)[0]["total_savings"]
-
-    if savings is None:
-        # This might happen when testing.
-        return 0
-    else:
-        return savings
 
 
 def all_england_measure_savings(entity_type, date):
