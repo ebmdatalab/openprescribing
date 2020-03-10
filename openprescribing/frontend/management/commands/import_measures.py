@@ -467,10 +467,15 @@ def build_bnf_codes_query_where(filter_):
         else:
             includes.append(build_bnf_codes_query_fragment(element))
 
-    where_clause = "(" + " OR ".join(includes) + ")"
+    where_clause = ""
+
+    if includes:
+        where_clause += "(" + " OR ".join(includes) + ")"
+        if excludes:
+            where_clause += " AND "
 
     if excludes:
-        where_clause += " AND NOT (" + " OR ".join(excludes) + ")"
+        where_clause += "NOT (" + " OR ".join(excludes) + ")"
 
     return where_clause
 

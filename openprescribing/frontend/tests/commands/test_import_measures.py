@@ -379,7 +379,7 @@ class ImportMeasuresTests(TestCase):
 
 
 class BuildMeasureSQLTests(TestCase):
-    def test_build_bnf_codes_Query(self):
+    def test_build_bnf_codes_query(self):
         base_query = "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '% Tab'"
         filter_ = [
             "010101 # Everything in 1.1.1",
@@ -408,6 +408,36 @@ class BuildMeasureSQLTests(TestCase):
         SELECT bnf_code
         FROM subquery
         WHERE (bnf_code LIKE '010101%') AND NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
+        """
+
+        self.assertEqual(build_bnf_codes_query(None, filter_), expected_sql)
+
+    def test_build_bnf_codes_query_includes_only(self):
+        filter_ = [
+            "010101000BBABA0 # Langdales_Cinnamon Tab",
+            "0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
+        ]
+
+        expected_sql = """
+        WITH subquery AS (SELECT bnf_code FROM {hscic}.presentation)
+        SELECT bnf_code
+        FROM subquery
+        WHERE (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
+        """
+
+        self.assertEqual(build_bnf_codes_query(None, filter_), expected_sql)
+
+    def test_build_bnf_codes_query_excludes_only(self):
+        filter_ = [
+            "~010101000BBABA0 # Langdales_Cinnamon Tab",
+            "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
+        ]
+
+        expected_sql = """
+        WITH subquery AS (SELECT bnf_code FROM {hscic}.presentation)
+        SELECT bnf_code
+        FROM subquery
+        WHERE NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
         """
 
         self.assertEqual(build_bnf_codes_query(None, filter_), expected_sql)
