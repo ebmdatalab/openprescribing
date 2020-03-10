@@ -136,6 +136,19 @@ def get_substitution_sets():
     return get_substitution_sets_from_bnf_codes(bnf_codes, FORMULATION_SWAPS_FILE)
 
 
+@memoize
+def get_substitution_sets_by_presentation():
+    """
+    Build a mapping of all substitutable presentations to the substitution set
+    which contains them
+    """
+    index = {}
+    for substitution_set in get_substitution_sets().values():
+        for presentation in substitution_set.presentations:
+            index[presentation] = substitution_set
+    return index
+
+
 def get_substitution_sets_from_bnf_codes(bnf_codes, formulation_swaps_file):
     """
     Given a list of BNF codes and a formulation swaps file return a list of

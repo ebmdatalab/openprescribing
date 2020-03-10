@@ -14,6 +14,7 @@ from django.test import TestCase, SimpleTestCase, override_settings
 
 from frontend.models import EmailMessage, OrgBookmark, SearchBookmark, Measure
 from frontend.views.views import BadRequestError, _get_measure_tag_filter, cached
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
 class TestAlertViews(TestCase):
@@ -521,6 +522,7 @@ class TestTariffView(TestCase):
         )
 
 
+@copy_fixtures_to_matrixstore
 class TestPPUViews(TestCase):
     fixtures = ["orgs", "importlog", "practices", "prescriptions", "presentations"]
 
@@ -563,6 +565,12 @@ class TestPPUViews(TestCase):
                 "highlight": ["P87629"],
                 "date": ["2014-11-01"],
             },
+        )
+
+    def test_branded_code_redirects_to_generic(self):
+        response = self.client.get("/practice/P87629/0204000I0JKKKAL/price_per_unit/")
+        self.assertRedirects(
+            response, "/practice/P87629/0204000I0AAALAL/price_per_unit/"
         )
 
 

@@ -60,6 +60,9 @@ from frontend.views.spending_utils import (
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
 )
 from frontend.price_per_unit.savings import get_total_savings_for_org
+from frontend.price_per_unit.substitution_sets import (
+    get_substitution_sets_by_presentation,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -819,6 +822,10 @@ def all_england_price_per_unit(request):
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
     date = _specified_or_last_date(request, "prescribing")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
+    generic_code = _get_generic_bnf_code(bnf_code)
+    if bnf_code != generic_code:
+        url = request.get_full_path().replace(bnf_code, generic_code)
+        return HttpResponseRedirect(url)
     if len(entity_code) == 3:
         entity = get_object_or_404(PCT, code=entity_code)
     elif len(entity_code) == 6:
@@ -854,6 +861,10 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 def all_england_price_per_unit_by_presentation(request, bnf_code):
     date = _specified_or_last_date(request, "prescribing")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
+    generic_code = _get_generic_bnf_code(bnf_code)
+    if bnf_code != generic_code:
+        url = request.get_full_path().replace(bnf_code, generic_code)
+        return HttpResponseRedirect(url)
 
     params = {
         "format": "json",
@@ -876,6 +887,19 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
         "entity_type": "CCG",
     }
     return render(request, "price_per_unit.html", context)
+
+
+def _get_generic_bnf_code(bnf_code):
+    """
+    If this BNF code belongs to a "substitution set" (e.g. it's a branded
+    version of a generic presentation) then return the corresponding generic.
+    Otherwise, just return the original code
+    """
+    substitution_sets = get_substitution_sets_by_presentation()
+    try:
+        return substitution_sets[bnf_code].id
+    except KeyError:
+        return bnf_code
 
 
 ##################################################
