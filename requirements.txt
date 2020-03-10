@@ -11,7 +11,7 @@ cachetools==4.0.0         # via google-auth, premailer
 certifi==2019.11.28       # via requests
 cffi==1.14.0              # via bcrypt, cryptography, pynacl
 chardet==3.0.4            # via requests
-click==7.0                # via pip-tools
+click==7.1.1              # via pip-tools
 coverage==5.0.3           # via -r requirements.in
 cryptography==2.8         # via paramiko, pyopenssl, requests
 cssselect==1.1.0          # via premailer, pyquery
@@ -25,7 +25,7 @@ django-debug-toolbar-template-timings==0.9  # via -r requirements.in
 django-debug-toolbar==2.2  # via -r requirements.in, django-debug-toolbar-template-timings
 django-dotenv==1.4.2      # via -r requirements.in
 django-extensions==2.2.8  # via -r requirements.in
-django==2.2.11            # via -r requirements.in, django-anymail, django-cors-headers, django-debug-toolbar, django-debug-toolbar-template-timings, django-redis, djangorestframework
+django==2.2.11            # via -r requirements.in, django-anymail, django-cors-headers, django-debug-toolbar, django-debug-toolbar-template-timings, djangorestframework
 djangorestframework-csv==2.1.0  # via -r requirements.in
 djangorestframework==3.11.0  # via -r requirements.in, djangorestframework-csv
 easyprocess==0.2.10       # via pyvirtualdisplay
