@@ -48,7 +48,12 @@ def get_savings_for_orgs(generic_code, date, org_type, org_ids, min_saving=1):
     Get available savings for the given orgs within a particular class of
     substitutable presentations
     """
-    substitution_set = get_substitution_sets()[generic_code]
+    try:
+        substitution_set = get_substitution_sets()[generic_code]
+    # Gracefully handle being asked for the savings for a code with no
+    # substitutions (to which the answer is always: no savings)
+    except KeyError:
+        return []
 
     quantities, net_costs = get_quantities_and_net_costs_at_date(
         get_db(), substitution_set, date
