@@ -119,7 +119,7 @@ urlpatterns = [
         name="regional_team_home_page",
     ),
     # All England
-    path(r"all-england/", views.all_england, name="all_england"),
+    path(r"national/england/", views.all_england, name="all_england"),
     # Analyse
     path(r"analyse/", views.analyse, name="analyse"),
     # Price per unit
@@ -136,7 +136,7 @@ urlpatterns = [
         name="ccg_price_per_unit",
     ),
     path(
-        r"all-england/price-per-unit/",
+        r"national/england/price-per-unit/",
         views.all_england_price_per_unit,
         name="all_england_price_per_unit",
     ),
@@ -151,7 +151,7 @@ urlpatterns = [
         name="price_per_unit_by_presentation",
     ),
     path(
-        r"all-england/<bnf_code>/price-per-unit/",
+        r"national/england/<bnf_code>/price-per-unit/",
         views.all_england_price_per_unit_by_presentation,
         name="all_england_price_per_unit_by_presentation",
     ),
@@ -202,7 +202,7 @@ urlpatterns = [
         kwargs={"entity_type": "regional_team"},
     ),
     path(
-        r"all-england/concessions/",
+        r"national/england/concessions/",
         views.spending_for_one_entity,
         name="spending_for_all_england",
         kwargs={"entity_type": "all_england", "entity_code": None},
@@ -240,7 +240,7 @@ urlpatterns = [
         kwargs={"entity_type": "regional_team"},
     ),
     path(
-        r"measure/<measure>/all-england/",
+        r"measure/<measure>/national/england/",
         views.measure_for_all_england,
         name="measure_for_all_england",
     ),

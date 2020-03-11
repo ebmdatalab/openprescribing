@@ -76,20 +76,20 @@ class MeasuresTests(SeleniumTestCase):
         return self.find_by_css("#{} .panel".format(id_))
 
     def test_all_england(self):
-        self._get("/all-england/")
+        self._get("/national/england/")
 
         panel_element = self._find_measure_panel("measure_lpzomnibus")
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
             "Break it down into its constituent measures.",
-            "/all-england/?tags=lowpriority",
+            "/national/england/?tags=lowpriority",
         )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
             "Break the overall score down into individual presentations",
-            "/measure/lpzomnibus/all-england/",
+            "/measure/lpzomnibus/national/england/",
         )
         self._verify_link(
             panel_element,
@@ -122,7 +122,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             ".inner li:nth-child(1)",
             "Break the overall score down into individual presentations",
-            "/measure/core_0/all-england/",
+            "/measure/core_0/national/england/",
         )
         self._verify_link(
             panel_element,
@@ -145,14 +145,14 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_num_elements(panel_element, ".inner li", 4)
 
     def test_all_england_low_priority(self):
-        self._get("/all-england/?tags=lowpriority")
+        self._get("/national/england/?tags=lowpriority")
 
         panel_element = self._find_measure_panel("measure_lp_2")
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
             "Break the overall score down into individual presentations",
-            "/measure/lp_2/all-england/",
+            "/measure/lp_2/national/england/",
         )
         self._verify_link(
             panel_element,
@@ -1008,7 +1008,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_num_elements(panel_element, ".explanation li", 3)
 
     def test_measure_for_all_england(self):
-        self._get("/measure/lp_2/all-england/")
+        self._get("/measure/lp_2/national/england/")
         panel_element = self._find_measure_panel("measure_lp_2")
         self._verify_link(
             panel_element, ".measure-panel-title", "LP measure 2", "/measure/lp_2/"
@@ -1298,7 +1298,7 @@ class MeasuresTests(SeleniumTestCase):
             mv.cost_savings["50"] for mv in mvs if mv.cost_savings["50"] > 0
         )
 
-        self._get("/all-england/")
+        self._get("/national/england/")
         perf_element = self.find_by_xpath(
             "//*[@id='measure_core_0']//strong[text()='Performance:']/.."
         )
