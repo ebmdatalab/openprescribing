@@ -676,3 +676,33 @@ class TestCacheWrapper(SimpleTestCase):
             cached(test_func)
             cached(test_func)
         self.assertEqual(test_func.call_count, 2)
+
+
+class TestNationalRedirects(TestCase):
+    def test_dashboard(self):
+        self.assertRedirects(
+            self.client.get("/all-england/?foo=bar"),
+            "/national/england/?foo=bar",
+            fetch_redirect_response=False,
+        )
+
+    def test_price_per_unit(self):
+        self.assertRedirects(
+            self.client.get("/all-england/ABCD00001/price-per-unit/?date=2020-01"),
+            "/national/england/ABCD00001/price-per-unit/?date=2020-01",
+            fetch_redirect_response=False,
+        )
+
+    def test_concessions(self):
+        self.assertRedirects(
+            self.client.get("/all-england/concessions/"),
+            "/national/england/concessions/",
+            fetch_redirect_response=False,
+        )
+
+    def test_measures(self):
+        self.assertRedirects(
+            self.client.get("/measure/somemeasure/all-england/"),
+            "/measure/somemeasure/national/england/",
+            fetch_redirect_response=False,
+        )
