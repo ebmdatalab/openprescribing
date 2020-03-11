@@ -530,10 +530,10 @@ class Command(BaseCommand):
     def get_mapping_path(self):
         """Return path to mapping spreadsheet.
 
-        It expects to find this at data/snomed_mapping/[datestamp]/XXX.xlsx
+        It expects to find this at data/bnf_snomed_mapping/[datestamp]/XXX.xlsx
         """
         glob_pattern = os.path.join(
-            settings.PIPELINE_DATA_BASEDIR, "snomed_mapping", "*", "*.xlsx"
+            settings.PIPELINE_DATA_BASEDIR, "bnf_snomed_mapping", "*", "*.xlsx"
         )
 
         paths = sorted(glob.glob(glob_pattern))

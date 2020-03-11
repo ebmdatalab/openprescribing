@@ -30,11 +30,11 @@ class TestImportDmd2(TestCase):
             "pipeline/test-data/data/dmd/2019_07_01/nhsbsa_dmd_7.4.0_20190701000001",
         )
 
-        mkdir_p("pipeline/test-data/data/snomed_mapping/2019_07_01")
+        mkdir_p("pipeline/test-data/data/bnf_snomed_mapping/2019_07_01")
 
         shutil.copyfile(
-            "dmd/tests/data/bnf_code_mapping/mapping.xlsx",
-            "pipeline/test-data/data/snomed_mapping/2019_07_01/mapping.xlsx",
+            "dmd/tests/data/bnf_snomed_mapping/mapping.xlsx",
+            "pipeline/test-data/data/bnf_snomed_mapping/2019_07_01/mapping.xlsx",
         )
 
         # Import the data.  See dmd/tests/data/README.txt for details of what
@@ -52,7 +52,7 @@ class TestImportDmd2(TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree("pipeline/test-data/data/dmd")
-        shutil.rmtree("pipeline/test-data/data/snomed_mapping")
+        shutil.rmtree("pipeline/test-data/data/bnf_snomed_mapping")
         super(TestImportDmd2, cls).tearDownClass()
 
     def test_objects_created(self):
