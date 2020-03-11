@@ -118,7 +118,7 @@ def paths_to_scrape():
 
         # Ignore any URLs that are not either parameterisable (these static
         # pages or lists of entities) or for All England.
-        if "%" not in pattern and "all-england" not in pattern:
+        if "%" not in pattern and "national/england" not in pattern:
             continue
 
         path = build_path(pattern, keys)

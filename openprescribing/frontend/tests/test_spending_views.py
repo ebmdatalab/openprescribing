@@ -100,7 +100,7 @@ class TestSpendingViews(TestCase):
             "/ccg/{}/concessions/".format(self.ccg.code),
             "/stp/{}/concessions/".format(self.stp.code),
             "/regional-team/{}/concessions/".format(self.regional_team.code),
-            "/all-england/concessions/",
+            "/national/england/concessions/",
         ]
         for url in urls:
             with self.subTest(url=url):
@@ -135,7 +135,7 @@ class TestSpendingViews(TestCase):
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
 
-        url = "/all-england/concessions/"
+        url = "/national/england/concessions/"
         data = {"email": "alice@example.com"}
         response = self.client.post(url, data, follow=True)
         self.assertContains(
@@ -154,7 +154,7 @@ class TestSpendingViews(TestCase):
         self.assertContains(response, "Get email updates")
 
     def test_all_england_alert_signup_form(self):
-        url = "/all-england/concessions/".format(self.practice.code)
+        url = "/national/england/concessions/".format(self.practice.code)
         response = self.client.get(url)
         self.assertContains(response, "Get email updates")
 

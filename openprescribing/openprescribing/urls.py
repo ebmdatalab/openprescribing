@@ -42,6 +42,11 @@ def redirect_if_tags_query(view_fn):
     return wrapper
 
 
+def all_england_redirects(request, *args, **kwargs):
+    url = request.get_full_path().replace("/all-england/", "/national/england/")
+    return HttpResponseRedirect(url)
+
+
 urlpatterns = [
     # Static pages.
     path(r"", TemplateView.as_view(template_name="index.html"), name="home"),
@@ -119,7 +124,8 @@ urlpatterns = [
         name="regional_team_home_page",
     ),
     # All England
-    path(r"all-england/", views.all_england, name="all_england"),
+    path(r"national/england/", views.all_england, name="all_england"),
+    path(r"all-england/", all_england_redirects),
     # Analyse
     path(r"analyse/", views.analyse, name="analyse"),
     # Price per unit
@@ -136,10 +142,11 @@ urlpatterns = [
         name="ccg_price_per_unit",
     ),
     path(
-        r"all-england/price-per-unit/",
+        r"national/england/price-per-unit/",
         views.all_england_price_per_unit,
         name="all_england_price_per_unit",
     ),
+    path(r"all-england/price-per-unit/", all_england_redirects),
     path(
         r"practice/<entity_code>/<bnf_code>/price_per_unit/",
         views.price_per_unit_by_presentation,
@@ -151,10 +158,11 @@ urlpatterns = [
         name="price_per_unit_by_presentation",
     ),
     path(
-        r"all-england/<bnf_code>/price-per-unit/",
+        r"national/england/<bnf_code>/price-per-unit/",
         views.all_england_price_per_unit_by_presentation,
         name="all_england_price_per_unit_by_presentation",
     ),
+    path(r"all-england/<bnf_code>/price-per-unit/", all_england_redirects),
     # Ghost generics
     path(
         r"practice/<code>/ghost_generics/",
@@ -202,11 +210,12 @@ urlpatterns = [
         kwargs={"entity_type": "regional_team"},
     ),
     path(
-        r"all-england/concessions/",
+        r"national/england/concessions/",
         views.spending_for_one_entity,
         name="spending_for_all_england",
         kwargs={"entity_type": "all_england", "entity_code": None},
     ),
+    path(r"all-england/concessions/", all_england_redirects),
     # Measures
     path(r"measure/", views.all_measures, name="all_measures"),
     path(
@@ -240,10 +249,11 @@ urlpatterns = [
         kwargs={"entity_type": "regional_team"},
     ),
     path(
-        r"measure/<measure>/all-england/",
+        r"measure/<measure>/national/england/",
         views.measure_for_all_england,
         name="measure_for_all_england",
     ),
+    path(r"measure/<measure>/all-england/", all_england_redirects),
     path(
         r"practice/<practice_code>/measures/",
         views.measures_for_one_practice,

@@ -35,7 +35,7 @@ class TestAlertViews(TestCase):
     def _post_org_signup(self, entity_id, email="foo@baz.com", follow=True):
         form_data = {"email": email}
         if entity_id == "all_england":
-            url = "/all-england/"
+            url = "/national/england/"
         elif len(entity_id) == 3:
             url = "/ccg/%s/" % entity_id
             form_data["pct_id"] = entity_id
@@ -127,7 +127,9 @@ class TestAlertViews(TestCase):
         # We don't follow the redirect, because we don't have the necessary test data for
         # testing the all-england page.
         response = self._post_org_signup("all_england", follow=False)
-        self.assertRedirects(response, "/all-england/", fetch_redirect_response=False)
+        self.assertRedirects(
+            response, "/national/england/", fetch_redirect_response=False
+        )
         self.assertEqual(OrgBookmark.objects.count(), 1)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.practice, None)
@@ -142,7 +144,9 @@ class TestAlertViews(TestCase):
         # We don't follow the redirect, because we don't have the necessary test data for
         # testing the all-england page.
         response = self._post_org_signup("all_england", follow=False)
-        self.assertRedirects(response, "/all-england/", fetch_redirect_response=False)
+        self.assertRedirects(
+            response, "/national/england/", fetch_redirect_response=False
+        )
         self.assertEqual(OrgBookmark.objects.count(), 2)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.practice, None)
@@ -454,7 +458,7 @@ class TestFrontendViews(TestCase):
         self.assertNotContains(response, "This list is filtered")
 
     def test_call_single_measure_for_all_england(self):
-        response = self.client.get("/measure/cerazette/all-england/")
+        response = self.client.get("/measure/cerazette/national/england/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "measure_for_one_entity.html")
 
@@ -672,3 +676,33 @@ class TestCacheWrapper(SimpleTestCase):
             cached(test_func)
             cached(test_func)
         self.assertEqual(test_func.call_count, 2)
+
+
+class TestNationalRedirects(TestCase):
+    def test_dashboard(self):
+        self.assertRedirects(
+            self.client.get("/all-england/?foo=bar"),
+            "/national/england/?foo=bar",
+            fetch_redirect_response=False,
+        )
+
+    def test_price_per_unit(self):
+        self.assertRedirects(
+            self.client.get("/all-england/ABCD00001/price-per-unit/?date=2020-01"),
+            "/national/england/ABCD00001/price-per-unit/?date=2020-01",
+            fetch_redirect_response=False,
+        )
+
+    def test_concessions(self):
+        self.assertRedirects(
+            self.client.get("/all-england/concessions/"),
+            "/national/england/concessions/",
+            fetch_redirect_response=False,
+        )
+
+    def test_measures(self):
+        self.assertRedirects(
+            self.client.get("/measure/somemeasure/all-england/"),
+            "/measure/somemeasure/national/england/",
+            fetch_redirect_response=False,
+        )
