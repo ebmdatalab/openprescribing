@@ -112,6 +112,7 @@
         "publication_lag": "60 days",
         "index_url": "https://apps.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=124",
         "notes": "Run `./manage.py fetch_prescribing_data {year} {month}` and follow the instructions.",
+        "data_dir": "prescribing_v2",
         "core_data": true
     },
     "prescribing_metadata": {
