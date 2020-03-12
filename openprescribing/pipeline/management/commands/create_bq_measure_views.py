@@ -24,6 +24,8 @@ class Command(BaseCommand):
             pass
 
         for table_name in [
+            "all_prescribing",
+            "normalised_prescribing",
             "normalised_prescribing_standard",
             "raw_prescribing_normalised",
         ]:
