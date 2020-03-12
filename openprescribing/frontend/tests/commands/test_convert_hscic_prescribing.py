@@ -1,10 +1,7 @@
-import csv
 import os
 
 from django.core.management import call_command
 from django.test import TestCase
-
-from django.core.management.base import CommandError
 
 from gcutils.bigquery import Client as BQClient, NotFound, results_to_dicts
 from gcutils.storage import Client as StorageClient
@@ -35,11 +32,6 @@ class ConvertHscicPrescribingTests(TestCase):
             + "convert_hscic_prescribing/2016_01/"
             + "Detailed_Prescribing_Information.csv"
         )
-        converted_data_path = (
-            "frontend/tests/fixtures/commands/"
-            + "convert_hscic_prescribing/2016_01/"
-            + "Detailed_Prescribing_Information_formatted.CSV"
-        )
         gcs_path = "hscic/prescribing/2016_01/" + "Detailed_Prescribing_Information.csv"
 
         client = StorageClient()
@@ -62,22 +54,6 @@ class ConvertHscicPrescribingTests(TestCase):
         for row in rows:
             if row["practice"] == "P92042" and row["bnf_code"] == "0202010B0AAABAB":
                 self.assertEqual(row["quantity"], 1288)
-
-        # Test that downloaded data is correct
-        with open(converted_data_path) as f:
-            rows = list(csv.reader(f))
-
-        self.assertEqual(len(rows), 9)
-        for row in rows:
-            if row[1] == "P92042" and row[2] == "0202010B0AAABAB":
-                self.assertEqual(row[6], "1288")
-
-    def test_filename_has_date(self):
-        with self.assertRaises(CommandError):
-            call_command(
-                "convert_hscic_prescribing",
-                filename="Detailed_Prescribing_Information.csv",
-            )
 
     def setUp(self):
         client = BQClient("hscic")
