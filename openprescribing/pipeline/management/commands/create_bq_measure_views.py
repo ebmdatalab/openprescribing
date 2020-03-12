@@ -12,14 +12,22 @@ class Command(BaseCommand):
     help = "Creates or updates all BQ views that measures depend on"
 
     def handle(self, *args, **kwargs):
+        client = Client("hscic")
+
         try:
-            Client("hscic").create_storage_backed_table(
+            client.create_storage_backed_table(
                 "raw_prescribing",
                 RAW_PRESCRIBING_SCHEMA,
                 "hscic/prescribing_v2/20*Detailed_Prescribing_Information.csv",
             )
         except Conflict:
             pass
+
+        for table_name in [
+            "normalised_prescribing_standard",
+            "raw_prescribing_normalised",
+        ]:
+            self.recreate_table(client, table_name)
 
         client = Client("measures")
 
@@ -36,8 +44,6 @@ class Command(BaseCommand):
             "gaba_total_ddd",
         ]:
             self.recreate_table(client, table_name)
-
-        self.recreate_table(Client("hscic"), "raw_prescribing_normalised")
 
         # cmpa_products is a table that has been created and managed by Rich.
         schema = build_schema(
