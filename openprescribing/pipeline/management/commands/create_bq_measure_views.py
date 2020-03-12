@@ -16,7 +16,7 @@ class Command(BaseCommand):
             Client("hscic").create_storage_backed_table(
                 "raw_prescribing",
                 RAW_PRESCRIBING_SCHEMA,
-                "hscic/prescribing/20*Detailed_Prescribing_Information.csv",
+                "hscic/prescribing_v2/20*Detailed_Prescribing_Information.csv",
             )
         except Conflict:
             pass
