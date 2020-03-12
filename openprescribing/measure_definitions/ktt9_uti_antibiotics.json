@@ -35,7 +35,7 @@
   "numerator_columns": [
     "SUM(p.quantity * r.adq_per_quantity) AS numerator"
   ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {hscic}.presentation r  ON p.bnf_code = r.bnf_code ",
+  "numerator_from": "{hscic}.normalised_prescribing p  LEFT JOIN {hscic}.presentation r  ON p.bnf_code = r.bnf_code ",
   "numerator_where": [
     "p.bnf_code LIKE '0501015P0%AB' OR --Pivmecillinam HCl_Tab 200mg (brands and generic) \n",
     "p.bnf_code LIKE '0501080W0%AE' OR --Trimethoprim_Tab 200mg (brands and generic) \n",

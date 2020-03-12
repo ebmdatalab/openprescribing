@@ -306,13 +306,13 @@ class Command(BaseCommand):
             f.seek(0)
             table.insert_rows_from_csv(f.name, schemas.PRESENTATION_SCHEMA)
 
-        # In production, normalised_prescribing_standard is actually a view,
+        # In production, normalised_prescribing is actually a view,
         # but for the tests it's much easier to set it up as a normal table.
         table = client.get_or_create_table(
-            "normalised_prescribing_standard", schemas.PRESCRIBING_SCHEMA
+            "normalised_prescribing", schemas.PRESCRIBING_SCHEMA
         )
 
-        # Upload prescribing_rows to normalised_prescribing_standard.
+        # Upload prescribing_rows to normalised_prescribing.
         with tempfile.NamedTemporaryFile(mode="wt", encoding="utf8", newline="") as f:
             writer = csv.writer(f)
             for row in prescribing_rows:

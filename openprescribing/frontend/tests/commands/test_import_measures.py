@@ -611,9 +611,7 @@ def set_up_bq():
     client = Client("hscic")
     client.get_or_create_table("ccgs", schemas.CCG_SCHEMA)
     client.get_or_create_table("practices", schemas.PRACTICE_SCHEMA)
-    client.get_or_create_table(
-        "normalised_prescribing_standard", schemas.PRESCRIBING_SCHEMA
-    )
+    client.get_or_create_table("normalised_prescribing", schemas.PRESCRIBING_SCHEMA)
     client.get_or_create_table(
         "practice_statistics", schemas.PRACTICE_STATISTICS_SCHEMA
     )
@@ -643,7 +641,7 @@ def upload_dummy_prescribing(bnf_codes):
         ]
         prescribing_rows.append(row)
 
-    table = Client("hscic").get_table("normalised_prescribing_standard")
+    table = Client("hscic").get_table("normalised_prescribing")
     with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in prescribing_rows:
@@ -852,9 +850,9 @@ def upload_prescribing(randint):
 
                 prescribing_rows.append(row)
 
-    # In production, normalised_prescribing_standard is actually a view,
+    # In production, normalised_prescribing is actually a view,
     # but for the tests it's much easier to set it up as a normal table.
-    table = Client("hscic").get_table("normalised_prescribing_standard")
+    table = Client("hscic").get_table("normalised_prescribing")
 
     with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)

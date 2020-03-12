@@ -26,7 +26,7 @@ class Command(BaseCommand):
         for table_name in [
             "all_prescribing",
             "normalised_prescribing",
-            "normalised_prescribing_standard",
+            "normalised_prescribing",
             "raw_prescribing_normalised",
         ]:
             self.recreate_table(client, table_name)

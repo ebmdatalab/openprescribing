@@ -52,7 +52,7 @@ SELECT
 FROM
   dt_prices dt
 INNER JOIN
-  {project}.{hscic}.normalised_prescribing_standard rx
+  {project}.{hscic}.normalised_prescribing rx
 ON
   rx.month = dt.date
   AND rx.bnf_code = dt.bnf_code

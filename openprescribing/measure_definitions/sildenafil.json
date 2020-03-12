@@ -30,7 +30,7 @@
   "numerator_columns": [
     "SUM(items) AS numerator"
   ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_from": "{hscic}.normalised_prescribing ",
   "numerator_where": [
     "bnf_code LIKE '070405%' --Drugs For Erectile Dysfunction \n",
     "AND ",
@@ -57,7 +57,7 @@
   ],
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT bnf_code",
-    "FROM {hscic}.normalised_prescribing_standard",
+    "FROM {hscic}.normalised_prescribing",
     "WHERE",
     "bnf_code LIKE '070405%'",
     "AND bnf_code NOT LIKE '0704050Z0AAAAAA%'",

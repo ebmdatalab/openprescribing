@@ -9,7 +9,7 @@ WITH prices_per_unit AS (
     bnf_code,
     IEEE_DIVIDE(net_cost,quantity) AS price_per_unit
   FROM
-    {project}.{hscic}.normalised_prescribing_standard
+    {project}.{hscic}.normalised_prescribing
   WHERE quantity > 0  -- See # 1373
 )
 
