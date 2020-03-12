@@ -1,4 +1,3 @@
-import csv
 import datetime
 import logging
 import re
@@ -12,8 +11,6 @@ from django.db import transaction
 
 from frontend.models import Chemical
 from frontend.models import ImportLog
-from frontend.models import PCT
-from frontend.models import Practice
 from frontend.models import PracticeStatistics
 from frontend.models import Prescription
 from frontend.models import Presentation
@@ -58,8 +55,6 @@ class Command(BaseCommand):
                 ).date()
             else:
                 self.date = self._date_from_filename(fname)
-            if not options["skip_orgs"]:
-                self.import_pcts_and_practices(fname)
             self.drop_partition()
             self.create_partition()
             self.import_prescriptions(fname)
@@ -123,26 +118,6 @@ class Command(BaseCommand):
                     if count > 0:
                         obj.is_current = True
                         obj.save()
-
-    def import_pcts_and_practices(self, filename):
-        logger.info("Importing PCTs and practices from %s" % filename)
-        rows = csv.reader(open(filename, "rU"))
-        pct_codes = set()
-        practices = set()
-        for row in rows:
-            pct_codes.add(row[0])
-            practices.add(row[1])
-        pcts_created = practices_created = 0
-        with transaction.atomic():
-            for pct_code in pct_codes:
-                p, created = PCT.objects.get_or_create(code=pct_code)
-                pcts_created += created
-            for practice_code in practices:
-                p, created = Practice.objects.get_or_create(code=practice_code)
-                practices_created += created
-
-        logger.info("%s PCTs created" % pcts_created)
-        logger.info("%s Practices created" % practices_created)
 
     def create_partition(self):
         date = self.date
