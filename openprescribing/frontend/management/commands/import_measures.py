@@ -128,6 +128,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         start = datetime.now()
 
+        options["bigquery_only"] = True  # TODO post-ODD-cleanup
+
         if options["measure"]:
             measure_ids = options["measure"].split(",")
             measure_defs = load_measure_defs(measure_ids)
