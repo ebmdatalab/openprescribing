@@ -179,18 +179,6 @@
             "fetch_prescribing"
         ]
     },
-    "import_hscic_prescribing": {
-        "type": "import",
-        "source_id": "prescribing",
-        "command": "import_hscic_prescribing --filename *Detailed_Prescribing_Information_formatted.CSV",
-        "dependencies": [
-            "convert_hscic_prescribing",
-            "import_hscic_practices",
-            "import_bnf_codes",
-            "import_ccg_details",
-            "import_practice_details"
-        ]
-    },
     "import_dispensing_practices": {
         "type": "import",
         "source_id": "dispensing_practices",
