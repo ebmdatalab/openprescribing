@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
         # Check that we haven't already processed data for this month
         sql = """SELECT COUNT(*)
-        FROM {hscic}.prescribing
+        FROM {hscic}.prescribing_v2
         WHERE month = TIMESTAMP('{date}')"""
 
         try:
@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
         logger.info("sql: %s", sql)
 
-        prescribing_table = hscic_dataset_client.get_table("prescribing")
+        prescribing_table = hscic_dataset_client.get_table("prescribing_v2")
         prescribing_table.insert_rows_from_query(
             sql, legacy=True, write_disposition="WRITE_APPEND"
         )
