@@ -32,7 +32,7 @@ class ConvertHscicPrescribingTests(TestCase):
             + "convert_hscic_prescribing/2016_01/"
             + "Detailed_Prescribing_Information.csv"
         )
-        gcs_path = "hscic/prescribing/2016_01/" + "Detailed_Prescribing_Information.csv"
+        gcs_path = "hscic/prescribing_v2/2016_01/Detailed_Prescribing_Information.csv"
 
         client = StorageClient()
         bucket = client.get_bucket()

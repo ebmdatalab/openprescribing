@@ -71,7 +71,7 @@ class Command(BaseCommand):
 
         # Create BQ table backed backed by uploaded source CSV file
         raw_data_table_name = "raw_prescribing_data_{}".format(year_and_month)
-        gcs_path = "hscic/prescribing/{}/{}".format(year_and_month, filename)
+        gcs_path = "hscic/prescribing_v2/{}/{}".format(year_and_month, filename)
 
         logger.info("raw_data_table_name: %s", raw_data_table_name)
         logger.info("gcs_path: %s", gcs_path)
