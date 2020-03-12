@@ -254,9 +254,6 @@ class Command(BaseCommand):
         file_obj = open(filename)
         with connection.cursor() as cursor:
             cursor.copy_expert(copy_str % self._partition_name(), file_obj)
-            ImportLog.objects.create(
-                current_at=self.date, filename=filename, category="prescribing"
-            )
 
     def _date_from_filename(self, filename):
         new_style = re.match(r".*/([0-9]{4}_[0-9]{2})/", filename)

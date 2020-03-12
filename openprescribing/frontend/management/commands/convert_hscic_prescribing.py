@@ -7,6 +7,7 @@ from django.core.management.base import CommandError
 
 from gcutils.bigquery import Client, NotFound
 from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA
+from frontend.models import ImportLog
 
 
 logger = logging.getLogger(__name__)
@@ -108,4 +109,8 @@ class Command(BaseCommand):
         prescribing_table = hscic_dataset_client.get_table("prescribing_v2")
         prescribing_table.insert_rows_from_query(
             sql, legacy=True, write_disposition="WRITE_APPEND"
+        )
+
+        ImportLog.objects.create(
+            current_at=date.replace("_", "-"), filename=filename, category="prescribing"
         )
