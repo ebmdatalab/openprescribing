@@ -28,7 +28,7 @@
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_query": [
     "SELECT bnf_code FROM {hscic}.presentation",
-    "  WHERE name LIKE '%Silv%' OR name LIKE '% Ag %' --dressings with either Silv or Ag in the name"
+    "  WHERE name LIKE '%Silv%' OR name LIKE '% Ag %'"
   ],
   "numerator_bnf_codes_filter": [
     "20 # Dressings"
