@@ -107,7 +107,8 @@
         "command": "import_adqs",
         "source_id": "prescribing",
         "dependencies": [
-          "import_hscic_prescribing"
+          "import_bnf_codes",
+          "convert_hscic_prescribing"
         ]
     },
     "import_patient_list_weightings": {
