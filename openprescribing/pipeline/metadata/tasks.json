@@ -226,7 +226,6 @@
             "convert_hscic_prescribing",
             "import_patient_list_size",
             "import_hscic_practices",
-            "import_hscic_prescribing",
             "import_ccg_details",
             "import_practice_details"
         ]
