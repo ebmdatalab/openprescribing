@@ -13,7 +13,7 @@ SELECT
   prescribing.quantity AS quantity,
   prescribing.month AS month
 FROM
-  {project}.{hscic}.prescribing AS prescribing
+  {project}.{hscic}.prescribing_v1 AS prescribing
 LEFT JOIN
   {project}.{hscic}.bnf_map AS bnf_map
 ON
