@@ -30,7 +30,9 @@ from django.db import transaction
 from gcutils.bigquery import Client
 
 from common import utils
-from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
+
+# TODO post-ODD-cleanup
+from frontend.models import MeasureGlobal, MeasureValue, Measure1 as Measure, ImportLog
 from frontend.utils.bnf_hierarchy import get_all_bnf_codes, simplify_bnf_codes
 
 from google.api_core.exceptions import BadRequest

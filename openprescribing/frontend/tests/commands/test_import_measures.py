@@ -22,7 +22,7 @@ from django.test import TestCase, override_settings
 from frontend import bq_schemas as schemas
 from frontend.models import (
     ImportLog,
-    Measure,
+    Measure1 as Measure,  # TODO post-ODD-cleanup
     MeasureGlobal,
     MeasureValue,
     Practice,
