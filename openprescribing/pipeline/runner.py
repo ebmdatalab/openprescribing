@@ -415,7 +415,7 @@ def run_all(year, month, under_test=False):
     for task in tasks.by_type("import").ordered():
         run_task(task, year, month)
 
-    prescribing_path = tasks["import_hscic_prescribing"].imported_paths()[-1]
+    prescribing_path = tasks["convert_hscic_prescribing"].imported_paths()[-1]
     last_imported = re.findall(r"/(\d{4}_\d{2})/", prescribing_path)[0]
 
     for task in tasks.by_type("post_process").ordered():
