@@ -58,12 +58,13 @@ class Command(BaseCommand):
 
         # Check that we haven't already processed data for this month
         sql = """SELECT COUNT(*)
-        FROM {dataset}.prescribing
-        WHERE month = TIMESTAMP('{date}')""".format(
-            dataset=hscic_dataset_client.dataset_id, date=date.replace("_", "-")
-        )
+        FROM {hscic}.prescribing
+        WHERE month = TIMESTAMP('{date}')"""
+
         try:
-            results = hscic_dataset_client.query(sql)
+            results = hscic_dataset_client.query(
+                sql, substitutions={"date": date.replace("_", "-")}
+            )
             assert results.rows[0][0] == 0
         except NotFound:
             pass
