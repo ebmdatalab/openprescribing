@@ -244,11 +244,6 @@
             "create_bq_public_tables"
         ]
     },
-    "import_measure_definitions": {
-        "type": "post_process",
-        "command": "import_measures --definitions_only",
-        "dependencies": ["create_bq_measure_views", "build_matrixstore"]
-    },
     "create_bq_measure_views": {
         "type": "post_process",
         "command": "create_bq_measure_views",
@@ -259,7 +254,6 @@
         "command": "import_measures",
         "dependencies": [
             "upload_to_bigquery",
-            "import_measure_definitions",
             "create_bq_measure_views",
             "publish_matrixstore"
         ]
