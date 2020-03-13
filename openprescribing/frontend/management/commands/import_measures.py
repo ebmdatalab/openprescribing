@@ -502,7 +502,7 @@ def build_where(bnf_codes):
     if not bnf_codes:
         # hackety hack: this is for the end-to-end tests, where we don't import
         # enough prescribing data for there to be prescribing for every measure.
-        return "1 = 1"
+        return "1 = 0"
 
     bnf_code_sql_fragment = ", ".join('"{}"'.format(bnf_code) for bnf_code in bnf_codes)
     return "bnf_code IN ({})".format(bnf_code_sql_fragment)
