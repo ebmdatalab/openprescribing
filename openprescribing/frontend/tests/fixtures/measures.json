@@ -16,12 +16,12 @@
       "low_is_good": false,
       "numerator_type": "bnf_quantity",
       "numerator_columns": "SUM(quantity) AS numerator, ",
-      "numerator_from": "{hscic}.normalised_prescribing_standard ",
+      "numerator_from": "{hscic}.normalised_prescribing ",
       "numerator_where": "(bnf_code LIKE '0703021Q0BB%%')  ",
       "numerator_bnf_codes": ["0703021Q0BBAAAA"],
       "denominator_type": "bnf_quantity",
       "denominator_columns": "SUM(quantity) AS denominator, ",
-      "denominator_from": "{hscic}.normalised_prescribing_standard ",
+      "denominator_from": "{hscic}.normalised_prescribing ",
       "denominator_where": "(bnf_code LIKE '0703021Q0%%')  ",
       "denominator_bnf_codes": ["0703021Q0AAAAAA", "0703021Q0BBAAAA"]
     }

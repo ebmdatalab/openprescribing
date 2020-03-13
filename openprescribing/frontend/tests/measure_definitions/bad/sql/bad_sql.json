@@ -24,10 +24,10 @@
   "tags": ["core"],
   "numerator_type": "custom",
   "numerator_columns": "SUM(quantity) AS numerator, ",
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_from": "{hscic}.normalised_prescribing ",
   "numerator_where": "(bnf_codex LIKE '0703021Q0BB%%')  ",
   "denominator_type": "custom",
   "denominator_columns": "SUM(quantity) AS denominator, ",
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
+  "denominator_from": "{hscic}.normalised_prescribing ",
   "denominator_where": "(bnf_code LIKE '0703021Q0%%')  "
 }

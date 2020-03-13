@@ -30,7 +30,9 @@ from django.db import transaction
 from gcutils.bigquery import Client
 
 from common import utils
-from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
+
+# TODO post-ODD-cleanup
+from frontend.models import MeasureGlobal, MeasureValue, Measure1 as Measure, ImportLog
 from frontend.utils.bnf_hierarchy import get_all_bnf_codes, simplify_bnf_codes
 
 from google.api_core.exceptions import BadRequest
@@ -125,6 +127,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         start = datetime.now()
+
+        options["bigquery_only"] = True  # TODO post-ODD-cleanup
 
         if options["measure"]:
             measure_ids = options["measure"].split(",")
@@ -325,7 +329,7 @@ def create_or_update_measure(measure_def, end_date):
         else:
             assert False, measure_id
 
-        m.numerator_from = "{hscic}.normalised_prescribing_standard"
+        m.numerator_from = "{hscic}.normalised_prescribing"
 
         m.numerator_bnf_codes_filter = v.get("numerator_bnf_codes_filter")
         m.numerator_bnf_codes_query = v.get("numerator_bnf_codes_query")
@@ -343,10 +347,7 @@ def create_or_update_measure(measure_def, end_date):
         m.denominator_from = v["denominator_from"]
         m.denominator_where = v["denominator_where"]
         m.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
-        if (
-            m.denominator_from
-            and "normalised_prescribing_standard" in m.denominator_from
-        ):
+        if m.denominator_from and "normalised_prescribing" in m.denominator_from:
             m.denominator_is_list_of_bnf_codes = v.get(
                 "denominator_is_list_of_bnf_codes", True
             )
@@ -378,7 +379,7 @@ def create_or_update_measure(measure_def, end_date):
         else:
             assert False, measure_id
 
-        m.denominator_from = "{hscic}.normalised_prescribing_standard"
+        m.denominator_from = "{hscic}.normalised_prescribing"
 
         m.denominator_bnf_codes_filter = v.get("denominator_bnf_codes_filter")
         m.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
@@ -570,11 +571,11 @@ def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
     else:
         # It would be nice if we could do:
         #
-        #     SELECT normalised_prescribing_standard.bnf_code FROM ...
+        #     SELECT normalised_prescribing.bnf_code FROM ...
         #
         # but BQ doesn't let you refer to an aliased table by its original
         # name, so we have to mess around like this.
-        if "{hscic}.normalised_prescribing_standard p" in get_measure_attr("from"):
+        if "{hscic}.normalised_prescribing p" in get_measure_attr("from"):
             col_name = "p.bnf_code"
         else:
             col_name = "bnf_code"

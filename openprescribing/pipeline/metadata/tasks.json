@@ -107,7 +107,8 @@
         "command": "import_adqs",
         "source_id": "prescribing",
         "dependencies": [
-          "import_hscic_prescribing"
+          "import_bnf_codes",
+          "convert_hscic_prescribing"
         ]
     },
     "import_patient_list_weightings": {
@@ -178,18 +179,6 @@
             "fetch_prescribing"
         ]
     },
-    "import_hscic_prescribing": {
-        "type": "import",
-        "source_id": "prescribing",
-        "command": "import_hscic_prescribing --filename *Detailed_Prescribing_Information_formatted.CSV",
-        "dependencies": [
-            "convert_hscic_prescribing",
-            "import_hscic_practices",
-            "import_bnf_codes",
-            "import_ccg_details",
-            "import_practice_details"
-        ]
-    },
     "import_dispensing_practices": {
         "type": "import",
         "source_id": "dispensing_practices",
@@ -225,7 +214,6 @@
             "convert_hscic_prescribing",
             "import_patient_list_size",
             "import_hscic_practices",
-            "import_hscic_prescribing",
             "import_ccg_details",
             "import_practice_details"
         ]
@@ -307,6 +295,13 @@
         "command": "matrixstore_set_live --date {last_imported}",
         "dependencies": [
             "build_matrixstore"
+        ]
+    },
+    "refresh_bnf_class_currency": {
+        "type": "post_process",
+        "command": "refresh_bnf_class_currency",
+        "dependencies": [
+            "publish_matrixstore"
         ]
     }
 }

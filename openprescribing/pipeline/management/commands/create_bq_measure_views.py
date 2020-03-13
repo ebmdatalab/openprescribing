@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA
+from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V1, RAW_PRESCRIBING_SCHEMA_V2
 from gcutils.bigquery import Client, build_schema
 from google.cloud.exceptions import Conflict
 
@@ -12,14 +12,35 @@ class Command(BaseCommand):
     help = "Creates or updates all BQ views that measures depend on"
 
     def handle(self, *args, **kwargs):
+        client = Client("hscic")
+
         try:
-            Client("hscic").create_storage_backed_table(
-                "raw_prescribing",
-                RAW_PRESCRIBING_SCHEMA,
-                "hscic/prescribing/20*Detailed_Prescribing_Information.csv",
+            client.create_storage_backed_table(
+                "raw_prescribing_v1",
+                RAW_PRESCRIBING_SCHEMA_V1,
+                "hscic/prescribing_v1/20*Detailed_Prescribing_Information.csv",
             )
         except Conflict:
             pass
+
+        try:
+            client.create_storage_backed_table(
+                "raw_prescribing_v2",
+                RAW_PRESCRIBING_SCHEMA_V2,
+                # This pattern may change once the data is published via the
+                # new Open Data Portal.
+                "hscic/prescribing_v2/DPI_DETAIL_PRESCRIBING_20*.csv",
+            )
+        except Conflict:
+            pass
+
+        for table_name in [
+            "all_prescribing",
+            "normalised_prescribing",
+            "normalised_prescribing",
+            "raw_prescribing_normalised",
+        ]:
+            self.recreate_table(client, table_name)
 
         client = Client("measures")
 
@@ -36,8 +57,6 @@ class Command(BaseCommand):
             "gaba_total_ddd",
         ]:
             self.recreate_table(client, table_name)
-
-        self.recreate_table(Client("hscic"), "raw_prescribing_normalised")
 
         # cmpa_products is a table that has been created and managed by Rich.
         schema = build_schema(

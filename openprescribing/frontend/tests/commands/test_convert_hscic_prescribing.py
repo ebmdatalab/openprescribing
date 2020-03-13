@@ -1,10 +1,7 @@
-import csv
 import os
 
 from django.core.management import call_command
 from django.test import TestCase
-
-from django.core.management.base import CommandError
 
 from gcutils.bigquery import Client as BQClient, NotFound, results_to_dicts
 from gcutils.storage import Client as StorageClient
@@ -33,14 +30,9 @@ class ConvertHscicPrescribingTests(TestCase):
         raw_data_path = (
             "frontend/tests/fixtures/commands/"
             + "convert_hscic_prescribing/2016_01/"
-            + "Detailed_Prescribing_Information.csv"
+            + "DPI_DETAIL_PRESCRIBING_201601.csv"
         )
-        converted_data_path = (
-            "frontend/tests/fixtures/commands/"
-            + "convert_hscic_prescribing/2016_01/"
-            + "Detailed_Prescribing_Information_formatted.CSV"
-        )
-        gcs_path = "hscic/prescribing/2016_01/" + "Detailed_Prescribing_Information.csv"
+        gcs_path = "hscic/prescribing_v2/2016_01/DPI_DETAIL_PRESCRIBING_201601.csv"
 
         client = StorageClient()
         bucket = client.get_bucket()
@@ -54,7 +46,7 @@ class ConvertHscicPrescribingTests(TestCase):
         # Test that data added to prescribing table
         client = BQClient()
         sql = """SELECT *
-        FROM {hscic}.prescribing
+        FROM {hscic}.prescribing_v2
         WHERE month = TIMESTAMP('2016-01-01')"""
 
         rows = list(results_to_dicts(client.query(sql)))
@@ -63,25 +55,9 @@ class ConvertHscicPrescribingTests(TestCase):
             if row["practice"] == "P92042" and row["bnf_code"] == "0202010B0AAABAB":
                 self.assertEqual(row["quantity"], 1288)
 
-        # Test that downloaded data is correct
-        with open(converted_data_path) as f:
-            rows = list(csv.reader(f))
-
-        self.assertEqual(len(rows), 9)
-        for row in rows:
-            if row[1] == "P92042" and row[2] == "0202010B0AAABAB":
-                self.assertEqual(row[6], "1288")
-
-    def test_filename_has_date(self):
-        with self.assertRaises(CommandError):
-            call_command(
-                "convert_hscic_prescribing",
-                filename="Detailed_Prescribing_Information.csv",
-            )
-
     def setUp(self):
         client = BQClient("hscic")
-        client.get_or_create_table("prescribing", PRESCRIBING_SCHEMA)
+        client.get_or_create_table("prescribing_v2", PRESCRIBING_SCHEMA)
 
     def tearDown(self):
         table_name = "raw_prescribing_data_2016_01"
@@ -90,7 +66,7 @@ class ConvertHscicPrescribingTests(TestCase):
         except NotFound:
             pass
 
-        table = BQClient("hscic").get_table("prescribing")
+        table = BQClient("hscic").get_table("prescribing_v2")
         table.delete_all_rows()
 
         try:

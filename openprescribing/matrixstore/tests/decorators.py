@@ -69,7 +69,7 @@ class _DatabaseFixtures(object):
                 "practice": p.practice_id,
                 "bnf_code": p.presentation_code,
                 "items": p.total_items,
-                "quantity": int(p.quantity),
+                "quantity": p.quantity,
                 # Net cost shouldn't really ever be null, but it is in some of
                 # our old test fixtures
                 "net_cost": p.net_cost or 0,

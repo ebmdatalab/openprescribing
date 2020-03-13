@@ -69,7 +69,7 @@ Specifically, you should:
         else:
             jsessionid = kwargs["jsessionid"]
 
-        self.path = os.path.join(settings.PIPELINE_DATA_BASEDIR, "prescribing")
+        self.path = os.path.join(settings.PIPELINE_DATA_BASEDIR, "prescribing_v2")
         self.base_url = "https://apps.nhsbsa.nhs.uk/infosystems/data/"
 
         session = requests.Session()

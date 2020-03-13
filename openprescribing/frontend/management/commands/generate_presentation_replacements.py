@@ -177,7 +177,7 @@ def write_zero_prescribing_codes_table(level):
     SELECT
       bnf.%s
     FROM
-      {hscic}.normalised_prescribing_standard AS prescribing
+      {hscic}.normalised_prescribing AS prescribing
     RIGHT JOIN
       {hscic}.bnf bnf
     ON

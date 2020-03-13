@@ -113,7 +113,7 @@ class DataFactory(object):
             "bnf_code": presentation["bnf_code"],
             "bnf_name": presentation["name"],
             "items": self.random.randint(1, 100),
-            "quantity": self.random.randint(1, 100),
+            "quantity": self.random.uniform(1, 100),
             # Costs should be in pounds to two decimal places
             "net_cost": self.random.randint(1, 10000) / 100,
             "actual_cost": self.random.randint(1, 10000) / 100,

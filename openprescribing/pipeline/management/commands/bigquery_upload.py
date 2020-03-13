@@ -1,7 +1,6 @@
 import datetime
 
-from django.core.management import BaseCommand, CommandError
-from django.db.models import Max
+from django.core.management import BaseCommand
 
 from gcutils.bigquery import Client as BQClient
 from gcutils.storage import Client as StorageClient
@@ -11,26 +10,6 @@ from frontend import bq_schemas as schemas
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        # Make sure that PracticeStatistics and Prescription tables both have
-        # latest data.
-        latest_practice_statistic_date = models.PracticeStatistics.objects.aggregate(
-            Max("date")
-        )["date__max"]
-        latest_prescription_date = models.Prescription.objects.aggregate(
-            Max("processing_date")
-        )["processing_date__max"]
-
-        if latest_practice_statistic_date != latest_prescription_date:
-            msg = (
-                "Latest PracticeStatistics object has date {}, "
-                "while latest Prescription object has processing_date {}".format(
-                    latest_practice_statistic_date, latest_prescription_date
-                )
-            )
-            raise CommandError(msg)
-
-        date = latest_prescription_date
-
         update_bnf_table()
 
         client = BQClient("hscic")
@@ -86,6 +65,7 @@ class Command(BaseCommand):
         table = client.get_table("regional_teams")
         table.insert_rows_from_pg(models.RegionalTeam, schemas.REGIONAL_TEAM_SCHEMA)
 
+        date = models.ImportLog.objects.latest_in_category("prescribing").current_at
         table = client.get_table("prescribing_" + date.strftime("%Y_%m"))
         sql = """SELECT * FROM {hscic}.prescribing
         WHERE month = TIMESTAMP('{date}')"""

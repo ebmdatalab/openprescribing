@@ -54,7 +54,7 @@ PRESCRIBING_SCHEMA = build_schema(
     ("items", "INTEGER"),
     ("net_cost", "FLOAT"),
     ("actual_cost", "FLOAT"),
-    ("quantity", "INTEGER"),
+    ("quantity", "FLOAT"),
     ("month", "TIMESTAMP"),
 )
 
@@ -137,7 +137,7 @@ BNF_SCHEMA = build_schema(
     ("presentation_code", "STRING"),
 )
 
-RAW_PRESCRIBING_SCHEMA = build_schema(
+RAW_PRESCRIBING_SCHEMA_V1 = build_schema(
     ("Regional_Office_Name", "STRING"),
     ("Regional_Office_Code", "STRING"),
     ("Area_Team_Name", "STRING"),
@@ -153,6 +153,35 @@ RAW_PRESCRIBING_SCHEMA = build_schema(
     ("ADQ_Usage", "FLOAT"),
     ("NIC", "FLOAT"),
     ("Actual_Cost", "FLOAT"),
+)
+
+RAW_PRESCRIBING_SCHEMA_V2 = build_schema(
+    ("YEAR_MONTH", "STRING"),
+    ("REGIONAL_OFFICE_NAME", "STRING"),
+    ("REGIONAL_OFFICE_CODE", "STRING"),
+    ("AREA_TEAM_NAME", "STRING"),
+    ("AREA_TEAM_CODE", "STRING"),
+    ("PCO_NAME", "STRING"),
+    ("PCO_CODE", "STRING"),
+    ("PRACTICE_NAME", "STRING"),
+    ("PRACTICE_CODE", "STRING"),
+    ("ADDRESS_1", "STRING"),
+    ("ADDRESS_2", "STRING"),
+    ("ADDRESS_3", "STRING"),
+    ("ADDRESS_4", "STRING"),
+    ("POSTCODE", "STRING"),
+    ("BNF_CHEMICAL_SUBSTANCE", "STRING"),
+    ("CHEMICAL_SUBSTANCE_BNF_DESCR", "STRING"),
+    ("BNF_CODE", "STRING"),
+    ("BNF_DESCRIPTION", "STRING"),
+    ("BNF_CHAPTER_PLUS_CODE", "STRING"),
+    ("QUANTITY", "FLOAT"),
+    ("ITEMS", "INTEGER"),
+    ("TOTAL_QUANTITY", "FLOAT"),
+    ("ADQUSAGE", "FLOAT"),
+    ("NIC", "FLOAT"),
+    ("ACTUAL_COST", "FLOAT"),
+    ("UNIDENTIFIED", "STRING"),
 )
 
 BDZ_ADQ_SCHEMA = build_schema(

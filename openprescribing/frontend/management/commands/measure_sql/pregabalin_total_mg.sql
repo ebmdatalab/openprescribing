@@ -26,7 +26,7 @@ SELECT
       WHEN SUBSTR(bnf_code,14,2)='AL' THEN quantity * 75
       ELSE 0 END) AS lyrica_mg
 FROM
-  {project}.{hscic}.normalised_prescribing_standard
+  {project}.{hscic}.normalised_prescribing
 WHERE
   bnf_code LIKE '0408010AE%'
 GROUP BY
