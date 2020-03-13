@@ -182,7 +182,10 @@ class TestMatrixStoreBuild(SimpleTestCase):
             for entry in self._expected_prescribing_values():
                 expected_entries += 1
                 value = get_value(entry["bnf_code"], entry["practice"], entry["month"])
-                expected_value = round(entry[field] * multiplier)
+                if field == "quantity":
+                    expected_value = entry[field] * multiplier
+                else:
+                    expected_value = round(entry[field] * multiplier)
                 self.assertEqual(value, expected_value)
             # Check there are no additional values that we weren't expecting
             self.assertEqual(get_value.nonzero_values, expected_entries)
@@ -224,9 +227,15 @@ class TestMatrixStoreBuild(SimpleTestCase):
                 field,
             )
             # Calculate totals over all presentations
-            totals = defaultdict(int)
+            if field == "quantity":
+                totals = defaultdict(float)
+            else:
+                totals = defaultdict(int)
             for entry in self._expected_prescribing_values():
-                value = round(entry[field] * multiplier)
+                if field == "quantity":
+                    value = entry[field] * multiplier
+                else:
+                    value = round(entry[field] * multiplier)
                 totals[entry["practice"], entry["month"]] += value
             # Check they match the stored values
             for (practice, month), expected_value in totals.items():
