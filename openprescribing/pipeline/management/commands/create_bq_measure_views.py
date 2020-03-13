@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA
+from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V1, RAW_PRESCRIBING_SCHEMA_V2
 from gcutils.bigquery import Client, build_schema
 from google.cloud.exceptions import Conflict
 
@@ -16,9 +16,20 @@ class Command(BaseCommand):
 
         try:
             client.create_storage_backed_table(
-                "raw_prescribing",
-                RAW_PRESCRIBING_SCHEMA,
-                "hscic/prescribing_v2/20*Detailed_Prescribing_Information.csv",
+                "raw_prescribing_v1",
+                RAW_PRESCRIBING_SCHEMA_V1,
+                "hscic/prescribing_v1/20*Detailed_Prescribing_Information.csv",
+            )
+        except Conflict:
+            pass
+
+        try:
+            client.create_storage_backed_table(
+                "raw_prescribing_v2",
+                RAW_PRESCRIBING_SCHEMA_V2,
+                # This pattern may change once the data is published via the
+                # new Open Data Portal.
+                "hscic/prescribing_v2/DPI_DETAIL_PRESCRIBING_20*.csv",
             )
         except Conflict:
             pass

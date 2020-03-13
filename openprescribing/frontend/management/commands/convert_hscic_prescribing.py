@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
 from gcutils.bigquery import Client, NotFound
-from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA
+from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V2
 from frontend.models import ImportLog
 
 
@@ -78,7 +78,7 @@ class Command(BaseCommand):
         logger.info("gcs_path: %s", gcs_path)
 
         raw_data_table = tmp_dataset_client.create_storage_backed_table(
-            raw_data_table_name, RAW_PRESCRIBING_SCHEMA, gcs_path
+            raw_data_table_name, RAW_PRESCRIBING_SCHEMA_V2, gcs_path
         )
 
         # Append aggregated data to prescribing table
