@@ -31,7 +31,7 @@ from gcutils.bigquery import Client
 
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
-from frontend.utils.bnf_hierarchy import simplify_bnf_codes
+from frontend.utils.bnf_hierarchy import get_all_bnf_codes, simplify_bnf_codes
 
 from google.api_core.exceptions import BadRequest
 
@@ -431,7 +431,9 @@ def get_bnf_codes(base_query, filter_):
 
     # Before 2017, the published prescribing data included trailing spaces in
     # certain BNF codes.  We strip those here.  See #2447.
-    return sorted(row[0].strip() for row in results.rows)
+    bnf_codes = {row[0].strip() for row in results.rows}
+
+    return sorted(bnf_codes & get_all_bnf_codes())
 
 
 def build_bnf_codes_query(base_query, filter_):
@@ -497,6 +499,11 @@ def build_bnf_codes_query_fragment(element):
 
 
 def build_where(bnf_codes):
+    if not bnf_codes:
+        # hackety hack: this is for the end-to-end tests, where we don't import
+        # enough prescribing data for there to be prescribing for every measure.
+        return "1 = 1"
+
     bnf_code_sql_fragment = ", ".join('"{}"'.format(bnf_code) for bnf_code in bnf_codes)
     return "bnf_code IN ({})".format(bnf_code_sql_fragment)
 
