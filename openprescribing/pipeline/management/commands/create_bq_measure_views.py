@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 RAW_PRESCRIBING_SCHEMA_V2,
                 # This pattern may change once the data is published via the
                 # new Open Data Portal.
-                "hscic/prescribing_v2/DPI_DETAIL_PRESCRIBING_20*.csv",
+                "hscic/prescribing_v2/20*/DPI_DETAIL_PRESCRIBING_20*.csv",
             )
         except Conflict:
             pass
