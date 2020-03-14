@@ -128,7 +128,7 @@ def extract_data_for_date(date, bq_client):
         SELECT
           bnf_code, practice, month, items, quantity, net_cost, actual_cost
         FROM
-          {hscic}.prescribing
+          {hscic}.prescribing_v2
         WHERE
           month = TIMESTAMP("{month}")
         """,

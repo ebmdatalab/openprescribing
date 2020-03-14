@@ -112,7 +112,7 @@ def import_practices(bq_conn, sqlite_conn, dates):
         "Querying for active practice codes between %s and %s", date_start, date_end
     )
     sql = """
-        SELECT DISTINCT practice FROM {hscic}.prescribing
+        SELECT DISTINCT practice FROM {hscic}.prescribing_v2
           WHERE month BETWEEN TIMESTAMP('%(start)s') AND TIMESTAMP('%(end)s')
         UNION DISTINCT
         SELECT DISTINCT practice FROM {hscic}.practice_statistics_all_years
