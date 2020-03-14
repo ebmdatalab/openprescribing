@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
         date = models.ImportLog.objects.latest_in_category("prescribing").current_at
         table = client.get_table("prescribing_" + date.strftime("%Y_%m"))
-        sql = """SELECT * FROM {hscic}.prescribing
+        sql = """SELECT * FROM {hscic}.prescribing_v2
         WHERE month = TIMESTAMP('{date}')"""
         substitutions = {"date": date}
         table.insert_rows_from_query(sql, substitutions=substitutions)
