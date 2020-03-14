@@ -84,18 +84,18 @@ class Command(BaseCommand):
         # Append aggregated data to prescribing table
         sql = """
          SELECT
-          Area_Team_Code AS sha,
-          LEFT(PCO_Code, 3) AS pct,
-          Practice_Code AS practice,
-          BNF_Code AS bnf_code,
-          BNF_Description AS bnf_name,
-          SUM(Items) AS items,
+          AREA_TEAM_CODE AS sha,
+          LEFT(PCO_CODE, 3) AS pct,
+          PRACTICE_CODE AS practice,
+          BNF_CODE AS bnf_code,
+          BNF_DESCRIPTION AS bnf_name,
+          SUM(ITEMS) AS items,
           SUM(NIC) AS net_cost,
-          SUM(Actual_Cost) AS actual_cost,
-          SUM(Quantity * Items) AS quantity,
+          SUM(ACTUAL_COST) AS actual_cost,
+          SUM(TOTAL_QUANTITY) AS quantity,
           TIMESTAMP('%s') AS month,
          FROM %s
-         WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
+         WHERE PRACTICE_CODE NOT LIKE '%%998'  -- see issue #349
          GROUP BY
            bnf_code, bnf_name, pct,
            practice, sha
