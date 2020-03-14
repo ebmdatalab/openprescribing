@@ -8,7 +8,7 @@ from gcutils.storage import Client as StorageClient
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        self.backup_table("prescribing")
+        self.backup_table("prescribing_v2")
         self.backup_table("practice_statistics")
 
     def backup_table(self, table_name):
