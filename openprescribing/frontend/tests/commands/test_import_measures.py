@@ -627,19 +627,16 @@ def upload_dummy_prescribing(bnf_codes):
     prescribing_rows = []
     for bnf_code in bnf_codes:
         row = [
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            bnf_code,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
+            None,  # sha
+            None,  # pct
+            None,  # practice
+            bnf_code,  # bnf_code
+            None,  # bnf_name
+            None,  # items
+            None,  # net_cost
+            None,  # actual_cost
+            None,  # quantity
+            None,  # month
         ]
         prescribing_rows.append(row)
 
