@@ -44,10 +44,7 @@ CCG_SCHEMA = build_schema(
 
 PRESCRIBING_SCHEMA = build_schema(
     ("sha", "STRING"),
-    ("regional_team", "STRING"),
-    ("stp", "STRING"),
     ("pct", "STRING"),
-    ("pcn", "STRING"),
     ("practice", "STRING"),
     ("bnf_code", "STRING"),
     ("bnf_name", "STRING"),
