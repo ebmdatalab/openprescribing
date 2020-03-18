@@ -1,6 +1,6 @@
 """
 Downloads and unzips the latest BNF SNOMED mapping to
-PIPELINE_DATA_BASEDIR/bnf_snomed_maping/[yyyy_mm_dd]/
+PIPELINE_DATA_BASEDIR/bnf_snomed_mapping/[yyyy_mm_dd]/
 
 Does nothing if file already downloaded.
 """
@@ -40,7 +40,7 @@ class Command(BaseCommand):
         release_date = datestamp[:4] + "_" + datestamp[4:6] + "_" + datestamp[6:]
 
         dir_path = os.path.join(
-            settings.PIPELINE_DATA_BASEDIR, "bnf_snomed_maping", release_date
+            settings.PIPELINE_DATA_BASEDIR, "bnf_snomed_mapping", release_date
         )
         zip_path = os.path.join(dir_path, filename)
 
