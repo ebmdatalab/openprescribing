@@ -59,7 +59,7 @@ numpy==1.18.2             # via -r requirements.in, pandas, pyarrow, scipy
 oauthlib==3.1.0           # via requests-oauthlib
 openpyxl==2.6.3           # via -r requirements.in
 pandas-gbq==0.13.1        # via -r requirements.in
-pandas==0.25.3            # via -r requirements.in, pandas-gbq
+pandas==1.0.3             # via -r requirements.in, pandas-gbq
 paramiko==2.7.1           # via fabric3
 pathtools==0.1.2          # via watchdog
 pip-tools==4.5.1          # via -r requirements.in
