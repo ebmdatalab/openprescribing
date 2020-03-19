@@ -44,11 +44,11 @@
     "0302000N0%AP # Fluticasone Prop_Pdr Inh 500mcg Disk+Dev (brands and generic)",
     "0302000N0%AU # Fluticasone Prop_Pdr For Inh 500mcg(60D) (brands and generic)",
     "0302000N0%AZ # Fluticasone/Salmeterol_Inh 500/50mcg 60D (brands and generic)",
-    "0302000N0%BC # Fluticasone Prop_Inha 250mcg (120 D) CFF (brands and generic)",
+    "0302000N0%BC # ...",
+    "0302000N0%BD # ...",
     "0302000N0%BG # Fluticasone/Salmeterol_Inh 250/25mcg120D (brands and generic)",
     "0302000N0%BK # Fluticasone/Formoterol_Inh 250/10mcg120D (brands and generic)",
     "0302000U0%AB # Ciclesonide_Inh 160mcg (120 D) CFF (brands and generic)",
-    "0302000U0%AC # Ciclesonide_Inh 160mcg (60 D) CFF (brands and generic)",
     "0302000V0%AA # Fluticasone/Vilanterol_Inha 184/22mcg30D (brands and generic)"
   ],
   "denominator_type": "bnf_items",
