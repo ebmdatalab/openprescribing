@@ -1,4 +1,4 @@
-Hello!
+Hello,
 
 This is an important safety update about {{ org_name }} from OpenPrescribing.
 Last night the MHRA issued a safety alert and advised that patients taking Esmya (ulipristal acetate) for uterine fibroids should STOP their treatment IMMEDIATELY.
@@ -6,7 +6,7 @@ We have identified that your organisation has issued prescriptions for Esmya (ul
 You should:
 
 * Use your clinical system to identify the patients taking Esmya (ulipristal acetate) and those who have recently stopped
-* Phone or text them to advising them to IMMEDIATELY STOP TREATMENT
+* Phone or text them advising them to IMMEDIATELY STOP TREATMENT
 * Advise people who are stopping treatment and recent users to seek immediate medical attention if they develop signs and symptoms of liver injury (nausea, vomiting, malaise, right hypochondrial pain, anorexia, asthenia or jaundice)
 * Arrange liver function tests for two to four weeks time
 
