@@ -48,3 +48,4 @@ venv/
 tmp
 logs
 deploy-log.json
+/diskcache
