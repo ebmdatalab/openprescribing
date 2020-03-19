@@ -1,0 +1,49 @@
+{
+  "name": "Injectable antibiotics",
+  "title": [
+    "Injectable antibiotics"
+  ],
+  "description": [
+    "TODO"
+  ],
+  "numerator_short": "Items",
+  "denominator_short": "1000 Patients",
+  "why_it_matters": [
+    "TODO"
+  ],
+  "tags": [
+    "core"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.dmd_objs_with_form_route",
+    "WHERE (form_route LIKE '%intravenous%' OR form_route LIKE '%injection%' OR form_route LIKE '%subcutaneous%')"
+  ],
+  "numerator_bnf_codes_filter": [
+    "05 # Infections"
+  ],
+  "denominator_type": "list_size",
+  "authored_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "TODO"
+  ],
+  "date_reviewed": [
+    "TODO"
+  ],
+  "next_review": [
+    "TODO"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/antibiotics-non-oral-routes-notebook/blob/master/notebooks/injections.ipynb"
+  ],
+  "measure_complexity": [
+    "low"
+  ]
+}
