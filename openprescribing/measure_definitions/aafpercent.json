@@ -23,13 +23,13 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "bnf_cost",
+  "numerator_type": "bnf_quantity",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.cmpa_products",
     "WHERE type = 'AAF'"
   ],
-  "denominator_type": "bnf_cost",
+  "denominator_type": "bnf_quantity",
   "denominator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.cmpa_products",
