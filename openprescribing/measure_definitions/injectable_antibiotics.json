@@ -1,10 +1,10 @@
 {
-  "name": "Injectable antibiotics",
+  "name": "Antibiotic stewardship:Injectable preparations for the treatment of infection",
   "title": [
-    "Injectable antibiotics"
+    "Antibiotic stewardship:Injectable preparations for the treatment of infection"
   ],
   "description": [
-    "TODO"
+    "Number of prescription items for all injectable medicines in BNF Chapter 5 (infections) excluding colistimethate sodium"
   ],
   "numerator_short": "Items",
   "denominator_short": "1000 Patients",
@@ -12,12 +12,14 @@
     "TODO"
   ],
   "tags": [
-    "core"
+    "antimicrobial",
+    "core",
+    "infections"
   ],
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
-  "low_is_good": true,
+  "low_is_good": false,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
