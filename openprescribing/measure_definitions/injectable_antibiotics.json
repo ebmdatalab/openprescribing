@@ -4,7 +4,7 @@
     "Antibiotic stewardship:Injectable preparations for the treatment of infection"
   ],
   "description": [
-    "Number of prescription items for all injectable medicines in BNF Chapter 5 (infections) excluding colistimethate sodium"
+    "Number of prescription items for all injectable medicines in BNF Chapter 5 (infections) excluding colistimethate sodium per 1000 patients"
   ],
   "numerator_short": "Items",
   "denominator_short": "1000 Patients",
