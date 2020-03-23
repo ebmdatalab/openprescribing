@@ -25,7 +25,7 @@
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
-  "low_is_good": false,
+  "low_is_good": null,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
