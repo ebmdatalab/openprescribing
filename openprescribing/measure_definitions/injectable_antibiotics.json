@@ -33,7 +33,8 @@
     "WHERE (form_route LIKE '%intravenous%' OR form_route LIKE '%injection%' OR form_route LIKE '%subcutaneous%')"
   ],
   "numerator_bnf_codes_filter": [
-    "05 # Infections"
+    "05 # Infections",
+    "~0501070I0 # colistimethate sodium"
   ],
   "denominator_type": "list_size",
   "authored_by": [
