@@ -75,7 +75,7 @@ def get_ppu_breakdown(prescribing, org_type, org_id):
         ppu = net_costs / quantities
         rounded_ppu = numpy.rint(ppu)
         ppu_values = numpy.unique(rounded_ppu)
-        ppu_values = ppu_values[~numpy.isnan(ppu_values)]
+        ppu_values = ppu_values[numpy.isfinite(ppu_values)]
         if len(ppu_values):
             presentations.append(
                 {
