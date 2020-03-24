@@ -339,7 +339,7 @@ urlpatterns = [
     path(r"docs/<doc_id>/", views.gdoc_view, name="docs"),
     # Other files.
     path(
-        r"robots\.txt/",
+        r"robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
     path(r"admin/", admin.site.urls),

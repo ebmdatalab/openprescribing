@@ -246,6 +246,11 @@ class TestFrontendViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "index.html")
 
+    def test_robots_txt(self):
+        response = self.client.get("/robots.txt")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Disallow")
+
     def test_javascript_inclusion(self):
         with self.settings(DEBUG=False):
             response = self.client.get("")
