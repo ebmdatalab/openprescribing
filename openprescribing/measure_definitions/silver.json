@@ -27,8 +27,11 @@
   "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_query": [
-    "SELECT bnf_code FROM {hscic}.presentation",
-    "  WHERE name LIKE '%Silv%' OR name LIKE '% Ag %'"
+    "SELECT bnf_code FROM {dmd}.vmp WHERE UPPER(nm) LIKE '%SILV%' OR UPPER(nm) LIKE '% AG %'",
+    "UNION DISTINCT",
+    "SELECT bnf_code FROM {dmd}.amp WHERE UPPER(nm) LIKE '%SILV%' OR UPPER(nm) LIKE '% AG %'",
+    "UNION DISTINCT",
+    "SELECT amp.bnf_code FROM {dmd}.vmp INNER JOIN {dmd}.amp ON vmp.id = amp.vmp WHERE UPPER(vmp.nm) LIKE '%SILV%' OR UPPER(vmp.nm) LIKE '% AG %'"
   ],
   "numerator_bnf_codes_filter": [
     "20 # Dressings"

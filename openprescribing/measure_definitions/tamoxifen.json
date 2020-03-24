@@ -31,10 +31,9 @@
   "low_is_good": null,
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(quantity/ CASE WHEN bnf_name LIKE '%Oral%' THEN 10 ",
-    "WHEN bnf_name LIKE '%Liq%' THEN 10 ",
-    "WHEN RTRIM(bnf_name) LIKE '%10mg' THEN 2 ",
-    "WHEN RTRIM(bnf_name) LIKE '%40mg' THEN 0.5 ",
+    "SUM(quantity/ CASE WHEN bnf_name LIKE '%oral%' THEN 10 ",
+    "WHEN bnf_name LIKE '%10mg%' THEN 2 ",
+    "WHEN bnf_name LIKE '%40mg%' THEN 0.5 ",
     "ELSE 1 END) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing ",

@@ -29,14 +29,34 @@
   "low_is_good": true,
   "numerator_type": "bnf_quantity",
   "numerator_bnf_codes_query": [
-    "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '%_Cap%'"
+    "SELECT bnf_code FROM {hscic}.presentation WHERE",
+    "bnf_name LIKE '%tablet%' OR",
+    "bnf_name LIKE '% tab %' OR",
+    "bnf_name LIKE '% tab' OR",
+    "bnf_name LIKE '% tabs %' OR",
+    "bnf_name LIKE '% tabs' OR",
+    "bnf_name LIKE '%capsule%' OR",
+    "bnf_name LIKE '% caps %' OR",
+    "bnf_name LIKE '% caps' OR",
+    "bnf_name LIKE '%caplet%' OR",
+    "bnf_name LIKE '%Chewtab%'"
   ],
   "numerator_bnf_codes_filter": [
     "0408010AEBB # Lyrica"
   ],
   "denominator_type": "bnf_quantity",
   "denominator_bnf_codes_query": [
-    "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '%_Cap%'"
+    "SELECT bnf_code FROM {hscic}.presentation WHERE",
+    "name LIKE '%tablet%' OR",
+    "name LIKE '% tab %' OR",
+    "name LIKE '% tab' OR",
+    "name LIKE '% tabs %' OR",
+    "name LIKE '% tabs' OR",
+    "name LIKE '%capsule%' OR",
+    "name LIKE '% caps %' OR",
+    "name LIKE '% caps' OR",
+    "name LIKE '%caplet%' OR",
+    "name LIKE '%Chewtab%'"
   ],
   "denominator_bnf_codes_filter": [
     "0408010AE # Pregabablin capsules(brands and generic)"
