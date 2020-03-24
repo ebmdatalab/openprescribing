@@ -1,12 +1,12 @@
-The forma ,Code,Sept_Quantity,Formulation,Alternative formulation,Really equivalent?,,Alternative name,Alternative quantity,Number of words in formulation,Alternative code,DM+Dnonbioequivalent
-Tramadol HCl_Cap 50mg,040702040AAAAAA,52885881,Cap ,Eff Pdr Sach ,,_Cap 50mg,Tramadol HCl_Eff Pdr Sach 50mg,#N/A,1,040702040AAAKAK,TRUE
-Tramadol HCl_Tab 100mg M/R,040702040AAACAC,885970,Tab ,Cap ,Y,_Tab 100mg M/R,Tramadol HCl_Cap 100mg M/R,040702040AAAHAH,1,040702040AAAHAH,TRUE
-Tramadol HCl_Tab 150mg M/R,040702040AAADAD,89805,Tab ,Cap ,Y,_Tab 150mg M/R,Tramadol HCl_Cap 150mg M/R,040702040AAAIAI,1,040702040AAAIAI,TRUE
-Tramadol HCl_Tab 200mg M/R,040702040AAAEAE,241319,Tab ,Cap ,Y,_Tab 200mg M/R,Tramadol HCl_Cap 200mg M/R,040702040AAAJAJ,1,040702040AAAJAJ,TRUE
-Tramadol HCl_Tab Solb 50mg S/F,040702040AAAFAF,161165,Tab Solb ,Orodisper Tab ,Y,_Tab Solb 50mg S/F,Tramadol HCl_Orodisper Tab 50mg S/F,040702040AAATAT,2,040702040AAATAT,TRUE
-Tramadol HCl_Cap 50mg M/R,040702040AAAGAG,549400,Cap ,Tab ,Y,_Cap 50mg M/R,Tramadol HCl_Tab 50mg M/R,040702040AAAYAY,1,040702040AAAYAY,TRUE
-Tramadol HCl_Cap 100mg M/R,040702040AAAHAH,1023997,Cap ,Tab ,Y,_Cap 100mg M/R,Tramadol HCl_Tab 100mg M/R,040702040AAACAC,1,040702040AAACAC,TRUE
-Tramadol HCl_Cap 150mg M/R,040702040AAAIAI,159142,Cap ,Tab ,Y,_Cap 150mg M/R,Tramadol HCl_Tab 150mg M/R,040702040AAADAD,1,040702040AAADAD,TRUE
-Tramadol HCl_Cap 200mg M/R,040702040AAAJAJ,387664,Cap ,Tab ,Y,_Cap 200mg M/R,Tramadol HCl_Tab 200mg M/R,040702040AAAEAE,1,040702040AAAEAE,TRUE
-Tramadol HCl_Orodisper Tab 50mg S/F,040702040AAATAT,55666,Orodisper Tab ,Tab Solb ,Y,_Orodisper Tab 50mg S/F,Tramadol HCl_Tab Solb 50mg S/F,040702040AAAFAF,2,040702040AAAFAF,TRUE
-Tramadol HCl_Tab 50mg M/R,040702040AAAYAY,356271,Tab ,Cap ,Y,_Tab 50mg M/R,Tramadol HCl_Cap 50mg M/R,040702040AAAGAG,1,040702040AAAGAG,TRUE
+Code,Name,Formulation,Alternative code,Alternative name,Alternative formulation,Really equivalent?
+040702040AAAAAA,Tramadol HCl_Cap 50mg,Cap ,040702040AAAKAK,Tramadol HCl_Eff Pdr Sach 50mg,Eff Pdr Sach ,
+040702040AAACAC,Tramadol HCl_Tab 100mg M/R,Tab ,040702040AAAHAH,Tramadol HCl_Cap 100mg M/R,Cap ,Y
+040702040AAADAD,Tramadol HCl_Tab 150mg M/R,Tab ,040702040AAAIAI,Tramadol HCl_Cap 150mg M/R,Cap ,Y
+040702040AAAEAE,Tramadol HCl_Tab 200mg M/R,Tab ,040702040AAAJAJ,Tramadol HCl_Cap 200mg M/R,Cap ,Y
+040702040AAAFAF,Tramadol HCl_Tab Solb 50mg S/F,Tab Solb ,040702040AAATAT,Tramadol HCl_Orodisper Tab 50mg S/F,Orodisper Tab ,Y
+040702040AAAGAG,Tramadol HCl_Cap 50mg M/R,Cap ,040702040AAAYAY,Tramadol HCl_Tab 50mg M/R,Tab ,Y
+040702040AAAHAH,Tramadol HCl_Cap 100mg M/R,Cap ,040702040AAACAC,Tramadol HCl_Tab 100mg M/R,Tab ,Y
+040702040AAAIAI,Tramadol HCl_Cap 150mg M/R,Cap ,040702040AAADAD,Tramadol HCl_Tab 150mg M/R,Tab ,Y
+040702040AAAJAJ,Tramadol HCl_Cap 200mg M/R,Cap ,040702040AAAEAE,Tramadol HCl_Tab 200mg M/R,Tab ,Y
+040702040AAATAT,Tramadol HCl_Orodisper Tab 50mg S/F,Orodisper Tab ,040702040AAAFAF,Tramadol HCl_Tab Solb 50mg S/F,Tab Solb ,Y
+040702040AAAYAY,Tramadol HCl_Tab 50mg M/R,Tab ,040702040AAAGAG,Tramadol HCl_Cap 50mg M/R,Cap ,Y
