@@ -1,674 +1,674 @@
 Code,Name,Formulation,Alternative code,Alternative name,Alternative formulation,Really equivalent?
-0101010I0AAABAB,Mag Ox_Cap 100mg,Cap,0101010I0AAAEAE,Mag Ox_Tab 100mg,Tab,Y
-0101010I0AAACAC,Mag Ox_Cap 160mg,Cap,0101010I0AAALAL,Mag Ox_Tab 160mg,Tab,Y
-0101010I0AAAEAE,Mag Ox_Tab 100mg,Tab,0101010I0AAABAB,Mag Ox_Cap 100mg,Cap,Y
-0101010I0AAAHAH,Mag Ox_Cap 400mg,Cap,0101010I0AABIBI,Mag Ox_Tab 400mg,Tab,Y
-0101010I0AAALAL,Mag Ox_Tab 160mg,Tab,0101010I0AAACAC,Mag Ox_Cap 160mg,Cap,Y
-0101010I0AAAXAX,Mag Ox_Tab 500mg,Tab,0101010I0AAAYAY,Mag Ox_Cap 500mg,Cap,Y
-0101010I0AAAYAY,Mag Ox_Cap 500mg,Cap,0101010I0AAAXAX,Mag Ox_Tab 500mg,Tab,Y
-0101010I0AABIBI,Mag Ox_Tab 400mg,Tab,0101010I0AAAHAH,Mag Ox_Cap 400mg,Cap,Y
-0101010R0AAAEAE,Simeticone_Tab Chble 125mg,Tab Chble,0101010R0AAAHAH,Simeticone_Cap 125mg,Cap,N
-0101010R0AAAHAH,Simeticone_Cap 125mg,Cap,0101010R0AAAEAE,Simeticone_Tab Chble 125mg,Tab Chble,N
-0101012B0AAABAB,Sod Bicarb_Liq Spec 420mg/5ml,Liq Spec,0101012B0AAAUAU,Sod Bicarb_Oral Soln 420mg/5ml,Oral Soln,Y
-0101012B0AAAUAU,Sod Bicarb_Oral Soln 420mg/5ml,Oral Soln,0101012B0AAABAB,Sod Bicarb_Liq Spec 420mg/5ml,Liq Spec,Y
-0101021C0AAAFAF,Calc Carb_Tab Chble 500mg,Tab Chble,0101021C0AAAPAP,Calc Carb_Cap 500mg,Cap,N
-0101021C0AAATAT,Calc Carb_Tab 300mg,Tab,0101021C0AAANAN,Calc Carb_Cap 300mg,Cap,
-0102000L0AABBBB,Glycopyrronium Brom_Oral Soln 2.5mg/5ml,Oral Soln,0102000L0AABCBC,Glycopyrronium Brom_Oral Susp 2.5mg/5ml,Oral Susp,Y
-0102000L0AABCBC,Glycopyrronium Brom_Oral Susp 2.5mg/5ml,Oral Susp,0102000L0AABBBB,Glycopyrronium Brom_Oral Soln 2.5mg/5ml,Oral Soln,Y
-0102000P0AAABAB,Mebeverine HCl_Tab 135mg,Tab,0102000P0AAAEAE,Mebeverine HCl_Oral Pdr Sach 135mg,Oral Pdr Sach,N
-0102000P0AAAEAE,Mebeverine HCl_Oral Pdr Sach 135mg,Oral Pdr Sach,0102000P0AAABAB,Mebeverine HCl_Tab 135mg,Tab,N
-0103010D0AAALAL,Cimetidine_Oral Soln 200mg/5ml S/F,Oral Soln,0103010D0AAAGAG,Cimetidine_Oral Susp 200mg/5ml S/F,Oral Susp,
-0103010T0AAACAC,Ranitidine HCl_Tab 300mg,Tab,0103010T0AAAJAJ,Ranitidine HCl_Tab Eff 300mg,Tab Eff,N
-0103010T0AAAJAJ,Ranitidine HCl_Tab Eff 300mg,Tab Eff,0103010T0AAACAC,Ranitidine HCl_Tab 300mg,Tab,N
-0103010T0AAAPAP,Ranitidine HCl_Tab 75mg,Tab,0103010T0AABKBK,Ranitidine HCl_Tab Eff 75mg,Tab Eff,
-0103050E0AAAAAA,Esomeprazole_Tab E/C 20mg,Tab E/C,0103050E0AAAFAF,Esomeprazole_Cap E/C 20mg,Cap E/C,Y
-0103050E0AAABAB,Esomeprazole_Tab E/C 40mg,Tab E/C,0103050E0AAAGAG,Esomeprazole_Cap E/C 40mg,Cap E/C,Y
-0103050E0AAAFAF,Esomeprazole_Cap E/C 20mg,Cap E/C,0103050E0AAAAAA,Esomeprazole_Tab E/C 20mg,Tab E/C,Y
-0103050E0AAAGAG,Esomeprazole_Cap E/C 40mg,Cap E/C,0103050E0AAABAB,Esomeprazole_Tab E/C 40mg,Tab E/C,Y
-0103050L0AAAHAH,Lansoprazole_Orodisper Tab 30mg,Orodisper Tab,0103050L0AAADAD,Lansoprazole_Gran Sach 30mg,Gran Sach,
-0103050L0AAAJAJ,Lansoprazole_Oral Soln 30mg/5ml,Oral Soln,0103050L0AAAYAY,Lansoprazole_Oral Susp 30mg/5ml,Oral Susp,Y
-0103050L0AAAMAM,Lansoprazole_Oral Soln 15mg/5ml,Oral Soln,0103050L0AAAXAX,Lansoprazole_Oral Susp 15mg/5ml,Oral Susp,Y
-0103050L0AAAQAQ,Lansoprazole_Oral Soln 5mg/5ml,Oral Soln,0103050L0AAAZAZ,Lansoprazole_Oral Susp 5mg/5ml,Oral Susp,Y
-0103050L0AAAXAX,Lansoprazole_Oral Susp 15mg/5ml,Oral Susp,0103050L0AAAMAM,Lansoprazole_Oral Soln 15mg/5ml,Oral Soln,Y
-0103050L0AAAYAY,Lansoprazole_Oral Susp 30mg/5ml,Oral Susp,0103050L0AAAJAJ,Lansoprazole_Oral Soln 30mg/5ml,Oral Soln,Y
-0103050L0AAAZAZ,Lansoprazole_Oral Susp 5mg/5ml,Oral Susp,0103050L0AAAQAQ,Lansoprazole_Oral Soln 5mg/5ml,Oral Soln,Y
-0103050P0AAAAAA,Omeprazole_Cap E/C 20mg,Cap E/C,0103050P0AABDBD,Omeprazole_Tab E/C 20mg,Tab E/C,Y
-0103050P0AAAEAE,Omeprazole_Cap E/C 40mg,Cap E/C,0103050P0AABEBE,Omeprazole_Tab E/C 40mg,Tab E/C,Y
-0103050P0AAAJAJ,Omeprazole_Oral Soln 10mg/5ml,Oral Soln,0103050P0AABLBL,Omeprazole_Oral Susp 10mg/5ml,Oral Susp,Y
-0103050P0AAAKAK,Omeprazole_Oral Soln 40mg/5ml,Oral Soln,0103050P0AABPBP,Omeprazole_Oral Susp 40mg/5ml,Oral Susp,Y
-0103050P0AAAQAQ,Omeprazole_Oral Soln 20mg/5ml,Oral Soln,0103050P0AABMBM,Omeprazole_Oral Susp 20mg/5ml,Oral Susp,Y
-0103050P0AABDBD,Omeprazole_Tab E/C 20mg,Tab E/C,0103050P0AAAAAA,Omeprazole_Cap E/C 20mg,Cap E/C,Y
-0103050P0AABEBE,Omeprazole_Tab E/C 40mg,Tab E/C,0103050P0AAAEAE,Omeprazole_Cap E/C 40mg,Cap E/C,Y
-0103050P0AABLBL,Omeprazole_Oral Susp 10mg/5ml,Oral Susp,0103050P0AAAJAJ,Omeprazole_Oral Soln 10mg/5ml,Oral Soln,Y
-0103050P0AABMBM,Omeprazole_Oral Susp 20mg/5ml,Oral Susp,0103050P0AAAQAQ,Omeprazole_Oral Soln 20mg/5ml,Oral Soln,Y
-0103050P0AABPBP,Omeprazole_Oral Susp 40mg/5ml,Oral Susp,0103050P0AAAKAK,Omeprazole_Oral Soln 40mg/5ml,Oral Soln,Y
-0104020L0AAAAAA,Loperamide HCl_Cap 2mg,Cap,0104020L0AAADAD,Loperamide HCl_Tab 2mg,Tab,Y
-0104020L0AAADAD,Loperamide HCl_Tab 2mg,Tab,0104020L0AAAAAA,Loperamide HCl_Cap 2mg,Cap,Y
-0104020L0AAAPAP,Loperamide HCl_Oral Susp 25mg/5ml,Oral Susp,0104020L0AAAQAQ,Loperamide HCl_Oral Soln 25mg/5ml,Oral Soln,Y
-0104020L0AAAQAQ,Loperamide HCl_Oral Soln 25mg/5ml,Oral Soln,0104020L0AAAPAP,Loperamide HCl_Oral Susp 25mg/5ml,Oral Susp,Y
-0105010B0AAABAB,Mesalazine_Suppos 500mg,Suppos,0105010B0AAAWAW,Mesalazine_Tab G/R 500mg,Tab G/R,N
-0105010B0AAAGAG,Mesalazine_Suppos 250mg,Suppos,0105010B0AAAHAH,Mesalazine_Tab E/C 250mg,Tab E/C,Y
-0105010B0AAAHAH,Mesalazine_Tab E/C 250mg,Tab E/C,0105010B0AAAGAG,Mesalazine_Suppos 250mg,Suppos,N
-0105010B0AAAIAI,Mesalazine_Tab 500mg M/R,Tab,0105010B0AAAPAP,Mesalazine_Gran Sach 500mg M/R,Gran Sach,N
-0105010B0AAANAN,Mesalazine_Gran Sach 1g M/R S/F,Gran Sach,0105010B0AAAXAX,Mesalazine_Gran Sach G/R 1g M/R S/F,Gran Sach G/R,Y
-0105010B0AAAPAP,Mesalazine_Gran Sach 500mg M/R,Gran Sach,0105010B0AAAIAI,Mesalazine_Tab 500mg M/R,Tab,Y
-0105010B0AAAWAW,Mesalazine_Tab G/R 500mg,Tab G/R,0105010B0AAABAB,Mesalazine_Suppos 500mg,Suppos,N
-0105010B0AAAXAX,Mesalazine_Gran Sach G/R 1g M/R S/F,Gran Sach G/R,0105010B0AAANAN,Mesalazine_Gran Sach 1g M/R S/F,Gran Sach,Y
-0105010E0AAAAAA,Sulfasalazine_Tab 500mg,Tab,0105010E0AAACAC,Sulfasalazine_Suppos 500mg,Suppos,N
-0105010E0AAABAB,Sulfasalazine_Tab E/C 500mg,Tab E/C,0105010E0AAACAC,Sulfasalazine_Suppos 500mg,Suppos,Y
-0105010E0AAACAC,Sulfasalazine_Suppos 500mg,Suppos,0105010E0AAAAAA,Sulfasalazine_Tab 500mg,Tab,N
-0106010E0AAAHAH,Ispag Husk_Gran Eff Sach 3.5g Orange S/F,Gran Eff Sach,0106010E0AAASAS,Ispag Husk_Pdr Sach 3.5g Orange S/F,Pdr Sach,
-0106010E0AAADAD,Ispag Husk_Gran Eff Sach 3.5g Orange S/F,Gran Eff Sach,0106010E0AAASAS,Ispag Husk_Pdr Sach 3.5g Orange S/F,Pdr Sach,
-0106020C0AAAAAA,Bisacodyl_Tab E/C 5mg,Tab E/C,0106020C0AAADAD,Bisacodyl_Suppos 5mg,Suppos,N
-0106020C0AAADAD,Bisacodyl_Suppos 5mg,Suppos,0106020C0AAAAAA,Bisacodyl_Tab E/C 5mg,Tab E/C,N
-0106020M0AAAPAP,Senna_Tab 15mg,Tab,0106020M0AAAQAQ,Senna_Tab Chble 15mg,Tab Chble,N
-0107010AAAAAJAJ,Diltiazem HCl_Crm 2%,Crm,0107010AAAAABAB,Diltiazem HCl_Gel 2%,Gel,
-0107010AAAAAKAK,Diltiazem HCl_Oint 2%,Oint,0107010AAAAAJAJ,Diltiazem HCl_Crm 2%,Crm,Y
-0109040N0AAAZAZ,Pancreatin_G/R Cap 340mg,G/R Cap,0109040N0AAAGAG,Pancreatin_Cap 340mg,Cap,
-0202010D0AAAUAU,Chloroth_Oral Susp 250mg/5ml,Oral Susp,0202010D0AABCBC,Chloroth_Oral Soln 250mg/5ml,Oral Soln,Y
-0202010D0AABCBC,Chloroth_Oral Soln 250mg/5ml,Oral Soln,0202010D0AAAUAU,Chloroth_Oral Susp 250mg/5ml,Oral Susp,Y
-0202030S0AACMCM,Spironol_Oral Soln 5mg/5ml,Oral Soln,0202030S0AAECEC,Spironol_Oral Susp 5mg/5ml,Oral Susp,Y
-0202030S0AAEFEF,Spironol_Oral Soln 25mg/5ml,Oral Soln,0202030S0AAEAEA,Spironol_Oral Susp 25mg/5ml,Oral Susp,Y
-0202030S0AACPCP,Spironol_Oral Soln 50mg/5ml,Oral Soln,0202030S0AAEBEB,Spironol_Oral Susp 50mg/5ml,Oral Susp,Y
-0202030S0AACQCQ,Spironol_Oral Soln 10mg/5ml,Oral Soln,0202030S0AAEDED,Spironol_Oral Susp 10mg/5ml,Oral Susp,Y
-0202030S0AACRCR,Spironol_Liq Spec 100mg/5ml,Liq Spec,0202030S0AAEEEE,Spironol_Oral Susp 100mg/5ml,Oral Susp,Y
-0202030S0AAEAEA,Spironol_Oral Susp 25mg/5ml,Oral Susp,0202030S0AAEFEF,Spironol_Oral Soln 25mg/5ml,Oral Soln,Y
-0202030S0AAEBEB,Spironol_Oral Susp 50mg/5ml,Oral Susp,0202030S0AACPCP,Spironol_Oral Soln 50mg/5ml,Oral Soln,Y
-0202030S0AAECEC,Spironol_Oral Susp 5mg/5ml,Oral Susp,0202030S0AACMCM,Spironol_Oral Soln 5mg/5ml,Oral Soln,Y
-0202030S0AAEDED,Spironol_Oral Susp 10mg/5ml,Oral Susp,0202030S0AACQCQ,Spironol_Oral Soln 10mg/5ml,Oral Soln,Y
-0202030S0AAEEEE,Spironol_Oral Susp 100mg/5ml,Oral Susp,0202030S0AACRCR,Spironol_Liq Spec 100mg/5ml,Liq Spec,Y
-0203020D0AAAUAU,Amiodarone HCl_Oral Soln 100mg/5ml,Oral Soln,0203020D0AACHCH,Amiodarone HCl_Oral Susp 100mg/5ml,Oral Susp,Y
-0203020D0AAAYAY,Amiodarone HCl_Oral Soln 50mg/5ml,Oral Soln,0203020D0AACICI,Amiodarone HCl_Oral Susp 50mg/5ml,Oral Susp,Y
-0203020D0AACHCH,Amiodarone HCl_Oral Susp 100mg/5ml,Oral Susp,0203020D0AAAUAU,Amiodarone HCl_Oral Soln 100mg/5ml,Oral Soln,Y
-0203020D0AACICI,Amiodarone HCl_Oral Susp 50mg/5ml,Oral Susp,0203020D0AAAYAY,Amiodarone HCl_Oral Soln 50mg/5ml,Oral Soln,Y
-0203020P0AAABAB,Mexiletine HCl_Cap 200mg,Cap,0203020P0AAAGAG,Mexiletine HCl_Tab 200mg,Tab,Y
-0203020P0AAAGAG,Mexiletine HCl_Tab 200mg,Tab,0203020P0AAABAB,Mexiletine HCl_Cap 200mg,Cap,Y
-0204000K0AABMBM,Metoprolol Tart_Oral Soln 50mg/5ml,Oral Soln,0204000K0AAATAT,Metoprolol Tart_Liq Spec 50mg/5ml,Liq Spec,
-0204000T0AAATAT,Sotalol HCl_Oral Soln 25mg/5ml,Oral Soln,0204000T0AABCBC,Sotalol HCl_Oral Susp 25mg/5ml,Oral Susp,Y
-0204000T0AABCBC,Sotalol HCl_Oral Susp 25mg/5ml,Oral Susp,0204000T0AAATAT,Sotalol HCl_Oral Soln 25mg/5ml,Oral Soln,Y
-0205040D0AAACAC,Doxazosin Mesil_Tab 4mg,Tab,0205040D0AAAFAF,Doxazosin Mesil_Cap 4mg,Cap,Y
-0205051F0AAAFAF,Captopril_Tab 50mg,Tab,0205051F0AADUDU,Captopril_Cap 50mg,Cap,Y
-0205051R0AAAAAA,Ramipril_Cap 1.25mg,Cap,0205051R0AAAKAK,Ramipril_Tab 1.25mg,Tab,Y
-0205051R0AAABAB,Ramipril_Cap 2.5mg,Cap,0205051R0AAALAL,Ramipril_Tab 2.5mg,Tab,Y
-0205051R0AAACAC,Ramipril_Cap 5mg,Cap,0205051R0AAAMAM,Ramipril_Tab 5mg,Tab,Y
-0205051R0AAADAD,Ramipril_Cap 10mg,Cap,0205051R0AAANAN,Ramipril_Tab 10mg,Tab,Y
-0205051R0AAAKAK,Ramipril_Tab 1.25mg,Tab,0205051R0AAAAAA,Ramipril_Cap 1.25mg,Cap,Y
-0205051R0AAALAL,Ramipril_Tab 2.5mg,Tab,0205051R0AAABAB,Ramipril_Cap 2.5mg,Cap,Y
-0205051R0AAAMAM,Ramipril_Tab 5mg,Tab,0205051R0AAACAC,Ramipril_Cap 5mg,Cap,Y
-0205051R0AAANAN,Ramipril_Tab 10mg,Tab,0205051R0AAADAD,Ramipril_Cap 10mg,Cap,Y
-0205051R0AAAUAU,Ramipril_Titration Pack (Tab 2.5/5/10mg),Titration Pack (Tab,0205051R0AAAIAI,Ramipril_Titration Pack (Cap 2.5/5/10mg),Titration Pack (Cap,
-0205052N0AAAEAE,Losartan Pot_Oral Soln 50mg/5ml,Oral Soln,0205052N0AAAJAJ,Losartan Pot_Oral Susp 50mg/5ml,Oral Susp,Y
-0205052N0AAAJAJ,Losartan Pot_Oral Susp 50mg/5ml,Oral Susp,0205052N0AAAEAE,Losartan Pot_Oral Soln 50mg/5ml,Oral Soln,Y
-0205052V0AAAAAA,Valsartan_Cap 40mg,Cap,0205052V0AAADAD,Valsartan_Tab 40mg,Tab,Y
-0205052V0AAABAB,Valsartan_Cap 80mg,Cap,0205052V0AAAIAI,Valsartan_Tab 80mg,Tab,Y
-0205052V0AAACAC,Valsartan_Cap 160mg,Cap,0205052V0AAAHAH,Valsartan_Tab 160mg,Tab,Y
-0205052V0AAADAD,Valsartan_Tab 40mg,Tab,0205052V0AAAAAA,Valsartan_Cap 40mg,Cap,Y
-0205052V0AAAHAH,Valsartan_Tab 160mg,Tab,0205052V0AAACAC,Valsartan_Cap 160mg,Cap,Y
-0205052V0AAAIAI,Valsartan_Tab 80mg,Tab,0205052V0AAABAB,Valsartan_Cap 80mg,Cap,Y
-0206010F0AACGCG,Glyceryl Trinit_Sub A/Spy 400mcg (180D),Sub A/Spy,0206010F0AACICI,Glyceryl Trinit_Sub P/Spy 400mcg (180D),Sub P/Spy,Y
-0206010F0AACGCG,Glyceryl Trinit_Sub A/Spy 400mcg (200D),Sub A/Spy,0206010F0AACICI,Glyceryl Trinit_Sub P/Spy 400mcg (200D),Sub P/Spy,Y
-0206010F0AACICI,Glyceryl Trinit_Sub P/Spy 400mcg (180D),Sub P/Spy,0206010F0AACGCG,Glyceryl Trinit_Sub A/Spy 400mcg (180D),Sub A/Spy,Y
-0206010F0AACICI,Glyceryl Trinit_Sub P/Spy 400mcg (200D),Sub P/Spy,0206010F0AACGCG,Glyceryl Trinit_Sub A/Spy 400mcg (200D),Sub A/Spy,Y
-0206010I0AAAJAJ,Isosorbide Dinit_Tab 40mg M/R,Tab,0206010I0AAABAB,Isosorbide Dinit_Cap 40mg M/R,Cap,
-0206010K0AAAEAE,Isosorbide Mononit_Tab 60mg M/R,Tab,0206010K0AAAQAQ,Isosorbide Mononit_Cap 60mg M/R,Cap,Y
-0206010K0AAAFAF,Isosorbide Mononit_Cap 50mg M/R,Cap,0206010K0AAAUAU,Isosorbide Mononit_Tab 50mg M/R,Tab,Y
-0206010K0AAAGAG,Isosorbide Mononit_Tab 40mg M/R,Tab,0206010K0AAAPAP,Isosorbide Mononit_Cap 40mg M/R,Cap,Y
-0206010K0AAAHAH,Isosorbide Mononit_Cap 25mg M/R,Cap,0206010K0AAATAT,Isosorbide Mononit_Tab 25mg M/R,Tab,Y
-0206010K0AAALAL,Isosorbide Mononit_Oral Soln 20mg/5ml,Oral Soln,0206010K0AABBBB,Isosorbide Mononit_Oral Susp 20mg/5ml,Oral Susp,Y
-0206010K0AAAPAP,Isosorbide Mononit_Cap 40mg M/R,Cap,0206010K0AAAGAG,Isosorbide Mononit_Tab 40mg M/R,Tab,Y
-0206010K0AAAQAQ,Isosorbide Mononit_Cap 60mg M/R,Cap,0206010K0AAAEAE,Isosorbide Mononit_Tab 60mg M/R,Tab,Y
-0206010K0AAATAT,Isosorbide Mononit_Tab 25mg M/R,Tab,0206010K0AAAHAH,Isosorbide Mononit_Cap 25mg M/R,Cap,Y
-0206010K0AAAUAU,Isosorbide Mononit_Tab 50mg M/R,Tab,0206010K0AAAFAF,Isosorbide Mononit_Cap 50mg M/R,Cap,Y
-0206010K0AABBBB,Isosorbide Mononit_Oral Susp 20mg/5ml,Oral Susp,0206010K0AAALAL,Isosorbide Mononit_Oral Soln 20mg/5ml,Oral Soln,Y
-0206020C0AAAAAA,Diltiazem HCl_Tab 60mg M/R,Tab,0206020C0AAAJAJ,Diltiazem HCl_Cap 60mg M/R,Cap,Y
-0206020C0AAACAC,Diltiazem HCl_Tab 90mg M/R,Tab,0206020C0AAATAT,Diltiazem HCl_Cap 90mg M/R,Cap,Y
-0206020C0AAAJAJ,Diltiazem HCl_Cap 60mg M/R,Cap,0206020C0AAAAAA,Diltiazem HCl_Tab 60mg M/R,Tab,Y
-0206020C0AAARAR,Diltiazem HCl_Oral Soln 60mg/5ml,Oral Soln,0206020C0AABIBI,Diltiazem HCl_Oral Susp 60mg/5ml,Oral Susp,Y
-0206020C0AAASAS,Diltiazem HCl_Tab 120mg M/R,Tab,0206020C0AAAUAU,Diltiazem HCl_Cap 120mg M/R,Cap,Y
-0206020C0AAATAT,Diltiazem HCl_Cap 90mg M/R,Cap,0206020C0AAACAC,Diltiazem HCl_Tab 90mg M/R,Tab,Y
-0206020C0AAAUAU,Diltiazem HCl_Cap 120mg M/R,Cap,0206020C0AAASAS,Diltiazem HCl_Tab 120mg M/R,Tab,Y
-0206020C0AABIBI,Diltiazem HCl_Oral Susp 60mg/5ml,Oral Susp,0206020C0AAARAR,Diltiazem HCl_Oral Soln 60mg/5ml,Oral Soln,Y
-0206020R0AAAEAE,Nifedipine_Tab 10mg M/R,Tab,0206020R0AAAMAM,Nifedipine_Cap 10mg M/R,Cap,Y
-0206020R0AAAHAH,Nifedipine_Cap 20mg M/R,Cap,0206020R0AAARAR,Nifedipine_Tab 20mg M/R,Tab,Y
-0206020R0AAAMAM,Nifedipine_Cap 10mg M/R,Cap,0206020R0AAAEAE,Nifedipine_Tab 10mg M/R,Tab,Y
-0206020R0AAANAN,Nifedipine_Tab 30mg M/R,Tab,0206020R0AABEBE,Nifedipine_Cap 30mg M/R,Cap,Y
-0206020R0AAAPAP,Nifedipine_Tab 60mg M/R,Tab,0206020R0AABFBF,Nifedipine_Cap 60mg M/R,Cap,Y
-0206020R0AAARAR,Nifedipine_Tab 20mg M/R,Tab,0206020R0AAAHAH,Nifedipine_Cap 20mg M/R,Cap,Y
-0206020R0AABEBE,Nifedipine_Cap 30mg M/R,Cap,0206020R0AAANAN,Nifedipine_Tab 30mg M/R,Tab,Y
-0206020R0AABFBF,Nifedipine_Cap 60mg M/R,Cap,0206020R0AAAPAP,Nifedipine_Tab 60mg M/R,Tab,Y
-0206020T0AAAHAH,Verapamil HCl_Tab 240mg M/R,Tab,0206020T0AAAKAK,Verapamil HCl_Cap 240mg M/R,Cap,Y
-0206020T0AAAIAI,Verapamil HCl_Cap 120mg M/R,Cap,0206020T0AAAUAU,Verapamil HCl_Tab 120mg M/R,Tab,Y
-0206020T0AAAKAK,Verapamil HCl_Cap 240mg M/R,Cap,0206020T0AAAHAH,Verapamil HCl_Tab 240mg M/R,Tab,Y
-0206020T0AAAUAU,Verapamil HCl_Tab 120mg M/R,Tab,0206020T0AAAIAI,Verapamil HCl_Cap 120mg M/R,Cap,Y
-0206030N0AAAAAA,Nicorandil_Tab 10mg,Tab,0206030N0AAAEAE,Nicorandil_Pdr Sach 10mg,Pdr Sach,
-0208020V0AAAAAA,Warfarin Sod_Tab 1mg,Tab,0208020V0AABABA,Warfarin Sod_Cap 1mg,Cap,Y
-0209000C0AAAAAA,Clopidogrel_Tab 75mg,Tab,0209000C0AAACAC,Clopidogrel_Pdrs 75mg,Pdrs,
-0212000B0AAAFAF,Atorvastatin_Oral Soln 20mg/5ml,Oral Soln,0212000B0AAAQAQ,Atorvastatin_Oral Susp 20mg/5ml,Oral Susp,Y
-0212000B0AAAQAQ,Atorvastatin_Oral Susp 20mg/5ml,Oral Susp,0212000B0AAAFAF,Atorvastatin_Oral Soln 20mg/5ml,Oral Soln,Y
-0301011R0AAAPAP,Salbutamol_Inha 100mcg (200 D) CFF,Inha,0301011R0AABUBU,Salbutamol_Inha B/A 100mcg (200 D) CFF,Inha B/A,N
-0301011R0AABMBM,Salbutamol_Cap 4mg M/R,Cap,0301011R0AABEBE,Salbutamol_Tab 4mg M/R,Tab,
-0301011R0AABPBP,Salbutamol_Cap 8mg M/R,Cap,0301011R0AABFBF,Salbutamol_Tab 8mg M/R,Tab,
-0301011R0AABUBU,Salbutamol_Inha B/A 100mcg (200 D) CFF,Inha B/A,0301011R0AAAPAP,Salbutamol_Inha 100mcg (200 D) CFF,Inha,N
-0301011R0AABZBZ,Salbutamol_Pdr For Inh 100mcg (200 D),Pdr For Inh,0301011R0AAAAAA,Salbutamol_Inha 100mcg (200 D),Inha,
-0301030S0AAADAD,Theophylline_Cap 250mg M/R,Cap,0301030S0AAANAN,Theophylline_Tab 250mg M/R,Tab,N
-0301030S0AAANAN,Theophylline_Tab 250mg M/R,Tab,0301030S0AAADAD,Theophylline_Cap 250mg M/R,Cap,N
-0302000K0AAADAD,Budesonide_Inha 200mcg (200 D),Inha,0302000K0AAAGAG,Budesonide_Pdr For Inh 200mcg (200 D),Pdr For Inh,
-0302000K0AAAGAG,Budesonide_Pdr For Inh 200mcg (100 D),Pdr For Inh,0302000K0AAADAD,Budesonide_Inha 200mcg (100 D),Inha,
-0303020G0AAACAC,Montelukast_Tab Chble 4mg S/F,Tab Chble,0303020G0AAADAD,Montelukast_Gran Sach 4mg S/F,Gran Sach,N
-0303020G0AAADAD,Montelukast_Gran Sach 4mg S/F,Gran Sach,0303020G0AAACAC,Montelukast_Tab Chble 4mg S/F,Tab Chble,N
-0304010I0AAAAAA,Cetirizine HCl_Tab 10mg,Tab,0304010I0AAADAD,Cetirizine HCl_Cap 10mg,Cap,Y
-0304010I0AAADAD,Cetirizine HCl_Cap 10mg,Cap,0304010I0AAAAAA,Cetirizine HCl_Tab 10mg,Tab,Y
-0307000C0AAAJAJ,Acetylcy_Tab Eff 600mg,Tab Eff,0307000C0AAAKAK,Acetylcy_Cap 600mg,Cap,N
-0307000C0AAAKAK,Acetylcy_Cap 600mg,Cap,0307000C0AAAMAM,Acetylcy_Tab 600mg,Tab,Y
-0307000C0AAAMAM,Acetylcy_Tab 600mg,Tab,0307000C0AAAKAK,Acetylcy_Cap 600mg,Cap,Y
-0401010ADAAAAAA,Melatonin_Tab 2mg M/R,Tab,0401010ADAACHCH,Melatonin_Cap 2mg M/R,Cap,Y
-0401010ADAAAEAE,Melatonin_Cap 2mg,Cap,0401010ADAABKBK,Melatonin_Tab 2mg,Tab,Y
-0401010ADAAAIAI,Melatonin_Tab 1mg,Tab,0401010ADAABQBQ,Melatonin_Cap 1mg,Cap,Y
-0401010ADAAAJAJ,Melatonin_Cap 3mg M/R,Cap,0401010ADAAAQAQ,Melatonin_Tab 3mg M/R,Tab,Y
-0401010ADAAAJAJ,Melatonin_Cap 3mg M/R,Cap,091200000AAFTFT,Melatonin_Tab 3mg M/R,Tab,Y
-0401010ADAAAQAQ,Melatonin_Tab 3mg M/R,Tab,0401010ADAAAJAJ,Melatonin_Cap 3mg M/R,Cap,Y
-091200000AAFTFT,Melatonin_Tab 3mg M/R,Tab,0401010ADAAAJAJ,Melatonin_Cap 3mg M/R,Cap,Y
-0401010ADAABKBK,Melatonin_Tab 2mg,Tab,0401010ADAAAEAE,Melatonin_Cap 2mg,Cap,Y
-0401010ADAABLBL,Melatonin_Tab 5mg,Tab,0401010ADAABSBS,Melatonin_Cap 5mg,Cap,Y
-0401010ADAACYCY,Melatonin_Tab 3mg,Tab,0401010ADAABRBR,Melatonin_Cap 3mg,Cap,Y
-0401010ADAABQBQ,Melatonin_Cap 1mg,Cap,0401010ADAAAIAI,Melatonin_Tab 1mg,Tab,Y
-0401010ADAABSBS,Melatonin_Cap 5mg,Cap,0401010ADAABLBL,Melatonin_Tab 5mg,Tab,Y
-0401010ADAACHCH,Melatonin_Cap 2mg M/R,Cap,0401010ADAAAAAA,Melatonin_Tab 2mg M/R,Tab,Y
-0401020E0AAAAAA,Chlordiazepox HCl_Tab 5mg,Tab,0401020E0AAADAD,Chlordiazepox HCl_Cap 5mg,Cap,Y
-0401020E0AAABAB,Chlordiazepox HCl_Tab 10mg,Tab,0401020E0AAAEAE,Chlordiazepox HCl_Cap 10mg,Cap,Y
-0401020E0AAADAD,Chlordiazepox HCl_Cap 5mg,Cap,0401020E0AAAAAA,Chlordiazepox HCl_Tab 5mg,Tab,Y
-0401020E0AAAEAE,Chlordiazepox HCl_Cap 10mg,Cap,0401020E0AAABAB,Chlordiazepox HCl_Tab 10mg,Tab,Y
-0401020K0AAACAC,Diazepam_Inj 5mg/ml 2ml Amp,Inj,0401020K0AAAQAQ,Diazepam_Inj (Emulsion) 5mg/ml 2ml Amp,Inj (Emulsion),Y
-0401020K0AAAQAQ,Diazepam_Inj (Emulsion) 5mg/ml 2ml Amp,Inj (Emulsion),0401020K0AAACAC,Diazepam_Inj 5mg/ml 2ml Amp,Inj,N
-040201060AAAAAA,Olanzapine_Tab 5mg,Tab,040201060AAAWAW,Olanzapine_Orodisper Tab 5mg,Orodisper Tab,Y
-040201060AAACAC,Olanzapine_Tab 10mg,Tab,040201060AAAXAX,Olanzapine_Orodisper Tab 10mg,Orodisper Tab,Y
-040201060AAAEAE,Olanzapine_Oral Lyophilisate Tab 5mg S/F,Oral Lyophilisate Tab,040201060AAASAS,Olanzapine_Orodisper Tab 5mg S/F,Orodisper Tab,Y
-040201060AAAIAI,Olanzapine_Oral Soln 2.5mg/5ml,Oral Soln,040201060AABABA,Olanzapine_Oral Susp 2.5mg/5ml,Oral Susp,Y
-040201060AAALAL,Olanzapine_Tab 15mg,Tab,040201060AAAYAY,Olanzapine_Orodisper Tab 15mg,Orodisper Tab,Y
-040201060AAAQAQ,Olanzapine_Tab 20mg,Tab,040201060AAAZAZ,Olanzapine_Orodisper Tab 20mg,Orodisper Tab,Y
-040201060AAASAS,Olanzapine_Orodisper Tab 5mg S/F,Orodisper Tab,040201060AAAEAE,Olanzapine_Oral Lyophilisate Tab 5mg S/F,Oral Lyophilisate Tab,Y
-040201060AAAWAW,Olanzapine_Orodisper Tab 5mg,Orodisper Tab,040201060AAAAAA,Olanzapine_Tab 5mg,Tab,Y
-040201060AAAXAX,Olanzapine_Orodisper Tab 10mg,Orodisper Tab,040201060AAACAC,Olanzapine_Tab 10mg,Tab,Y
-040201060AAAYAY,Olanzapine_Orodisper Tab 15mg,Orodisper Tab,040201060AAALAL,Olanzapine_Tab 15mg,Tab,Y
-040201060AAAZAZ,Olanzapine_Orodisper Tab 20mg,Orodisper Tab,040201060AAAQAQ,Olanzapine_Tab 20mg,Tab,Y
-040201060AABABA,Olanzapine_Oral Susp 2.5mg/5ml,Oral Susp,040201060AAAIAI,Olanzapine_Oral Soln 2.5mg/5ml,Oral Soln,Y
-0402010ABAAAHAH,Quetiapine_Oral Soln 25mg/5ml,Oral Soln,0402010ABAABDBD,Quetiapine_Oral Susp 25mg/5ml,Oral Susp,Y
-0402010ABAAAIAI,Quetiapine_Oral Soln 12.5mg/5ml,Oral Soln,0402010ABAABBBB,Quetiapine_Oral Susp 12.5mg/5ml,Oral Susp,Y
-0402010ABAAALAL,Quetiapine_Oral Soln 50mg/5ml,Oral Soln,0402010ABAABEBE,Quetiapine_Oral Susp 50mg/5ml,Oral Susp,Y
-0402010ABAABBBB,Quetiapine_Oral Susp 12.5mg/5ml,Oral Susp,0402010ABAAAIAI,Quetiapine_Oral Soln 12.5mg/5ml,Oral Soln,Y
-0402010ABAABDBD,Quetiapine_Oral Susp 25mg/5ml,Oral Susp,0402010ABAAAHAH,Quetiapine_Oral Soln 25mg/5ml,Oral Soln,Y
-0402010ABAABEBE,Quetiapine_Oral Susp 50mg/5ml,Oral Susp,0402010ABAAALAL,Quetiapine_Oral Soln 50mg/5ml,Oral Soln,Y
-0402010D0AAA2A2,Chlorpromazine HCl_Liq Spec 100mg/5ml,Liq Spec,0402010D0AAAFAF,Chlorpromazine HCl_Oral Soln 100mg/5ml,Oral Soln,Y
-0402010D0AAAFAF,Chlorpromazine HCl_Oral Soln 100mg/5ml,Oral Soln,0402010D0AAA2A2,Chlorpromazine HCl_Liq Spec 100mg/5ml,Liq Spec,Y
-0402010D0AAAHAH,Chlorpromazine HCl_Tab 10mg,Tab,0402010D0AABDBD,Chlorpromazine HCl_Cap 10mg,Cap,Y
-0402010D0AAAIAI,Chlorpromazine HCl_Tab 25mg,Tab,0402010D0AAASAS,Chlorpromazine HCl_Suppos 25mg,Suppos,
-0402010D0AABDBD,Chlorpromazine HCl_Cap 10mg,Cap,0402010D0AAAHAH,Chlorpromazine HCl_Tab 10mg,Tab,Y
-0402010J0AAAAAA,Haloperidol_Cap 500mcg,Cap,0402010J0AAAIAI,Haloperidol_Tab 500mcg,Tab,Y
-0402010J0AAAIAI,Haloperidol_Tab 500mcg,Tab,0402010J0AAAAAA,Haloperidol_Cap 500mcg,Cap,Y
-0402010K0AAARAR,Levomeprom Mal_Oral Susp 2.5mg/5ml,Oral Susp,0402010K0AAALAL,Levomeprom Mal_Oral Soln 2.5mg/5ml,Oral Soln,
-0402010S0AAADAD,Promazine HCl_Oral Soln 25mg/5ml,Oral Soln,0402010S0AAALAL,Promazine HCl_Liq Spec 25mg/5ml,Liq Spec,
-0402010S0AAAIAI,Promazine HCl_Oral Soln 50mg/5ml,Oral Soln,0402010S0AAANAN,Promazine HCl_Liq Spec 50mg/5ml,Liq Spec,
-0402030Q0AAABAB,Valproic Acid_Tab G/R 500mg,Tab G/R,040801020AAACAC,Valproic Acid_Cap E/C 500mg,Cap E/C,Y
-0403010J0AABKBK,Dosulepin HCl_Oral Soln 75mg/5ml,Oral Soln,0403010J0AAA7A7,Dosulepin HCl_Liq Spec 75mg/5ml,Liq Spec,Y
-0403010V0AAANAN,Nortriptyline_Liq Spec 10mg/5ml,Liq Spec,0403010V0AAAGAG,Nortriptyline_Susp 10mg/5ml,Susp,
-0403040S0AAABAB,Tryptophan_Tab 500mg,Tab,0403040S0AAAIAI,Tryptophan_Cap 500mg,Cap,Y
-0403040S0AAAIAI,Tryptophan_Cap 500mg,Cap,0403040S0AAABAB,Tryptophan_Tab 500mg,Tab,Y
-0403040W0AAADAD,Venlafaxine_Cap 75mg M/R,Cap,0403040W0AAAJAJ,Venlafaxine_Tab 75mg M/R,Tab,Y
-0403040W0AAAEAE,Venlafaxine_Cap 150mg M/R,Cap,0403040W0AAAKAK,Venlafaxine_Tab 150mg M/R,Tab,Y
-0403040W0AAAJAJ,Venlafaxine_Tab 75mg M/R,Tab,0403040W0AAADAD,Venlafaxine_Cap 75mg M/R,Cap,Y
-0403040W0AAAKAK,Venlafaxine_Tab 150mg M/R,Tab,0403040W0AAAEAE,Venlafaxine_Cap 150mg M/R,Cap,Y
-0403040W0AAAMAM,Venlafaxine_Tab 37.5mg M/R,Tab,0403040W0AAASAS,Venlafaxine_Cap 37.5mg M/R,Cap,Y
-0403040W0AAASAS,Venlafaxine_Cap 37.5mg M/R,Cap,0403040W0AAAMAM,Venlafaxine_Tab 37.5mg M/R,Tab,Y
-0403040X0AAAAAA,Mirtazapine_Tab 30mg,Tab,0403040X0AAAJAJ,Mirtazapine_Orodisper Tab 30mg,Orodisper Tab,Y
-0403040X0AAAJAJ,Mirtazapine_Orodisper Tab 30mg,Orodisper Tab,0403040X0AAAAAA,Mirtazapine_Tab 30mg,Tab,Y
-0403040X0AAALAL,Mirtazapine_Orodisper Tab 15mg,Orodisper Tab,0403040X0AAANAN,Mirtazapine_Tab 15mg,Tab,Y
-0403040X0AAAMAM,Mirtazapine_Orodisper Tab 45mg,Orodisper Tab,0403040X0AAAPAP,Mirtazapine_Tab 45mg,Tab,Y
-0403040X0AAANAN,Mirtazapine_Tab 15mg,Tab,0403040X0AAALAL,Mirtazapine_Orodisper Tab 15mg,Orodisper Tab,Y
-0403040X0AAAPAP,Mirtazapine_Tab 45mg,Tab,0403040X0AAAMAM,Mirtazapine_Orodisper Tab 45mg,Orodisper Tab,Y
-0404000M0AAAFAF,Methylphenidate HCl_Oral Soln 5mg/5ml,Oral Soln,0404000M0AABBBB,Methylphenidate HCl_Oral Susp 5mg/5ml,Oral Susp,Y
-0404000M0AAAHAH,Methylphenidate HCl_Tab 20mg M/R,Tab,0404000M0AAAQAQ,Methylphenidate HCl_Cap 20mg M/R,Cap,Y
-0404000M0AAAQAQ,Methylphenidate HCl_Cap 20mg M/R,Cap,0404000M0AAAHAH,Methylphenidate HCl_Tab 20mg M/R,Tab,Y
-0404000M0AABBBB,Methylphenidate HCl_Oral Susp 5mg/5ml,Oral Susp,0404000M0AAAFAF,Methylphenidate HCl_Oral Soln 5mg/5ml,Oral Soln,Y
-0404000R0AAADAD,Modafinil_Oral Soln 100mg/5ml,Oral Soln,0404000R0AAAGAG,Modafinil_Oral Susp 100mg/5ml,Oral Susp,Y
-0404000R0AAAGAG,Modafinil_Oral Susp 100mg/5ml,Oral Susp,0404000R0AAADAD,Modafinil_Oral Soln 100mg/5ml,Oral Soln,Y
-0406000B0AAADAD,Betahistine HCl_Oral Soln 8mg/5ml,Oral Soln,0406000B0AAAGAG,Betahistine HCl_Oral Susp 8mg/5ml,Oral Susp,Y
-0406000B0AAAGAG,Betahistine HCl_Oral Susp 8mg/5ml,Oral Susp,0406000B0AAADAD,Betahistine HCl_Oral Soln 8mg/5ml,Oral Soln,Y
-0406000E0AAAAAA,Flunarizine HCl_Cap 5mg,Cap,0406000E0AAADAD,Flunarizine HCl_Tab 5mg,Tab,Y
-0406000E0AAADAD,Flunarizine HCl_Tab 5mg,Tab,0406000E0AAAAAA,Flunarizine HCl_Cap 5mg,Cap,Y
-0406000F0AAACAC,Cyclizine HCl_Tab 50mg,Tab,0406000F0AAABAB,Cyclizine HCl_Suppos 50mg,Suppos,
-0406000F0AABEBE,Cyclizine HCl_Oral Susp 50mg/5ml,Oral Susp,0406000F0AAAQAQ,Cyclizine HCl_Liq Spec 50mg/5ml,Liq Spec,
-0406000L0AAACAC,Hyoscine Hydrob_Tab 150mcg,Tab,0406000L0AAAWAW,Hyoscine Hydrob_Tab Chble 150mcg,Tab Chble,N
-0406000L0AAAWAW,Hyoscine Hydrob_Tab Chble 150mcg,Tab Chble,0406000L0AAACAC,Hyoscine Hydrob_Tab 150mcg,Tab,Y
-0406000S0AAABAB,Ondansetron HCl_Tab 4mg,Tab,0406000S0AAAKAK,Ondansetron HCl_Orodisper Tab 4mg,Orodisper Tab,Y
-0406000S0AAACAC,Ondansetron HCl_Tab 8mg,Tab,0406000S0AAALAL,Ondansetron HCl_Orodisper Tab 8mg,Orodisper Tab,Y
-0406000S0AAAIAI,Ondansetron HCl_Oral Lyophil Tab 4mg S/F,Oral Lyophil Tab,0406000S0AAAMAM,Ondansetron HCl_Orodisper Film 4mg S/F,Orodisper Film,Y
-0406000S0AAAJAJ,Ondansetron HCl_Oral Lyophil Tab 8mg S/F,Oral Lyophil Tab,0406000S0AAANAN,Ondansetron HCl_Orodisper Film 8mg S/F,Orodisper Film,Y
-0406000S0AAAKAK,Ondansetron HCl_Orodisper Tab 4mg,Orodisper Tab,0406000S0AAABAB,Ondansetron HCl_Tab 4mg,Tab,Y
-0406000S0AAALAL,Ondansetron HCl_Orodisper Tab 8mg,Orodisper Tab,0406000S0AAACAC,Ondansetron HCl_Tab 8mg,Tab,Y
-0406000S0AAAMAM,Ondansetron HCl_Orodisper Film 4mg S/F,Orodisper Film,0406000S0AAAIAI,Ondansetron HCl_Oral Lyophil Tab 4mg S/F,Oral Lyophil Tab,Y
-0406000S0AAANAN,Ondansetron HCl_Orodisper Film 8mg S/F,Orodisper Film,0406000S0AAAJAJ,Ondansetron HCl_Oral Lyophil Tab 8mg S/F,Oral Lyophil Tab,Y
-0406000T0AAAEAE,Prochlpzine Mal_Suppos 5mg,Suppos,0406000T0AAAGAG,Prochlpzine Mal_Tab 5mg,Tab,N
-0406000T0AAAGAG,Prochlpzine Mal_Tab 5mg,Tab,0406000T0AAAEAE,Prochlpzine Mal_Suppos 5mg,Suppos,N
-0407010F0AAAAAA,Co-Codamol_Tab 8mg/500mg,Tab,0407010F0AAABAB,Co-Codamol_Cap 8mg/500mg,Cap,Y
-0407010F0AAAHAH,Co-Codamol_Tab 30mg/500mg,Tab,0407010F0AAADAD,Co-Codamol_Cap 30mg/500mg,Cap,Y
-0407010F0AAAKAK,Co-Codamol_Tab 15mg/500mg,Tab,0407010F0AAAVAV,Co-Codamol_Cap 15mg/500mg,Cap,Y
-0407010F0AAAVAV,Co-Codamol_Cap 15mg/500mg,Cap,0407010F0AAAKAK,Co-Codamol_Tab 15mg/500mg,Tab,Y
-0407010H0AAA5A5,Paracet_Oral Susp 500mg/5ml S/F,Oral Susp,0407010H0AADPDP,Paracet_Oral Soln 500mg/5ml S/F,Oral Soln,Y
-0407010H0AAA7A7,Paracet_Oral Soln Paed 120mg/5ml S/F,Oral Soln Paed,0407010H0AAAWAW,Paracet_Oral Susp Paed 120mg/5ml S/F,Oral Susp Paed,Y
-0407010H0AAABAB,Paracet_Oral Soln Paed 120mg/5ml,Oral Soln Paed,0407010H0AAAIAI,Paracet_Oral Susp Paed 120mg/5ml,Oral Susp Paed,Y
-0407010H0AAACAC,Paracet_Oral Susp 250mg/5ml,Oral Susp,0407010H0AADBDB,Paracet_Liq Spec 250mg/5ml,Liq Spec,Y
-0407010H0AAAIAI,Paracet_Oral Susp Paed 120mg/5ml,Oral Susp Paed,0407010H0AAABAB,Paracet_Oral Soln Paed 120mg/5ml,Oral Soln Paed,Y
-0407010H0AAAMAM,Paracet_Tab 500mg,Tab,0407010H0AAAAAA,Paracet_Cap 500mg,Cap,Y
-0407010H0AAAQAQ,Paracet_Tab Solb 500mg,Tab Solb,0407010H0AAAAAA,Paracet_Cap 500mg,Cap,N
-0407010H0AAAWAW,Paracet_Oral Susp Paed 120mg/5ml S/F,Oral Susp Paed,0407010H0AAA7A7,Paracet_Oral Soln Paed 120mg/5ml S/F,Oral Soln Paed,Y
-0407010H0AABNBN,Paracet_Suppos 1g,Suppos,0407010H0AADGDG,Paracet_Pdr Sach 1g,Pdr Sach,N
-0407010H0AABUBU,Paracet_Suppos 500mg,Suppos,0407010H0AAAAAA,Paracet_Cap 500mg,Cap,N
-0407010H0AADBDB,Paracet_Liq Spec 250mg/5ml,Liq Spec,0407010H0AAACAC,Paracet_Oral Susp 250mg/5ml,Oral Susp,Y
-0407010H0AADLDL,Paracet_Tab 1g,Tab,0407010H0AADGDG,Paracet_Pdr Sach 1g,Pdr Sach,N
-0407010H0AADPDP,Paracet_Oral Soln 500mg/5ml S/F,Oral Soln,0407010H0AAA5A5,Paracet_Oral Susp 500mg/5ml S/F,Oral Susp,Y
-0407010N0AAAAAA,Co-Dydramol_Tab 10mg/500mg,Tab,0407010N0AAAFAF,Co-Dydramol_Pdr Sach 10mg/500mg,Pdr Sach,
-0407010N0AAACAC,Co-Dydramol_Oral Soln 10mg/500mg/5ml,Oral Soln,0407010N0AAAGAG,Co-Dydramol_Oral Susp 10mg/500mg/5ml,Oral Susp,Y
-0407010N0AAAGAG,Co-Dydramol_Oral Susp 10mg/500mg/5ml,Oral Susp,0407010N0AAACAC,Co-Dydramol_Oral Soln 10mg/500mg/5ml,Oral Soln,Y
-040702040AAACAC,Tramadol HCl_Tab 100mg M/R,Tab,040702040AAAHAH,Tramadol HCl_Cap 100mg M/R,Cap,Y
-040702040AAADAD,Tramadol HCl_Tab 150mg M/R,Tab,040702040AAAIAI,Tramadol HCl_Cap 150mg M/R,Cap,Y
-040702040AAAEAE,Tramadol HCl_Tab 200mg M/R,Tab,040702040AAAJAJ,Tramadol HCl_Cap 200mg M/R,Cap,Y
-040702040AAAFAF,Tramadol HCl_Tab Solb 50mg S/F,Tab Solb,040702040AAATAT,Tramadol HCl_Orodisper Tab 50mg S/F,Orodisper Tab,Y
-040702040AAAGAG,Tramadol HCl_Cap 50mg M/R,Cap,040702040AAAYAY,Tramadol HCl_Tab 50mg M/R,Tab,Y
-040702040AAAHAH,Tramadol HCl_Cap 100mg M/R,Cap,040702040AAACAC,Tramadol HCl_Tab 100mg M/R,Tab,Y
-040702040AAAIAI,Tramadol HCl_Cap 150mg M/R,Cap,040702040AAADAD,Tramadol HCl_Tab 150mg M/R,Tab,Y
-040702040AAAJAJ,Tramadol HCl_Cap 200mg M/R,Cap,040702040AAAEAE,Tramadol HCl_Tab 200mg M/R,Tab,Y
-040702040AAATAT,Tramadol HCl_Orodisper Tab 50mg S/F,Orodisper Tab,040702040AAAFAF,Tramadol HCl_Tab Solb 50mg S/F,Tab Solb,Y
-040702040AAAYAY,Tramadol HCl_Tab 50mg M/R,Tab,040702040AAAGAG,Tramadol HCl_Cap 50mg M/R,Cap,Y
-0407020A0AAAWAW,Fentanyl_Tab Sublingual 100mcg S/F,Tab Sublingual,0407020A0AABCBC,Fentanyl_Tab Buccal 100mcg S/F,Tab Buccal,Y
-0407020A0AAAXAX,Fentanyl_Tab Sublingual 200mcg S/F,Tab Sublingual,0407020A0AABTBT,Fentanyl_Buccal Film 200mcg S/F,Buccal Film,
-0407020A0AAAZAZ,Fentanyl_Tab Sublingual 400mcg S/F,Tab Sublingual,0407020A0AABUBU,Fentanyl_Buccal Film 400mcg S/F,Buccal Film,
-0407020A0AABABA,Fentanyl_Tab Sublingual 600mcg S/F,Tab Sublingual,0407020A0AABFBF,Fentanyl_Tab Buccal 600mcg S/F,Tab Buccal,Y
-0407020A0AABBBB,Fentanyl_Tab Sublingual 800mcg S/F,Tab Sublingual,0407020A0AABVBV,Fentanyl_Buccal Film 800mcg S/F,Buccal Film,
-0407020A0AABCBC,Fentanyl_Tab Buccal 100mcg S/F,Tab Buccal,0407020A0AAAWAW,Fentanyl_Tab Sublingual 100mcg S/F,Tab Sublingual,Y
-0407020A0AABDBD,Fentanyl_Tab Buccal 200mcg S/F,Tab Buccal,0407020A0AABTBT,Fentanyl_Buccal Film 200mcg S/F,Buccal Film,
-0407020A0AABEBE,Fentanyl_Tab Buccal 400mcg S/F,Tab Buccal,0407020A0AABUBU,Fentanyl_Buccal Film 400mcg S/F,Buccal Film,
-0407020A0AABFBF,Fentanyl_Tab Buccal 600mcg S/F,Tab Buccal,0407020A0AABABA,Fentanyl_Tab Sublingual 600mcg S/F,Tab Sublingual,Y
-0407020A0AABGBG,Fentanyl_Tab Buccal 800mcg S/F,Tab Buccal,0407020A0AABVBV,Fentanyl_Buccal Film 800mcg S/F,Buccal Film,
-0407020G0AAAAAA,Dihydrocodeine Tart_Oral Soln 10mg/5ml,Oral Soln,0407020G0AAAPAP,Dihydrocodeine Tart_Liq Spec 10mg/5ml,Liq Spec,
-0407020M0AAAEAE,Methadone HCl_Tab 5mg,Tab,0407020M0AABUBU,Methadone HCl_Cap 5mg,Cap,Y
-0407020Q0AAAGAG,Morph Sulf_Tab 200mg M/R,Tab,0407020Q0AAEIEI,Morph Sulf_Cap 200mg M/R,Cap,Y
-0407020Q0AAAHAH,Morph Sulf_Tab 100mg M/R,Tab,0407020Q0AAEBEB,Morph Sulf_Cap 100mg M/R,Cap,Y
-0407020Q0AAAIAI,Morph Sulf_Tab 60mg M/R,Tab,0407020Q0AAEHEH,Morph Sulf_Cap 60mg M/R,Cap,Y
-0407020Q0AAAKAK,Morph Sulf_Tab 10mg M/R,Tab,0407020Q0AAEFEF,Morph Sulf_Cap 10mg M/R,Cap,Y
-0407020Q0AAALAL,Morph Sulf_Tab 30mg M/R,Tab,0407020Q0AAEGEG,Morph Sulf_Cap 30mg M/R,Cap,Y
-0407020Q0AACDCD,Morph Sulf_Tab 10mg,Tab,0407020Q0AACQCQ,Morph Sulf_Suppos 10mg,Suppos,N
-0407020Q0AACECE,Morph Sulf_Tab 20mg,Tab,0407020Q0AACRCR,Morph Sulf_Suppos 20mg,Suppos,
-0407020Q0AACPCP,Morph Sulf_Gran Sach 30mg M/R,Gran Sach,0407020Q0AAEGEG,Morph Sulf_Cap 30mg M/R,Cap,N
-0407020Q0AACQCQ,Morph Sulf_Suppos 10mg,Suppos,0407020Q0AACDCD,Morph Sulf_Tab 10mg,Tab,N
-0407020Q0AACVCV,Morph Sulf_Gran Sach 20mg M/R,Gran Sach,0407020Q0AADZDZ,Morph Sulf_Cap 20mg M/R,Cap,
-0407020Q0AADCDC,Morph Sulf_Gran Sach 60mg M/R,Gran Sach,0407020Q0AAEHEH,Morph Sulf_Cap 60mg M/R,Cap,Y
-0407020Q0AADDDD,Morph Sulf_Gran Sach 100mg M/R,Gran Sach,0407020Q0AAEBEB,Morph Sulf_Cap 100mg M/R,Cap,Y
-0407020Q0AADEDE,Morph Sulf_Gran Sach 200mg M/R,Gran Sach,0407020Q0AAEIEI,Morph Sulf_Cap 200mg M/R,Cap,Y
-0407020Q0AAEBEB,Morph Sulf_Cap 100mg M/R,Cap,0407020Q0AADDDD,Morph Sulf_Gran Sach 100mg M/R,Gran Sach,N
-0407020Q0AAEFEF,Morph Sulf_Cap 10mg M/R,Cap,0407020Q0AAAKAK,Morph Sulf_Tab 10mg M/R,Tab,Y
-0407020Q0AAEGEG,Morph Sulf_Cap 30mg M/R,Cap,0407020Q0AACPCP,Morph Sulf_Gran Sach 30mg M/R,Gran Sach,N
-0407020Q0AAEHEH,Morph Sulf_Cap 60mg M/R,Cap,0407020Q0AADCDC,Morph Sulf_Gran Sach 60mg M/R,Gran Sach,N
-0407020Q0AAEIEI,Morph Sulf_Cap 200mg M/R,Cap,0407020Q0AADEDE,Morph Sulf_Gran Sach 200mg M/R,Gran Sach,N
-0407020Q0AAFXFX,Morph Sulf_Intrasite Gel 0.1%,Intrasite Gel,0407020Q0AAFSFS,Morph Sulf_Gel 0.1%,Gel,
-0407020Q0AAFYFY,Morph Sulf_Intrasite Gel 0.2%,Intrasite Gel,0407020Q0AAFUFU,Morph Sulf_Gel 0.2%,Gel,
-0407020V0AAACAC,Pethidine HCl_Tab 50mg,Tab,0407020V0AABFBF,Pethidine HCl_Cap 50mg,Cap,Y
-0407041R0AAABAB,Rizatriptan_Tab 10mg,Tab,0407041R0AAACAC,Rizatriptan_Oral Lyophilisate Tab 10mg,Oral Lyophilisate Tab,Y
-0407041R0AAACAC,Rizatriptan_Oral Lyophilisate Tab 10mg,Oral Lyophilisate Tab,0407041R0AAABAB,Rizatriptan_Tab 10mg,Tab,Y
-040801050AAAAAA,Topiramate_Tab 50mg,Tab,040801050AAAWAW,Topiramate_Cap 50mg,Cap,Y
-040801050AAADAD,Topiramate_Tab 25mg,Tab,040801050AAAVAV,Topiramate_Cap 25mg,Cap,Y
-0408010ADAAADAD,Zonisamide_Oral Soln 50mg/5ml,Oral Soln,0408010ADAAAEAE,Zonisamide_Oral Susp 50mg/5ml,Oral Susp,Y
-0408010ADAAAEAE,Zonisamide_Oral Susp 50mg/5ml,Oral Susp,0408010ADAAADAD,Zonisamide_Oral Soln 50mg/5ml,Oral Soln,Y
-0408010AEAAACAC,Pregabalin_Cap 75mg,Cap,0408010AEAAALAL,Pregabalin_Pdr Sach 75mg,Pdr Sach,
-0408010AGAAAAAA,Stiripentol_Cap 250mg,Cap,0408010AGAAACAC,Stiripentol_Pdr Sach 250mg,Pdr Sach,N
-0408010AGAAABAB,Stiripentol_Cap 500mg,Cap,0408010AGAAADAD,Stiripentol_Pdr Sach 500mg,Pdr Sach,Y
-0408010AGAAACAC,Stiripentol_Pdr Sach 250mg,Pdr Sach,0408010AGAAAAAA,Stiripentol_Cap 250mg,Cap,Y
-0408010AGAAADAD,Stiripentol_Pdr Sach 500mg,Pdr Sach,0408010AGAAABAB,Stiripentol_Cap 500mg,Cap,N
-0408010C0AAACAC,Carbamazepine_Tab 200mg,Tab,0408010C0AAAKAK,Carbamazepine_Tab Chble 200mg,Tab Chble,N
-0408010C0AAAKAK,Carbamazepine_Tab Chble 200mg,Tab Chble,0408010C0AAACAC,Carbamazepine_Tab 200mg,Tab,Y
-0408010N0AAASAS,Phenobarb_Cap 100mg,Cap,0408010N0AAAMAM,Phenobarb_Tab 100mg,Tab,
-0408010N0AADMDM,Phenobarb_Liq Spec 15mg/5ml,Liq Spec,0408010N0AAACAC,Phenobarb_Elix 15mg/5ml,Elix,Y
-0408010Q0AAAGAG,Phenytoin_Sod Tab 100mg,Sod Tab,0408010Q0AAAAAA,Phenytoin_Sod Cap 100mg,Sod Cap,N
-0408010U0AAAXAX,Primidone_Tab 50mg,Tab,0408010U0AAAFAF,Primidone_Cap 50mg,Cap,Y
-0408010W0AAA1A1,Sod Valpr_Tab 300mg M/R,Tab,0408010W0AABRBR,Sod Valpr_Cap 300mg M/R,Cap,Y
-0408010W0AABRBR,Sod Valpr_Cap 300mg M/R,Cap,0408010W0AAA1A1,Sod Valpr_Tab 300mg M/R,Tab,N
-0408010Z0AAACAC,Phenytoin_Tab Chble 50mg,Tab Chble,0408010Q0AAAPAP,Phenytoin_Sod Cap 50mg,Sod Cap,N
-0408010Z0AAALAL,Phenytoin_Oral Susp 90mg/5ml,Oral Susp,0408010Q0AAAYAY,Phenytoin_Sod Oral Soln 90mg/5ml,Sod Oral Soln,Y
-0409010N0AAAKAK,Co-Careldopa_Oral Soln 25mg/100mg/5ml,Oral Soln,0409010N0AAAUAU,Co-Careldopa_Oral Susp 25mg/100mg/5ml,Oral Susp,Y
-0409010N0AAAUAU,Co-Careldopa_Oral Susp 25mg/100mg/5ml,Oral Susp,0409010N0AAAKAK,Co-Careldopa_Oral Soln 25mg/100mg/5ml,Oral Soln,Y
-0409020C0AAACAC,Trihexyphenidyl HCl_Oral Soln 5mg/5ml,Oral Soln,0409020C0AAAKAK,Trihexyphenidyl HCl_Liq Spec 5mg/5ml,Liq Spec,Y
-0409020C0AAAKAK,Trihexyphenidyl HCl_Liq Spec 5mg/5ml,Liq Spec,0409020C0AAACAC,Trihexyphenidyl HCl_Oral Soln 5mg/5ml,Oral Soln,Y
-0410020B0AAAWAW,Nicotine_Subling Tab 2mg S/F,Subling Tab,0410020B0AABABA,Nicotine_Chewing Gum 2mg S/F,Chewing Gum,N
-0410020B0AAAYAY,Nicotine_Loz 2mg S/F,Loz,0410020B0AABABA,Nicotine_Chewing Gum 2mg S/F,Chewing Gum,N
-0410020B0AAAZAZ,Nicotine_Loz 4mg S/F,Loz,0410020B0AABDBD,Nicotine_Chewing Gum 4mg S/F,Chewing Gum,Y
-0410020B0AABABA,Nicotine_Chewing Gum 2mg S/F,Chewing Gum,0410020B0AAAYAY,Nicotine_Loz 2mg S/F,Loz,N
-0410020B0AABDBD,Nicotine_Chewing Gum 4mg S/F,Chewing Gum,0410020B0AAAZAZ,Nicotine_Loz 4mg S/F,Loz,N
-0411000D0AAAAAA,Donepezil HCl_Tab 5mg,Tab,0411000D0AAAHAH,Donepezil HCl_Orodisper Tab 5mg,Orodisper Tab,Y
-0411000D0AAABAB,Donepezil HCl_Tab 10mg,Tab,0411000D0AAAIAI,Donepezil HCl_Orodisper Tab 10mg,Orodisper Tab,Y
-0411000D0AAAHAH,Donepezil HCl_Orodisper Tab 5mg,Orodisper Tab,0411000D0AAAAAA,Donepezil HCl_Tab 5mg,Tab,Y
-0411000D0AAAIAI,Donepezil HCl_Orodisper Tab 10mg,Orodisper Tab,0411000D0AAABAB,Donepezil HCl_Tab 10mg,Tab,Y
-0501021K0AAAAAA,Cefuroxime Axetil_Tab 125mg,Tab,0501021K0AAADAD,Cefuroxime Axetil_Gran Sach 125mg,Gran Sach,
-0501021L0AAAAAA,Cefalexin_Cap 250mg,Cap,0501021L0AAAGAG,Cefalexin_Tab 250mg,Tab,Y
-0501021L0AAABAB,Cefalexin_Cap 500mg,Cap,0501021L0AAAHAH,Cefalexin_Tab 500mg,Tab,Y
-0501021L0AAAGAG,Cefalexin_Tab 250mg,Tab,0501021L0AAAAAA,Cefalexin_Cap 250mg,Cap,Y
-0501021L0AAAHAH,Cefalexin_Tab 500mg,Tab,0501021L0AAABAB,Cefalexin_Cap 500mg,Cap,Y
-0501030F0AAAAAA,Demeclocycline HCl_Cap 150mg,Cap,0501030F0AAAIAI,Demeclocycline HCl_Tab 150mg,Tab,Y
-0501030F0AAAIAI,Demeclocycline HCl_Tab 150mg,Tab,0501030F0AAAAAA,Demeclocycline HCl_Cap 150mg,Cap,Y
-0501030P0AAAAAA,Minocycline HCl_Tab 50mg,Tab,0501030P0AAADAD,Minocycline HCl_Cap 50mg,Cap,Y
-0501030P0AAABAB,Minocycline HCl_Tab 100mg,Tab,0501030P0AAAEAE,Minocycline HCl_Cap 100mg,Cap,Y
-0501030P0AAADAD,Minocycline HCl_Cap 50mg,Cap,0501030P0AAAAAA,Minocycline HCl_Tab 50mg,Tab,Y
-0501030P0AAAEAE,Minocycline HCl_Cap 100mg,Cap,0501030P0AAABAB,Minocycline HCl_Tab 100mg,Tab,Y
-0501030V0AAAAAA,Tetracycline_Cap 250mg,Cap,0501030V0AAAFAF,Tetracycline_Tab 250mg,Tab,Y
-0501030V0AAAFAF,Tetracycline_Tab 250mg,Tab,0501030V0AAAAAA,Tetracycline_Cap 250mg,Cap,Y
-0501050A0AAAAAA,Azithromycin_Cap 250mg,Cap,0501050A0AAAGAG,Azithromycin_Tab 250mg,Tab,Y
-0501050A0AAAGAG,Azithromycin_Tab 250mg,Tab,0501050A0AAAAAA,Azithromycin_Cap 250mg,Cap,Y
-0501060D0AAANAN,Clindamycin HCl_Oral Susp 75mg/5ml,Oral Susp,0501060D0AAAEAE,Clindamycin HCl_Oral Soln 75mg/5ml,Oral Soln,
-0501090K0AACUCU,Isoniazid_Oral Soln 50mg/5ml,Oral Soln,0501090K0AABIBI,Isoniazid_Oral Susp 50mg/5ml,Oral Susp,
-0501110C0AAAEAE,Metronidazole_Oral Susp 200mg/5ml,Oral Susp,0501110C0AABQBQ,Metronidazole_Liq Spec 200mg/5ml,Liq Spec,
-0501110C0AAAGAG,Metronidazole_Suppos 500mg,Suppos,0501110C0AABHBH,Metronidazole_Tab 500mg,Tab,N
-0501110C0AAAIAI,Metronidazole_Tab 200mg,Tab,0501110C0AABJBJ,Metronidazole_Suppos 200mg,Suppos,
-0501110C0AABHBH,Metronidazole_Tab 500mg,Tab,0501110C0AAAGAG,Metronidazole_Suppos 500mg,Suppos,N
-0501130R0AAABAB,Nitrofurantoin_Cap 100mg,Cap,0501130R0AAAEAE,Nitrofurantoin_Tab 100mg,Tab,Y
-0501130R0AAADAD,Nitrofurantoin_Tab 50mg,Tab,0501130R0AAAAAA,Nitrofurantoin_Cap 50mg,Cap,Y
-0501130R0AAAEAE,Nitrofurantoin_Tab 100mg,Tab,0501130R0AAABAB,Nitrofurantoin_Cap 100mg,Cap,Y
-0502030A0AAAAAA,Amphotericin_Inf(Sod Desoxychol) 50mg Vl,Inf(Sod Desoxychol),0502030A0AAAIAI,Amphotericin_Inf (In Liposomes) 50mg Vl,Inf (In Liposomes),N
-0502050C0AAAEAE,Terbinafine HCl_Oral Soln 250mg/5ml,Oral Soln,0502050C0AAAFAF,Terbinafine HCl_Oral Susp 250mg/5ml,Oral Susp,Y
-0502050C0AAAFAF,Terbinafine HCl_Oral Susp 250mg/5ml,Oral Susp,0502050C0AAAEAE,Terbinafine HCl_Oral Soln 250mg/5ml,Oral Soln,Y
-0503010U0AAACAC,Ritonavir_Tab 100mg,Tab,0503010U0AAAAAA,Ritonavir_Cap 100mg,Cap,
-0503021C0AAABAB,Aciclovir_Tab 200mg,Tab,0503021C0AAAGAG,Aciclovir_Tab Disper 200mg,Tab Disper,N
-0503021C0AAACAC,Aciclovir_Tab 400mg,Tab,0503021C0AAAHAH,Aciclovir_Tab Disper 400mg,Tab Disper,Y
-0503021C0AAADAD,Aciclovir_Tab 800mg,Tab,0503021C0AAAEAE,Aciclovir_Tab Disper 800mg,Tab Disper,N
-0503021C0AAAEAE,Aciclovir_Tab Disper 800mg,Tab Disper,0503021C0AAADAD,Aciclovir_Tab 800mg,Tab,Y
-0503021C0AAAGAG,Aciclovir_Tab Disper 200mg,Tab Disper,0503021C0AAABAB,Aciclovir_Tab 200mg,Tab,N
-0503021C0AAAHAH,Aciclovir_Tab Disper 400mg,Tab Disper,0503021C0AAACAC,Aciclovir_Tab 400mg,Tab,N
-0503050B0AAABAB,Ribavirin_Cap 200mg,Cap,0503050B0AAAEAE,Ribavirin_Tab 200mg,Tab,
-0505030A0AAABAB,Albendazole_Tab Chble 400mg,Tab Chble,0505030A0AAADAD,Albendazole_Tab 400mg,Tab,N
-0505030A0AAADAD,Albendazole_Tab 400mg,Tab,0505030A0AAABAB,Albendazole_Tab Chble 400mg,Tab Chble,N
-0601011N0AAACAC,Ins Solb_Inj (Pore) 100u/ml 10ml Vl,Inj (Pore),0601011N0AAAAAA,Ins Solb_Inj (Bov) 100u/ml 10ml Vl,Inj (Bov),Y
-0601011N0AAAPAP,Ins Solb_Inj (Hum Prb) 100u/ml 3ml Cart,Inj (Hum Prb),0601011N0AAAYAY,Ins Solb_Inj (Bov) 100u/ml 3ml Cart,Inj (Bov),
-0601012S0AAASAS,Ins Isop_Inj (Bov) 100u/ml 3ml Cart,Inj (Bov),0601012S0AAATAT,Ins Isop_Inj (Pore) 100u/ml 3ml Cart,Inj (Pore),N
-0601012S0AAATAT,Ins Isop_Inj (Pore) 100u/ml 3ml Cart,Inj (Pore),0601012S0AAASAS,Ins Isop_Inj (Bov) 100u/ml 3ml Cart,Inj (Bov),N
-0601022B0AAADAD,Metformin HCl_Tab 850mg,Tab,0601022B0AAAQAQ,Metformin HCl_Cap 850mg,Cap,Y
-0601040E0AAAMAM,Diazoxide_Oral Soln 50mg/5ml,Oral Soln,0601040E0AABIBI,Diazoxide_Oral Susp 50mg/5ml,Oral Susp,Y
-0601040E0AABHBH,Diazoxide_Oral Susp 250mg/5ml,Oral Susp,0601040E0AAAYAY,Diazoxide_Oral Soln 250mg/5ml,Oral Soln,
-0601040E0AABIBI,Diazoxide_Oral Susp 50mg/5ml,Oral Susp,0601040E0AAAMAM,Diazoxide_Oral Soln 50mg/5ml,Oral Soln,Y
-0602010M0AAAUAU,Liothyronine Sod_Cap 10mcg,Cap,0602010M0AAAQAQ,Liothyronine Sod_Tab 10mcg,Tab,
-0602010V0AAAFAF,Levothyrox Sod_Cap 50mcg,Cap,0602010V0AABPBP,Levothyrox Sod_Pdrs 50mcg,Pdrs,
-0602010V0AABWBW,Levothyrox Sod_Tab 25mcg,Tab,0602010V0AAAGAG,Levothyrox Sod_Cap 25mcg,Cap,Y
-0602010V0AABXBX,Levothyrox Sod_Tab 50mcg,Tab,0602010V0AAAFAF,Levothyrox Sod_Cap 50mcg,Cap,Y
-0602010V0AABZBZ,Levothyrox Sod_Tab 100mcg,Tab,0602010V0AACMCM,Levothyrox Sod_Cap 100mcg,Cap,Y
-0602010V0AACJCJ,Levothyrox Sod_Cap 150mcg,Cap,0602010V0AADNDN,Levothyrox Sod_Pdrs 150mcg,Pdrs,N
-0602010V0AACMCM,Levothyrox Sod_Cap 100mcg,Cap,0602010V0AACQCQ,Levothyrox Sod_Pdrs 100mcg,Pdrs,N
-0602010V0AACQCQ,Levothyrox Sod_Pdrs 100mcg,Pdrs,0602010V0AACMCM,Levothyrox Sod_Cap 100mcg,Cap,N
-0602010V0AADNDN,Levothyrox Sod_Pdrs 150mcg,Pdrs,0602010V0AACJCJ,Levothyrox Sod_Cap 150mcg,Cap,N
-0602020D0AAAWAW,Carbimazole_Oral Susp 10mg/5ml,Oral Susp,0602020D0AAAGAG,Carbimazole_Oral Soln 10mg/5ml,Oral Soln,
-0603020J0AAAJAJ,Hydrocort_Liq Spec 5mg/5ml,Liq Spec,0603020J0AAAXAX,Hydrocort_Oral Susp 5mg/5ml,Oral Susp,Y
-0603020J0AAAXAX,Hydrocort_Oral Susp 5mg/5ml,Oral Susp,0603020J0AAAJAJ,Hydrocort_Liq Spec 5mg/5ml,Liq Spec,Y
-0604011D0AAALAL,Ethinylestr_Tab 2mcg,Tab,0604011D0AAAWAW,Ethinylestr_Cap 2mcg,Cap,
-0604011G0AABDBD,Estradiol_Tab 1mg,Tab,0604011K0AAAAAA,Estradiol_Val Tab 1mg,Val Tab,Y
-0604011K0AAAAAA,Estradiol_Val Tab 1mg,Val Tab,0604011G0AABDBD,Estradiol_Tab 1mg,Tab,Y
-0604012S0AABZBZ,Progesterone_Vag Cap 200mg (Micronised),Vag Cap,0604012S0AABWBW,Progesterone_Cap 200mg (Micronised),Cap,
-0604020K0AABHBH,Testosterone_Gel Sach 50mg/5g,Gel Sach,0604020K0AABKBK,Testosterone_Gel 50mg/5g,Gel,Y
-0604020K0AABKBK,Testosterone_Gel 50mg/5g,Gel,0604020K0AABHBH,Testosterone_Gel Sach 50mg/5g,Gel Sach,N
-0604030Q0AAAAAA,Prasterone_Cap 25mg,Cap,0604030Q0AAAIAI,Prasterone_Tab 25mg,Tab,
-0703030G0AAAIAI,Nonoxinol 9_Gel 2%,Gel,0703030G0AAABAB,Nonoxinol 9_Crm 2%,Crm,
-0704010U0AAAAAA,Tamsulosin HCl_Cap 400mcg M/R,Cap,0704010U0AAABAB,Tamsulosin HCl_Tab 400mcg M/R,Tab,Y
-0704010U0AAABAB,Tamsulosin HCl_Tab 400mcg M/R,Tab,0704010U0AAAAAA,Tamsulosin HCl_Cap 400mcg M/R,Cap,Y
-0704020J0AAAZAZ,Oxybutynin HCl_Oral Soln 2.5mg/5ml,Oral Soln,0704020J0AAAKAK,Oxybutynin HCl_Liq Spec 2.5mg/5ml,Liq Spec,Y
-0704020J0AAAKAK,Oxybutynin HCl_Liq Spec 2.5mg/5ml,Liq Spec,0704020J0AAAZAZ,Oxybutynin HCl_Oral Soln 2.5mg/5ml,Oral Soln,Y
-0704020N0AAAJAJ,Tolterodine_Oral Susp 2mg/5ml,Oral Susp,0704020N0AAAEAE,Tolterodine_Oral Soln 2mg/5ml,Oral Soln,
-0704030J0AAAHAH,Sod Cit_Pdr Sach 4g,Pdr Sach,0704030J0AAAIAI,Sod Cit_Gran Sach 4g,Gran Sach,Y
-0704030J0AAAIAI,Sod Cit_Gran Sach 4g,Gran Sach,0704030J0AAAHAH,Sod Cit_Pdr Sach 4g,Pdr Sach,Y
-0704050B0AAAVAV,Alprostadil_Cont Pack Inj 20mcg Cart,Cont Pack Inj,0704050B0AABLBL,Alprostadil_S/Pack Inj 20mcg Cart,S/Pack Inj,Y
-0704050B0AAAWAW,Alprostadil_Cont Pack Inj 10mcg Cart,Cont Pack Inj,0704050B0AABMBM,Alprostadil_S/Pack Inj 10mcg Cart,S/Pack Inj,N
-0704050B0AABFBF,Alprostadil_Cont Pack Inj 40mcg Cart,Cont Pack Inj,0704050B0AABNBN,Alprostadil_S/Pack Inj 40mcg Cart,S/Pack Inj,N
-0704050B0AABLBL,Alprostadil_S/Pack Inj 20mcg Cart,S/Pack Inj,0704050B0AAAVAV,Alprostadil_Cont Pack Inj 20mcg Cart,Cont Pack Inj,Y
-0704050B0AABMBM,Alprostadil_S/Pack Inj 10mcg Cart,S/Pack Inj,0704050B0AAAWAW,Alprostadil_Cont Pack Inj 10mcg Cart,Cont Pack Inj,Y
-0704050B0AABNBN,Alprostadil_S/Pack Inj 40mcg Cart,S/Pack Inj,0704050B0AABFBF,Alprostadil_Cont Pack Inj 40mcg Cart,Cont Pack Inj,N
-0704050Z0AAAFAF,Sildenafil_Oral Soln 25mg/5ml,Oral Soln,0704050Z0AAALAL,Sildenafil_Oral Susp 25mg/5ml,Oral Susp,Y
-0704050Z0AAAGAG,Sildenafil_Oral Soln 10mg/5ml,Oral Soln,0704050Z0AAAKAK,Sildenafil_Oral Susp 10mg/5ml,Oral Susp,Y
-0704050Z0AAAKAK,Sildenafil_Oral Susp 10mg/5ml,Oral Susp,0704050Z0AAAGAG,Sildenafil_Oral Soln 10mg/5ml,Oral Soln,Y
-0704050Z0AAALAL,Sildenafil_Oral Susp 25mg/5ml,Oral Susp,0704050Z0AAAFAF,Sildenafil_Oral Soln 25mg/5ml,Oral Soln,Y
-0801030L0AAABAB,Mercaptopurine_Tab 10mg,Tab,0801030L0AAAGAG,Mercaptopurine_Cap 10mg,Cap,Y
-0801030L0AAAGAG,Mercaptopurine_Cap 10mg,Cap,0801030L0AAABAB,Mercaptopurine_Tab 10mg,Tab,Y
-0801030L0AAALAL,Mercaptopurine_Cap 25mg,Cap,0801030L0AAAJAJ,Mercaptopurine_Tab 25mg,Tab,
-0801050AAAAACAC,Imatinib Mesil_Tab 100mg,Tab,0801050AAAAAAAA,Imatinib Mesil_Cap 100mg,Cap,
-0801050P0AAABAB,Hydroxycarbamide_Oral Soln 500mg/5ml,Oral Soln,0801050P0AAADAD,Hydroxycarbamide_Oral Susp 500mg/5ml,Oral Susp,Y
-0801050P0AAADAD,Hydroxycarbamide_Oral Susp 500mg/5ml,Oral Susp,0801050P0AAABAB,Hydroxycarbamide_Oral Soln 500mg/5ml,Oral Soln,Y
-0802010G0AAAPAP,Azathioprine_Oral Soln 50mg/5ml,Oral Soln,0802010G0AACHCH,Azathioprine_Oral Susp 50mg/5ml,Oral Susp,Y
-0802010G0AACHCH,Azathioprine_Oral Susp 50mg/5ml,Oral Susp,0802010G0AAAPAP,Azathioprine_Oral Soln 50mg/5ml,Oral Soln,Y
-0802010G0AACICI,Azathioprine_Oral Susp 25mg/5ml,Oral Susp,0802010G0AAASAS,Azathioprine_Oral Soln 25mg/5ml,Oral Soln,
-0802020T0AAANAN,Tacrolimus_Cap 1mg M/R,Cap,0802020T0AABCBC,Tacrolimus_Tab 1mg M/R,Tab,
-0901011P0AACKCK,Ferr Sulf_Oral Soln 60mg/5ml,Oral Soln,0901011P0AABPBP,Ferr Sulf_Liq Spec 60mg/5ml,Liq Spec,
-0902012L0AABRBR,Sod Chlor_Liq Spec 292.5mg/5ml,Liq Spec,0902012L0AADDDD,Sod Chlor_Oral Soln 292.5mg/5ml,Oral Soln,
-0902012L0AABRBR,Sod Chlor_Liq Spec 292.5mg/5ml,Liq Spec,0902012L0AADCDC,Sod Chlor_Oral Soln 292.5mg/5ml,Oral Soln,
-0902012L0AADDDD,Sod Chlor_Liq Spec 292.5mg/5ml,Liq Spec,0902012L0AADCDC,Sod Chlor_Oral Soln 292.5mg/5ml,Oral Soln,
-0902013S0AAADAD,Sod Bicarb_Cap 600mg,Cap,0902013S0AAAPAP,Sod Bicarb_Tab 600mg,Tab,Y
-0902013S0AAAPAP,Sod Bicarb_Tab 600mg,Tab,0902013S0AAADAD,Sod Bicarb_Cap 600mg,Cap,Y
-0902021S0AAAXAX,Sod Chlor_I/V Inf 0.9%,I/V Inf,1108010K0AAAAAA,Sod Chlor_Eye Dps 0.9%,Eye Dps,N
-0902021S0AADQDQ,Sod Chlor_I/V Inf 0.9%,I/V Inf,1108010K0AAAAAA,Sod Chlor_Eye Dps 0.9%,Eye Dps,N
-0905011K0AAAGAG,Calc Glucon_Tab 600mg,Tab,0905011K0AAARAR,Calc Glucon_Cap 600mg,Cap,
-0905013G0AAA2A2,Mag Glycerophos_Tab 97.2mg,Tab,0905013G0AAA4A4,Mag Glycerophos_Cap 97.2mg,Cap,Y
-0905013G0AAA4A4,Mag Glycerophos_Cap 97.2mg,Cap,0905013G0AABVBV,Mag Glycerophos_Pdrs 97.2mg,Pdrs,
-0905013G0AABMBM,Mag Glycerophos_Cap 48.6mg,Cap,0905013G0AACXCX,Mag Glycerophos_Tab 48.6mg,Tab,Y
-0905013G0AACXCX,Mag Glycerophos_Tab 48.6mg,Tab,0905013G0AABMBM,Mag Glycerophos_Cap 48.6mg,Cap,Y
-0905021L0AAAGAG,Sod Dihydrogen Phos_Oral Susp 780mg/5ml,Oral Susp,0905021L0AAASAS,Sod Dihydrogen Phos_Oral Soln 780mg/5ml,Oral Soln,Y
-0905021L0AAASAS,Sod Dihydrogen Phos_Oral Soln 780mg/5ml,Oral Soln,0905021L0AAAGAG,Sod Dihydrogen Phos_Oral Susp 780mg/5ml,Oral Susp,Y
-0905050A0AAAAAA,Selenium_Oral Soln 50mcg/ml 2ml Amp,Oral Soln,0905050A0AAACAC,Selenium_Inj 50mcg/ml 2ml Amp,Inj,N
-0905050A0AAACAC,Selenium_Inj 50mcg/ml 2ml Amp,Inj,0905050A0AAAAAA,Selenium_Oral Soln 50mcg/ml 2ml Amp,Oral Soln,N
-0906022K0AAACAC,Nicotinamide_Tab 500mg,Tab,0906022K0AAAGAG,Nicotinamide_Cap 500mg,Cap,Y
-0906022K0AAAGAG,Nicotinamide_Cap 500mg,Cap,0906022K0AAACAC,Nicotinamide_Tab 500mg,Tab,Y
-0906024N0AAAGAG,Pyridox HCl_Tab 10mg,Tab,0906024N0AABJBJ,Pyridox HCl_Cap 10mg,Cap,Y
-0906024N0AAAJAJ,Pyridox HCl_Tab 100mg,Tab,0906024N0AABEBE,Pyridox HCl_Cap 100mg,Cap,
-0906025P0AAAAAA,Riboflavin_Tab 50mg,Tab,0906025P0AABFBF,Riboflavin_Cap 50mg,Cap,Y
-0906025P0AABPBP,Riboflavin_Tab 100mg,Tab,0906025P0AAAUAU,Riboflavin_Cap 100mg,Cap,Y
-0906026M0AAAXAX,Thiamine HCl_Oral Soln 50mg/5ml,Oral Soln,0906026M0AABKBK,Thiamine HCl_Oral Susp 50mg/5ml,Oral Susp,Y
-0906026M0AABKBK,Thiamine HCl_Oral Susp 50mg/5ml,Oral Susp,0906026M0AAAXAX,Thiamine HCl_Oral Soln 50mg/5ml,Oral Soln,Y
-090602800AAANAN,Pot Aminobenz_Cap 500mg,Cap,090602800AAAVAV,Pot Aminobenz_Tab 500mg,Tab,
-0906031C0AAAIAI,Ascorbic Acid_Tab 500mg,Tab,0906031C0AABIBI,Ascorbic Acid_Cap 500mg,Cap,Y
-0906031C0AAALAL,Ascorbic Acid_Tab Chble 500mg,Tab Chble,0906031C0AABIBI,Ascorbic Acid_Cap 500mg,Cap,
-0906031C0AACBCB,Ascorbic Acid_Tab Chble 500mg,Tab Chble,0906031C0AABIBI,Ascorbic Acid_Cap 500mg,Cap,
-0906031C0AAAUAU,Ascorbic Acid_Tab Eff 500mg,Tab Eff,0906031C0AABIBI,Ascorbic Acid_Cap 500mg,Cap,
-0906031C0AABABA,Ascorbic Acid_Cap 500mg M/R,Cap,0906031C0AABJBJ,Ascorbic Acid_Tab 500mg M/R,Tab,Y
-0906031C0AABJBJ,Ascorbic Acid_Tab 500mg M/R,Tab,0906031C0AABABA,Ascorbic Acid_Cap 500mg M/R,Cap,Y
-0906040G0AAANAN,Colecal_Cap 800u,Cap,0906040G0AACSCS,Colecal_Tab 800u,Tab,Y
-0906040G0AAATAT,"Colecal_Oral Susp 10,000u/5ml",Oral Susp,0906040G0AACUCU,"Colecal_Oral Soln 10,000u/5ml",Oral Soln,Y
-0906040G0AABABA,"Colecal_Cap 2,000u",Cap,0906040G0AADBDB,"Colecal_Tab 2,000u",Tab,Y
-0906040G0AABGBG,"Colecal_Tab 1,000u",Tab,0906040G0AABHBH,"Colecal_Cap 1,000u",Cap,Y
-0906040G0AABHBH,"Colecal_Cap 1,000u",Cap,0906040G0AABGBG,"Colecal_Tab 1,000u",Tab,Y
-0906040G0AABIBI,Colecal_Cap 400u,Cap,0906040G0AAELEL,Colecal_Tab 400u,Tab,Y
-0906040G0AABNBN,"Colecal_Oral Soln 5,000u/5ml",Oral Soln,0906040G0AAAXAX,"Colecal_Oral Susp 5,000u/5ml",Oral Susp,
-0906040G0AAELEL,Colecal_Tab 400u,Tab,0906040G0AABIBI,Colecal_Cap 400u,Cap,Y
-0906040G0AABSBS,Colecal & Calc_Tab 400u/1.5g,Tab,0906040G0AABYBY,Colecal & Calc_Tab Chble 400u/1.5g,Tab Chble,Y
-0906040G0AABWBW,Colecal & Calc_Tab Chble 400u/1.25g,Tab Chble,0906040G0AACCCC,Colecal & Calc_Tab 400u/1.25g,Tab,Y
-0906040G0AABYBY,Colecal & Calc_Tab Chble 400u/1.5g,Tab Chble,0906040G0AABSBS,Colecal & Calc_Tab 400u/1.5g,Tab,Y
-0906040G0AABYBY,Colecal & Calc_Tab Chble 400u/1.5g (Lem),Tab Chble,0906040G0AACBCB,Colecal & Calc_Tab Eff 400u/1.5g (Lem),Tab Eff,Y
-0906040G0AACBCB,Colecal & Calc_Tab Eff 400u/1.5g (Lem),Tab Eff,0906040G0AABYBY,Colecal & Calc_Tab Chble 400u/1.5g (Lem),Tab Chble,Y
-0906040G0AACCCC,Colecal & Calc_Tab 400u/1.25g,Tab,0906040G0AABWBW,Colecal & Calc_Tab Chble 400u/1.25g,Tab Chble,Y
-0906040G0AABYBY,Colecal & Calc_Tab Chble 400u/1.5g,Tab Chble,0906040G0AABSBS,Colecal & Calc_Tab 400u/1.5g,Tab,Y
-0906040G0AACLCL,"Colecal_Oral Dps 20,000u/ml",Oral Dps,0906040G0AADGDG,"Colecal_Oral Soln 20,000u/ml",Oral Soln,N
-0906040G0AACSCS,Colecal_Tab 800u,Tab,0906040G0AAANAN,Colecal_Cap 800u,Cap,Y
-0906040G0AACUCU,"Colecal_Oral Soln 10,000u/5ml",Oral Soln,0906040G0AAATAT,"Colecal_Oral Susp 10,000u/5ml",Oral Susp,Y
-0906040G0AACWCW,Colecal & Calc_Tab 800u/1.25g,Tab,0906040N0AAEXEX,Colecal & Calc_Tab Chble 800u/1.25g,Tab Chble,Y
-0906040G0AADBDB,"Colecal_Tab 2,000u",Tab,0906040G0AABABA,"Colecal_Cap 2,000u",Cap,Y
-0906040G0AADGDG,"Colecal_Oral Soln 20,000u/ml",Oral Soln,0906040G0AACLCL,"Colecal_Oral Dps 20,000u/ml",Oral Dps,N
-0906040N0AADCDC,"Ergocalciferol_Oral Susp 1,000u/5ml",Oral Susp,0906040N0AAFGFG,"Ergocalciferol_Oral Soln 1,000u/5ml",Oral Soln,Y
-0906040N0AADLDL,"Ergocalciferol_Liq Spec 10,000u/5ml",Liq Spec,0906040N0AAFIFI,"Ergocalciferol_Oral Soln 10,000u/5ml",Oral Soln,Y
-0906040N0AAEIEI,"Ergocalciferol_Oral Susp 6,000u/5ml",Oral Susp,0906040N0AAFJFJ,"Ergocalciferol_Oral Soln 6,000u/5ml",Oral Soln,Y
-0906040N0AAEXEX,Colecal & Calc_Tab Chble 800u/1.25g,Tab Chble,0906040G0AACWCW,Colecal & Calc_Tab 800u/1.25g,Tab,Y
-0906040N0AAFGFG,"Ergocalciferol_Oral Soln 1,000u/5ml",Oral Soln,0906040N0AADCDC,"Ergocalciferol_Oral Susp 1,000u/5ml",Oral Susp,Y
-0906040N0AAFIFI,"Ergocalciferol_Oral Soln 10,000u/5ml",Oral Soln,0906040N0AADLDL,"Ergocalciferol_Liq Spec 10,000u/5ml",Liq Spec,Y
-0906040N0AAFJFJ,"Ergocalciferol_Oral Soln 6,000u/5ml",Oral Soln,0906040N0AAEIEI,"Ergocalciferol_Oral Susp 6,000u/5ml",Oral Susp,Y
-0906040N0AAFKFK,"Ergocalciferol_Oral Soln 100,000u/5ml",Oral Soln,0906040N0AADDDD,"Ergocalciferol_Oral Susp 100,000u/5ml",Oral Susp,
-0906060L0AAAGAG,Menadiol Sod Phos_Oral Soln 5mg/5ml,Oral Soln,0906060L0AAAPAP,Menadiol Sod Phos_Oral Susp 5mg/5ml,Oral Susp,Y
-0906060L0AAAPAP,Menadiol Sod Phos_Oral Susp 5mg/5ml,Oral Susp,0906060L0AAAGAG,Menadiol Sod Phos_Oral Soln 5mg/5ml,Oral Soln,Y
-0906060Q0AAACAC,Phytomenadione_Tab 10mg,Tab,0906060Q0AABCBC,Phytomenadione_Cap 10mg,Cap,Y
-0906060Q0AABCBC,Phytomenadione_Cap 10mg,Cap,0906060Q0AAACAC,Phytomenadione_Tab 10mg,Tab,Y
-0908010N0AAABAB,Sod Benz_Cap 500mg,Cap,0908010N0AAAXAX,Sod Benz_Tab 500mg,Tab,Y
-0908010N0AAAXAX,Sod Benz_Tab 500mg,Tab,0908010N0AAABAB,Sod Benz_Cap 500mg,Cap,Y
-0908010P0AAACAC,Sod Phenylbut_Cap 500mg,Cap,0908010P0AAAGAG,Sod Phenylbut_Tab 500mg,Tab,Y
-0908010P0AAAGAG,Sod Phenylbut_Tab 500mg,Tab,0908010P0AAACAC,Sod Phenylbut_Cap 500mg,Cap,Y
-091101000AADQDQ,Arginine_Tab 500mg,Tab,091101000AACSCS,Arginine_Cap 500mg,Cap,Y
-091101000AAERER,Glycine_Pdrs 1g,Pdrs,091101000AAFBFB,Glycine_Pdr Sach 1g,Pdr Sach,N
-091101000AAFBFB,Glycine_Pdr Sach 1g,Pdr Sach,091101000AAERER,Glycine_Pdrs 1g,Pdrs,N
-091102000AAAIAI,Ubidecarenone_Cap 30mg,Cap,091102000AABMBM,Ubidecarenone_Tab 30mg,Tab,Y
-091102000AABMBM,Ubidecarenone_Tab 30mg,Tab,091102000AAAIAI,Ubidecarenone_Cap 30mg,Cap,Y
-091200000AADGDG,Glucosamine Sulf_Tab 500mg,Tab,091200000AADJDJ,Glucosamine Sulf_Cap 500mg,Cap,Y
-091200000AADJDJ,Glucosamine Sulf_Cap 500mg,Cap,091200000AADGDG,Glucosamine Sulf_Tab 500mg,Tab,Y
-091200000AAEEEE,Glucosamine + Chond_Cap 400mg/100mg,Cap,091200000AAELEL,Glucosamine + Chond_Tab 400mg/100mg,Tab,Y
-091200000AAELEL,Glucosamine + Chond_Tab 400mg/100mg,Tab,091200000AAEEEE,Glucosamine + Chond_Cap 400mg/100mg,Cap,Y
-1001010ADAAACAC,Ibuprofen Lysine_Tab 400mg,Tab,1001010ADAAADAD,Ibuprofen Lysine_Sach 400mg,Sach,
-1001010C0AAADAD,Diclofenac Sod_Tab E/C 25mg,Tab E/C,1001010C0AAATAT,Diclofenac Sod_Suppos 25mg,Suppos,Y
-1001010C0AAAEAE,Diclofenac Sod_Tab E/C 50mg,Tab E/C,1001010C0AAAUAU,Diclofenac Sod_Suppos 50mg,Suppos,Y
-1001010C0AAAFAF,Diclofenac Sod_Tab 100mg M/R,Tab,1001010C0AAANAN,Diclofenac Sod_Cap 100mg M/R,Cap,Y
-1001010C0AAALAL,Diclofenac Sod_Tab 75mg M/R,Tab,1001010C0AAAWAW,Diclofenac Sod_Cap 75mg M/R,Cap,Y
-1001010C0AAANAN,Diclofenac Sod_Cap 100mg M/R,Cap,1001010C0AAAFAF,Diclofenac Sod_Tab 100mg M/R,Tab,Y
-1001010C0AAATAT,Diclofenac Sod_Suppos 25mg,Suppos,1001010C0AAADAD,Diclofenac Sod_Tab E/C 25mg,Tab E/C,N
-1001010C0AAAUAU,Diclofenac Sod_Suppos 50mg,Suppos,1001010C0AAAEAE,Diclofenac Sod_Tab E/C 50mg,Tab E/C,N
-1001010C0AAAWAW,Diclofenac Sod_Cap 75mg M/R,Cap,1001010C0AAALAL,Diclofenac Sod_Tab 75mg M/R,Tab,Y
-1001010J0AAADAD,Ibuprofen_Tab 200mg,Tab,1001010J0AAAAAA,Ibuprofen_Cap 200mg,Cap,Y
-1001010J0AAAEAE,Ibuprofen_Tab 400mg,Tab,1001010J0AAAUAU,Ibuprofen_Cap 400mg,Cap,Y
-1001010J0AAAFAF,Ibuprofen_Tab 600mg,Tab,1001010J0AAANAN,Ibuprofen_Gran Eff Sach 600mg,Gran Eff Sach,Y
-1001010J0AAANAN,Ibuprofen_Gran Eff Sach 600mg,Gran Eff Sach,1001010J0AAAFAF,Ibuprofen_Tab 600mg,Tab,N
-1001010J0AABNBN,Ibuprofen_Orodisper Tab 200mg,Orodisper Tab,1001010J0AAAAAA,Ibuprofen_Cap 200mg,Cap,Y
-1001010P0AAADAD,Naproxen_Tab 250mg,Tab,1001010P0AAAHAH,Naproxen_Tab E/C 250mg,Tab E/C,Y
-1001010P0AAAHAH,Naproxen_Tab E/C 250mg,Tab E/C,1001010P0AAADAD,Naproxen_Tab 250mg,Tab,Y
-1001010R0AAAAAA,Piroxicam_Cap 10mg,Cap,1001010R0AAADAD,Piroxicam_Tab Disper 10mg,Tab Disper,
-1001010R0AAAEAE,Piroxicam_Tab Disper 20mg,Tab Disper,1001010R0AAABAB,Piroxicam_Cap 20mg,Cap,N
-1001040C0AAALAL,Allopurinol_Oral Soln 300mg/5ml,Oral Soln,1001040C0AAAXAX,Allopurinol_Oral Susp 300mg/5ml,Oral Susp,Y
-1001040C0AAAPAP,Allopurinol_Oral Soln 100mg/5ml,Oral Soln,1001040C0AAAWAW,Allopurinol_Oral Susp 100mg/5ml,Oral Susp,Y
-1001040C0AAAWAW,Allopurinol_Oral Susp 100mg/5ml,Oral Susp,1001040C0AAAPAP,Allopurinol_Oral Soln 100mg/5ml,Oral Soln,Y
-1001040C0AAAXAX,Allopurinol_Oral Susp 300mg/5ml,Oral Susp,1001040C0AAALAL,Allopurinol_Oral Soln 300mg/5ml,Oral Soln,Y
-1001050A0AAABAB,Glucosamine HCl_Tab 750mg,Tab,1001050A0AAAMAM,Glucosamine HCl_Cap 750mg,Cap,
-1001050A0AAACAC,Glucosamine HCl_Tab Chble 1.5g,Tab Chble,1001050A0AAAHAH,Glucosamine HCl_Tab 1.5g,Tab,Y
-1001050A0AAAHAH,Glucosamine HCl_Tab 1.5g,Tab,1001050A0AAACAC,Glucosamine HCl_Tab Chble 1.5g,Tab Chble,Y
-1002010Q0AABIBI,Pyridostig Brom_Liq Spec 60mg/5ml,Liq Spec,1002010Q0AABFBF,Pyridostig Brom_Oral Soln 60mg/5ml,Oral Soln,
-1002010Q0AAANAN,Pyridostig Brom_Oral Soln 30mg/5ml,Oral Soln,1002010Q0AABHBH,Pyridostig Brom_Oral Susp 30mg/5ml,Oral Susp,Y
-1002010Q0AABGBG,Pyridostig Brom_Oral Susp 20mg/5ml,Oral Susp,1002010Q0AAAMAM,Pyridostig Brom_Oral Soln 20mg/5ml,Oral Soln,
-1002010Q0AABHBH,Pyridostig Brom_Oral Susp 30mg/5ml,Oral Susp,1002010Q0AAANAN,Pyridostig Brom_Oral Soln 30mg/5ml,Oral Soln,Y
-1002020J0AABIBI,Dantrolene Sod_Oral Soln 100mg/5ml,Oral Soln,1002020J0AABQBQ,Dantrolene Sod_Oral Susp 100mg/5ml,Oral Susp,Y
-1002020J0AABQBQ,Dantrolene Sod_Oral Susp 100mg/5ml,Oral Susp,1002020J0AABIBI,Dantrolene Sod_Oral Soln 100mg/5ml,Oral Soln,Y
-1002020J0AABRBR,Dantrolene Sod_Oral Susp 10mg/5ml,Oral Susp,1002020J0AAAXAX,Dantrolene Sod_Oral Soln 10mg/5ml,Oral Soln,
-100302040AAAAAA,Dimethyl Sulfox_Crm 50%,Crm,0704040F0AAAAAA,Dimethyl Sulfox_Ster Soln 50%,Ster Soln,
-1003020P0AAAAAA,Ibuprofen_Crm 5%,Crm,1003020P0AAACAC,Ibuprofen_Gel 5%,Gel,Y
-1003020P0AAACAC,Ibuprofen_Gel 5%,Gel,1003020P0AAAAAA,Ibuprofen_Crm 5%,Crm,Y
-1003020W0AAAAAA,Salicylic Acid/Mucopolysac_Gel 2%/0.2%,Gel,1003020W0AAABAB,Salicylic Acid/Mucopolysac_Crm 2%/0.2%,Crm,Y
-1003020W0AAABAB,Salicylic Acid/Mucopolysac_Crm 2%/0.2%,Crm,1003020W0AAAAAA,Salicylic Acid/Mucopolysac_Gel 2%/0.2%,Gel,Y
-1103010B0AAAAAA,Ciprofloxacin_Eye Dps 0.3%,Eye Dps,1201010ACAAAAAA,Ciprofloxacin_Ear Dps 0.3%,Ear Dps,N
-1103010E0AAAAAA,Dibromprop Iset_Eye Oint 0.15%,Eye Oint,1310050K0AAAAAA,Dibromprop Iset_Crm 0.15%,Crm,N
-1103010Y0AAAAAA,Ofloxacin_Eye Dps 0.3%,Eye Dps,1201010ABAAAAAA,Ofloxacin_Ear Dps 0.3%,Ear Dps,N
-1104010S0AABLBL,Prednisolone Sod Phos_Eye Dps 0.1%,Eye Dps,1104010S0AABHBH,Prednisolone Sod Phos_Ear Dps 0.1%,Ear Dps,
-1104010S0AABMBM,Prednisolone Sod Phos_Eye Dps 0.3%,Eye Dps,1104010S0AABIBI,Prednisolone Sod Phos_Ear Dps 0.3%,Ear Dps,
-1104020T0AAAAAA,Sod Cromoglicate_Eye Dps Aq 2%,Eye Dps Aq,1202010P0AAAHAH,Sod Cromoglicate_Aq Nsl Spy 2%,Aq Nsl Spy,
-1105000B0AAAEAE,Atrop Sulf_Eye Dps 1%,Eye Dps,1105000B0AAAHAH,Atrop Sulf_Eye Oint 1%,Eye Oint,N
-1105000B0AAAHAH,Atrop Sulf_Eye Oint 1%,Eye Oint,1105000B0AAAEAE,Atrop Sulf_Eye Dps 1%,Eye Dps,N
-1106000B0AABQBQ,Acetazolamide_Oral Susp 250mg/5ml,Oral Susp,1106000B0AAATAT,Acetazolamide_Oral Soln 250mg/5ml,Oral Soln,
-1106000X0AAAEAE,Piloc HCl_Eye Dps 4%,Eye Dps,1106000X0AABDBD,Piloc HCl_Eye Gel 4%,Eye Gel,
-1106000Z0AAAAAA,Timolol_Eye Dps 0.25%,Eye Dps,1106000Z0AAAPAP,Timolol_Gel Eye Dps 0.25%,Gel Eye Dps,N
-1106000Z0AAABAB,Timolol_Eye Dps 0.5%,Eye Dps,1106000Z0AAAQAQ,Timolol_Gel Eye Dps 0.5%,Gel Eye Dps,N
-1106000Z0AAAPAP,Timolol_Gel Eye Dps 0.25%,Gel Eye Dps,1106000Z0AAAAAA,Timolol_Eye Dps 0.25%,Eye Dps,N
-1106000Z0AAAQAQ,Timolol_Gel Eye Dps 0.5%,Gel Eye Dps,1106000Z0AAABAB,Timolol_Eye Dps 0.5%,Eye Dps,N
-1108010AAAAAIAI,Ciclosporin_Eye Oint 2%,Eye Oint,1108010AAAAAAAA,Ciclosporin_Eye Dps 2%,Eye Dps,
-1108010K0AAAJAJ,Sod Chlor_Eye Oint 0.5%,Eye Oint,1108010K0AAAWAW,Sod Chlor_Eye Dps 0.5%,Eye Dps,N
-1108010K0AAAWAW,Sod Chlor_Eye Dps 0.5%,Eye Dps,1108010K0AAAJAJ,Sod Chlor_Eye Oint 0.5%,Eye Oint,N
-1108010K0AACFCF,Sod Chlor_Eye Oint 5%,Eye Oint,1108010K0AAABAB,Sod Chlor_Eye Dps 5%,Eye Dps,
-1201010ABAAAAAA,Ofloxacin_Ear Dps 0.3%,Ear Dps,1103010Y0AAAAAA,Ofloxacin_Eye Dps 0.3%,Eye Dps,N
-1201010ACAAAAAA,Ciprofloxacin_Ear Dps 0.3%,Ear Dps,1103010B0AAAAAA,Ciprofloxacin_Eye Dps 0.3%,Eye Dps,N
-1202010C0AAAAAA,Beclomet Diprop_Nsl Spy 50mcg (200 D),Nsl Spy,0302000C0AAASAS,Beclomet Diprop_Inha B/A 50mcg (200 D),Inha B/A,
-1202030R0AAAAAA,Mupirocin_Nsl Oint 2%,Nsl Oint,1310011M0AAABAB,Mupirocin_Crm 2%,Crm,N
-1302010U0AAASAS,Urea_Shampoo 5%,Shampoo,1302010U0AAAKAK,Urea_Crm 5%,Crm,N
-1302010U0AAAWAW,Urea_Scalp Applic 5%,Scalp Applic,1302010U0AAAKAK,Urea_Crm 5%,Crm,N
-1303000I0AAAAAA,Crotamiton_Crm 10%,Crm,1303000I0AAABAB,Crotamiton_Lot 10%,Lot,N
-1303000I0AAABAB,Crotamiton_Lot 10%,Lot,1303000I0AAAAAA,Crotamiton_Crm 10%,Crm,N
-1304000B0AAAAAA,Alclometasone Diprop_Crm 0.05%,Crm,1304000B0AABABA,Alclometasone Diprop_Oint 0.05%,Oint,
-1304000C0AAAAAA,Beclomet Diprop_Crm 0.025%,Crm,1304000C0AABABA,Beclomet Diprop_Oint 0.025%,Oint,Y
-1304000C0AABABA,Beclomet Diprop_Oint 0.025%,Oint,1304000C0AAAAAA,Beclomet Diprop_Crm 0.025%,Crm,Y
-1304000D0AAAAAA,Betameth Diprop_Crm 0.05%,Crm,1304000D0AABABA,Betameth Diprop_Oint 0.05%,Oint,Y
-1304000D0AABABA,Betameth Diprop_Oint 0.05%,Oint,1304000D0AAAAAA,Betameth Diprop_Crm 0.05%,Crm,Y
-1304000D0AABCBC,Betameth Diprop_Scalp Lot 0.05%,Scalp Lot,1304000D0AAAAAA,Betameth Diprop_Crm 0.05%,Crm,N
-1304000F0AAAAAA,Betameth Val_Crm 0.1%,Crm,1304000F0AABCBC,Betameth Val_Lot 0.1%,Lot,N
-1304000F0AAABAB,Betameth Val_Crm 0.025% (1 in 4),Crm,1304000F0AABBBB,Betameth Val_Oint 0.025% (1 in 4),Oint,Y
-1304000F0AABABA,Betameth Val_Oint 0.1%,Oint,1304000F0AAAAAA,Betameth Val_Crm 0.1%,Crm,Y
-1304000F0AABBBB,Betameth Val_Oint 0.025% (1 in 4),Oint,1304000F0AAABAB,Betameth Val_Crm 0.025% (1 in 4),Crm,Y
-1304000F0AABCBC,Betameth Val_Lot 0.1%,Lot,1304000F0AAAAAA,Betameth Val_Crm 0.1%,Crm,Y
-1304000F0AABDBD,Betameth Val_Scalp Applic 0.1%,Scalp Applic,1304000F0AAAAAA,Betameth Val_Crm 0.1%,Crm,N
-1304000F0AACACA,Betameth Val/Clioquinol_Crm 0.1%/3%,Crm,1304000F0AACDCD,Betameth Val/Clioquinol_Oint 0.1%/3%,Oint,Y
-1304000F0AACDCD,Betameth Val/Clioquinol_Oint 0.1%/3%,Oint,1304000F0AACACA,Betameth Val/Clioquinol_Crm 0.1%/3%,Crm,Y
-1304000G0AAAAAA,Clobetasol Prop_Crm 0.05%,Crm,1304000G0AABABA,Clobetasol Prop_Oint 0.05%,Oint,Y
-1304000G0AABABA,Clobetasol Prop_Oint 0.05%,Oint,1304000G0AAAAAA,Clobetasol Prop_Crm 0.05%,Crm,Y
-1304000G0AABBBB,Clobetasol Prop_Scalp Applic 0.05%,Scalp Applic,1304000G0AAAAAA,Clobetasol Prop_Crm 0.05%,Crm,N
-1304000H0AAAAAA,Clobet But_Crm 0.05%,Crm,1304000H0AABABA,Clobet But_Oint 0.05%,Oint,Y
-1304000H0AABABA,Clobet But_Oint 0.05%,Oint,1304000H0AAAAAA,Clobet But_Crm 0.05%,Crm,Y
-1304000L0AAABAB,Diflucortolone Val_Oily Crm 0.1%,Oily Crm,1304000L0AAAAAA,Diflucortolone Val_Crm 0.1%,Crm,Y
-1304000L0AABBBB,Diflucortolone Val_Oint 0.1%,Oint,1304000L0AAAAAA,Diflucortolone Val_Crm 0.1%,Crm,Y
-1304000N0AAABAB,Fluocinolone Aceton_Crm 0.025%,Crm,1304000N0AABDBD,Fluocinolone Aceton_Gel 0.025%,Gel,Y
-1304000N0AAADAD,Fluocinolone Aceton_Crm 0.00625%,Crm,1304000N0AABCBC,Fluocinolone Aceton_Oint 0.00625%,Oint,Y
-1304000N0AABBBB,Fluocinolone Aceton_Oint 0.025%,Oint,1304000N0AAABAB,Fluocinolone Aceton_Crm 0.025%,Crm,Y
-1304000N0AABCBC,Fluocinolone Aceton_Oint 0.00625%,Oint,1304000N0AAADAD,Fluocinolone Aceton_Crm 0.00625%,Crm,Y
-1304000N0AABDBD,Fluocinolone Aceton_Gel 0.025%,Gel,1304000N0AAABAB,Fluocinolone Aceton_Crm 0.025%,Crm,Y
-1304000N0AACACA,Fluocinolone/Clioquinol_Crm 0.025%/3%,Crm,1304000N0AACCCC,Fluocinolone/Clioquinol_Oint 0.025%/3%,Oint,Y
-1304000N0AACBCB,Fluocinolone/Neomycin_Crm 0.025%/0.5%,Crm,1304000N0AACDCD,Fluocinolone/Neomycin_Oint 0.025%/0.5%,Oint,Y
-1304000N0AACCCC,Fluocinolone/Clioquinol_Oint 0.025%/3%,Oint,1304000N0AACACA,Fluocinolone/Clioquinol_Crm 0.025%/3%,Crm,Y
-1304000N0AACDCD,Fluocinolone/Neomycin_Oint 0.025%/0.5%,Oint,1304000N0AACBCB,Fluocinolone/Neomycin_Crm 0.025%/0.5%,Crm,Y
-1304000P0AAAAAA,Fluocinonide_Crm 0.05%,Crm,1304000P0AABABA,Fluocinonide_Oint 0.05%,Oint,Y
-1304000P0AABABA,Fluocinonide_Oint 0.05%,Oint,1304000P0AAAAAA,Fluocinonide_Crm 0.05%,Crm,Y
-1304000T0AAAAAA,Fludroxycortide_Crm 0.0125%,Crm,1304000T0AABABA,Fludroxycortide_Oint 0.0125%,Oint,Y
-1304000T0AABABA,Fludroxycortide_Oint 0.0125%,Oint,1304000T0AAAAAA,Fludroxycortide_Crm 0.0125%,Crm,Y
-1304000V0AAAFAF,Hydrocort_Crm 2.5%,Crm,1104010M0AAAEAE,Hydrocort_Eye Oint 2.5%,Eye Oint,
-1304000V0AABBBB,Hydrocort_Oint 0.5%,Oint,1304000V0AAACAC,Hydrocort_Crm 0.5%,Crm,Y
-1304000V0AABCBC,Hydrocort_Oint 1%,Oint,1304000V0AAADAD,Hydrocort_Crm 1%,Crm,Y
-1304000V0AABDBD,Hydrocort_Oint 2.5%,Oint,1304000V0AAAFAF,Hydrocort_Crm 2.5%,Crm,Y
-1304000V0AACHCH,Hydrocort/Miconazole Nit_Crm 1%/2%,Crm,1304000V0AACSCS,Hydrocort/Miconazole Nit_Oint 1%/2%,Oint,Y
-1304000V0AACSCS,Hydrocort/Miconazole Nit_Oint 1%/2%,Oint,1304000V0AACHCH,Hydrocort/Miconazole Nit_Crm 1%/2%,Crm,Y
-1304000W0AABABA,Hydrocort But_Oint 0.1%,Oint,1304000W0AAAAAA,Hydrocort But_Crm 0.1%,Crm,Y
-1304000W0AABBBB,Hydrocort But_Scalp Lot 0.1%,Scalp Lot,1304000W0AAAAAA,Hydrocort But_Crm 0.1%,Crm,N
-1304000W0AABDBD,Hydrocort But_Emuls 0.1%,Emuls,1304000W0AAAAAA,Hydrocort But_Crm 0.1%,Crm,Y
-1304000X0AABABA,Hydrocort Acet_Oint 1%,Oint,1304000X0AAAAAA,Hydrocort Acet_Crm 1%,Crm,Y
-1304000Y0AAAAAA,Mometasone Fur_Crm 0.1%,Crm,1304000Y0AABABA,Mometasone Fur_Oint 0.1%,Oint,Y
-1304000Y0AABABA,Mometasone Fur_Oint 0.1%,Oint,1304000Y0AAAAAA,Mometasone Fur_Crm 0.1%,Crm,Y
-1304000Y0AABBBB,Mometasone Fur_Scalp Lot 0.1%,Scalp Lot,1304000Y0AAAAAA,Mometasone Fur_Crm 0.1%,Crm,N
-1305020D0AAAAAA,Calcipotriol_Oint 50mcg/1g,Oint,1305020D0AAABAB,Calcipotriol_Crm 50mcg/1g,Crm,Y
-1305020D0AAABAB,Calcipotriol_Crm 50mcg/1g,Crm,1305020D0AAAAAA,Calcipotriol_Oint 50mcg/1g,Oint,Y
-1305020D0AAAFAF,Calcipotriol/Betameth_Oint 0.005%/0.05%,Oint,1305020D0AAAGAG,Calcipotriol/Betameth_Gel 0.005%/0.05%,Gel,Y
-1305020D0AAAGAG,Calcipotriol/Betameth_Gel 0.005%/0.05%,Gel,1305020D0AAAFAF,Calcipotriol/Betameth_Oint 0.005%/0.05%,Oint,Y
-1305020R0AAAAAA,Tacalcitol_Oint 4mcg/1g,Oint,1305020R0AAABAB,Tacalcitol_Lot 4mcg/1g,Lot,Y
-1305020R0AAABAB,Tacalcitol_Lot 4mcg/1g,Lot,1305020R0AAAAAA,Tacalcitol_Oint 4mcg/1g,Oint,Y
-1306010C0AAAAAA,Benzoyl Per_Gel 2.5%,Gel,1306010C0AAAZAZ,Benzoyl Per_Crm 2.5%,Crm,
-1306010C0AAABAB,Benzoyl Per_Gel 5%,Gel,1306010C0AAADAD,Benzoyl Per_Crm 5%,Crm,Y
-1306010C0AAACAC,Benzoyl Per_Gel 10%,Gel,1306010C0AAAJAJ,Benzoyl Per_A-Bact Skin Wsh 10%,A-Bact Skin Wsh,Y
-1306010C0AAADAD,Benzoyl Per_Crm 5%,Crm,1306010C0AAABAB,Benzoyl Per_Gel 5%,Gel,Y
-1306010F0AAABAB,Clindamycin Phos_Lot 1%,Lot,1306010F0AAADAD,Clindamycin Phos_Gel 1%,Gel,N
-1306010F0AAADAD,Clindamycin Phos_Gel 1%,Gel,1306010F0AAABAB,Clindamycin Phos_Lot 1%,Lot,N
-1306010H0AAAAAA,Adapalene_Gel 0.1%,Gel,1306010H0AAABAB,Adapalene_Crm 0.1%,Crm,Y
-1306010H0AAABAB,Adapalene_Crm 0.1%,Crm,1306010H0AAAAAA,Adapalene_Gel 0.1%,Gel,N
-1309000H0AAAAAA,Minoxidil_Soln 2%,Soln,1309000H0AAAKAK,Minoxidil_Gel 2%,Gel,Y
-1309000I0AAAAAA,Ketoconazole_Shampoo 2%,Shampoo,1310020L0AAAAAA,Ketoconazole_Crm 2%,Crm,N
-1310011M0AAAAAA,Mupirocin_Oint 2%,Oint,1310011M0AAABAB,Mupirocin_Crm 2%,Crm,N
-1310011M0AAABAB,Mupirocin_Crm 2%,Crm,1202030R0AAAAAA,Mupirocin_Nsl Oint 2%,Nsl Oint,N
-1310012K0AAARAR,Metronidazole_Gel 0.75%,Gel,1310012K0AAAXAX,Metronidazole_Crm 0.75%,Crm,N
-1310012K0AAAXAX,Metronidazole_Crm 0.75%,Crm,1310012K0AAARAR,Metronidazole_Gel 0.75%,Gel,Y
-131002030AAAAAA,Terbinafine HCl_Crm 1%,Crm,131002030AAACAC,Terbinafine HCl_Gel 1%,Gel,Y
-131002030AAACAC,Terbinafine HCl_Gel 1%,Gel,131002030AAAAAA,Terbinafine HCl_Crm 1%,Crm,Y
-131002030AAADAD,Terbinafine HCl_Soln 1%,Soln,131002030AAAAAA,Terbinafine HCl_Crm 1%,Crm,Y
-1310020H0AAAAAA,Clotrimazole_Soln 1%,Soln,1310020H0AAABAB,Clotrimazole_Crm 1%,Crm,Y
-1310020L0AAAAAA,Ketoconazole_Crm 2%,Crm,1309000I0AAAAAA,Ketoconazole_Shampoo 2%,Shampoo,N
-1310020N0AAAAAA,Miconazole Nit_Crm 2%,Crm,1310020N0AAABAB,Miconazole Nit_Dust Pdr 2%,Dust Pdr,N
-1310020Y0AAABAB,Tolnaftate_Dust Pdr 1%,Dust Pdr,1310020Y0AAAAAA,Tolnaftate_Crm 1%,Crm,
-1310040M0AAACAC,Malathion_Alcoholic Lot 0.5%,Alcoholic Lot,1310040M0AAADAD,Malathion_Aq Lot 0.5%,Aq Lot,Y
-1310040M0AAADAD,Malathion_Aq Lot 0.5%,Aq Lot,1310040M0AAACAC,Malathion_Alcoholic Lot 0.5%,Alcoholic Lot,Y
-1310050J0AAAAAA,Chlorhex Glucon_Clr Gel 0.5%,Clr Gel,1311020L0AAALAL,Chlorhex Glucon_Soln 0.5%,Soln,N
-1310050K0AAAAAA,Dibromprop Iset_Crm 0.15%,Crm,1103010E0AAAAAA,Dibromprop Iset_Eye Oint 0.15%,Eye Oint,N
-1311010S0AAADAD,Sod Chlor_Soln 0.9%,Soln,1108010K0AAAAAA,Sod Chlor_Eye Dps 0.9%,Eye Dps,Y
-1311020L0AAALAL,Chlorhex Glucon_Soln 0.5%,Soln,1310050J0AAAAAA,Chlorhex Glucon_Clr Gel 0.5%,Clr Gel,N
-1311040K0AAATAT,Povidone-Iodine_Soln 10%,Soln,1311040K0AAAFAF,Povidone-Iodine_Alcoholic Soln 10%,Alcoholic Soln,N
-1312000G0AAAUAU,Glycopyrronium Brom_Aq Crm 2%,Aq Crm,1312000G0AAANAN,Glycopyrronium Brom_Crm 2%,Crm,
-1312000G0AABCBC,Glycopyrronium Brom_Top Soln 0.05%,Top Soln,1312000G0AAAYAY,Glycopyrronium Brom_Crm 0.05%,Crm,
-1314000H0AAAAAA,Heparinoid_Crm 0.3%,Crm,1314000H0AAABAB,Heparinoid_Gel 0.3%,Gel,Y
-1314000H0AAABAB,Heparinoid_Gel 0.3%,Gel,1314000H0AAAAAA,Heparinoid_Crm 0.3%,Crm,Y
-1404000N0AAAAAA,Rabies_Vac Inact (HDC) 1ml Vl + Dil,Vac Inact (HDC),1404000N0AAABAB,Rabies_Vac Inact (PCEC) 1ml Vl + Dil,Vac Inact (PCEC),N
-1404000N0AAABAB,Rabies_Vac Inact (PCEC) 1ml Vl + Dil,Vac Inact (PCEC),1404000N0AAAAAA,Rabies_Vac Inact (HDC) 1ml Vl + Dil,Vac Inact (HDC),N
-1502010I0AAAEAE,Lido_Oint 5%,Oint,1502010J0AAELEL,Lido_Medic Plastr 5%,Medic Plastr,N
-1502010J0AAELEL,Lido_Medic Plastr 5%,Medic Plastr,1502010I0AAAEAE,Lido_Oint 5%,Oint,N
-190601000AAAKAK,Peppermint_Water Conc BP 1973,Water Conc BP,190601000AAALAL,Peppermint_Water BP 1973,Water BP,N
-190601000AAALAL,Peppermint_Water BP 1973,Water BP,190601000AAAKAK,Peppermint_Water Conc BP 1973,Water Conc BP,N
-0301020Q0AAABAB,Tiotropium_Pdr For Inh Cap 18mcg,Pdr For Inh Cap 18mcg,0301020Q0AAADAD,Tiotropium_Pdr For Inh Cap 10mcg + Dev,Pdr For Inh Cap 10mcg,Y
-0301020Q0AAAAAA,Tiotropium_Pdr For Inh Cap 18mcg + Dev,Pdr For Inh Cap 18mcg,0301020Q0AAADAD,Tiotropium_Pdr For Inh Cap 10mcg + Dev,Pdr For Inh Cap 10mcg,Y
+0101010I0AAABAB,Magnesium oxide 100mg capsules,Cap,0101010I0AAAEAE,Magnesium oxide 100mg tablets,Tab,Y
+0101010I0AAACAC,Magnesium oxide 160mg capsules,Cap,0101010I0AAALAL,Magnesium oxide 160mg tablets,Tab,Y
+0101010I0AAAEAE,Magnesium oxide 100mg tablets,Tab,0101010I0AAABAB,Magnesium oxide 100mg capsules,Cap,Y
+0101010I0AAAHAH,Magnesium oxide 400mg capsules,Cap,0101010I0AABIBI,Magnesium oxide 400mg tablets,Tab,Y
+0101010I0AAALAL,Magnesium oxide 160mg tablets,Tab,0101010I0AAACAC,Magnesium oxide 160mg capsules,Cap,Y
+0101010I0AAAXAX,Magnesium oxide 500mg tablets,Tab,0101010I0AAAYAY,Magnesium oxide 500mg capsules,Cap,Y
+0101010I0AAAYAY,Magnesium oxide 500mg capsules,Cap,0101010I0AAAXAX,Magnesium oxide 500mg tablets,Tab,Y
+0101010I0AABIBI,Magnesium oxide 400mg tablets,Tab,0101010I0AAAHAH,Magnesium oxide 400mg capsules,Cap,Y
+0101010R0AAAEAE,Simeticone 125mg chewable tablets,Tab Chble,0101010R0AAAHAH,Simeticone 125mg capsules,Cap,N
+0101010R0AAAHAH,Simeticone 125mg capsules,Cap,0101010R0AAAEAE,Simeticone 125mg chewable tablets,Tab Chble,N
+0101012B0AAABAB,Sodium bicarbonate 420mg/5ml (1mol/ml) soln sugar free,Liq Spec,0101012B0AAAUAU,Sodium bicarbonate 420mg/5ml (1mmol/ml) oral liquid,Oral Soln,Y
+0101012B0AAAUAU,Sodium bicarbonate 420mg/5ml (1mmol/ml) oral liquid,Oral Soln,0101012B0AAABAB,Sodium bicarbonate 420mg/5ml (1mol/ml) soln sugar free,Liq Spec,Y
+0101021C0AAAFAF,Calcium carbonate 500mg chewable tablets,Tab Chble,0101021C0AAAPAP,Calcium carbonate 500mg capsules,Cap,N
+0101021C0AAATAT,Calcium carbonate 300mg tablets,Tab,0101021C0AAANAN,Calcium carbonate 300mg capsules,Cap,
+0102000L0AABBBB,Glycopyrronium bromide 2.5mg/5ml oral solution,Oral Soln,0102000L0AABCBC,Glycopyrronium bromide 2.5mg/5ml oral suspension,Oral Susp,Y
+0102000L0AABCBC,Glycopyrronium bromide 2.5mg/5ml oral suspension,Oral Susp,0102000L0AABBBB,Glycopyrronium bromide 2.5mg/5ml oral solution,Oral Soln,Y
+0102000P0AAABAB,Mebeverine 135mg tablets,Tab,0102000P0AAAEAE,Mebeverine 135mg oral powder sachets,Oral Pdr Sach,N
+0102000P0AAAEAE,Mebeverine 135mg oral powder sachets,Oral Pdr Sach,0102000P0AAABAB,Mebeverine 135mg tablets,Tab,N
+0103010D0AAALAL,Cimetidine 200mg/5ml oral solution sugar free,Oral Soln,0103010D0AAAGAG,Cimetidine 200mg/5ml oral suspension sugar free,Oral Susp,
+0103010T0AAACAC,Ranitidine 300mg tablets,Tab,0103010T0AAAJAJ,Ranitidine 300mg effervescent tablets,Tab Eff,N
+0103010T0AAAJAJ,Ranitidine 300mg effervescent tablets,Tab Eff,0103010T0AAACAC,Ranitidine 300mg tablets,Tab,N
+0103010T0AAAPAP,Ranitidine 75mg tablets,Tab,0103010T0AABKBK,Ranitidine 75mg effervescent tablets sugar free,Tab Eff,
+0103050E0AAAAAA,Esomeprazole 20mg gastro-resistant tablets,Tab E/C,0103050E0AAAFAF,Esomeprazole 20mg gastro-resistant capsules,Cap E/C,Y
+0103050E0AAABAB,Esomeprazole 40mg gastro-resistant tablets,Tab E/C,0103050E0AAAGAG,Esomeprazole 40mg gastro-resistant capsules,Cap E/C,Y
+0103050E0AAAFAF,Esomeprazole 20mg gastro-resistant capsules,Cap E/C,0103050E0AAAAAA,Esomeprazole 20mg gastro-resistant tablets,Tab E/C,Y
+0103050E0AAAGAG,Esomeprazole 40mg gastro-resistant capsules,Cap E/C,0103050E0AAABAB,Esomeprazole 40mg gastro-resistant tablets,Tab E/C,Y
+0103050L0AAAHAH,Lansoprazole 30mg orodispersible tablets,Orodisper Tab,0103050L0AAADAD,Lansoprazole 30mg gastro-resistant granules sachets,Gran Sach,
+0103050L0AAAJAJ,Lansoprazole 30mg/5ml oral solution,Oral Soln,0103050L0AAAYAY,Lansoprazole 30mg/5ml oral suspension,Oral Susp,Y
+0103050L0AAAMAM,Lansoprazole 15mg/5ml oral solution,Oral Soln,0103050L0AAAXAX,Lansoprazole 15mg/5ml oral suspension,Oral Susp,Y
+0103050L0AAAQAQ,Lansoprazole 5mg/5ml oral solution,Oral Soln,0103050L0AAAZAZ,Lansoprazole 5mg/5ml oral suspension,Oral Susp,Y
+0103050L0AAAXAX,Lansoprazole 15mg/5ml oral suspension,Oral Susp,0103050L0AAAMAM,Lansoprazole 15mg/5ml oral solution,Oral Soln,Y
+0103050L0AAAYAY,Lansoprazole 30mg/5ml oral suspension,Oral Susp,0103050L0AAAJAJ,Lansoprazole 30mg/5ml oral solution,Oral Soln,Y
+0103050L0AAAZAZ,Lansoprazole 5mg/5ml oral suspension,Oral Susp,0103050L0AAAQAQ,Lansoprazole 5mg/5ml oral solution,Oral Soln,Y
+0103050P0AAAAAA,Omeprazole 20mg gastro-resistant capsules,Cap E/C,0103050P0AABDBD,Omeprazole 20mg gastro-resistant tablets,Tab E/C,Y
+0103050P0AAAEAE,Omeprazole 40mg gastro-resistant capsules,Cap E/C,0103050P0AABEBE,Omeprazole 40mg gastro-resistant tablets,Tab E/C,Y
+0103050P0AAAJAJ,Omeprazole 10mg/5ml oral solution,Oral Soln,0103050P0AABLBL,Omeprazole 10mg/5ml oral suspension,Oral Susp,Y
+0103050P0AAAKAK,Omeprazole 40mg/5ml oral solution,Oral Soln,0103050P0AABPBP,Omeprazole 40mg/5ml oral suspension,Oral Susp,Y
+0103050P0AAAQAQ,Omeprazole 20mg/5ml oral solution,Oral Soln,0103050P0AABMBM,Omeprazole 20mg/5ml oral suspension,Oral Susp,Y
+0103050P0AABDBD,Omeprazole 20mg gastro-resistant tablets,Tab E/C,0103050P0AAAAAA,Omeprazole 20mg gastro-resistant capsules,Cap E/C,Y
+0103050P0AABEBE,Omeprazole 40mg gastro-resistant tablets,Tab E/C,0103050P0AAAEAE,Omeprazole 40mg gastro-resistant capsules,Cap E/C,Y
+0103050P0AABLBL,Omeprazole 10mg/5ml oral suspension,Oral Susp,0103050P0AAAJAJ,Omeprazole 10mg/5ml oral solution,Oral Soln,Y
+0103050P0AABMBM,Omeprazole 20mg/5ml oral suspension,Oral Susp,0103050P0AAAQAQ,Omeprazole 20mg/5ml oral solution,Oral Soln,Y
+0103050P0AABPBP,Omeprazole 40mg/5ml oral suspension,Oral Susp,0103050P0AAAKAK,Omeprazole 40mg/5ml oral solution,Oral Soln,Y
+0104020L0AAAAAA,Loperamide 2mg capsules,Cap,0104020L0AAADAD,Loperamide 2mg tablets,Tab,Y
+0104020L0AAADAD,Loperamide 2mg tablets,Tab,0104020L0AAAAAA,Loperamide 2mg capsules,Cap,Y
+0104020L0AAAPAP,Loperamide 25mg/5ml oral suspension,Oral Susp,0104020L0AAAQAQ,Loperamide 25mg/5ml oral solution,Oral Soln,Y
+0104020L0AAAQAQ,Loperamide 25mg/5ml oral solution,Oral Soln,0104020L0AAAPAP,Loperamide 25mg/5ml oral suspension,Oral Susp,Y
+0105010B0AAABAB,Mesalazine 500mg suppositories,Suppos,0105010B0AAAWAW,Mesalazine 500mg gastro-resistant tablets,Tab G/R,N
+0105010B0AAAGAG,Mesalazine 250mg suppositories,Suppos,0105010B0AAAHAH,Mesalazine 250mg gastro-resistant tablets,Tab E/C,Y
+0105010B0AAAHAH,Mesalazine 250mg gastro-resistant tablets,Tab E/C,0105010B0AAAGAG,Mesalazine 250mg suppositories,Suppos,N
+0105010B0AAAIAI,Mesalazine 500mg modified-release tablets,Tab,0105010B0AAAPAP,Mesalazine 500mg gast res MR gran sachets sugar free,Gran Sach,N
+0105010B0AAANAN,Mesalazine 1g modified-release granules sachets sugar free,Gran Sach,0105010B0AAAXAX,Mesalazine 1g gast res MR gran sachets sugar free,Gran Sach G/R,Y
+0105010B0AAAPAP,Mesalazine 500mg gast res MR gran sachets sugar free,Gran Sach,0105010B0AAAIAI,Mesalazine 500mg modified-release tablets,Tab,Y
+0105010B0AAAWAW,Mesalazine 500mg gastro-resistant tablets,Tab G/R,0105010B0AAABAB,Mesalazine 500mg suppositories,Suppos,N
+0105010B0AAAXAX,Mesalazine 1g gast res MR gran sachets sugar free,Gran Sach G/R,0105010B0AAANAN,Mesalazine 1g modified-release granules sachets sugar free,Gran Sach,Y
+0105010E0AAAAAA,Sulfasalazine 500mg tablets,Tab,0105010E0AAACAC,Sulfasalazine 500mg suppositories,Suppos,N
+0105010E0AAABAB,Sulfasalazine 500mg gastro-resistant tablets,Tab E/C,0105010E0AAACAC,Sulfasalazine 500mg suppositories,Suppos,Y
+0105010E0AAACAC,Sulfasalazine 500mg suppositories,Suppos,0105010E0AAAAAA,Sulfasalazine 500mg tablets,Tab,N
+0106010E0AAAHAH,Ispaghula husk 3.5g efferv gran sach gluten free sf (old),Gran Eff Sach,0106010E0AAASAS,Ispaghula husk 3.5g oral pdr sachets gluten free sugar free,Pdr Sach,
+0106010E0AAADAD,Ispaghula husk 3.5g efferv gran sach gluten free sugar free,Gran Eff Sach,0106010E0AAASAS,Ispaghula husk 3.5g oral pdr sachets gluten free sugar free,Pdr Sach,
+0106020C0AAAAAA,Bisacodyl 5mg gastro-resistant tablets,Tab E/C,0106020C0AAADAD,Bisacodyl 5mg suppositories,Suppos,N
+0106020C0AAADAD,Bisacodyl 5mg suppositories,Suppos,0106020C0AAAAAA,Bisacodyl 5mg gastro-resistant tablets,Tab E/C,N
+0106020M0AAAPAP,Senna 15mg tablets,Tab,0106020M0AAAQAQ,Senna 15mg chewable tablets,Tab Chble,N
+0107010AAAAAJAJ,Diltiazem 2% cream,Crm,0107010AAAAABAB,Diltiazem 2% gel,Gel,
+0107010AAAAAKAK,Diltiazem 2% ointment,Oint,0107010AAAAAJAJ,Diltiazem 2% cream,Crm,Y
+0109040N0AAAZAZ,Generic Nutrizym 22 gastro-resistant capsules,G/R Cap,0109040N0AAAGAG,Generic Pancrex V capsules,Cap,
+0202010D0AAAUAU,Chlorothiazide 250mg/5ml oral suspension,Oral Susp,0202010D0AABCBC,Chlorothiazide 250mg/5ml oral solution,Oral Soln,Y
+0202010D0AABCBC,Chlorothiazide 250mg/5ml oral solution,Oral Soln,0202010D0AAAUAU,Chlorothiazide 250mg/5ml oral suspension,Oral Susp,Y
+0202030S0AACMCM,Spironolactone 5mg/5ml oral solution,Oral Soln,0202030S0AAECEC,Spironolactone 5mg/5ml oral suspension,Oral Susp,Y
+0202030S0AAEFEF,Spironolactone 25mg/5ml oral solution,Oral Soln,0202030S0AAEAEA,Spironolactone 25mg/5ml oral suspension,Oral Susp,Y
+0202030S0AACPCP,Spironolactone 50mg/5ml oral solution,Oral Soln,0202030S0AAEBEB,Spironolactone 50mg/5ml oral suspension,Oral Susp,Y
+0202030S0AACQCQ,Spironolactone 10mg/5ml oral solution,Oral Soln,0202030S0AAEDED,Spironolactone 10mg/5ml oral suspension,Oral Susp,Y
+0202030S0AACRCR,Spironolactone 100mg/5ml oral solution,Liq Spec,0202030S0AAEEEE,Spironolactone 100mg/5ml oral suspension,Oral Susp,Y
+0202030S0AAEAEA,Spironolactone 25mg/5ml oral suspension,Oral Susp,0202030S0AAEFEF,Spironolactone 25mg/5ml oral solution,Oral Soln,Y
+0202030S0AAEBEB,Spironolactone 50mg/5ml oral suspension,Oral Susp,0202030S0AACPCP,Spironolactone 50mg/5ml oral solution,Oral Soln,Y
+0202030S0AAECEC,Spironolactone 5mg/5ml oral suspension,Oral Susp,0202030S0AACMCM,Spironolactone 5mg/5ml oral solution,Oral Soln,Y
+0202030S0AAEDED,Spironolactone 10mg/5ml oral suspension,Oral Susp,0202030S0AACQCQ,Spironolactone 10mg/5ml oral solution,Oral Soln,Y
+0202030S0AAEEEE,Spironolactone 100mg/5ml oral suspension,Oral Susp,0202030S0AACRCR,Spironolactone 100mg/5ml oral solution,Liq Spec,Y
+0203020D0AAAUAU,Amiodarone 100mg/5ml oral solution,Oral Soln,0203020D0AACHCH,Amiodarone 100mg/5ml oral suspension,Oral Susp,Y
+0203020D0AAAYAY,Amiodarone 50mg/5ml oral solution,Oral Soln,0203020D0AACICI,Amiodarone 50mg/5ml oral suspension,Oral Susp,Y
+0203020D0AACHCH,Amiodarone 100mg/5ml oral suspension,Oral Susp,0203020D0AAAUAU,Amiodarone 100mg/5ml oral solution,Oral Soln,Y
+0203020D0AACICI,Amiodarone 50mg/5ml oral suspension,Oral Susp,0203020D0AAAYAY,Amiodarone 50mg/5ml oral solution,Oral Soln,Y
+0203020P0AAABAB,Mexiletine hydrochloride 200mg capsules,Cap,0203020P0AAAGAG,Mexiletine 200mg tablets,Tab,Y
+0203020P0AAAGAG,Mexiletine 200mg tablets,Tab,0203020P0AAABAB,Mexiletine hydrochloride 200mg capsules,Cap,Y
+0204000K0AABMBM,Metoprolol 50mg/5ml oral solution,Oral Soln,0204000K0AAATAT,Metoprolol 50mg/5ml oral suspension,Liq Spec,
+0204000T0AAATAT,Sotalol 25mg/5ml oral solution,Oral Soln,0204000T0AABCBC,Sotalol 25mg/5ml oral suspension,Oral Susp,Y
+0204000T0AABCBC,Sotalol 25mg/5ml oral suspension,Oral Susp,0204000T0AAATAT,Sotalol 25mg/5ml oral solution,Oral Soln,Y
+0205040D0AAACAC,Doxazosin 4mg tablets,Tab,0205040D0AAAFAF,Doxazosin 4mg capsules,Cap,Y
+0205051F0AAAFAF,Captopril 50mg tablets,Tab,0205051F0AADUDU,Captopril 50mg capsules,Cap,Y
+0205051R0AAAAAA,Ramipril 1.25mg capsules,Cap,0205051R0AAAKAK,Ramipril 1.25mg tablets,Tab,Y
+0205051R0AAABAB,Ramipril 2.5mg capsules,Cap,0205051R0AAALAL,Ramipril 2.5mg tablets,Tab,Y
+0205051R0AAACAC,Ramipril 5mg capsules,Cap,0205051R0AAAMAM,Ramipril 5mg tablets,Tab,Y
+0205051R0AAADAD,Ramipril 10mg capsules,Cap,0205051R0AAANAN,Ramipril 10mg tablets,Tab,Y
+0205051R0AAAKAK,Ramipril 1.25mg tablets,Tab,0205051R0AAAAAA,Ramipril 1.25mg capsules,Cap,Y
+0205051R0AAALAL,Ramipril 2.5mg tablets,Tab,0205051R0AAABAB,Ramipril 2.5mg capsules,Cap,Y
+0205051R0AAAMAM,Ramipril 5mg tablets,Tab,0205051R0AAACAC,Ramipril 5mg capsules,Cap,Y
+0205051R0AAANAN,Ramipril 10mg tablets,Tab,0205051R0AAADAD,Ramipril 10mg capsules,Cap,Y
+0205051R0AAAUAU,Generic Tritace titration pack tablets,Titration Pack (Tab,0205051R0AAAIAI,Generic Tritace titration pack capsules,Titration Pack (Cap,
+0205052N0AAAEAE,Losartan 50mg/5ml oral solution,Oral Soln,0205052N0AAAJAJ,Losartan 50mg/5ml oral suspension,Oral Susp,Y
+0205052N0AAAJAJ,Losartan 50mg/5ml oral suspension,Oral Susp,0205052N0AAAEAE,Losartan 50mg/5ml oral solution,Oral Soln,Y
+0205052V0AAAAAA,Valsartan 40mg capsules,Cap,0205052V0AAADAD,Valsartan 40mg tablets,Tab,Y
+0205052V0AAABAB,Valsartan 80mg capsules,Cap,0205052V0AAAIAI,Valsartan 80mg tablets,Tab,Y
+0205052V0AAACAC,Valsartan 160mg capsules,Cap,0205052V0AAAHAH,Valsartan 160mg tablets,Tab,Y
+0205052V0AAADAD,Valsartan 40mg tablets,Tab,0205052V0AAAAAA,Valsartan 40mg capsules,Cap,Y
+0205052V0AAAHAH,Valsartan 160mg tablets,Tab,0205052V0AAACAC,Valsartan 160mg capsules,Cap,Y
+0205052V0AAAIAI,Valsartan 80mg tablets,Tab,0205052V0AAABAB,Valsartan 80mg capsules,Cap,Y
+0206010F0AACGCG,Glyceryl trinitrate 400micrograms/dose aerosol SL spy,Sub A/Spy,0206010F0AACICI,Glyceryl trinitrate 400micrograms/dose pump sublingual spray,Sub P/Spy,Y
+0206010F0AACGCG,Glyceryl trinitrate 400micrograms/dose aerosol SL spy,Sub A/Spy,0206010F0AACICI,Glyceryl trinitrate 400micrograms/dose pump sublingual spray,Sub P/Spy,Y
+0206010F0AACICI,Glyceryl trinitrate 400micrograms/dose pump sublingual spray,Sub P/Spy,0206010F0AACGCG,Glyceryl trinitrate 400micrograms/dose aerosol SL spy,Sub A/Spy,Y
+0206010F0AACICI,Glyceryl trinitrate 400micrograms/dose pump sublingual spray,Sub P/Spy,0206010F0AACGCG,Glyceryl trinitrate 400micrograms/dose aerosol SL spy,Sub A/Spy,Y
+0206010I0AAAJAJ,Isosorbide dinitrate 40mg modified-release tablets,Tab,0206010I0AAABAB,Isosorbide dinitrate 40mg modified-release capsules,Cap,
+0206010K0AAAEAE,Isosorbide mononitrate 60mg modified-release tablets,Tab,0206010K0AAAQAQ,Isosorbide mononitrate 60mg modified-release capsules,Cap,Y
+0206010K0AAAFAF,Isosorbide mononitrate 50mg modified-release capsules,Cap,0206010K0AAAUAU,Isosorbide mononitrate 50mg modified-release tablets,Tab,Y
+0206010K0AAAGAG,Isosorbide mononitrate 40mg modified-release tablets,Tab,0206010K0AAAPAP,Isosorbide mononitrate 40mg modified-release capsules,Cap,Y
+0206010K0AAAHAH,Isosorbide mononitrate 25mg modified-release capsules,Cap,0206010K0AAATAT,Isosorbide mononitrate 25mg modified-release tablets,Tab,Y
+0206010K0AAALAL,Isosorbide mononitrate 20mg/5ml oral solution,Oral Soln,0206010K0AABBBB,Isosorbide mononitrate 20mg/5ml oral suspension,Oral Susp,Y
+0206010K0AAAPAP,Isosorbide mononitrate 40mg modified-release capsules,Cap,0206010K0AAAGAG,Isosorbide mononitrate 40mg modified-release tablets,Tab,Y
+0206010K0AAAQAQ,Isosorbide mononitrate 60mg modified-release capsules,Cap,0206010K0AAAEAE,Isosorbide mononitrate 60mg modified-release tablets,Tab,Y
+0206010K0AAATAT,Isosorbide mononitrate 25mg modified-release tablets,Tab,0206010K0AAAHAH,Isosorbide mononitrate 25mg modified-release capsules,Cap,Y
+0206010K0AAAUAU,Isosorbide mononitrate 50mg modified-release tablets,Tab,0206010K0AAAFAF,Isosorbide mononitrate 50mg modified-release capsules,Cap,Y
+0206010K0AABBBB,Isosorbide mononitrate 20mg/5ml oral suspension,Oral Susp,0206010K0AAALAL,Isosorbide mononitrate 20mg/5ml oral solution,Oral Soln,Y
+0206020C0AAAAAA,Diltiazem 60mg modified-release tablets,Tab,0206020C0AAAJAJ,Diltiazem 60mg modified-release capsules,Cap,Y
+0206020C0AAACAC,Diltiazem 90mg modified-release tablets,Tab,0206020C0AAATAT,Diltiazem 90mg modified-release capsules,Cap,Y
+0206020C0AAAJAJ,Diltiazem 60mg modified-release capsules,Cap,0206020C0AAAAAA,Diltiazem 60mg modified-release tablets,Tab,Y
+0206020C0AAARAR,Diltiazem 60mg/5ml oral solution,Oral Soln,0206020C0AABIBI,Diltiazem 60mg/5ml oral suspension,Oral Susp,Y
+0206020C0AAASAS,Diltiazem 120mg modified-release tablets,Tab,0206020C0AAAUAU,Diltiazem 120mg modified-release capsules,Cap,Y
+0206020C0AAATAT,Diltiazem 90mg modified-release capsules,Cap,0206020C0AAACAC,Diltiazem 90mg modified-release tablets,Tab,Y
+0206020C0AAAUAU,Diltiazem 120mg modified-release capsules,Cap,0206020C0AAASAS,Diltiazem 120mg modified-release tablets,Tab,Y
+0206020C0AABIBI,Diltiazem 60mg/5ml oral suspension,Oral Susp,0206020C0AAARAR,Diltiazem 60mg/5ml oral solution,Oral Soln,Y
+0206020R0AAAEAE,Nifedipine 10mg modified-release tablets,Tab,0206020R0AAAMAM,Nifedipine 10mg modified-release capsules,Cap,Y
+0206020R0AAAHAH,Nifedipine 20mg modified-release capsules,Cap,0206020R0AAARAR,Nifedipine 20mg modified-release tablets,Tab,Y
+0206020R0AAAMAM,Nifedipine 10mg modified-release capsules,Cap,0206020R0AAAEAE,Nifedipine 10mg modified-release tablets,Tab,Y
+0206020R0AAANAN,Nifedipine 30mg modified-release tablets,Tab,0206020R0AABEBE,Nifedipine 30mg modified-release capsules,Cap,Y
+0206020R0AAAPAP,Nifedipine 60mg modified-release tablets,Tab,0206020R0AABFBF,Nifedipine 60mg modified-release capsules,Cap,Y
+0206020R0AAARAR,Nifedipine 20mg modified-release tablets,Tab,0206020R0AAAHAH,Nifedipine 20mg modified-release capsules,Cap,Y
+0206020R0AABEBE,Nifedipine 30mg modified-release capsules,Cap,0206020R0AAANAN,Nifedipine 30mg modified-release tablets,Tab,Y
+0206020R0AABFBF,Nifedipine 60mg modified-release capsules,Cap,0206020R0AAAPAP,Nifedipine 60mg modified-release tablets,Tab,Y
+0206020T0AAAHAH,Verapamil 240mg modified-release tablets,Tab,0206020T0AAAKAK,Verapamil 240mg modified-release capsules,Cap,Y
+0206020T0AAAIAI,Verapamil 120mg modified-release capsules,Cap,0206020T0AAAUAU,Verapamil 120mg modified-release tablets,Tab,Y
+0206020T0AAAKAK,Verapamil 240mg modified-release capsules,Cap,0206020T0AAAHAH,Verapamil 240mg modified-release tablets,Tab,Y
+0206020T0AAAUAU,Verapamil 120mg modified-release tablets,Tab,0206020T0AAAIAI,Verapamil 120mg modified-release capsules,Cap,Y
+0206030N0AAAAAA,Nicorandil 10mg tablets,Tab,0206030N0AAAEAE,Nicorandil 10mg oral powder sachets,Pdr Sach,
+0208020V0AAAAAA,Warfarin 1mg tablets,Tab,0208020V0AABABA,Warfarin 1mg capsules,Cap,Y
+0209000C0AAAAAA,Clopidogrel 75mg tablets,Tab,0209000C0AAACAC,Clopidogrel 75mg oral powder sachets,Pdrs,
+0212000B0AAAFAF,Atorvastatin 20mg/5ml oral solution,Oral Soln,0212000B0AAAQAQ,Atorvastatin 20mg/5ml oral suspension,Oral Susp,Y
+0212000B0AAAQAQ,Atorvastatin 20mg/5ml oral suspension,Oral Susp,0212000B0AAAFAF,Atorvastatin 20mg/5ml oral solution,Oral Soln,Y
+0301011R0AAAPAP,Salbutamol 100micrograms/dose inhaler CFC free,Inha,0301011R0AABUBU,Salbutamol 100micrograms/dose breath actuated inh CFC free,Inha B/A,N
+0301011R0AABMBM,Salbutamol 4mg modified-release capsules,Cap,0301011R0AABEBE,Salbutamol 4mg modified-release tablets,Tab,
+0301011R0AABPBP,Salbutamol 8mg modified-release capsules,Cap,0301011R0AABFBF,Salbutamol 8mg modified-release tablets,Tab,
+0301011R0AABUBU,Salbutamol 100micrograms/dose breath actuated inh CFC free,Inha B/A,0301011R0AAAPAP,Salbutamol 100micrograms/dose inhaler CFC free,Inha,N
+0301011R0AABZBZ,Salbutamol 100micrograms/dose dry powder inhaler,Pdr For Inh,0301011R0AAAAAA,Salbutamol 100micrograms/dose inhaler,Inha,
+0301030S0AAADAD,Theophylline 250mg modified-release capsules,Cap,0301030S0AAANAN,Theophylline 250mg modified-release tablets,Tab,N
+0301030S0AAANAN,Theophylline 250mg modified-release tablets,Tab,0301030S0AAADAD,Theophylline 250mg modified-release capsules,Cap,N
+0302000K0AAADAD,Budesonide 200micrograms/dose inhaler,Inha,0302000K0AAAGAG,Budesonide 200micrograms/dose dry powder inhaler,Pdr For Inh,
+0302000K0AAAGAG,Budesonide 200micrograms/dose dry powder inhaler,Pdr For Inh,0302000K0AAADAD,Budesonide 200micrograms/dose inhaler,Inha,
+0303020G0AAACAC,Montelukast 4mg chewable tablets sugar free,Tab Chble,0303020G0AAADAD,Montelukast 4mg granules sachets sugar free,Gran Sach,N
+0303020G0AAADAD,Montelukast 4mg granules sachets sugar free,Gran Sach,0303020G0AAACAC,Montelukast 4mg chewable tablets sugar free,Tab Chble,N
+0304010I0AAAAAA,Cetirizine 10mg tablets,Tab,0304010I0AAADAD,Cetirizine 10mg capsules,Cap,Y
+0304010I0AAADAD,Cetirizine 10mg capsules,Cap,0304010I0AAAAAA,Cetirizine 10mg tablets,Tab,Y
+0307000C0AAAJAJ,Acetylcysteine 600mg effervescent tablets,Tab Eff,0307000C0AAAKAK,Acetylcysteine 600mg capsules,Cap,N
+0307000C0AAAKAK,Acetylcysteine 600mg capsules,Cap,0307000C0AAAMAM,Acetylcysteine 600mg tablets,Tab,Y
+0307000C0AAAMAM,Acetylcysteine 600mg tablets,Tab,0307000C0AAAKAK,Acetylcysteine 600mg capsules,Cap,Y
+0401010ADAAAAAA,Melatonin 2mg modified-release tablets,Tab,0401010ADAACHCH,Melatonin 2mg modified-release capsules,Cap,Y
+0401010ADAAAEAE,Melatonin 2mg capsules,Cap,0401010ADAABKBK,Melatonin 2mg tablets,Tab,Y
+0401010ADAAAIAI,Melatonin 1mg tablets,Tab,0401010ADAABQBQ,Melatonin 1mg capsules,Cap,Y
+0401010ADAAAJAJ,Melatonin 3mg modified-release capsules,Cap,0401010ADAAAQAQ,Melatonin 3mg modified-release tablets,Tab,Y
+0401010ADAAAJAJ,Melatonin 3mg modified-release capsules,Cap,091200000AAFTFT,Multinutrient tablets,Tab,Y
+0401010ADAAAQAQ,Melatonin 3mg modified-release tablets,Tab,0401010ADAAAJAJ,Melatonin 3mg modified-release capsules,Cap,Y
+091200000AAFTFT,Multinutrient tablets,Tab,0401010ADAAAJAJ,Melatonin 3mg modified-release capsules,Cap,Y
+0401010ADAABKBK,Melatonin 2mg tablets,Tab,0401010ADAAAEAE,Melatonin 2mg capsules,Cap,Y
+0401010ADAABLBL,Melatonin 5mg tablets,Tab,0401010ADAABSBS,Melatonin 5mg capsules,Cap,Y
+0401010ADAACYCY,Melatonin 3mg tablets,Tab,0401010ADAABRBR,Melatonin 3mg capsules,Cap,Y
+0401010ADAABQBQ,Melatonin 1mg capsules,Cap,0401010ADAAAIAI,Melatonin 1mg tablets,Tab,Y
+0401010ADAABSBS,Melatonin 5mg capsules,Cap,0401010ADAABLBL,Melatonin 5mg tablets,Tab,Y
+0401010ADAACHCH,Melatonin 2mg modified-release capsules,Cap,0401010ADAAAAAA,Melatonin 2mg modified-release tablets,Tab,Y
+0401020E0AAAAAA,Chlordiazepoxide 5mg tablets,Tab,0401020E0AAADAD,Chlordiazepoxide 5mg capsules,Cap,Y
+0401020E0AAABAB,Chlordiazepoxide 10mg tablets,Tab,0401020E0AAAEAE,Chlordiazepoxide 10mg capsules,Cap,Y
+0401020E0AAADAD,Chlordiazepoxide 5mg capsules,Cap,0401020E0AAAAAA,Chlordiazepoxide 5mg tablets,Tab,Y
+0401020E0AAAEAE,Chlordiazepoxide 10mg capsules,Cap,0401020E0AAABAB,Chlordiazepoxide 10mg tablets,Tab,Y
+0401020K0AAACAC,Diazepam 10mg/2ml solution for injection ampoules,Inj,0401020K0AAAQAQ,Diazepam 10mg/2ml emulsion for injection ampoules,Inj (Emulsion),Y
+0401020K0AAAQAQ,Diazepam 10mg/2ml emulsion for injection ampoules,Inj (Emulsion),0401020K0AAACAC,Diazepam 10mg/2ml solution for injection ampoules,Inj,N
+040201060AAAAAA,Olanzapine 5mg tablets,Tab,040201060AAAWAW,Olanzapine 5mg orodispersible tablets,Orodisper Tab,Y
+040201060AAACAC,Olanzapine 10mg tablets,Tab,040201060AAAXAX,Olanzapine 10mg orodispersible tablets,Orodisper Tab,Y
+040201060AAAEAE,Olanzapine 5mg oral lyophilisates sugar free,Oral Lyophilisate Tab,040201060AAASAS,Olanzapine 5mg orodispersible tablets sugar free,Orodisper Tab,Y
+040201060AAAIAI,Olanzapine 2.5mg/5ml oral solution,Oral Soln,040201060AABABA,Olanzapine 2.5mg/5ml oral suspension,Oral Susp,Y
+040201060AAALAL,Olanzapine 15mg tablets,Tab,040201060AAAYAY,Olanzapine 15mg orodispersible tablets,Orodisper Tab,Y
+040201060AAAQAQ,Olanzapine 20mg tablets,Tab,040201060AAAZAZ,Olanzapine 20mg orodispersible tablets,Orodisper Tab,Y
+040201060AAASAS,Olanzapine 5mg orodispersible tablets sugar free,Orodisper Tab,040201060AAAEAE,Olanzapine 5mg oral lyophilisates sugar free,Oral Lyophilisate Tab,Y
+040201060AAAWAW,Olanzapine 5mg orodispersible tablets,Orodisper Tab,040201060AAAAAA,Olanzapine 5mg tablets,Tab,Y
+040201060AAAXAX,Olanzapine 10mg orodispersible tablets,Orodisper Tab,040201060AAACAC,Olanzapine 10mg tablets,Tab,Y
+040201060AAAYAY,Olanzapine 15mg orodispersible tablets,Orodisper Tab,040201060AAALAL,Olanzapine 15mg tablets,Tab,Y
+040201060AAAZAZ,Olanzapine 20mg orodispersible tablets,Orodisper Tab,040201060AAAQAQ,Olanzapine 20mg tablets,Tab,Y
+040201060AABABA,Olanzapine 2.5mg/5ml oral suspension,Oral Susp,040201060AAAIAI,Olanzapine 2.5mg/5ml oral solution,Oral Soln,Y
+0402010ABAAAHAH,Quetiapine 25mg/5ml oral solution,Oral Soln,0402010ABAABDBD,Quetiapine 25mg/5ml oral suspension,Oral Susp,Y
+0402010ABAAAIAI,Quetiapine 12.5mg/5ml oral solution,Oral Soln,0402010ABAABBBB,Quetiapine 12.5mg/5ml oral suspension,Oral Susp,Y
+0402010ABAAALAL,Quetiapine 50mg/5ml oral solution,Oral Soln,0402010ABAABEBE,Quetiapine 50mg/5ml oral suspension,Oral Susp,Y
+0402010ABAABBBB,Quetiapine 12.5mg/5ml oral suspension,Oral Susp,0402010ABAAAIAI,Quetiapine 12.5mg/5ml oral solution,Oral Soln,Y
+0402010ABAABDBD,Quetiapine 25mg/5ml oral suspension,Oral Susp,0402010ABAAAHAH,Quetiapine 25mg/5ml oral solution,Oral Soln,Y
+0402010ABAABEBE,Quetiapine 50mg/5ml oral suspension,Oral Susp,0402010ABAAALAL,Quetiapine 50mg/5ml oral solution,Oral Soln,Y
+0402010D0AAA2A2,Chlorpromazine 100mg/5ml oral suspension,Liq Spec,0402010D0AAAFAF,Chlorpromazine 100mg/5ml oral solution,Oral Soln,Y
+0402010D0AAAFAF,Chlorpromazine 100mg/5ml oral solution,Oral Soln,0402010D0AAA2A2,Chlorpromazine 100mg/5ml oral suspension,Liq Spec,Y
+0402010D0AAAHAH,Chlorpromazine 10mg tablets,Tab,0402010D0AABDBD,Chlorpromazine 10mg capsules,Cap,Y
+0402010D0AAAIAI,Chlorpromazine 25mg tablets,Tab,0402010D0AAASAS,Chlorpromazine 25mg suppositories,Suppos,
+0402010D0AABDBD,Chlorpromazine 10mg capsules,Cap,0402010D0AAAHAH,Chlorpromazine 10mg tablets,Tab,Y
+0402010J0AAAAAA,Haloperidol 500microgram capsules,Cap,0402010J0AAAIAI,Haloperidol 500microgram tablets,Tab,Y
+0402010J0AAAIAI,Haloperidol 500microgram tablets,Tab,0402010J0AAAAAA,Haloperidol 500microgram capsules,Cap,Y
+0402010K0AAARAR,Levomepromazine 2.5mg/5ml oral suspension,Oral Susp,0402010K0AAALAL,Levomepromazine 2.5mg/5ml oral solution,Oral Soln,
+0402010S0AAADAD,Promazine 25mg/5ml oral solution,Oral Soln,0402010S0AAALAL,Promazine 25mg/5ml oral suspension,Liq Spec,
+0402010S0AAAIAI,Promazine 50mg/5ml oral solution,Oral Soln,0402010S0AAANAN,Promazine 50mg/5ml oral suspension,Liq Spec,
+0402030Q0AAABAB,Valproic acid 500mg gastro-resistant tablets,Tab G/R,040801020AAACAC,Valproic acid 500mg gastro-resistant capsules,Cap E/C,Y
+0403010J0AABKBK,Dosulepin 75mg/5ml oral solution,Oral Soln,0403010J0AAA7A7,Dosulepin 75mg/5ml oral suspension,Liq Spec,Y
+0403010V0AAANAN,Nortriptyline 10mg/5ml oral solution,Liq Spec,0403010V0AAAGAG,Nortriptyline 10mg/5ml oral suspension,Susp,
+0403040S0AAABAB,Tryptophan 500mg tablets,Tab,0403040S0AAAIAI,Tryptophan 500mg capsules,Cap,Y
+0403040S0AAAIAI,Tryptophan 500mg capsules,Cap,0403040S0AAABAB,Tryptophan 500mg tablets,Tab,Y
+0403040W0AAADAD,Venlafaxine 75mg modified-release capsules,Cap,0403040W0AAAJAJ,Venlafaxine 75mg modified-release tablets,Tab,Y
+0403040W0AAAEAE,Venlafaxine 150mg modified-release capsules,Cap,0403040W0AAAKAK,Venlafaxine 150mg modified-release tablets,Tab,Y
+0403040W0AAAJAJ,Venlafaxine 75mg modified-release tablets,Tab,0403040W0AAADAD,Venlafaxine 75mg modified-release capsules,Cap,Y
+0403040W0AAAKAK,Venlafaxine 150mg modified-release tablets,Tab,0403040W0AAAEAE,Venlafaxine 150mg modified-release capsules,Cap,Y
+0403040W0AAAMAM,Venlafaxine 37.5mg modified-release tablets,Tab,0403040W0AAASAS,Venlafaxine 37.5mg modified-release capsules,Cap,Y
+0403040W0AAASAS,Venlafaxine 37.5mg modified-release capsules,Cap,0403040W0AAAMAM,Venlafaxine 37.5mg modified-release tablets,Tab,Y
+0403040X0AAAAAA,Mirtazapine 30mg tablets,Tab,0403040X0AAAJAJ,Mirtazapine 30mg orodispersible tablets,Orodisper Tab,Y
+0403040X0AAAJAJ,Mirtazapine 30mg orodispersible tablets,Orodisper Tab,0403040X0AAAAAA,Mirtazapine 30mg tablets,Tab,Y
+0403040X0AAALAL,Mirtazapine 15mg orodispersible tablets,Orodisper Tab,0403040X0AAANAN,Mirtazapine 15mg tablets,Tab,Y
+0403040X0AAAMAM,Mirtazapine 45mg orodispersible tablets,Orodisper Tab,0403040X0AAAPAP,Mirtazapine 45mg tablets,Tab,Y
+0403040X0AAANAN,Mirtazapine 15mg tablets,Tab,0403040X0AAALAL,Mirtazapine 15mg orodispersible tablets,Orodisper Tab,Y
+0403040X0AAAPAP,Mirtazapine 45mg tablets,Tab,0403040X0AAAMAM,Mirtazapine 45mg orodispersible tablets,Orodisper Tab,Y
+0404000M0AAAFAF,Methylphenidate 5mg/5ml oral solution,Oral Soln,0404000M0AABBBB,Methylphenidate 5mg/5ml oral suspension,Oral Susp,Y
+0404000M0AAAHAH,Methylphenidate 20mg modified-release tablets,Tab,0404000M0AAAQAQ,Methylphenidate 20mg modified-release capsules,Cap,Y
+0404000M0AAAQAQ,Methylphenidate 20mg modified-release capsules,Cap,0404000M0AAAHAH,Methylphenidate 20mg modified-release tablets,Tab,Y
+0404000M0AABBBB,Methylphenidate 5mg/5ml oral suspension,Oral Susp,0404000M0AAAFAF,Methylphenidate 5mg/5ml oral solution,Oral Soln,Y
+0404000R0AAADAD,Modafinil 100mg/5ml oral solution,Oral Soln,0404000R0AAAGAG,Modafinil 100mg/5ml oral suspension,Oral Susp,Y
+0404000R0AAAGAG,Modafinil 100mg/5ml oral suspension,Oral Susp,0404000R0AAADAD,Modafinil 100mg/5ml oral solution,Oral Soln,Y
+0406000B0AAADAD,Betahistine 8mg/5ml oral solution,Oral Soln,0406000B0AAAGAG,Betahistine 8mg/5ml oral suspension,Oral Susp,Y
+0406000B0AAAGAG,Betahistine 8mg/5ml oral suspension,Oral Susp,0406000B0AAADAD,Betahistine 8mg/5ml oral solution,Oral Soln,Y
+0406000E0AAAAAA,Flunarizine 5mg capsules,Cap,0406000E0AAADAD,Flunarizine 5mg tablets,Tab,Y
+0406000E0AAADAD,Flunarizine 5mg tablets,Tab,0406000E0AAAAAA,Flunarizine 5mg capsules,Cap,Y
+0406000F0AAACAC,Cyclizine 50mg tablets,Tab,0406000F0AAABAB,Cyclizine 50mg suppositories,Suppos,
+0406000F0AABEBE,Cyclizine 50mg/5ml oral suspension,Oral Susp,0406000F0AAAQAQ,Cyclizine 50mg/5ml oral solution,Liq Spec,
+0406000L0AAACAC,Hyoscine hydrobromide 150microgram tablets,Tab,0406000L0AAAWAW,Hyoscine hydrobromide 150microgram chewable tab sugar free,Tab Chble,N
+0406000L0AAAWAW,Hyoscine hydrobromide 150microgram chewable tab sugar free,Tab Chble,0406000L0AAACAC,Hyoscine hydrobromide 150microgram tablets,Tab,Y
+0406000S0AAABAB,Ondansetron 4mg tablets,Tab,0406000S0AAAKAK,Ondansetron 4mg orodispersible tablets,Orodisper Tab,Y
+0406000S0AAACAC,Ondansetron 8mg tablets,Tab,0406000S0AAALAL,Ondansetron 8mg orodispersible tablets,Orodisper Tab,Y
+0406000S0AAAIAI,Ondansetron 4mg oral lyophilisates sugar free,Oral Lyophil Tab,0406000S0AAAMAM,Ondansetron 4mg orodispersible films sugar free,Orodisper Film,Y
+0406000S0AAAJAJ,Ondansetron 8mg oral lyophilisates sugar free,Oral Lyophil Tab,0406000S0AAANAN,Ondansetron 8mg orodispersible films sugar free,Orodisper Film,Y
+0406000S0AAAKAK,Ondansetron 4mg orodispersible tablets,Orodisper Tab,0406000S0AAABAB,Ondansetron 4mg tablets,Tab,Y
+0406000S0AAALAL,Ondansetron 8mg orodispersible tablets,Orodisper Tab,0406000S0AAACAC,Ondansetron 8mg tablets,Tab,Y
+0406000S0AAAMAM,Ondansetron 4mg orodispersible films sugar free,Orodisper Film,0406000S0AAAIAI,Ondansetron 4mg oral lyophilisates sugar free,Oral Lyophil Tab,Y
+0406000S0AAANAN,Ondansetron 8mg orodispersible films sugar free,Orodisper Film,0406000S0AAAJAJ,Ondansetron 8mg oral lyophilisates sugar free,Oral Lyophil Tab,Y
+0406000T0AAAEAE,Prochlorperazine 5mg suppositories,Suppos,0406000T0AAAGAG,Prochlorperazine 5mg tablets,Tab,N
+0406000T0AAAGAG,Prochlorperazine 5mg tablets,Tab,0406000T0AAAEAE,Prochlorperazine 5mg suppositories,Suppos,N
+0407010F0AAAAAA,Co-codamol 8mg/500mg tablets,Tab,0407010F0AAABAB,Co-codamol 8mg/500mg capsules,Cap,Y
+0407010F0AAAHAH,Co-codamol 30mg/500mg tablets,Tab,0407010F0AAADAD,Co-codamol 30mg/500mg capsules,Cap,Y
+0407010F0AAAKAK,Co-codamol 15mg/500mg tablets,Tab,0407010F0AAAVAV,Co-codamol 15mg/500mg capsules,Cap,Y
+0407010F0AAAVAV,Co-codamol 15mg/500mg capsules,Cap,0407010F0AAAKAK,Co-codamol 15mg/500mg tablets,Tab,Y
+0407010H0AAA5A5,Paracetamol 500mg/5ml oral suspension sugar free,Oral Susp,0407010H0AADPDP,Paracetamol 500mg/5ml oral solution sugar free,Oral Soln,Y
+0407010H0AAA7A7,Paracetamol 120mg/5ml oral solution paediatric sugar free,Oral Soln Paed,0407010H0AAAWAW,Paracetamol 120mg/5ml oral suspension paediatric sugar free,Oral Susp Paed,Y
+0407010H0AAABAB,Paracetamol 120mg/5ml oral solution paediatric,Oral Soln Paed,0407010H0AAAIAI,Paracetamol 120mg/5ml oral suspension paediatric,Oral Susp Paed,Y
+0407010H0AAACAC,Paracetamol 250mg/5ml oral suspension,Oral Susp,0407010H0AADBDB,Paracetamol 250mg/5ml oral solution,Liq Spec,Y
+0407010H0AAAIAI,Paracetamol 120mg/5ml oral suspension paediatric,Oral Susp Paed,0407010H0AAABAB,Paracetamol 120mg/5ml oral solution paediatric,Oral Soln Paed,Y
+0407010H0AAAMAM,Paracetamol 500mg tablets,Tab,0407010H0AAAAAA,Paracetamol 500mg capsules,Cap,Y
+0407010H0AAAQAQ,Paracetamol 500mg soluble tablets,Tab Solb,0407010H0AAAAAA,Paracetamol 500mg capsules,Cap,N
+0407010H0AAAWAW,Paracetamol 120mg/5ml oral suspension paediatric sugar free,Oral Susp Paed,0407010H0AAA7A7,Paracetamol 120mg/5ml oral solution paediatric sugar free,Oral Soln Paed,Y
+0407010H0AABNBN,Paracetamol 1g suppositories,Suppos,0407010H0AADGDG,Paracetamol 1g oral powder sachets,Pdr Sach,N
+0407010H0AABUBU,Paracetamol 500mg suppositories,Suppos,0407010H0AAAAAA,Paracetamol 500mg capsules,Cap,N
+0407010H0AADBDB,Paracetamol 250mg/5ml oral solution,Liq Spec,0407010H0AAACAC,Paracetamol 250mg/5ml oral suspension,Oral Susp,Y
+0407010H0AADLDL,Paracetamol 1g tablets,Tab,0407010H0AADGDG,Paracetamol 1g oral powder sachets,Pdr Sach,N
+0407010H0AADPDP,Paracetamol 500mg/5ml oral solution sugar free,Oral Soln,0407010H0AAA5A5,Paracetamol 500mg/5ml oral suspension sugar free,Oral Susp,Y
+0407010N0AAAAAA,Co-dydramol 10mg/500mg tablets,Tab,0407010N0AAAFAF,Co-dydramol 10mg/500mg oral powder sachets,Pdr Sach,
+0407010N0AAACAC,Co-dydramol 10mg/500mg/5ml oral solution,Oral Soln,0407010N0AAAGAG,Co-dydramol 10mg/500mg/5ml oral suspension,Oral Susp,Y
+0407010N0AAAGAG,Co-dydramol 10mg/500mg/5ml oral suspension,Oral Susp,0407010N0AAACAC,Co-dydramol 10mg/500mg/5ml oral solution,Oral Soln,Y
+040702040AAACAC,Tramadol 100mg modified-release tablets,Tab,040702040AAAHAH,Tramadol 100mg modified-release capsules,Cap,Y
+040702040AAADAD,Tramadol 150mg modified-release tablets,Tab,040702040AAAIAI,Tramadol 150mg modified-release capsules,Cap,Y
+040702040AAAEAE,Tramadol 200mg modified-release tablets,Tab,040702040AAAJAJ,Tramadol 200mg modified-release capsules,Cap,Y
+040702040AAAFAF,Tramadol 50mg soluble tablets sugar free,Tab Solb,040702040AAATAT,Tramadol 50mg orodispersible tablets sugar free,Orodisper Tab,Y
+040702040AAAGAG,Tramadol 50mg modified-release capsules,Cap,040702040AAAYAY,Tramadol 50mg modified-release tablets,Tab,Y
+040702040AAAHAH,Tramadol 100mg modified-release capsules,Cap,040702040AAACAC,Tramadol 100mg modified-release tablets,Tab,Y
+040702040AAAIAI,Tramadol 150mg modified-release capsules,Cap,040702040AAADAD,Tramadol 150mg modified-release tablets,Tab,Y
+040702040AAAJAJ,Tramadol 200mg modified-release capsules,Cap,040702040AAAEAE,Tramadol 200mg modified-release tablets,Tab,Y
+040702040AAATAT,Tramadol 50mg orodispersible tablets sugar free,Orodisper Tab,040702040AAAFAF,Tramadol 50mg soluble tablets sugar free,Tab Solb,Y
+040702040AAAYAY,Tramadol 50mg modified-release tablets,Tab,040702040AAAGAG,Tramadol 50mg modified-release capsules,Cap,Y
+0407020A0AAAWAW,Fentanyl 100microgram sublingual tablets sugar free,Tab Sublingual,0407020A0AABCBC,Fentanyl 100microgram buccal tablets sugar free,Tab Buccal,Y
+0407020A0AAAXAX,Fentanyl 200microgram sublingual tablets sugar free,Tab Sublingual,0407020A0AABTBT,Fentanyl 200microgram buccal films sugar free,Buccal Film,
+0407020A0AAAZAZ,Fentanyl 400microgram sublingual tablets sugar free,Tab Sublingual,0407020A0AABUBU,Fentanyl 400microgram buccal films sugar free,Buccal Film,
+0407020A0AABABA,Fentanyl 600microgram sublingual tablets sugar free,Tab Sublingual,0407020A0AABFBF,Fentanyl 600microgram buccal tablets sugar free,Tab Buccal,Y
+0407020A0AABBBB,Fentanyl 800microgram sublingual tablets sugar free,Tab Sublingual,0407020A0AABVBV,Fentanyl 800microgram buccal films sugar free,Buccal Film,
+0407020A0AABCBC,Fentanyl 100microgram buccal tablets sugar free,Tab Buccal,0407020A0AAAWAW,Fentanyl 100microgram sublingual tablets sugar free,Tab Sublingual,Y
+0407020A0AABDBD,Fentanyl 200microgram buccal tablets sugar free,Tab Buccal,0407020A0AABTBT,Fentanyl 200microgram buccal films sugar free,Buccal Film,
+0407020A0AABEBE,Fentanyl 400microgram buccal tablets sugar free,Tab Buccal,0407020A0AABUBU,Fentanyl 400microgram buccal films sugar free,Buccal Film,
+0407020A0AABFBF,Fentanyl 600microgram buccal tablets sugar free,Tab Buccal,0407020A0AABABA,Fentanyl 600microgram sublingual tablets sugar free,Tab Sublingual,Y
+0407020A0AABGBG,Fentanyl 800microgram buccal tablets sugar free,Tab Buccal,0407020A0AABVBV,Fentanyl 800microgram buccal films sugar free,Buccal Film,
+0407020G0AAAAAA,Dihydrocodeine 10mg/5ml oral solution,Oral Soln,0407020G0AAAPAP,Dihydrocodeine 10mg/5ml oral suspension,Liq Spec,
+0407020M0AAAEAE,Methadone 5mg tablets,Tab,0407020M0AABUBU,Methadone 5mg capsules,Cap,Y
+0407020Q0AAAGAG,Morphine 200mg modified-release tablets,Tab,0407020Q0AAEIEI,Morphine 200mg modified-release capsules,Cap,Y
+0407020Q0AAAHAH,Morphine 100mg modified-release tablets,Tab,0407020Q0AAEBEB,Morphine 100mg modified-release capsules,Cap,Y
+0407020Q0AAAIAI,Morphine 60mg modified-release tablets,Tab,0407020Q0AAEHEH,Morphine 60mg modified-release capsules,Cap,Y
+0407020Q0AAAKAK,Morphine 10mg modified-release tablets,Tab,0407020Q0AAEFEF,Morphine 10mg modified-release capsules,Cap,Y
+0407020Q0AAALAL,Morphine 30mg modified-release tablets,Tab,0407020Q0AAEGEG,Morphine 30mg modified-release capsules,Cap,Y
+0407020Q0AACDCD,Morphine 10mg tablets,Tab,0407020Q0AACQCQ,Morphine sulfate 10mg suppositories,Suppos,N
+0407020Q0AACECE,Morphine 20mg tablets,Tab,0407020Q0AACRCR,Morphine sulfate 20mg suppositories,Suppos,
+0407020Q0AACPCP,Morphine 30mg modified-release granules sachets sugar free,Gran Sach,0407020Q0AAEGEG,Morphine 30mg modified-release capsules,Cap,N
+0407020Q0AACQCQ,Morphine sulfate 10mg suppositories,Suppos,0407020Q0AACDCD,Morphine 10mg tablets,Tab,N
+0407020Q0AACVCV,Morphine 20mg modified-release granules sachets sugar free,Gran Sach,0407020Q0AADZDZ,Morphine 20mg modified-release capsules,Cap,
+0407020Q0AADCDC,Morphine 60mg modified-release granules sachets sugar free,Gran Sach,0407020Q0AAEHEH,Morphine 60mg modified-release capsules,Cap,Y
+0407020Q0AADDDD,Morphine 100mg modified-release granules sachets sugar free,Gran Sach,0407020Q0AAEBEB,Morphine 100mg modified-release capsules,Cap,Y
+0407020Q0AADEDE,Morphine 200mg modified-release granules sachets sugar free,Gran Sach,0407020Q0AAEIEI,Morphine 200mg modified-release capsules,Cap,Y
+0407020Q0AAEBEB,Morphine 100mg modified-release capsules,Cap,0407020Q0AADDDD,Morphine 100mg modified-release granules sachets sugar free,Gran Sach,N
+0407020Q0AAEFEF,Morphine 10mg modified-release capsules,Cap,0407020Q0AAAKAK,Morphine 10mg modified-release tablets,Tab,Y
+0407020Q0AAEGEG,Morphine 30mg modified-release capsules,Cap,0407020Q0AACPCP,Morphine 30mg modified-release granules sachets sugar free,Gran Sach,N
+0407020Q0AAEHEH,Morphine 60mg modified-release capsules,Cap,0407020Q0AADCDC,Morphine 60mg modified-release granules sachets sugar free,Gran Sach,N
+0407020Q0AAEIEI,Morphine 200mg modified-release capsules,Cap,0407020Q0AADEDE,Morphine 200mg modified-release granules sachets sugar free,Gran Sach,N
+0407020Q0AAFXFX,Morphine 0.1% in Intrasite gel,Intrasite Gel,0407020Q0AAFSFS,Morphine 0.1% gel,Gel,
+0407020Q0AAFYFY,Morphine 0.2% in Intrasite gel,Intrasite Gel,0407020Q0AAFUFU,Morphine 0.2% gel,Gel,
+0407020V0AAACAC,Pethidine 50mg tablets,Tab,0407020V0AABFBF,Pethidine 50mg capsules,Cap,Y
+0407041R0AAABAB,Rizatriptan 10mg tablets,Tab,0407041R0AAACAC,Rizatriptan 10mg oral lyophilisates sugar free,Oral Lyophilisate Tab,Y
+0407041R0AAACAC,Rizatriptan 10mg oral lyophilisates sugar free,Oral Lyophilisate Tab,0407041R0AAABAB,Rizatriptan 10mg tablets,Tab,Y
+040801050AAAAAA,Topiramate 50mg tablets,Tab,040801050AAAWAW,Topiramate 50mg capsules,Cap,Y
+040801050AAADAD,Topiramate 25mg tablets,Tab,040801050AAAVAV,Topiramate 25mg capsules,Cap,Y
+0408010ADAAADAD,Zonisamide 50mg/5ml oral solution,Oral Soln,0408010ADAAAEAE,Zonisamide 50mg/5ml oral suspension,Oral Susp,Y
+0408010ADAAAEAE,Zonisamide 50mg/5ml oral suspension,Oral Susp,0408010ADAAADAD,Zonisamide 50mg/5ml oral solution,Oral Soln,Y
+0408010AEAAACAC,Pregabalin 75mg capsules,Cap,0408010AEAAALAL,Pregabalin 75mg oral powder sachets,Pdr Sach,
+0408010AGAAAAAA,Stiripentol 250mg capsules,Cap,0408010AGAAACAC,Stiripentol 250mg oral powder sachets,Pdr Sach,N
+0408010AGAAABAB,Stiripentol 500mg capsules,Cap,0408010AGAAADAD,Stiripentol 500mg oral powder sachets,Pdr Sach,Y
+0408010AGAAACAC,Stiripentol 250mg oral powder sachets,Pdr Sach,0408010AGAAAAAA,Stiripentol 250mg capsules,Cap,Y
+0408010AGAAADAD,Stiripentol 500mg oral powder sachets,Pdr Sach,0408010AGAAABAB,Stiripentol 500mg capsules,Cap,N
+0408010C0AAACAC,Carbamazepine 200mg tablets,Tab,0408010C0AAAKAK,Carbamazepine 200mg chewable tablets sugar free,Tab Chble,N
+0408010C0AAAKAK,Carbamazepine 200mg chewable tablets sugar free,Tab Chble,0408010C0AAACAC,Carbamazepine 200mg tablets,Tab,Y
+0408010N0AAASAS,Phenobarbital 100mg capsules,Cap,0408010N0AAAMAM,Phenobarbital 100mg tablets,Tab,
+0408010N0AADMDM,Phenobarbital 15mg/5ml oral liquid,Liq Spec,0408010N0AAACAC,Phenobarbital 15mg/5ml elixir,Elix,Y
+0408010Q0AAAGAG,Phenytoin sodium 100mg tablets,Sod Tab,0408010Q0AAAAAA,Phenytoin sodium 100mg capsules,Sod Cap,N
+0408010U0AAAXAX,Primidone 50mg tablets,Tab,0408010U0AAAFAF,Primidone 50mg capsules,Cap,Y
+0408010W0AAA1A1,Sodium valproate 300mg modified-release tablets,Tab,0408010W0AABRBR,Sodium valproate 300mg modified-release capsules,Cap,Y
+0408010W0AABRBR,Sodium valproate 300mg modified-release capsules,Cap,0408010W0AAA1A1,Sodium valproate 300mg modified-release tablets,Tab,N
+0408010Z0AAACAC,Phenytoin 50mg chewable tablets,Tab Chble,0408010Q0AAAPAP,Phenytoin sodium 50mg capsules,Sod Cap,N
+0408010Z0AAALAL,Phenytoin 90mg/5ml oral suspension,Oral Susp,0408010Q0AAAYAY,Phenytoin 90mg/5ml oral liquid,Sod Oral Soln,Y
+0409010N0AAAKAK,Co-careldopa 25mg/100mg/5ml oral solution,Oral Soln,0409010N0AAAUAU,Co-careldopa 25mg/100mg/5ml oral suspension,Oral Susp,Y
+0409010N0AAAUAU,Co-careldopa 25mg/100mg/5ml oral suspension,Oral Susp,0409010N0AAAKAK,Co-careldopa 25mg/100mg/5ml oral solution,Oral Soln,Y
+0409020C0AAACAC,Trihexyphenidyl 5mg/5ml oral solution,Oral Soln,0409020C0AAAKAK,Trihexyphenidyl 5mg/5ml oral suspension,Liq Spec,Y
+0409020C0AAAKAK,Trihexyphenidyl 5mg/5ml oral suspension,Liq Spec,0409020C0AAACAC,Trihexyphenidyl 5mg/5ml oral solution,Oral Soln,Y
+0410020B0AAAWAW,Nicotine 2mg sublingual tablets sugar free,Subling Tab,0410020B0AABABA,Nicotine 2mg medicated chewing gum sugar free,Chewing Gum,N
+0410020B0AAAYAY,Nicotine 2mg lozenges sugar free,Loz,0410020B0AABABA,Nicotine 2mg medicated chewing gum sugar free,Chewing Gum,N
+0410020B0AAAZAZ,Nicotine 4mg lozenges sugar free,Loz,0410020B0AABDBD,Nicotine 4mg medicated chewing gum sugar free,Chewing Gum,Y
+0410020B0AABABA,Nicotine 2mg medicated chewing gum sugar free,Chewing Gum,0410020B0AAAYAY,Nicotine 2mg lozenges sugar free,Loz,N
+0410020B0AABDBD,Nicotine 4mg medicated chewing gum sugar free,Chewing Gum,0410020B0AAAZAZ,Nicotine 4mg lozenges sugar free,Loz,N
+0411000D0AAAAAA,Donepezil 5mg tablets,Tab,0411000D0AAAHAH,Donepezil 5mg orodispersible tablets,Orodisper Tab,Y
+0411000D0AAABAB,Donepezil 10mg tablets,Tab,0411000D0AAAIAI,Donepezil 10mg orodispersible tablets,Orodisper Tab,Y
+0411000D0AAAHAH,Donepezil 5mg orodispersible tablets,Orodisper Tab,0411000D0AAAAAA,Donepezil 5mg tablets,Tab,Y
+0411000D0AAAIAI,Donepezil 10mg orodispersible tablets,Orodisper Tab,0411000D0AAABAB,Donepezil 10mg tablets,Tab,Y
+0501021K0AAAAAA,Cefuroxime 125mg tablets,Tab,0501021K0AAADAD,Cefuroxime 125mg granules sachets,Gran Sach,
+0501021L0AAAAAA,Cefalexin 250mg capsules,Cap,0501021L0AAAGAG,Cefalexin 250mg tablets,Tab,Y
+0501021L0AAABAB,Cefalexin 500mg capsules,Cap,0501021L0AAAHAH,Cefalexin 500mg tablets,Tab,Y
+0501021L0AAAGAG,Cefalexin 250mg tablets,Tab,0501021L0AAAAAA,Cefalexin 250mg capsules,Cap,Y
+0501021L0AAAHAH,Cefalexin 500mg tablets,Tab,0501021L0AAABAB,Cefalexin 500mg capsules,Cap,Y
+0501030F0AAAAAA,Demeclocycline 150mg capsules,Cap,0501030F0AAAIAI,Demeclocycline 150mg tablets,Tab,Y
+0501030F0AAAIAI,Demeclocycline 150mg tablets,Tab,0501030F0AAAAAA,Demeclocycline 150mg capsules,Cap,Y
+0501030P0AAAAAA,Minocycline 50mg tablets,Tab,0501030P0AAADAD,Minocycline 50mg capsules,Cap,Y
+0501030P0AAABAB,Minocycline 100mg tablets,Tab,0501030P0AAAEAE,Minocycline 100mg capsules,Cap,Y
+0501030P0AAADAD,Minocycline 50mg capsules,Cap,0501030P0AAAAAA,Minocycline 50mg tablets,Tab,Y
+0501030P0AAAEAE,Minocycline 100mg capsules,Cap,0501030P0AAABAB,Minocycline 100mg tablets,Tab,Y
+0501030V0AAAAAA,Tetracycline 250mg capsules,Cap,0501030V0AAAFAF,Tetracycline 250mg tablets,Tab,Y
+0501030V0AAAFAF,Tetracycline 250mg tablets,Tab,0501030V0AAAAAA,Tetracycline 250mg capsules,Cap,Y
+0501050A0AAAAAA,Azithromycin 250mg capsules,Cap,0501050A0AAAGAG,Azithromycin 250mg tablets,Tab,Y
+0501050A0AAAGAG,Azithromycin 250mg tablets,Tab,0501050A0AAAAAA,Azithromycin 250mg capsules,Cap,Y
+0501060D0AAANAN,Clindamycin 75mg/5ml oral suspension,Oral Susp,0501060D0AAAEAE,Clindamycin 75mg/5ml oral solution,Oral Soln,
+0501090K0AACUCU,Isoniazid 50mg/5ml oral solution,Oral Soln,0501090K0AABIBI,Isoniazid 50mg/5ml oral suspension,Oral Susp,
+0501110C0AAAEAE,Metronidazole 200mg/5ml oral suspension,Oral Susp,0501110C0AABQBQ,Metronidazole 200mg/5ml oral solution,Liq Spec,
+0501110C0AAAGAG,Metronidazole 500mg suppositories,Suppos,0501110C0AABHBH,Metronidazole 500mg tablets,Tab,N
+0501110C0AAAIAI,Metronidazole 200mg tablets,Tab,0501110C0AABJBJ,Metronidazole 200mg suppositories,Suppos,
+0501110C0AABHBH,Metronidazole 500mg tablets,Tab,0501110C0AAAGAG,Metronidazole 500mg suppositories,Suppos,N
+0501130R0AAABAB,Nitrofurantoin 100mg capsules,Cap,0501130R0AAAEAE,Nitrofurantoin 100mg tablets,Tab,Y
+0501130R0AAADAD,Nitrofurantoin 50mg tablets,Tab,0501130R0AAAAAA,Nitrofurantoin 50mg capsules,Cap,Y
+0501130R0AAAEAE,Nitrofurantoin 100mg tablets,Tab,0501130R0AAABAB,Nitrofurantoin 100mg capsules,Cap,Y
+0502030A0AAAAAA,Amphotericin B 50mg powder for solution for infusion vials,Inf(Sod Desoxychol),0502030A0AAAIAI,Amphotericin B liposomal 50mg pdr for dispersion for inf vl,Inf (In Liposomes),N
+0502050C0AAAEAE,Terbinafine 250mg/5ml oral solution,Oral Soln,0502050C0AAAFAF,Terbinafine 250mg/5ml oral suspension,Oral Susp,Y
+0502050C0AAAFAF,Terbinafine 250mg/5ml oral suspension,Oral Susp,0502050C0AAAEAE,Terbinafine 250mg/5ml oral solution,Oral Soln,Y
+0503010U0AAACAC,Ritonavir 100mg tablets,Tab,0503010U0AAAAAA,Ritonavir 100mg capsules,Cap,
+0503021C0AAABAB,Aciclovir 200mg tablets,Tab,0503021C0AAAGAG,Aciclovir 200mg dispersible tablets,Tab Disper,N
+0503021C0AAACAC,Aciclovir 400mg tablets,Tab,0503021C0AAAHAH,Aciclovir 400mg dispersible tablets,Tab Disper,Y
+0503021C0AAADAD,Aciclovir 800mg tablets,Tab,0503021C0AAAEAE,Aciclovir 800mg dispersible tablets,Tab Disper,N
+0503021C0AAAEAE,Aciclovir 800mg dispersible tablets,Tab Disper,0503021C0AAADAD,Aciclovir 800mg tablets,Tab,Y
+0503021C0AAAGAG,Aciclovir 200mg dispersible tablets,Tab Disper,0503021C0AAABAB,Aciclovir 200mg tablets,Tab,N
+0503021C0AAAHAH,Aciclovir 400mg dispersible tablets,Tab Disper,0503021C0AAACAC,Aciclovir 400mg tablets,Tab,N
+0503050B0AAABAB,Ribavirin 200mg capsules,Cap,0503050B0AAAEAE,Ribavirin 200mg tablets,Tab,
+0505030A0AAABAB,Albendazole 400mg chewable tablets,Tab Chble,0505030A0AAADAD,Albendazole 400mg tablets,Tab,N
+0505030A0AAADAD,Albendazole 400mg tablets,Tab,0505030A0AAABAB,Albendazole 400mg chewable tablets,Tab Chble,N
+0601011N0AAACAC,Insulin soluble porcine 100units/ml inj 10ml vials,Inj (Pore),0601011N0AAAAAA,Insulin soluble bovine 100units/ml inj 10ml vials,Inj (Bov),Y
+0601011N0AAAPAP,Insulin soluble human 100units/ml inj 3ml cartridges,Inj (Hum Prb),0601011N0AAAYAY,Insulin soluble bovine 100units/ml inj 3ml cartridges,Inj (Bov),
+0601012S0AAASAS,Insulin isophane bovine 100units/ml inj 3ml cartridges,Inj (Bov),0601012S0AAATAT,Insulin isophane porcine 100units/ml inj 3ml cartridges,Inj (Pore),N
+0601012S0AAATAT,Insulin isophane porcine 100units/ml inj 3ml cartridges,Inj (Pore),0601012S0AAASAS,Insulin isophane bovine 100units/ml inj 3ml cartridges,Inj (Bov),N
+0601022B0AAADAD,Metformin 850mg tablets,Tab,0601022B0AAAQAQ,Metformin 850mg capsules,Cap,Y
+0601040E0AAAMAM,Diazoxide 50mg/5ml oral solution,Oral Soln,0601040E0AABIBI,Diazoxide 50mg/5ml oral suspension,Oral Susp,Y
+0601040E0AABHBH,Diazoxide 250mg/5ml oral suspension,Oral Susp,0601040E0AAAYAY,Diazoxide 250mg/5ml oral solution,Oral Soln,
+0601040E0AABIBI,Diazoxide 50mg/5ml oral suspension,Oral Susp,0601040E0AAAMAM,Diazoxide 50mg/5ml oral solution,Oral Soln,Y
+0602010M0AAAUAU,Liothyronine 10microgram capsules,Cap,0602010M0AAAQAQ,Liothyronine 10microgram tablets,Tab,
+0602010V0AAAFAF,Levothyroxine sodium 50microgram capsules,Cap,0602010V0AABPBP,Levothyroxine sodium 50microgram oral powder sachets,Pdrs,
+0602010V0AABWBW,Levothyroxine sodium 25microgram tablets,Tab,0602010V0AAAGAG,Levothyroxine sodium 25microgram capsules,Cap,Y
+0602010V0AABXBX,Levothyroxine sodium 50microgram tablets,Tab,0602010V0AAAFAF,Levothyroxine sodium 50microgram capsules,Cap,Y
+0602010V0AABZBZ,Levothyroxine sodium 100microgram tablets,Tab,0602010V0AACMCM,Levothyroxine sodium 100microgram capsules,Cap,Y
+0602010V0AACJCJ,Levothyroxine sodium 150microgram capsules,Cap,0602010V0AADNDN,Levothyroxine sodium 150microgram oral powder sachets,Pdrs,N
+0602010V0AACMCM,Levothyroxine sodium 100microgram capsules,Cap,0602010V0AACQCQ,Levothyroxine sodium 100microgram oral powder sachets,Pdrs,N
+0602010V0AACQCQ,Levothyroxine sodium 100microgram oral powder sachets,Pdrs,0602010V0AACMCM,Levothyroxine sodium 100microgram capsules,Cap,N
+0602010V0AADNDN,Levothyroxine sodium 150microgram oral powder sachets,Pdrs,0602010V0AACJCJ,Levothyroxine sodium 150microgram capsules,Cap,N
+0602020D0AAAWAW,Carbimazole 10mg/5ml oral suspension,Oral Susp,0602020D0AAAGAG,Carbimazole 10mg/5ml oral solution,Oral Soln,
+0603020J0AAAJAJ,Hydrocortisone 5mg/5ml oral solution,Liq Spec,0603020J0AAAXAX,Hydrocortisone 5mg/5ml oral suspension,Oral Susp,Y
+0603020J0AAAXAX,Hydrocortisone 5mg/5ml oral suspension,Oral Susp,0603020J0AAAJAJ,Hydrocortisone 5mg/5ml oral solution,Liq Spec,Y
+0604011D0AAALAL,Ethinylestradiol 2microgram tablets,Tab,0604011D0AAAWAW,Ethinylestradiol 2microgram capsules,Cap,
+0604011G0AABDBD,Estradiol 1mg tablets,Tab,0604011K0AAAAAA,Estradiol valerate 1mg tablets,Val Tab,Y
+0604011K0AAAAAA,Estradiol valerate 1mg tablets,Val Tab,0604011G0AABDBD,Estradiol 1mg tablets,Tab,Y
+0604012S0AABZBZ,Progesterone micronised 200mg vaginal capsules,Vag Cap,0604012S0AABWBW,Progesterone micronised 200mg capsules,Cap,
+0604020K0AABHBH,Testosterone 50mg/5g gel unit dose sachets,Gel Sach,0604020K0AABKBK,Testosterone 50mg/5g gel unit dose tube,Gel,Y
+0604020K0AABKBK,Testosterone 50mg/5g gel unit dose tube,Gel,0604020K0AABHBH,Testosterone 50mg/5g gel unit dose sachets,Gel Sach,N
+0604030Q0AAAAAA,Prasterone 25mg capsules,Cap,0604030Q0AAAIAI,Prasterone 25mg tablets,Tab,
+0703030G0AAAIAI,Nonoxinol-9 2% gel,Gel,0703030G0AAABAB,Nonoxinol-9 2% cream,Crm,
+0704010U0AAAAAA,Tamsulosin 400microgram modified-release capsules,Cap,0704010U0AAABAB,Tamsulosin 400microgram modified-release tablets,Tab,Y
+0704010U0AAABAB,Tamsulosin 400microgram modified-release tablets,Tab,0704010U0AAAAAA,Tamsulosin 400microgram modified-release capsules,Cap,Y
+0704020J0AAAZAZ,Oxybutynin 2.5mg/5ml oral solution,Oral Soln,0704020J0AAAKAK,Oxybutynin 2.5mg/5ml oral suspension,Liq Spec,Y
+0704020J0AAAKAK,Oxybutynin 2.5mg/5ml oral suspension,Liq Spec,0704020J0AAAZAZ,Oxybutynin 2.5mg/5ml oral solution,Oral Soln,Y
+0704020N0AAAJAJ,Tolterodine 2mg/5ml oral suspension,Oral Susp,0704020N0AAAEAE,Tolterodine 2mg/5ml oral solution,Oral Soln,
+0704030J0AAAHAH,Sodium citrate 4g oral powder sachets,Pdr Sach,0704030J0AAAIAI,Sodium citrate 4g oral granules sachets,Gran Sach,Y
+0704030J0AAAIAI,Sodium citrate 4g oral granules sachets,Gran Sach,0704030J0AAAHAH,Sodium citrate 4g oral powder sachets,Pdr Sach,Y
+0704050B0AAAVAV,Alprostadil 20microgram inj cartridges,Cont Pack Inj,0704050B0AABLBL,Alprostadil 20microgram inj cartridges with device,S/Pack Inj,Y
+0704050B0AAAWAW,Alprostadil 10microgram inj cartridges,Cont Pack Inj,0704050B0AABMBM,Alprostadil 10microgram inj cartridges with device,S/Pack Inj,N
+0704050B0AABFBF,Alprostadil 40microgram inj cartridges,Cont Pack Inj,0704050B0AABNBN,Alprostadil 40microgram inj cartridges with device,S/Pack Inj,N
+0704050B0AABLBL,Alprostadil 20microgram inj cartridges with device,S/Pack Inj,0704050B0AAAVAV,Alprostadil 20microgram inj cartridges,Cont Pack Inj,Y
+0704050B0AABMBM,Alprostadil 10microgram inj cartridges with device,S/Pack Inj,0704050B0AAAWAW,Alprostadil 10microgram inj cartridges,Cont Pack Inj,Y
+0704050B0AABNBN,Alprostadil 40microgram inj cartridges with device,S/Pack Inj,0704050B0AABFBF,Alprostadil 40microgram inj cartridges,Cont Pack Inj,N
+0704050Z0AAAFAF,Sildenafil 25mg/5ml oral solution,Oral Soln,0704050Z0AAALAL,Sildenafil 25mg/5ml oral suspension,Oral Susp,Y
+0704050Z0AAAGAG,Sildenafil 10mg/5ml oral solution,Oral Soln,0704050Z0AAAKAK,Sildenafil 10mg/5ml oral suspension,Oral Susp,Y
+0704050Z0AAAKAK,Sildenafil 10mg/5ml oral suspension,Oral Susp,0704050Z0AAAGAG,Sildenafil 10mg/5ml oral solution,Oral Soln,Y
+0704050Z0AAALAL,Sildenafil 25mg/5ml oral suspension,Oral Susp,0704050Z0AAAFAF,Sildenafil 25mg/5ml oral solution,Oral Soln,Y
+0801030L0AAABAB,Mercaptopurine 10mg tablets,Tab,0801030L0AAAGAG,Mercaptopurine 10mg capsules,Cap,Y
+0801030L0AAAGAG,Mercaptopurine 10mg capsules,Cap,0801030L0AAABAB,Mercaptopurine 10mg tablets,Tab,Y
+0801030L0AAALAL,Mercaptopurine 25mg capsules,Cap,0801030L0AAAJAJ,Mercaptopurine 25mg tablets,Tab,
+0801050AAAAACAC,Imatinib 100mg tablets,Tab,0801050AAAAAAAA,Imatinib 100mg capsules,Cap,
+0801050P0AAABAB,Hydroxycarbamide 500mg/5ml oral solution,Oral Soln,0801050P0AAADAD,Hydroxycarbamide 500mg/5ml oral suspension,Oral Susp,Y
+0801050P0AAADAD,Hydroxycarbamide 500mg/5ml oral suspension,Oral Susp,0801050P0AAABAB,Hydroxycarbamide 500mg/5ml oral solution,Oral Soln,Y
+0802010G0AAAPAP,Azathioprine 50mg/5ml oral solution,Oral Soln,0802010G0AACHCH,Azathioprine 50mg/5ml oral suspension,Oral Susp,Y
+0802010G0AACHCH,Azathioprine 50mg/5ml oral suspension,Oral Susp,0802010G0AAAPAP,Azathioprine 50mg/5ml oral solution,Oral Soln,Y
+0802010G0AACICI,Azathioprine 25mg/5ml oral suspension,Oral Susp,0802010G0AAASAS,Azathioprine 25mg/5ml oral solution,Oral Soln,
+0802020T0AAANAN,Tacrolimus 1mg modified-release capsules,Cap,0802020T0AABCBC,Tacrolimus 1mg modified-release tablets,Tab,
+0901011P0AACKCK,Ferrous sulfate 60mg/5ml oral solution,Oral Soln,0901011P0AABPBP,Ferrous sulfate 60mg/5ml oral suspension,Liq Spec,
+0902012L0AABRBR,Sodium chloride 292.5mg/5ml (1mmol/ml) oral solution (old),Liq Spec,0902012L0AADDDD,Sodium chloride 292.5mg/5ml (1mmol/ml) oral solution,Oral Soln,
+0902012L0AABRBR,Sodium chloride 292.5mg/5ml (1mmol/ml) oral solution (old),Liq Spec,0902012L0AADCDC,Sodium chloride 292.5mg/5ml (1mmol/ml) soln sugar free,Oral Soln,
+0902012L0AADDDD,Sodium chloride 292.5mg/5ml (1mmol/ml) oral solution,Liq Spec,0902012L0AADCDC,Sodium chloride 292.5mg/5ml (1mmol/ml) soln sugar free,Oral Soln,
+0902013S0AAADAD,Sodium bicarbonate 600mg capsules,Cap,0902013S0AAAPAP,Sodium bicarbonate 600mg tablets,Tab,Y
+0902013S0AAAPAP,Sodium bicarbonate 600mg tablets,Tab,0902013S0AAADAD,Sodium bicarbonate 600mg capsules,Cap,Y
+0902021S0AAAXAX,Sodium chloride 0.9% infusion polyethylene bottles,I/V Inf,1108010K0AAAAAA,Sodium chloride 0.9% eye drops,Eye Dps,N
+0902021S0AADQDQ,Sodium chloride 0.9% infusion 500ml polyethylene bottles,I/V Inf,1108010K0AAAAAA,Sodium chloride 0.9% eye drops,Eye Dps,N
+0905011K0AAAGAG,Calcium gluconate 600mg tablets,Tab,0905011K0AAARAR,Calcium gluconate 600mg capsules,Cap,
+0905013G0AAA2A2,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tab,Tab,0905013G0AAA4A4,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) caps,Cap,Y
+0905013G0AAA4A4,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) caps,Cap,0905013G0AABVBV,Mag glycerophos (mag 97.2mg (4mmol)) oral pdr sach,Pdrs,
+0905013G0AABMBM,Magnesium glycerophosphate (magnesium 48.6mg (2mmol)) caps,Cap,0905013G0AACXCX,Magnesium glycerophosphate (magnesium 48.6mg (2mmol)) tab,Tab,Y
+0905013G0AACXCX,Magnesium glycerophosphate (magnesium 48.6mg (2mmol)) tab,Tab,0905013G0AABMBM,Magnesium glycerophosphate (magnesium 48.6mg (2mmol)) caps,Cap,Y
+0905021L0AAAGAG,Sodium dihydrogen phosphate dihydrate 780mg/5ml susp,Oral Susp,0905021L0AAASAS,Sodium dihydrogen phosphate dihydrate 780mg/5ml soln,Oral Soln,Y
+0905021L0AAASAS,Sodium dihydrogen phosphate dihydrate 780mg/5ml soln,Oral Soln,0905021L0AAAGAG,Sodium dihydrogen phosphate dihydrate 780mg/5ml susp,Oral Susp,Y
+0905050A0AAAAAA,Selenium 100micrograms/2ml oral solution unit dose ampoules,Oral Soln,0905050A0AAACAC,Selenium 100micrograms/2ml solution for injection ampoules,Inj,N
+0905050A0AAACAC,Selenium 100micrograms/2ml solution for injection ampoules,Inj,0905050A0AAAAAA,Selenium 100micrograms/2ml oral solution unit dose ampoules,Oral Soln,N
+0906022K0AAACAC,Nicotinamide 500mg tablets,Tab,0906022K0AAAGAG,Nicotinamide 500mg capsules,Cap,Y
+0906022K0AAAGAG,Nicotinamide 500mg capsules,Cap,0906022K0AAACAC,Nicotinamide 500mg tablets,Tab,Y
+0906024N0AAAGAG,Pyridoxine 10mg tablets,Tab,0906024N0AABJBJ,Pyridoxine 10mg capsules,Cap,Y
+0906024N0AAAJAJ,Pyridoxine 100mg tablets,Tab,0906024N0AABEBE,Pyridoxine 100mg capsules,Cap,
+0906025P0AAAAAA,Riboflavin 50mg tablets,Tab,0906025P0AABFBF,Riboflavin 50mg capsules,Cap,Y
+0906025P0AABPBP,Riboflavin 100mg tablets,Tab,0906025P0AAAUAU,Riboflavin 100mg capsules,Cap,Y
+0906026M0AAAXAX,Thiamine 50mg/5ml oral solution,Oral Soln,0906026M0AABKBK,Thiamine 50mg/5ml oral suspension,Oral Susp,Y
+0906026M0AABKBK,Thiamine 50mg/5ml oral suspension,Oral Susp,0906026M0AAAXAX,Thiamine 50mg/5ml oral solution,Oral Soln,Y
+090602800AAANAN,Potassium aminobenzoate 500mg capsules,Cap,090602800AAAVAV,Potassium aminobenzoate 500mg tablets,Tab,
+0906031C0AAAIAI,Ascorbic acid 500mg tablets,Tab,0906031C0AABIBI,Ascorbic acid 500mg capsules,Cap,Y
+0906031C0AAALAL,Ascorbic acid 500mg chewable tablets,Tab Chble,0906031C0AABIBI,Ascorbic acid 500mg capsules,Cap,
+0906031C0AACBCB,Ascorbic acid 500mg chewable tablets sugar free,Tab Chble,0906031C0AABIBI,Ascorbic acid 500mg capsules,Cap,
+0906031C0AAAUAU,Ascorbic acid 500mg effervescent tablets,Tab Eff,0906031C0AABIBI,Ascorbic acid 500mg capsules,Cap,
+0906031C0AABABA,Ascorbic acid 500mg modified-release capsules,Cap,0906031C0AABJBJ,Ascorbic acid 500mg modified-release tablets,Tab,Y
+0906031C0AABJBJ,Ascorbic acid 500mg modified-release tablets,Tab,0906031C0AABABA,Ascorbic acid 500mg modified-release capsules,Cap,Y
+0906040G0AAANAN,Colecalciferol 800unit capsules,Cap,0906040G0AACSCS,Colecalciferol 800unit tablets,Tab,Y
+0906040G0AAATAT,"Colecalciferol 10,000units/5ml oral suspension",Oral Susp,0906040G0AACUCU,"Colecalciferol 10,000units/5ml oral solution",Oral Soln,Y
+0906040G0AABABA,"Colecalciferol 2,000unit capsules",Cap,0906040G0AADBDB,"Colecalciferol 2,000unit tablets",Tab,Y
+0906040G0AABGBG,"Colecalciferol 1,000unit tablets",Tab,0906040G0AABHBH,"Colecalciferol 1,000unit capsules",Cap,Y
+0906040G0AABHBH,"Colecalciferol 1,000unit capsules",Cap,0906040G0AABGBG,"Colecalciferol 1,000unit tablets",Tab,Y
+0906040G0AABIBI,Colecalciferol 400unit capsules,Cap,0906040G0AAELEL,Colecalciferol 400unit tablets,Tab,Y
+0906040G0AABNBN,"Colecalciferol 5,000units/5ml oral solution",Oral Soln,0906040G0AAAXAX,"Colecalciferol 5,000units/5ml oral suspension",Oral Susp,
+0906040G0AAELEL,Colecalciferol 400unit tablets,Tab,0906040G0AABIBI,Colecalciferol 400unit capsules,Cap,Y
+0906040G0AABSBS,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,Tab,0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tab,Tab Chble,Y
+0906040G0AABWBW,Colecalciferol 400unit / Calcium carbonate 1.25g chew tab,Tab Chble,0906040G0AACCCC,Colecalciferol 400unit / Calcium carbonate 1.25g tablets,Tab,Y
+0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tab,Tab Chble,0906040G0AABSBS,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,Tab,Y
+0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tab,Tab Chble,0906040G0AACBCB,Colecalciferol 400unit / Calcium carbonate 1.5g efferv tab,Tab Eff,Y
+0906040G0AACBCB,Colecalciferol 400unit / Calcium carbonate 1.5g efferv tab,Tab Eff,0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tab,Tab Chble,Y
+0906040G0AACCCC,Colecalciferol 400unit / Calcium carbonate 1.25g tablets,Tab,0906040G0AABWBW,Colecalciferol 400unit / Calcium carbonate 1.25g chew tab,Tab Chble,Y
+0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tab,Tab Chble,0906040G0AABSBS,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,Tab,Y
+0906040G0AACLCL,"Colecalciferol 20,000units/ml oral drops",Oral Dps,0906040G0AADGDG,"Colecalciferol 20,000units/ml oral solution",Oral Soln,N
+0906040G0AACSCS,Colecalciferol 800unit tablets,Tab,0906040G0AAANAN,Colecalciferol 800unit capsules,Cap,Y
+0906040G0AACUCU,"Colecalciferol 10,000units/5ml oral solution",Oral Soln,0906040G0AAATAT,"Colecalciferol 10,000units/5ml oral suspension",Oral Susp,Y
+0906040G0AACWCW,Colecalciferol 800unit / Calcium carbonate 1.25g tablets,Tab,0906040N0AAEXEX,Colecalciferol 800unit / Calcium carbonate 1.25g chew tab,Tab Chble,Y
+0906040G0AADBDB,"Colecalciferol 2,000unit tablets",Tab,0906040G0AABABA,"Colecalciferol 2,000unit capsules",Cap,Y
+0906040G0AADGDG,"Colecalciferol 20,000units/ml oral solution",Oral Soln,0906040G0AACLCL,"Colecalciferol 20,000units/ml oral drops",Oral Dps,N
+0906040N0AADCDC,"Ergocalciferol 1,000units/5ml oral suspension",Oral Susp,0906040N0AAFGFG,"Ergocalciferol 1,000units/5ml oral solution",Oral Soln,Y
+0906040N0AADLDL,"Ergocalciferol 10,000units/5ml oral suspension",Liq Spec,0906040N0AAFIFI,"Ergocalciferol 10,000units/5ml oral solution",Oral Soln,Y
+0906040N0AAEIEI,"Ergocalciferol 6,000units/5ml oral suspension",Oral Susp,0906040N0AAFJFJ,"Ergocalciferol 6,000units/5ml oral solution",Oral Soln,Y
+0906040N0AAEXEX,Colecalciferol 800unit / Calcium carbonate 1.25g chew tab,Tab Chble,0906040G0AACWCW,Colecalciferol 800unit / Calcium carbonate 1.25g tablets,Tab,Y
+0906040N0AAFGFG,"Ergocalciferol 1,000units/5ml oral solution",Oral Soln,0906040N0AADCDC,"Ergocalciferol 1,000units/5ml oral suspension",Oral Susp,Y
+0906040N0AAFIFI,"Ergocalciferol 10,000units/5ml oral solution",Oral Soln,0906040N0AADLDL,"Ergocalciferol 10,000units/5ml oral suspension",Liq Spec,Y
+0906040N0AAFJFJ,"Ergocalciferol 6,000units/5ml oral solution",Oral Soln,0906040N0AAEIEI,"Ergocalciferol 6,000units/5ml oral suspension",Oral Susp,Y
+0906040N0AAFKFK,"Ergocalciferol 100,000units/5ml oral solution",Oral Soln,0906040N0AADDDD,"Ergocalciferol 100,000units/5ml oral suspension",Oral Susp,
+0906060L0AAAGAG,Menadiol 5mg/5ml oral solution,Oral Soln,0906060L0AAAPAP,Menadiol 5mg/5ml oral suspension,Oral Susp,Y
+0906060L0AAAPAP,Menadiol 5mg/5ml oral suspension,Oral Susp,0906060L0AAAGAG,Menadiol 5mg/5ml oral solution,Oral Soln,Y
+0906060Q0AAACAC,Phytomenadione 10mg tablets,Tab,0906060Q0AABCBC,Phytomenadione 10mg capsules,Cap,Y
+0906060Q0AABCBC,Phytomenadione 10mg capsules,Cap,0906060Q0AAACAC,Phytomenadione 10mg tablets,Tab,Y
+0908010N0AAABAB,Sodium benzoate 500mg capsules,Cap,0908010N0AAAXAX,Sodium benzoate 500mg tablets,Tab,Y
+0908010N0AAAXAX,Sodium benzoate 500mg tablets,Tab,0908010N0AAABAB,Sodium benzoate 500mg capsules,Cap,Y
+0908010P0AAACAC,Sodium phenylbutyrate 500mg capsules,Cap,0908010P0AAAGAG,Sodium phenylbutyrate 500mg tablets,Tab,Y
+0908010P0AAAGAG,Sodium phenylbutyrate 500mg tablets,Tab,0908010P0AAACAC,Sodium phenylbutyrate 500mg capsules,Cap,Y
+091101000AADQDQ,Arginine 500mg tablets,Tab,091101000AACSCS,Arginine 500mg capsules,Cap,Y
+091101000AAERER,Glycine powder,Pdrs,091101000AAFBFB,Glycine 1g oral powder sachets,Pdr Sach,N
+091101000AAFBFB,Glycine 1g oral powder sachets,Pdr Sach,091101000AAERER,Glycine powder,Pdrs,N
+091102000AAAIAI,Ubidecarenone 30mg capsules,Cap,091102000AABMBM,Ubidecarenone 30mg tablets,Tab,Y
+091102000AABMBM,Ubidecarenone 30mg tablets,Tab,091102000AAAIAI,Ubidecarenone 30mg capsules,Cap,Y
+091200000AADGDG,Glucosamine sulfate 500mg tablets,Tab,091200000AADJDJ,Glucosamine sulfate 500mg capsules,Cap,Y
+091200000AADJDJ,Glucosamine sulfate 500mg capsules,Cap,091200000AADGDG,Glucosamine sulfate 500mg tablets,Tab,Y
+091200000AAEEEE,Glucosamine sulfate 400mg / Chondroitin sulfate 100mg caps,Cap,091200000AAELEL,Glucosamine sulfate 400mg / Chondroitin sulfate 100mg tab,Tab,Y
+091200000AAELEL,Glucosamine sulfate 400mg / Chondroitin sulfate 100mg tab,Tab,091200000AAEEEE,Glucosamine sulfate 400mg / Chondroitin sulfate 100mg caps,Cap,Y
+1001010ADAAACAC,Ibuprofen lysine 400mg tablets,Tab,1001010ADAAADAD,Ibuprofen lysine 400mg oral powder sachets,Sach,
+1001010C0AAADAD,Diclofenac sodium 25mg gastro-resistant tablets,Tab E/C,1001010C0AAATAT,Diclofenac 25mg suppositories,Suppos,Y
+1001010C0AAAEAE,Diclofenac sodium 50mg gastro-resistant tablets,Tab E/C,1001010C0AAAUAU,Diclofenac 50mg suppositories,Suppos,Y
+1001010C0AAAFAF,Diclofenac sodium 100mg modified-release tablets,Tab,1001010C0AAANAN,Diclofenac sodium 100mg modified-release capsules,Cap,Y
+1001010C0AAALAL,Diclofenac sodium 75mg modified-release tablets,Tab,1001010C0AAAWAW,Diclofenac sodium 75mg modified-release capsules,Cap,Y
+1001010C0AAANAN,Diclofenac sodium 100mg modified-release capsules,Cap,1001010C0AAAFAF,Diclofenac sodium 100mg modified-release tablets,Tab,Y
+1001010C0AAATAT,Diclofenac 25mg suppositories,Suppos,1001010C0AAADAD,Diclofenac sodium 25mg gastro-resistant tablets,Tab E/C,N
+1001010C0AAAUAU,Diclofenac 50mg suppositories,Suppos,1001010C0AAAEAE,Diclofenac sodium 50mg gastro-resistant tablets,Tab E/C,N
+1001010C0AAAWAW,Diclofenac sodium 75mg modified-release capsules,Cap,1001010C0AAALAL,Diclofenac sodium 75mg modified-release tablets,Tab,Y
+1001010J0AAADAD,Ibuprofen 200mg tablets,Tab,1001010J0AAAAAA,Ibuprofen 200mg capsules,Cap,Y
+1001010J0AAAEAE,Ibuprofen 400mg tablets,Tab,1001010J0AAAUAU,Ibuprofen 400mg capsules,Cap,Y
+1001010J0AAAFAF,Ibuprofen 600mg tablets,Tab,1001010J0AAANAN,Ibuprofen 600mg effervescent granules sachets,Gran Eff Sach,Y
+1001010J0AAANAN,Ibuprofen 600mg effervescent granules sachets,Gran Eff Sach,1001010J0AAAFAF,Ibuprofen 600mg tablets,Tab,N
+1001010J0AABNBN,Ibuprofen 200mg orodispersible tablets sugar free,Orodisper Tab,1001010J0AAAAAA,Ibuprofen 200mg capsules,Cap,Y
+1001010P0AAADAD,Naproxen 250mg tablets,Tab,1001010P0AAAHAH,Naproxen 250mg gastro-resistant tablets,Tab E/C,Y
+1001010P0AAAHAH,Naproxen 250mg gastro-resistant tablets,Tab E/C,1001010P0AAADAD,Naproxen 250mg tablets,Tab,Y
+1001010R0AAAAAA,Piroxicam 10mg capsules,Cap,1001010R0AAADAD,Piroxicam 10mg dispersible tablets,Tab Disper,
+1001010R0AAAEAE,Piroxicam 20mg dispersible tablets,Tab Disper,1001010R0AAABAB,Piroxicam 20mg capsules,Cap,N
+1001040C0AAALAL,Allopurinol 300mg/5ml oral solution,Oral Soln,1001040C0AAAXAX,Allopurinol 300mg/5ml oral suspension,Oral Susp,Y
+1001040C0AAAPAP,Allopurinol 100mg/5ml oral solution,Oral Soln,1001040C0AAAWAW,Allopurinol 100mg/5ml oral suspension,Oral Susp,Y
+1001040C0AAAWAW,Allopurinol 100mg/5ml oral suspension,Oral Susp,1001040C0AAAPAP,Allopurinol 100mg/5ml oral solution,Oral Soln,Y
+1001040C0AAAXAX,Allopurinol 300mg/5ml oral suspension,Oral Susp,1001040C0AAALAL,Allopurinol 300mg/5ml oral solution,Oral Soln,Y
+1001050A0AAABAB,Glucosamine hydrochloride 750mg tablets,Tab,1001050A0AAAMAM,Glucosamine hydrochloride 750mg capsules,Cap,
+1001050A0AAACAC,Glucosamine hydrochloride 1.5g chewable tablets,Tab Chble,1001050A0AAAHAH,Glucosamine hydrochloride 1.5g tablets,Tab,Y
+1001050A0AAAHAH,Glucosamine hydrochloride 1.5g tablets,Tab,1001050A0AAACAC,Glucosamine hydrochloride 1.5g chewable tablets,Tab Chble,Y
+1002010Q0AABIBI,Pyridostigmine bromide 60mg/5ml oral suspension,Liq Spec,1002010Q0AABFBF,Pyridostigmine bromide 60mg/5ml oral solution,Oral Soln,
+1002010Q0AAANAN,Pyridostigmine bromide 30mg/5ml oral solution,Oral Soln,1002010Q0AABHBH,Pyridostigmine bromide 30mg/5ml oral suspension,Oral Susp,Y
+1002010Q0AABGBG,Pyridostigmine bromide 20mg/5ml oral suspension,Oral Susp,1002010Q0AAAMAM,Pyridostigmine bromide 20mg/5ml oral solution,Oral Soln,
+1002010Q0AABHBH,Pyridostigmine bromide 30mg/5ml oral suspension,Oral Susp,1002010Q0AAANAN,Pyridostigmine bromide 30mg/5ml oral solution,Oral Soln,Y
+1002020J0AABIBI,Dantrolene 100mg/5ml oral solution,Oral Soln,1002020J0AABQBQ,Dantrolene 100mg/5ml oral suspension,Oral Susp,Y
+1002020J0AABQBQ,Dantrolene 100mg/5ml oral suspension,Oral Susp,1002020J0AABIBI,Dantrolene 100mg/5ml oral solution,Oral Soln,Y
+1002020J0AABRBR,Dantrolene 10mg/5ml oral suspension,Oral Susp,1002020J0AAAXAX,Dantrolene 10mg/5ml oral solution,Oral Soln,
+100302040AAAAAA,Dimethyl sulfoxide 50% cream,Crm,0704040F0AAAAAA,Dimethyl sulfoxide 50% solution for instillation,Ster Soln,
+1003020P0AAAAAA,Ibuprofen 5% cream,Crm,1003020P0AAACAC,Ibuprofen 5% gel,Gel,Y
+1003020P0AAACAC,Ibuprofen 5% gel,Gel,1003020P0AAAAAA,Ibuprofen 5% cream,Crm,Y
+1003020W0AAAAAA,Salicylic acid 2% / Mucopolysaccharide polysulfate 0.2% gel,Gel,1003020W0AAABAB,Salicylic acid 2% / Mucopolysaccharide polysulfate 0.2% crm,Crm,Y
+1003020W0AAABAB,Salicylic acid 2% / Mucopolysaccharide polysulfate 0.2% crm,Crm,1003020W0AAAAAA,Salicylic acid 2% / Mucopolysaccharide polysulfate 0.2% gel,Gel,Y
+1103010B0AAAAAA,Ciprofloxacin 0.3% eye drops,Eye Dps,1201010ACAAAAAA,Ciprofloxacin 0.3% ear drops,Ear Dps,N
+1103010E0AAAAAA,Dibrompropamidine 0.15% eye ointment,Eye Oint,1310050K0AAAAAA,Dibrompropamidine 0.15% cream,Crm,N
+1103010Y0AAAAAA,Ofloxacin 0.3% eye drops,Eye Dps,1201010ABAAAAAA,Ofloxacin 0.3% ear drops,Ear Dps,N
+1104010S0AABLBL,Prednisolone sodium phosphate 0.1% eye drops,Eye Dps,1104010S0AABHBH,Prednisolone sodium phosphate 0.1% ear drops,Ear Dps,
+1104010S0AABMBM,Prednisolone sodium phosphate 0.3% eye drops,Eye Dps,1104010S0AABIBI,Prednisolone sodium phosphate 0.3% ear drops,Ear Dps,
+1104020T0AAAAAA,Sodium cromoglicate 2% eye drops,Eye Dps Aq,1202010P0AAAHAH,Sodium cromoglicate 2% nasal spray,Aq Nsl Spy,
+1105000B0AAAEAE,Atropine 1% eye drops,Eye Dps,1105000B0AAAHAH,Atropine 1% eye ointment,Eye Oint,N
+1105000B0AAAHAH,Atropine 1% eye ointment,Eye Oint,1105000B0AAAEAE,Atropine 1% eye drops,Eye Dps,N
+1106000B0AABQBQ,Acetazolamide 250mg/5ml oral suspension,Oral Susp,1106000B0AAATAT,Acetazolamide 250mg/5ml oral solution,Oral Soln,
+1106000X0AAAEAE,Pilocarpine hydrochloride 4% eye drops,Eye Dps,1106000X0AABDBD,Pilocarpine hydrochloride 4% eye gel,Eye Gel,
+1106000Z0AAAAAA,Timolol 0.25% eye drops,Eye Dps,1106000Z0AAAPAP,Timolol 0.25% eye gel,Gel Eye Dps,N
+1106000Z0AAABAB,Timolol 0.5% eye drops,Eye Dps,1106000Z0AAAQAQ,Timolol 0.5% eye gel,Gel Eye Dps,N
+1106000Z0AAAPAP,Timolol 0.25% eye gel,Gel Eye Dps,1106000Z0AAAAAA,Timolol 0.25% eye drops,Eye Dps,N
+1106000Z0AAAQAQ,Timolol 0.5% eye gel,Gel Eye Dps,1106000Z0AAABAB,Timolol 0.5% eye drops,Eye Dps,N
+1108010AAAAAIAI,Ciclosporin 2% eye ointment,Eye Oint,1108010AAAAAAAA,Ciclosporin 2% eye drops,Eye Dps,
+1108010K0AAAJAJ,Sodium chloride 0.5% eye ointment,Eye Oint,1108010K0AAAWAW,Sodium chloride 0.5% eye drops,Eye Dps,N
+1108010K0AAAWAW,Sodium chloride 0.5% eye drops,Eye Dps,1108010K0AAAJAJ,Sodium chloride 0.5% eye ointment,Eye Oint,N
+1108010K0AACFCF,Sodium chloride 5% eye ointment,Eye Oint,1108010K0AAABAB,Sodium chloride 5% eye drops (drug),Eye Dps,
+1201010ABAAAAAA,Ofloxacin 0.3% ear drops,Ear Dps,1103010Y0AAAAAA,Ofloxacin 0.3% eye drops,Eye Dps,N
+1201010ACAAAAAA,Ciprofloxacin 0.3% ear drops,Ear Dps,1103010B0AAAAAA,Ciprofloxacin 0.3% eye drops,Eye Dps,N
+1202010C0AAAAAA,Beclometasone 50micrograms/dose nasal spray,Nsl Spy,0302000C0AAASAS,Beclometasone 50micrograms/dose breath actuated inhaler,Inha B/A,
+1202030R0AAAAAA,Mupirocin 2% nasal ointment,Nsl Oint,1310011M0AAABAB,Mupirocin 2% cream,Crm,N
+1302010U0AAASAS,Urea 5% shampoo,Shampoo,1302010U0AAAKAK,Urea 5% cream,Crm,N
+1302010U0AAAWAW,Urea 5% scalp application,Scalp Applic,1302010U0AAAKAK,Urea 5% cream,Crm,N
+1303000I0AAAAAA,Crotamiton 10% cream,Crm,1303000I0AAABAB,Crotamiton 10% lotion,Lot,N
+1303000I0AAABAB,Crotamiton 10% lotion,Lot,1303000I0AAAAAA,Crotamiton 10% cream,Crm,N
+1304000B0AAAAAA,Alclometasone 0.05% cream,Crm,1304000B0AABABA,Alclometasone 0.05% ointment,Oint,
+1304000C0AAAAAA,Beclometasone 0.025% cream,Crm,1304000C0AABABA,Beclometasone 0.025% ointment,Oint,Y
+1304000C0AABABA,Beclometasone 0.025% ointment,Oint,1304000C0AAAAAA,Beclometasone 0.025% cream,Crm,Y
+1304000D0AAAAAA,Betamethasone dipropionate 0.05% cream,Crm,1304000D0AABABA,Betamethasone dipropionate 0.05% ointment,Oint,Y
+1304000D0AABABA,Betamethasone dipropionate 0.05% ointment,Oint,1304000D0AAAAAA,Betamethasone dipropionate 0.05% cream,Crm,Y
+1304000D0AABCBC,Betamethasone dipropionate 0.05% scalp lotion,Scalp Lot,1304000D0AAAAAA,Betamethasone dipropionate 0.05% cream,Crm,N
+1304000F0AAAAAA,Betamethasone valerate 0.1% cream,Crm,1304000F0AABCBC,Betamethasone valerate 0.1% lotion,Lot,N
+1304000F0AAABAB,Betamethasone valerate 0.025% cream,Crm,1304000F0AABBBB,Betamethasone valerate 0.025% ointment,Oint,Y
+1304000F0AABABA,Betamethasone valerate 0.1% ointment,Oint,1304000F0AAAAAA,Betamethasone valerate 0.1% cream,Crm,Y
+1304000F0AABBBB,Betamethasone valerate 0.025% ointment,Oint,1304000F0AAABAB,Betamethasone valerate 0.025% cream,Crm,Y
+1304000F0AABCBC,Betamethasone valerate 0.1% lotion,Lot,1304000F0AAAAAA,Betamethasone valerate 0.1% cream,Crm,Y
+1304000F0AABDBD,Betamethasone valerate 0.1% scalp application,Scalp Applic,1304000F0AAAAAA,Betamethasone valerate 0.1% cream,Crm,N
+1304000F0AACACA,Betamethasone valerate 0.1% / Clioquinol 3% cream,Crm,1304000F0AACDCD,Betamethasone valerate 0.1% / Clioquinol 3% ointment,Oint,Y
+1304000F0AACDCD,Betamethasone valerate 0.1% / Clioquinol 3% ointment,Oint,1304000F0AACACA,Betamethasone valerate 0.1% / Clioquinol 3% cream,Crm,Y
+1304000G0AAAAAA,Clobetasol 0.05% cream,Crm,1304000G0AABABA,Clobetasol 0.05% ointment,Oint,Y
+1304000G0AABABA,Clobetasol 0.05% ointment,Oint,1304000G0AAAAAA,Clobetasol 0.05% cream,Crm,Y
+1304000G0AABBBB,Clobetasol 0.05% scalp application,Scalp Applic,1304000G0AAAAAA,Clobetasol 0.05% cream,Crm,N
+1304000H0AAAAAA,Clobetasone 0.05% cream,Crm,1304000H0AABABA,Clobetasone 0.05% ointment,Oint,Y
+1304000H0AABABA,Clobetasone 0.05% ointment,Oint,1304000H0AAAAAA,Clobetasone 0.05% cream,Crm,Y
+1304000L0AAABAB,Diflucortolone 0.1% oily cream,Oily Crm,1304000L0AAAAAA,Diflucortolone 0.1% cream,Crm,Y
+1304000L0AABBBB,Diflucortolone 0.1% ointment,Oint,1304000L0AAAAAA,Diflucortolone 0.1% cream,Crm,Y
+1304000N0AAABAB,Fluocinolone acetonide 0.025% cream,Crm,1304000N0AABDBD,Fluocinolone acetonide 0.025% gel,Gel,Y
+1304000N0AAADAD,Fluocinolone acetonide 0.00625% cream,Crm,1304000N0AABCBC,Fluocinolone acetonide 0.00625% ointment,Oint,Y
+1304000N0AABBBB,Fluocinolone acetonide 0.025% ointment,Oint,1304000N0AAABAB,Fluocinolone acetonide 0.025% cream,Crm,Y
+1304000N0AABCBC,Fluocinolone acetonide 0.00625% ointment,Oint,1304000N0AAADAD,Fluocinolone acetonide 0.00625% cream,Crm,Y
+1304000N0AABDBD,Fluocinolone acetonide 0.025% gel,Gel,1304000N0AAABAB,Fluocinolone acetonide 0.025% cream,Crm,Y
+1304000N0AACACA,Fluocinolone acetonide 0.025% / Clioquinol 3% cream,Crm,1304000N0AACCCC,Fluocinolone acetonide 0.025% / Clioquinol 3% ointment,Oint,Y
+1304000N0AACBCB,Fluocinolone acetonide 0.025% / Neomycin 0.5% cream,Crm,1304000N0AACDCD,Fluocinolone acetonide 0.025% / Neomycin 0.5% ointment,Oint,Y
+1304000N0AACCCC,Fluocinolone acetonide 0.025% / Clioquinol 3% ointment,Oint,1304000N0AACACA,Fluocinolone acetonide 0.025% / Clioquinol 3% cream,Crm,Y
+1304000N0AACDCD,Fluocinolone acetonide 0.025% / Neomycin 0.5% ointment,Oint,1304000N0AACBCB,Fluocinolone acetonide 0.025% / Neomycin 0.5% cream,Crm,Y
+1304000P0AAAAAA,Fluocinonide 0.05% cream,Crm,1304000P0AABABA,Fluocinonide 0.05% ointment,Oint,Y
+1304000P0AABABA,Fluocinonide 0.05% ointment,Oint,1304000P0AAAAAA,Fluocinonide 0.05% cream,Crm,Y
+1304000T0AAAAAA,Fludroxycortide 0.0125% cream,Crm,1304000T0AABABA,Fludroxycortide 0.0125% ointment,Oint,Y
+1304000T0AABABA,Fludroxycortide 0.0125% ointment,Oint,1304000T0AAAAAA,Fludroxycortide 0.0125% cream,Crm,Y
+1304000V0AAAFAF,Hydrocortisone 2.5% cream,Crm,1104010M0AAAEAE,Hydrocortisone 2.5% eye ointment,Eye Oint,
+1304000V0AABBBB,Hydrocortisone 0.5% ointment,Oint,1304000V0AAACAC,Hydrocortisone 0.5% cream,Crm,Y
+1304000V0AABCBC,Hydrocortisone 1% ointment,Oint,1304000V0AAADAD,Hydrocortisone 1% cream,Crm,Y
+1304000V0AABDBD,Hydrocortisone 2.5% ointment,Oint,1304000V0AAAFAF,Hydrocortisone 2.5% cream,Crm,Y
+1304000V0AACHCH,Hydrocortisone 1% / Miconazole 2% cream,Crm,1304000V0AACSCS,Hydrocortisone 1% / Miconazole 2% ointment,Oint,Y
+1304000V0AACSCS,Hydrocortisone 1% / Miconazole 2% ointment,Oint,1304000V0AACHCH,Hydrocortisone 1% / Miconazole 2% cream,Crm,Y
+1304000W0AABABA,Hydrocortisone butyrate 0.1% ointment,Oint,1304000W0AAAAAA,Hydrocortisone butyrate 0.1% cream,Crm,Y
+1304000W0AABBBB,Hydrocortisone butyrate 0.1% scalp lotion,Scalp Lot,1304000W0AAAAAA,Hydrocortisone butyrate 0.1% cream,Crm,N
+1304000W0AABDBD,Hydrocortisone 0.1% topical emulsion,Emuls,1304000W0AAAAAA,Hydrocortisone butyrate 0.1% cream,Crm,Y
+1304000X0AABABA,Hydrocortisone acetate 1% ointment,Oint,1304000X0AAAAAA,Hydrocortisone acetate 1% cream,Crm,Y
+1304000Y0AAAAAA,Mometasone 0.1% cream,Crm,1304000Y0AABABA,Mometasone 0.1% ointment,Oint,Y
+1304000Y0AABABA,Mometasone 0.1% ointment,Oint,1304000Y0AAAAAA,Mometasone 0.1% cream,Crm,Y
+1304000Y0AABBBB,Mometasone 0.1% scalp lotion,Scalp Lot,1304000Y0AAAAAA,Mometasone 0.1% cream,Crm,N
+1305020D0AAAAAA,Calcipotriol 50micrograms/g ointment,Oint,1305020D0AAABAB,Calcipotriol 50micrograms/g cream,Crm,Y
+1305020D0AAABAB,Calcipotriol 50micrograms/g cream,Crm,1305020D0AAAAAA,Calcipotriol 50micrograms/g ointment,Oint,Y
+1305020D0AAAFAF,Calcipotriol 0.005% / Betamethasone dipropionate 0.05% oint,Oint,1305020D0AAAGAG,Calcipotriol 0.005% / Betamethasone dipropionate 0.05% gel,Gel,Y
+1305020D0AAAGAG,Calcipotriol 0.005% / Betamethasone dipropionate 0.05% gel,Gel,1305020D0AAAFAF,Calcipotriol 0.005% / Betamethasone dipropionate 0.05% oint,Oint,Y
+1305020R0AAAAAA,Tacalcitol 4micrograms/g ointment,Oint,1305020R0AAABAB,Tacalcitol 4micrograms/g lotion,Lot,Y
+1305020R0AAABAB,Tacalcitol 4micrograms/g lotion,Lot,1305020R0AAAAAA,Tacalcitol 4micrograms/g ointment,Oint,Y
+1306010C0AAAAAA,Benzoyl peroxide 2.5% gel,Gel,1306010C0AAAZAZ,Benzoyl peroxide 2.5% cream,Crm,
+1306010C0AAABAB,Benzoyl peroxide 5% gel,Gel,1306010C0AAADAD,Benzoyl peroxide 5% cream,Crm,Y
+1306010C0AAACAC,Benzoyl peroxide 10% gel,Gel,1306010C0AAAJAJ,Benzoyl peroxide 10% wash,A-Bact Skin Wsh,Y
+1306010C0AAADAD,Benzoyl peroxide 5% cream,Crm,1306010C0AAABAB,Benzoyl peroxide 5% gel,Gel,Y
+1306010F0AAABAB,Clindamycin 1% aqueous lotion,Lot,1306010F0AAADAD,Clindamycin 1% gel,Gel,N
+1306010F0AAADAD,Clindamycin 1% gel,Gel,1306010F0AAABAB,Clindamycin 1% aqueous lotion,Lot,N
+1306010H0AAAAAA,Adapalene 0.1% gel,Gel,1306010H0AAABAB,Adapalene 0.1% cream,Crm,Y
+1306010H0AAABAB,Adapalene 0.1% cream,Crm,1306010H0AAAAAA,Adapalene 0.1% gel,Gel,N
+1309000H0AAAAAA,Minoxidil 2% solution,Soln,1309000H0AAAKAK,Minoxidil 2% gel,Gel,Y
+1309000I0AAAAAA,Ketoconazole 2% shampoo,Shampoo,1310020L0AAAAAA,Ketoconazole 2% cream,Crm,N
+1310011M0AAAAAA,Mupirocin 2% ointment,Oint,1310011M0AAABAB,Mupirocin 2% cream,Crm,N
+1310011M0AAABAB,Mupirocin 2% cream,Crm,1202030R0AAAAAA,Mupirocin 2% nasal ointment,Nsl Oint,N
+1310012K0AAARAR,Metronidazole 0.75% gel,Gel,1310012K0AAAXAX,Metronidazole 0.75% cream,Crm,N
+1310012K0AAAXAX,Metronidazole 0.75% cream,Crm,1310012K0AAARAR,Metronidazole 0.75% gel,Gel,Y
+131002030AAAAAA,Terbinafine 1% cream,Crm,131002030AAACAC,Terbinafine 1% gel,Gel,Y
+131002030AAACAC,Terbinafine 1% gel,Gel,131002030AAAAAA,Terbinafine 1% cream,Crm,Y
+131002030AAADAD,Terbinafine 1% solution,Soln,131002030AAAAAA,Terbinafine 1% cream,Crm,Y
+1310020H0AAAAAA,Clotrimazole 1% solution,Soln,1310020H0AAABAB,Clotrimazole 1% cream,Crm,Y
+1310020L0AAAAAA,Ketoconazole 2% cream,Crm,1309000I0AAAAAA,Ketoconazole 2% shampoo,Shampoo,N
+1310020N0AAAAAA,Miconazole 2% cream,Crm,1310020N0AAABAB,Miconazole 2% powder,Dust Pdr,N
+1310020Y0AAABAB,Tolnaftate 1% powder,Dust Pdr,1310020Y0AAAAAA,Tolnaftate 1% cream,Crm,
+1310040M0AAACAC,Malathion 0.5% alcoholic lotion,Alcoholic Lot,1310040M0AAADAD,Malathion 0.5% aqueous liquid,Aq Lot,Y
+1310040M0AAADAD,Malathion 0.5% aqueous liquid,Aq Lot,1310040M0AAACAC,Malathion 0.5% alcoholic lotion,Alcoholic Lot,Y
+1310050J0AAAAAA,Chlorhexidine 0.5% gel,Clr Gel,1311020L0AAALAL,Chlorhexidine gluconate 0.5% solution,Soln,N
+1310050K0AAAAAA,Dibrompropamidine 0.15% cream,Crm,1103010E0AAAAAA,Dibrompropamidine 0.15% eye ointment,Eye Oint,N
+1311010S0AAADAD,Sodium chloride 0.9% solution,Soln,1108010K0AAAAAA,Sodium chloride 0.9% eye drops,Eye Dps,Y
+1311020L0AAALAL,Chlorhexidine gluconate 0.5% solution,Soln,1310050J0AAAAAA,Chlorhexidine 0.5% gel,Clr Gel,N
+1311040K0AAATAT,Povidone-Iodine 10% antiseptic solution,Soln,1311040K0AAAFAF,Povidone-Iodine 10% alcoholic solution,Alcoholic Soln,N
+1312000G0AAAUAU,Glycopyrronium bromide 2% in Aqueous cream,Aq Crm,1312000G0AAANAN,Glycopyrronium bromide 2% cream,Crm,
+1312000G0AABCBC,Glycopyrronium bromide 0.05% topical solution,Top Soln,1312000G0AAAYAY,Glycopyrronium bromide 0.05% cream,Crm,
+1314000H0AAAAAA,Heparinoid 0.3% cream,Crm,1314000H0AAABAB,Heparinoid 0.3% gel,Gel,Y
+1314000H0AAABAB,Heparinoid 0.3% gel,Gel,1314000H0AAAAAA,Heparinoid 0.3% cream,Crm,Y
+1404000N0AAAAAA,Rabies vacc pdr & solv for susp inj 1ml vials,Vac Inact (HDC),1404000N0AAABAB,Rabies vacc pdr & solv for soln inj 1ml vials,Vac Inact (PCEC),N
+1404000N0AAABAB,Rabies vacc pdr & solv for soln inj 1ml vials,Vac Inact (PCEC),1404000N0AAAAAA,Rabies vacc pdr & solv for susp inj 1ml vials,Vac Inact (HDC),N
+1502010I0AAAEAE,Lidocaine 5% ointment,Oint,1502010J0AAELEL,Lidocaine 5% medicated plasters,Medic Plastr,N
+1502010J0AAELEL,Lidocaine 5% medicated plasters,Medic Plastr,1502010I0AAAEAE,Lidocaine 5% ointment,Oint,N
+190601000AAAKAK,Peppermint water concentrated,Water Conc BP,190601000AAALAL,Peppermint water BP 1973,Water BP,N
+190601000AAALAL,Peppermint water BP 1973,Water BP,190601000AAAKAK,Peppermint water concentrated,Water Conc BP,N
+0301020Q0AAABAB,Tiotropium bromide 18microgram inhalation powder capsules,Pdr For Inh Cap 18mcg,0301020Q0AAADAD,Tiotropium bromide 10microgram inhalation pdr caps with dev,Pdr For Inh Cap 10mcg,Y
+0301020Q0AAAAAA,Tiotropium bromide 18microgram inhalation pdr caps with dev,Pdr For Inh Cap 18mcg,0301020Q0AAADAD,Tiotropium bromide 10microgram inhalation pdr caps with dev,Pdr For Inh Cap 10mcg,Y
