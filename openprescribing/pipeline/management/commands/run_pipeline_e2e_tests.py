@@ -128,8 +128,7 @@ def run_end_to_end():
 
 
 def assert_count_equal(expected, model):
-    pass  # TODO post-ODD-cleanup
-    # actual = model.objects.count()
-    # if actual != expected:
-    #     msg = "Expected {} {} objects, found {}".format(expected, model, actual)
-    #     raise CommandError(msg)
+    actual = model.objects.count()
+    if actual != expected:
+        msg = "Expected {} {} objects, found {}".format(expected, model, actual)
+        raise CommandError(msg)

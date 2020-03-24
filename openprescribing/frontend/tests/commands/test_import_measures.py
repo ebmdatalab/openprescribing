@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-from unittest import skip  # TODO post-ODD-cleanup
 import csv
 import itertools
 import json
@@ -23,7 +22,7 @@ from django.test import TestCase, override_settings
 from frontend import bq_schemas as schemas
 from frontend.models import (
     ImportLog,
-    Measure1 as Measure,  # TODO post-ODD-cleanup
+    Measure,
     MeasureGlobal,
     MeasureValue,
     Practice,
@@ -50,7 +49,6 @@ from matrixstore.tests.data_factory import DataFactory
 # calculations.
 
 
-@skip
 class ImportMeasuresTests(TestCase):
     @classmethod
     def setUpTestData(cls):

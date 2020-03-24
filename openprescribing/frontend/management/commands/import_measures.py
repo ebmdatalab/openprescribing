@@ -31,8 +31,7 @@ from gcutils.bigquery import Client
 
 from common import utils
 
-# TODO post-ODD-cleanup
-from frontend.models import MeasureGlobal, MeasureValue, Measure1 as Measure, ImportLog
+from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
 from frontend.utils.bnf_hierarchy import get_all_bnf_codes, simplify_bnf_codes
 
 from google.api_core.exceptions import BadRequest
@@ -127,8 +126,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         start = datetime.now()
-
-        options["bigquery_only"] = True  # TODO post-ODD-cleanup
 
         if options["measure"]:
             measure_ids = options["measure"].split(",")
