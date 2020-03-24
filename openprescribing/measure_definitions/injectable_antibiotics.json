@@ -10,7 +10,7 @@
   "denominator_short": "1000 Patients",
   "why_it_matters": [
     "<p>It is important that we don't overuse antibiotics.  As antimicrobials underpin routine medical practice, "
-    "Antimicrobial resistance poses a significant threat to public health.",
+    "antimicrobial resistance poses a significant threat to public health.",
     "This measure shows the use of injectable preparations listed in the infections chapter of the British National Formulary, including ",
     "antibiotics, antivirals and antifungals.  We have excluded <a href='https://openprescribing.net/dmd/vmp/324311004/'>colistimethate ",
     "sodium</a>, as the injection is more commonly inhaled for the treatment of infections in people with cystic fibrosis.</p>",
