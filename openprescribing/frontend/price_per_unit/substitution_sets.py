@@ -84,7 +84,7 @@ memoize = lru_cache(maxsize=None)
 # https://github.com/ebmdatalab/price-per-dose/issues/11
 #
 # The local copy can be updated using the command:
-#   curl -L https://tinyurl.com/qkewngr > frontend/price_per_unit/formulation_swaps.csv
+#   curl -L https://tinyurl.com/w5ecxfg > frontend/price_per_unit/formulation_swaps.csv
 FORMULATION_SWAPS_FILE = os.path.join(
     os.path.dirname(__file__), "formulation_swaps.csv"
 )
