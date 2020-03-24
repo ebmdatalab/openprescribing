@@ -38,13 +38,13 @@
     "1 = 1"
   ],
   "numerator_bnf_codes_query": [
-    "SELECT DISTINCT bnf.presentation_code",
-    "FROM {hscic}.bnf",
+    "SELECT DISTINCT presentation.bnf_code",
+    "FROM {hscic}.presentation",
     "JOIN ebmdatalab.richard.opioid_measure",
     "ON CONCAT(",
-    "    SUBSTR(bnf.presentation_code,0,9),",
+    "    SUBSTR(presentation.bnf_code,0,9),",
     "    'AA',",
-    "    SUBSTR(bnf.presentation_code,-2,2)",
+    "    SUBSTR(presentation.bnf_code,-2,2)",
     "  ) = CONCAT(",
     "    SUBSTR(opioid_measure.bnf_code,0,11),",
     "    SUBSTR(opioid_measure.bnf_code,-2,2)",
