@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-from unittest import skip  # TODO post-ODD-cleanup
 import csv
 import itertools
 import json
@@ -23,7 +22,7 @@ from django.test import TestCase, override_settings
 from frontend import bq_schemas as schemas
 from frontend.models import (
     ImportLog,
-    Measure1 as Measure,  # TODO post-ODD-cleanup
+    Measure,
     MeasureGlobal,
     MeasureValue,
     Practice,
@@ -50,7 +49,6 @@ from matrixstore.tests.data_factory import DataFactory
 # calculations.
 
 
-@skip
 class ImportMeasuresTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -853,30 +851,38 @@ def upload_prescribing(randint):
     # but for the tests it's much easier to set it up as a normal table.
     table = Client("hscic").get_table("normalised_prescribing")
 
+    headers = [
+        "sha",
+        "regional_team_id",
+        "stp_id",
+        "ccg_id",
+        "pcn_id",
+        "practice_id",
+        "bnf_code",
+        "bnf_name",
+        "items",
+        "net_cost",
+        "actual_cost",
+        "quantity",
+        "month",
+    ]
+
+    headers_to_exclude_from_bq = ["regional_team_id", "stp_id", "pcn_id"]
+
     with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in prescribing_rows:
-            writer.writerow(row)
+            row_to_upload = [
+                item
+                for item, header in zip(row, headers)
+                if header not in headers_to_exclude_from_bq
+            ]
+            writer.writerow(row_to_upload)
         f.seek(0)
         table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
 
-        headers = [
-            "sha",
-            "regional_team_id",
-            "stp_id",
-            "ccg_id",
-            "pcn_id",
-            "practice_id",
-            "bnf_code",
-            "bnf_name",
-            "items",
-            "net_cost",
-            "actual_cost",
-            "quantity",
-            "month",
-        ]
-        prescriptions = pd.read_csv(f.name, names=headers)
-        prescriptions["month"] = prescriptions["month"].str[:10]
+    prescriptions = pd.DataFrame.from_records(prescribing_rows, columns=headers)
+    prescriptions["month"] = prescriptions["month"].str[:10]
 
     return prescriptions
 

@@ -1,4 +1,3 @@
-from unittest import skip  # TODO post-ODD-cleanup
 import mock
 from mock import Mock
 import os
@@ -504,7 +503,6 @@ class TestMeasureDefinitionViews(TestCase):
                 get_bnf_codes.return_value = []
                 call_command("import_measures", definitions_only=True)
 
-    @skip
     def test_can_load_all_measure_definition_pages(self):
         measure_ids = list(Measure.objects.values_list("id", flat=True))
         self.assertGreater(len(measure_ids), 1)

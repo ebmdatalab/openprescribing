@@ -679,56 +679,6 @@ class Measure(models.Model):
         return self.name
 
 
-class Measure1(models.Model):
-    # TODO post-ODD-cleanup
-    id = models.CharField(max_length=40, primary_key=True)
-    name = models.CharField(max_length=500)
-    title = models.CharField(max_length=500)
-    description = models.TextField()
-    why_it_matters = models.TextField(null=True, blank=True)
-    tags = ArrayField(models.CharField(max_length=30), blank=True)
-    tags_focus = ArrayField(
-        models.CharField(max_length=30),
-        null=True,
-        blank=True,
-        help_text=(
-            "Indicates that this measure is an aggregate made up of "
-            "all measures with the listed tags"
-        ),
-    )
-    include_in_alerts = models.BooleanField(default=True)
-    url = models.URLField(null=True, blank=True)
-    is_percentage = models.NullBooleanField()
-    is_cost_based = models.NullBooleanField()
-    low_is_good = models.NullBooleanField()
-    analyse_url = models.CharField(max_length=5000, null=True)
-
-    numerator_type = models.CharField(max_length=20)
-    numerator_short = models.CharField(max_length=100)
-    numerator_columns = models.TextField()
-    numerator_from = models.TextField()
-    numerator_where = models.TextField()
-    numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
-    numerator_bnf_codes_filter = ArrayField(models.CharField(max_length=16), null=True)
-    numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
-    numerator_bnf_codes = ArrayField(models.CharField(max_length=15), null=True)
-
-    denominator_type = models.CharField(max_length=20)
-    denominator_short = models.CharField(max_length=100)
-    denominator_columns = models.TextField()
-    denominator_from = models.TextField()
-    denominator_where = models.TextField()
-    denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
-    denominator_bnf_codes_filter = ArrayField(
-        models.CharField(max_length=16), null=True
-    )
-    denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
-    denominator_bnf_codes = ArrayField(models.CharField(max_length=15), null=True)
-
-    def __str__(self):
-        return self.name
-
-
 class MeasureValue(models.Model):
     """
     An instance of a measure for a particular organisation,
