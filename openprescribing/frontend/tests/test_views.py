@@ -167,21 +167,16 @@ class TestAlertViews(TestCase):
         self.assertEqual(bookmark.pcn.code, "PCN0001")
 
 
+@copy_fixtures_to_matrixstore
 class TestFrontendHomepageViews(TestCase):
-    fixtures = ["practices", "orgs", "one_month_of_measures", "importlog", "dmd-subset"]
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        patcher = mock.patch("frontend.views.views.get_total_savings_for_org")
-        mocked = patcher.start()
-        mocked.return_value = 0
-        cls.patcher = patcher
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.patcher.stop()
-        super().tearDownClass()
+    fixtures = [
+        "practices",
+        "orgs",
+        "one_month_of_measures",
+        "homepage_importlog",
+        "dmd-subset",
+        "homepage_prescriptions",
+    ]
 
     def test_call_regional_team_homepage(self):
         response = self.client.get("/regional-team/Y01/")
@@ -204,7 +199,7 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(response.context["possible_savings"], 0.0)
         self.assertEqual(response.context["entity"].code, "02Q")
         self.assertEqual(response.context["entity_type"], "ccg")
-        self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        self.assertEqual(response.context["date"], datetime.date(2015, 9, 1))
         doc = pq(response.content)
         practices = doc(".practice-list li")
         self.assertEqual(len(practices), 7)
@@ -217,7 +212,7 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, "entity_home_page.html")
         self.assertEqual(response.context["entity"].code, "PCN001")
         self.assertEqual(response.context["entity_type"], "pcn")
-        self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        self.assertEqual(response.context["date"], datetime.date(2015, 9, 1))
         doc = pq(response.content)
         practices = doc(".practice-list li")
         self.assertEqual(len(practices), 5)
@@ -231,10 +226,35 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(response.context["possible_savings"], 0.0)
         self.assertEqual(response.context["entity"].code, "C84001")
         self.assertEqual(response.context["entity_type"], "practice")
-        self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        self.assertEqual(response.context["date"], datetime.date(2015, 9, 1))
         doc = pq(response.content)
         title = doc("h1")
         self.assertEqual(title.text(), "Larwood Surgery")
+
+    def test_call_view_regional_team_homepage_no_prescribing(self):
+        response = self.client.get("/regional-team/Y60/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_stp_homepage_no_prescribing(self):
+        response = self.client.get("/stp/E54000020/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_ccg_homepage_no_prescribing(self):
+        response = self.client.get("/ccg/03X/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_pcn_homepage_no_prescribing(self):
+        response = self.client.get("/pcn/PCN0002/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_practice_homepage_no_prescribing(self):
+        response = self.client.get("/practice/P87629/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
 
 
 class TestFrontendViews(TestCase):

@@ -232,10 +232,7 @@ class Command(BaseCommand):
 
                     row = [
                         "sha",  # This value doesn't matter.
-                        practice.ccg.regional_team_id,
-                        practice.ccg.stp_id,
                         practice.ccg_id,
-                        practice.pcn_id,
                         practice.code,
                         bnf_code,
                         "bnf_name",  # This value doesn't matter
@@ -249,27 +246,19 @@ class Command(BaseCommand):
                     prescribing_rows.append(row)
 
         # Create the minimal amount of prescribing necessary for the
-        # MatrixStore to build and for the PPU calculation to work
-        # successfully. This means at least one prescription for a branded
-        # presentation and its generic equivalent.
-        for bnf_code in ["0601022B0AAASAS", "0601022B0BJADAS"]:
-            bnf_codes.append(bnf_code)
-
-            practice = Practice.objects.all()[0]
+        # MatrixStore to build and for the homepages to load. This means
+        # at least one prescription for each practice.
+        for practice in Practice.objects.all():
+            bnf_code = bnf_codes[-1]
             timestamp = timestamps[-1]
-            # It doesn't really matter what these values are but it's nice for
-            # them to be both predictable and different
-            items = len(bnf_codes)
-            quantity = 50 * len(bnf_codes)
-            net_cost = 10 * len(bnf_codes) + 1000
-            actual_cost = net_cost * 0.93
+            items = 10
+            quantity = 500
+            net_cost = 100
+            actual_cost = 95
 
             row = [
                 "sha",  # This value doesn't matter.
-                practice.ccg.regional_team_id,
-                practice.ccg.stp_id,
                 practice.ccg_id,
-                practice.pcn_id,
                 practice.code,
                 bnf_code,
                 "bnf_name",  # This value doesn't matter
@@ -285,14 +274,14 @@ class Command(BaseCommand):
             # prescribing needs to be written to the database so it gets
             # included in the fixture we create
             Prescription.objects.create(
-                practice_id=row[5],
-                pct_id=row[3],
-                presentation_code=row[6],
-                total_items=row[8],
-                net_cost=row[9],
-                actual_cost=row[10],
-                quantity=row[11],
-                processing_date=row[12][:10],
+                practice_id=row[2],
+                pct_id=row[1],
+                presentation_code=row[3],
+                total_items=row[5],
+                net_cost=row[6],
+                actual_cost=row[7],
+                quantity=row[8],
+                processing_date=row[9][:10],
             )
 
         # Upload presentations to BigQuery: the new measures system requires them

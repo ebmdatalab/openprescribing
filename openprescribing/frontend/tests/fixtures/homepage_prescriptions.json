@@ -1,0 +1,142 @@
+[
+  {
+    "model": "frontend.prescription",
+    "pk": 1000001,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "A85017",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000002,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "A86030",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000003,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "B82005",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000004,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "B82008",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000005,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "B82010",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000006,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "C83019",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000007,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "C83051",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000008,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "C84001",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000009,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "C84024",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  },
+  {
+    "model": "frontend.prescription",
+    "pk": 1000010,
+    "fields": {
+      "total_items": 2,
+      "actual_cost": 3.05,
+      "net_cost": 3.28,
+      "practice": "Y00581",
+      "quantity": 56,
+      "presentation_code": "0408010A0BBAAAA",
+      "processing_date": "2015-09-01",
+      "pct": "03V"
+    }
+  }
+]

@@ -102,9 +102,15 @@ def get_total_savings_for_org(date, org_type, org_id):
     Get total available savings through presentation switches for the given org
     """
     group_by_org = get_row_grouper(org_type)
+    substitution_sets = get_substitution_sets()
+    # This only happens during testing where a test case might not have enough
+    # different presentations to generate any substitutions. If this is the
+    # case then their are, obviously, zero savings available.
+    if not substitution_sets:
+        return 0.0
     totals = get_total_savings_for_org_type(
         db=get_db(),
-        substitution_sets=get_substitution_sets(),
+        substitution_sets=substitution_sets,
         date=date,
         group_by_org=group_by_org,
         min_saving=CONFIG_MIN_SAVINGS_FOR_ORG_TYPE[org_type],

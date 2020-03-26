@@ -4,10 +4,8 @@ import json
 from .api_test_base import ApiTestBase
 
 from frontend.models import PCT
-from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
-@copy_fixtures_to_matrixstore
 class TestAPIMeasureViews(ApiTestBase):
     fixtures = ["one_month_of_measures"]
     api_prefix = "/api/1.0"
