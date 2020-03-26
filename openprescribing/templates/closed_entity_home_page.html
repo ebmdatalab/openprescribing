@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Prescribing measures for {{ entity.name }}{% endblock %}
+{% block active_class %}dashboards{% endblock %}
+{% block container_class %}landing-page{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+{% include '_entity_heading.html' %}
+
+<hr/>
+
+<h2>There is no prescribing data available for this {{ entity_type_human }}</h2>
+
+<p>
+  It may have closed or merged with another {{ entity_type_human }}.
+</p>
+
+<p>
+  Search for other {{ entity_type_human }}s in the <a href="../">index</a>.
+</p>
+
+{% endblock %}

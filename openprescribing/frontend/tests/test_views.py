@@ -231,6 +231,31 @@ class TestFrontendHomepageViews(TestCase):
         title = doc("h1")
         self.assertEqual(title.text(), "Larwood Surgery")
 
+    def test_call_view_regional_team_homepage_no_prescribing(self):
+        response = self.client.get("/regional-team/Y60/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_stp_homepage_no_prescribing(self):
+        response = self.client.get("/stp/E54000020/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_ccg_homepage_no_prescribing(self):
+        response = self.client.get("/ccg/03X/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_pcn_homepage_no_prescribing(self):
+        response = self.client.get("/pcn/PCN0002/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_practice_homepage_no_prescribing(self):
+        response = self.client.get("/practice/P87629/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
 
 class TestFrontendViews(TestCase):
     fixtures = ["chemicals", "sections", "orgs", "practices", "measures", "importlog"]

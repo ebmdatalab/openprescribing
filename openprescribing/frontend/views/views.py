@@ -63,6 +63,7 @@ from frontend.price_per_unit.savings import get_total_savings_for_org
 from frontend.price_per_unit.substitution_sets import (
     get_substitution_sets_by_presentation,
 )
+from matrixstore.db import org_has_prescribing
 
 
 logger = logging.getLogger(__name__)
@@ -182,7 +183,11 @@ def practice_home_page(request, practice_code):
     form = _build_bookmark_form(OrgBookmark, {"practice_id": practice_code})
     context = _home_page_context_for_entity(request, practice)
     context["form"] = form
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -221,7 +226,11 @@ def pcn_home_page(request, pcn_code):
         "form": form,
     }
     context.update(extra_context)
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -253,7 +262,11 @@ def ccg_home_page(request, ccg_code):
         "pcns": ccg.pcns(),
     }
     context.update(extra_context)
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -274,7 +287,11 @@ def stp_home_page(request, stp_code):
     ).order_by("name")
     context = _home_page_context_for_entity(request, stp)
     context["ccgs"] = ccgs
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -297,7 +314,11 @@ def regional_team_home_page(request, regional_team_code):
     ).order_by("name")
     context = _home_page_context_for_entity(request, regional_team)
     context["ccgs"] = ccgs
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -1387,6 +1408,15 @@ def _specified_or_last_date(request, category):
 
 
 def _home_page_context_for_entity(request, entity):
+    entity_type = _org_type_for_entity(entity)
+    context = {
+        "entity": entity,
+        "entity_type": entity_type,
+        "entity_type_human": _entity_type_human(entity_type),
+        "has_prescribing": org_has_prescribing(entity_type, entity.code),
+    }
+    if not context["has_prescribing"]:
+        return context
     prescribing_date = ImportLog.objects.latest_in_category("prescribing").current_at
     six_months_ago = prescribing_date - relativedelta(months=6)
     mv_filter = {
@@ -1394,23 +1424,18 @@ def _home_page_context_for_entity(request, entity):
         "measure__tags__contains": ["core"],
         "percentile__isnull": False,
     }
-    if isinstance(entity, Practice):
+    if entity_type == "practice":
         mv_filter["practice_id"] = entity.code
-        entity_type = "practice"
-    elif isinstance(entity, PCN):
+    elif entity_type == "pcn":
         mv_filter["pcn_id"] = entity.code
-        entity_type = "pcn"
-    elif isinstance(entity, PCT):
+    elif entity_type == "ccg":
         mv_filter["pct_id"] = entity.code
-        entity_type = "ccg"
-    elif isinstance(entity, STP):
+    elif entity_type == "stp":
         mv_filter["stp_id"] = entity.code
-        entity_type = "stp"
-    elif isinstance(entity, RegionalTeam):
+    elif entity_type == "regional_team":
         mv_filter["regional_team_id"] = entity.code
-        entity_type = "regional_team"
     else:
-        raise RuntimeError("Can't handle type: {!r}".format(entity))
+        raise RuntimeError("Can't handle type: {!r}".format(entity_type))
     # find the core measurevalue that is most outlierish
     extreme_measurevalue = (
         MeasureValue.objects.filter_by_org_type(entity_type)
@@ -1470,27 +1495,26 @@ def _home_page_context_for_entity(request, entity):
     if entity_type == "practice":
         measure_options["parentOrgId"] = entity.ccg_id
 
-    context = {
-        "measure": extreme_measure,
-        "measures_count": measures_count,
-        "entity": entity,
-        "entity_type": entity_type,
-        "entity_type_human": _entity_type_human(entity_type),
-        "measures_for_one_entity_url": "measures_for_one_{}".format(
-            entity_type.lower().replace(" ", "_")
-        ),
-        "date": prescribing_date,
-        "measure_options": measure_options,
-        "measure_tags": [
-            (k, v) for (k, v) in sorted(MEASURE_TAGS.items()) if k != "core"
-        ],
-        "ncso_spending": first_or_none(
-            ncso_spending_for_entity(entity, entity_type, num_months=1)
-        ),
-        "spending_for_one_entity_url": "spending_for_one_{}".format(
-            entity_type.lower()
-        ),
-    }
+    context.update(
+        {
+            "measure": extreme_measure,
+            "measures_count": measures_count,
+            "measures_for_one_entity_url": "measures_for_one_{}".format(
+                entity_type.lower().replace(" ", "_")
+            ),
+            "date": prescribing_date,
+            "measure_options": measure_options,
+            "measure_tags": [
+                (k, v) for (k, v) in sorted(MEASURE_TAGS.items()) if k != "core"
+            ],
+            "ncso_spending": first_or_none(
+                ncso_spending_for_entity(entity, entity_type, num_months=1)
+            ),
+            "spending_for_one_entity_url": "spending_for_one_{}".format(
+                entity_type.lower()
+            ),
+        }
+    )
 
     if entity_type in ["practice", "ccg"]:
         context["entity_price_per_unit_url"] = "{}_price_per_unit".format(

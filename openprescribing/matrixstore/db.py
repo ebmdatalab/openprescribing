@@ -29,6 +29,14 @@ def get_db():
     return MatrixStore.from_file(settings.MATRIXSTORE_LIVE_FILE)
 
 
+def org_has_prescribing(org_type, org_id):
+    """
+    Return whether this org has any prescribing data associated with it
+    """
+    row_grouper = get_row_grouper(org_type)
+    return org_id in row_grouper.offsets
+
+
 @memoize
 def get_row_grouper(org_type):
     """
