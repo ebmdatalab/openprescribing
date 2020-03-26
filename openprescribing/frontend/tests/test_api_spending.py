@@ -1,10 +1,8 @@
 from collections import defaultdict
 import csv
 import json
-import warnings
 
-from django.core.cache import CacheKeyWarning
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from .api_test_base import ApiTestBase
 
@@ -16,14 +14,6 @@ from dmd.models import VMPP
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 import numpy as np
-
-
-# The dummy cache backend we use in testing warns that our binary cache keys
-# won't be compatible with memcached, but we really don't care
-warnings.simplefilter("ignore", CacheKeyWarning)
-DUMMY_CACHE_SETTING = {
-    "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
-}
 
 
 def _parse_json_response(response):
@@ -635,7 +625,6 @@ class TestSpendingByOrg(ApiTestBase):
         )
 
 
-@override_settings(CACHES=DUMMY_CACHE_SETTING)
 @copy_fixtures_to_matrixstore
 class TestAPISpendingViewsGhostGenerics(TestCase):
     @classmethod
