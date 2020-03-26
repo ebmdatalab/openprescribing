@@ -16,7 +16,6 @@ openprescribing/pipeline/e2e-test-data/log.json
 # System files
 *.py[co]
 *.egg*
-*.db
 *.log
 .project
 .pydevproject
@@ -48,3 +47,4 @@ venv/
 tmp
 logs
 deploy-log.json
+/diskcache
