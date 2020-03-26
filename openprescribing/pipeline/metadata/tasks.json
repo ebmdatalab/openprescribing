@@ -246,13 +246,6 @@
             "publish_matrixstore"
         ]
     },
-    "refresh_views": {
-        "type": "post_process",
-        "command": "refresh_views",
-        "dependencies": [
-            "upload_to_bigquery"
-        ]
-    },
     "create_importlog_for_dashboard_data": {
         "type": "post_process",
         "command": "create_importlog_for_dashboard_data",
@@ -272,7 +265,6 @@
         "command": "update_smoketests {last_imported}",
         "dependencies": [
             "import_measures",
-            "refresh_views",
             "publish_matrixstore"
         ]
     },

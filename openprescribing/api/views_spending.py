@@ -1,4 +1,3 @@
-from django.db import connection
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
@@ -16,12 +15,13 @@ from frontend.price_per_unit.savings import (
     get_savings_for_orgs,
     get_all_savings_for_orgs,
 )
+from frontend.ghost_branded_generics import (
+    get_ghost_branded_generic_spending,
+    get_total_ghost_branded_generic_spending,
+)
 from matrixstore.db import get_db, get_row_grouper
 
 from . import view_utils as utils
-
-
-MIN_GHOST_GENERIC_DELTA = 2
 
 
 class NotValid(APIException):
@@ -91,7 +91,6 @@ def bubble(request, format=None):
                     "mean_ppu": presentation["mean_ppu"] / 100,
                 }
             )
-
     return Response(
         {
             "plotline": mean_ppu / 100 if mean_ppu is not None else None,
@@ -152,14 +151,7 @@ def price_per_unit(request, format=None):
             # actually want the results over its practices
             if entity_type == "ccg" and bnf_code:
                 entity_type = "practice"
-                practices = Practice.objects.filter(ccg_id=entity_code, setting=4)
-                # Remove any practice codes with no associated prescribing
-                prescribing_practice_codes = get_row_grouper("practice").offsets.keys()
-                entity_codes = [
-                    code
-                    for code in practices.values_list("code", flat=True)
-                    if code in prescribing_practice_codes
-                ]
+                entity_codes = _get_practice_codes_for_ccg(entity_code)
             # Otherwise we should just show the specified org
             else:
                 entity_codes = [entity_code]
@@ -213,6 +205,17 @@ def price_per_unit(request, format=None):
     return response
 
 
+def _get_practice_codes_for_ccg(ccg_id):
+    practices = Practice.objects.filter(ccg_id=ccg_id, setting=4)
+    # Remove any practice codes with no associated prescribing
+    prescribing_practice_codes = get_row_grouper("practice").offsets.keys()
+    return [
+        code
+        for code in practices.values_list("code", flat=True)
+        if code in prescribing_practice_codes
+    ]
+
+
 def _get_concession_bnf_codes(date):
     """
     Return list of BNF codes to which NCSO price concessions were applied in
@@ -227,95 +230,52 @@ def _get_concession_bnf_codes(date):
 
 @api_view(["GET"])
 def ghost_generics(request, format=None):
-    """Returns price per unit data for presentations and practices or
-    CCGs
-
     """
-    # We compare the price that should have been paid for a generic,
-    # with the price actually paid. The price that should have been
-    # paid comes from the Drug Tariff; however, we can't use that data
-    # reliably because the BSA use an internal copy that doesn't match
-    # with the published version (see #1318 for an explanation).
-    #
-    # Therefore, we use the median price paid nationally as a proxy
-    # for the Drug Tariff price, which is computed and stored in the
-    # materialized view `vw__medians_for_tariff` (only contains data
-    # for current month; updated as part of the pipeline).
+    Returns price per unit data for presentations and practices or CCGs
+    """
+    # We compare the price that should have been paid for a generic, with the
+    # price actually paid. The price that should have been paid comes from the
+    # Drug Tariff; however, we can't use that data reliably because the BSA use
+    # an internal copy that doesn't match with the published version (see #1318
+    # for an explanation). Therefore, we use the median price paid nationally
+    # as a proxy for the Drug Tariff price.
     #
     # We exclude trivial amounts of saving on the grounds these should
     # be actionable savings.
     date = request.query_params.get("date")
     entity_code = request.query_params.get("entity_code")
-    entity_type = request.query_params.get("entity_type")
-    group_by = request.query_params.get("group_by")
-    entity = _get_org_or_404(entity_code, org_type=entity_type)
+    entity_type = request.query_params.get("entity_type").lower()
+    group_by = request.query_params.get("group_by", "practice")
     if not date:
         raise NotValid("You must supply a date")
 
-    params = {"date": date, "entity_code": entity_code}
-    filename = "ghost-generics-%s-%s" % (entity_code, date)
-    extra_conditions = ""
-    if isinstance(entity, Practice):
-        extra_conditions += "  AND practice_id = %(entity_code)s"
-    elif isinstance(entity, PCT):
-        extra_conditions += "  AND ccg_id = %(entity_code)s"
-    else:
-        assert False, "Not implemented for {}".format(entity)
-    sql = """
-    WITH savings AS (
-        SELECT
-            dt.date,
-            practice.code AS practice_id,
-            practice.ccg_id AS pct,
-            dt.median_ppu,
-            CASE
-                WHEN rx.quantity > 0::double precision
-                THEN round((rx.net_cost / rx.quantity)::numeric, 4)
-                ELSE 0
-            END AS price_per_unit,
-            rx.quantity,
-            rx.presentation_code AS bnf_code,
-            dt.nm,
-            rx.net_cost - round(dt.median_ppu::numeric, 4)::double precision * rx.quantity AS possible_savings
-        FROM vw__medians_for_tariff dt
-        INNER JOIN frontend_prescription rx
-            ON rx.processing_date = dt.date AND rx.presentation_code = dt.bnf_code
-        INNER JOIN frontend_practice practice
-            ON practice.code = rx.practice_id
-        WHERE rx.processing_date = %(date)s {extra_conditions}
-    )
-    SELECT *
-    FROM savings s
-    WHERE s.bnf_code::text <> '1106000L0AAAAAA'
-        AND (s.possible_savings >= {min_delta} OR s.possible_savings <= -{min_delta})
-    ORDER BY possible_savings DESC
-    """.format(
-        min_delta=MIN_GHOST_GENERIC_DELTA, extra_conditions=extra_conditions
-    )
     if group_by == "presentation":
-        grouping = """
-          SELECT
-            date, pct, bnf_code,
-            MAX(median_ppu) AS median_ppu,
-            MAX(price_per_unit) AS price_per_unit,
-            SUM(quantity) AS quantity,
-            MAX(nm) AS product_name,
-            SUM(possible_savings) AS possible_savings
-          FROM ({}) s
-          GROUP BY date, pct, bnf_code"""
-        sql = grouping.format(sql)
+        results = get_ghost_branded_generic_spending(date, entity_type, [entity_code])
     elif group_by == "all":
-        grouping = """
-          SELECT
-            SUM(possible_savings) AS possible_savings
-          FROM ({}) s"""
-        sql = grouping.format(sql)
+        total = get_total_ghost_branded_generic_spending(date, entity_type, entity_code)
+        results = [{"possible_savings": total}]
+    elif group_by == "practice":
+        if entity_type == "practice":
+            child_org_type = "practice"
+            child_org_ids = [entity_code]
+        elif entity_type == "ccg":
+            child_org_type = "practice"
+            child_org_ids = _get_practice_codes_for_ccg(entity_code)
+        else:
+            raise ValueError("Unhanlded org_type: {}".format(entity_type))
+        results = get_ghost_branded_generic_spending(
+            date, child_org_type, child_org_ids
+        )
+    else:
+        raise ValueError(group_by)
 
-    with connection.cursor() as cursor:
-        cursor.execute(sql, params)
-        results = utils.dictfetchall(cursor)
+    # Add a practice/CCG columns for consistency with original API
+    for result in results:
+        result[entity_type] = entity_code
+
     response = Response(results)
     if request.accepted_renderer.format == "csv":
+        filename = "ghost-generics-%s-%s" % (entity_code, date)
         filename = "%s.csv" % (filename)
         response["content-disposition"] = "attachment; filename=%s" % filename
     return response

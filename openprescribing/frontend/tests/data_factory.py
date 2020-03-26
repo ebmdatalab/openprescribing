@@ -44,7 +44,7 @@ class DataFactory(object):
             for i in range(0, num_months)
         ]
 
-    def create_practice(self, ccg=None, pcn=None):
+    def create_practice(self, ccg=None, pcn=None, setting=-1):
         if ccg is None:
             ccg = self.create_ccg()
         index = self.next_id()
@@ -53,6 +53,7 @@ class DataFactory(object):
             code="ABC{:03}".format(index),
             ccg=ccg,
             pcn=pcn,
+            setting=setting,
         )
 
     def create_ccg(self, stp=None, regional_team=None):

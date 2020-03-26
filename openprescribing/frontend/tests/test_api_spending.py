@@ -1,19 +1,29 @@
 from collections import defaultdict
 import csv
 import json
+import warnings
 
-from django.db import connection
-from django.test import TestCase
+from django.core.cache import CacheKeyWarning
+from django.test import TestCase, override_settings
 
 from .api_test_base import ApiTestBase
 
 from frontend.models import Prescription
 from frontend.models import TariffPrice
 from frontend.tests.data_factory import DataFactory
-from api.views_spending import MIN_GHOST_GENERIC_DELTA
+from frontend.ghost_branded_generics import MIN_GHOST_GENERIC_DELTA
 from dmd.models import VMPP
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 import numpy as np
+
+
+# The dummy cache backend we use in testing warns that our binary cache keys
+# won't be compatible with memcached, but we really don't care
+warnings.simplefilter("ignore", CacheKeyWarning)
+DUMMY_CACHE_SETTING = {
+    "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+}
 
 
 def _parse_json_response(response):
@@ -625,8 +635,11 @@ class TestSpendingByOrg(ApiTestBase):
         )
 
 
+@override_settings(CACHES=DUMMY_CACHE_SETTING)
+@copy_fixtures_to_matrixstore
 class TestAPISpendingViewsGhostGenerics(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(self):
         self.api_prefix = "/api/1.0"
         factory = DataFactory()
         self.months = factory.create_months_array(start_date="2018-02-01")
@@ -634,7 +647,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         self.practices = []
         for ccg in self.ccgs:
             for _ in range(2):
-                self.practices.append(factory.create_practice(ccg=ccg))
+                self.practices.append(factory.create_practice(ccg=ccg, setting=4))
         self.presentations = factory.create_presentations(2, vmpp_per_presentation=2)
         factory.create_tariff_and_ncso_costings_for_presentations(
             presentations=self.presentations, months=self.months
@@ -645,11 +658,6 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
             factory.create_prescribing_for_practice(
                 practice, presentations=self.presentations, months=self.months
             )
-
-        # Refresh vw__medians_for_tariff materialized view
-        with connection.cursor() as cursor:
-            cursor.execute("REFRESH MATERIALIZED VIEW vw__medians_for_tariff")
-        super(TestAPISpendingViewsGhostGenerics, self).setUp()
 
     def _get(self, **data):
         data["format"] = "json"
@@ -672,7 +680,10 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         # Are practice-level savings as expected?
         for practice in self.practices:
             practice_data = self._get(
-                entity_code=practice.code, entity_type="practice", date="2018-02-01"
+                entity_code=practice.code,
+                entity_type="practice",
+                date="2018-02-01",
+                group_by="presentation",
             )
             practice_expected = expected["practice_savings"][practice.code]
             for data in practice_data:
@@ -685,7 +696,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         ccg_data = self._get(
             entity_code=self.ccgs[0].code, entity_type="CCG", date="2018-02-01"
         )
-        self.assertTrue(all([x["pct"] == self.ccgs[0].code for x in ccg_data]))
+        self.assertTrue(all([x["ccg"] == self.ccgs[0].code for x in ccg_data]))
         savings_count = len(self._practice_savings_for_ccg(self.ccgs[0], expected))
         self.assertEqual(len(ccg_data), savings_count)
 
@@ -699,7 +710,8 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
 
         for d in grouped_ccg_data:
             self.assertEqual(
-                d["possible_savings"], expected["ccg_savings"][d["pct"]][d["bnf_code"]]
+                round(d["possible_savings"], 3),
+                round(expected["ccg_savings"][d["ccg"]][d["bnf_code"]], 3),
             )
 
         # Single presentations which have more than one tariff price
@@ -713,8 +725,6 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         price_to_alter = TariffPrice.objects.last()
         price_to_alter.price_pence *= 2
         price_to_alter.save()
-        with connection.cursor() as cursor:
-            cursor.execute("REFRESH MATERIALIZED VIEW vw__medians_for_tariff")
 
         # Now test the savings are as expected, and fewer than
         # previously
@@ -744,7 +754,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
             for rx in Prescription.objects.filter(
                 presentation_code=presentation.bnf_code
             ):
-                net_costs.append(round(rx.net_cost / rx.quantity, 4))
+                net_costs.append(rx.net_cost / rx.quantity)
             presentation_medians[presentation.bnf_code] = np.percentile(
                 net_costs, 50, interpolation="lower"
             )
@@ -765,10 +775,9 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
                         - (presentation_medians[rx.presentation_code] * rx.quantity),
                         4,
                     )
-                    if (
-                        possible_saving <= -MIN_GHOST_GENERIC_DELTA
-                        or possible_saving >= MIN_GHOST_GENERIC_DELTA
-                    ):
+                    if possible_saving <= (
+                        -MIN_GHOST_GENERIC_DELTA / 100
+                    ) or possible_saving >= (MIN_GHOST_GENERIC_DELTA / 100):
                         practice_savings[practice.code][
                             rx.presentation_code
                         ] = possible_saving
