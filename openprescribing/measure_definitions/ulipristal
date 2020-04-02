@@ -1,0 +1,52 @@
+{
+  "name": "Ulipristal acetate 5mg prescribing for uterine fibroids",
+  "title": [
+    "Ulipristal acetate 5mg prescribing for uterine fibroids"
+  ],
+  "description": [
+    "Number of items for ulipristal acetate 5mg per 1000 patients"
+  ],
+  "numerator_short": "Items",
+  "denominator_short": "1000 Patients",
+  "why_it_matters": [
+    "The <a href='https://bnf.nice.org.uk/drug/zuclopenthixol-acetate.html'> BNF has a safety warning advising that</a>",
+    "zuclopenthixol <b>acetate</b> should only be used in hospitals as it is a relatively short-acting antipsychotic.",
+    "Sometimes it may be confused with zuclopnethixol <b>decanoate</b>, a long-acting antipsychotic which is",
+    "more commonly prescribed in primary care supporting long term maintenance.",
+    "<p>Any prescribing on this measure could prompt investigation to ascertain if zuclopenthixol <b>acetate</b> was prescribed in error.</p>",
+    "<p>Please note that this is an experimental measure to support a new type of alert. We would be grateful for",
+    "any feedback at <a href='mailto:feedback@openprescribing.net?Subject=ulipristal%20measure'>feedback@openprescribing.net</a>",
+    "and you can read more about the measure ",
+    "<a href='https://ebmdatalab.net/zuclopenthixol-acetate-a-new-kind-of-measure-on-openprescribing/'>on our blog</a>.</p>"
+  ],
+  "tags": [
+    "safety"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_filter": [
+    "0604012U0 # ulipristal"
+  ],
+  "denominator_type": "list_size",
+  "authored_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    ""
+  ],
+  "date_reviewed": [
+    "2020-04-02"
+  ],
+  "next_review": [
+    "2020-10-02"
+  ],
+  "measure_notebook_url": [
+    ""
+  ],
+  "measure_complexity": [
+    "low"
+  ]
+}
