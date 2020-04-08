@@ -193,4 +193,4 @@ def constraint_and_index_reconstructor(table_name):
 
 
 def parse_date(s):
-    return datetime.strptime(s, "%Y-%m-%d")
+    return datetime.strptime(s, "%Y-%m-%d").date()
