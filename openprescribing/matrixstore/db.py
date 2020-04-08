@@ -37,6 +37,13 @@ def org_has_prescribing(org_type, org_id):
     return org_id in row_grouper.offsets
 
 
+def latest_prescribing_date():
+    """
+    Return the latest date for which we have prescribing data
+    """
+    return get_db().dates[-1]
+
+
 @memoize
 def get_row_grouper(org_type):
     """

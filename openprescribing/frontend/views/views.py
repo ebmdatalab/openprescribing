@@ -63,7 +63,7 @@ from frontend.price_per_unit.savings import get_total_savings_for_org
 from frontend.price_per_unit.substitution_sets import (
     get_substitution_sets_by_presentation,
 )
-from matrixstore.db import org_has_prescribing
+from matrixstore.db import org_has_prescribing, latest_prescribing_date
 
 
 logger = logging.getLogger(__name__)
@@ -537,7 +537,7 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
         "measures_url_name": "measures_for_one_{}".format(entity_type),
         "measure": measure,
         "measure_options": measure_options,
-        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+        "current_at": parse_date(latest_prescribing_date()),
         "numerator_breakdown_url": _build_api_url(
             "measure_numerators_by_org",
             {"org": entity.code, "org_type": entity_type, "measure": measure.id},
@@ -572,7 +572,7 @@ def measure_for_all_england(request, measure):
         "measures_url_name": "measures_for_one_{}".format(entity_type),
         "measure": measure,
         "measure_options": measure_options,
-        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+        "current_at": parse_date(latest_prescribing_date()),
         "numerator_breakdown_url": _build_api_url(
             "measure_numerators_by_org",
             {"org": "", "org_type": entity_type, "measure": measure.id},
@@ -1403,7 +1403,10 @@ def _specified_or_last_date(request, category):
         except ValueError:
             raise BadRequestError("Date not in valid YYYY-MM-DD format: %s" % date)
     else:
-        date = ImportLog.objects.latest_in_category(category).current_at
+        if category == "prescribing":
+            date = parse_date(latest_prescribing_date())
+        else:
+            date = ImportLog.objects.latest_in_category(category).current_at
     return date
 
 
@@ -1417,7 +1420,7 @@ def _home_page_context_for_entity(request, entity):
     }
     if not context["has_prescribing"]:
         return context
-    prescribing_date = ImportLog.objects.latest_in_category("prescribing").current_at
+    prescribing_date = parse_date(latest_prescribing_date())
     six_months_ago = prescribing_date - relativedelta(months=6)
     mv_filter = {
         "month__gte": six_months_ago,
