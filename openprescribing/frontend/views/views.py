@@ -537,7 +537,7 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
         "measures_url_name": "measures_for_one_{}".format(entity_type),
         "measure": measure,
         "measure_options": measure_options,
-        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+        "current_at": ImportLog.objects.latest_in_category("dashboard_data").current_at,
         "numerator_breakdown_url": _build_api_url(
             "measure_numerators_by_org",
             {"org": entity.code, "org_type": entity_type, "measure": measure.id},
@@ -572,7 +572,7 @@ def measure_for_all_england(request, measure):
         "measures_url_name": "measures_for_one_{}".format(entity_type),
         "measure": measure,
         "measure_options": measure_options,
-        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+        "current_at": ImportLog.objects.latest_in_category("dashboard_data").current_at,
         "numerator_breakdown_url": _build_api_url(
             "measure_numerators_by_org",
             {"org": "", "org_type": entity_type, "measure": measure.id},
@@ -794,7 +794,7 @@ def measure_for_all_entities(request, measure, entity_type):
 
 @handle_bad_request
 def practice_price_per_unit(request, code):
-    date = _specified_or_last_date(request, "prescribing")
+    date = _specified_or_last_date(request, "dashboard_data")
     practice = get_object_or_404(Practice, code=code)
     context = {
         "entity": practice,
@@ -810,7 +810,7 @@ def practice_price_per_unit(request, code):
 
 @handle_bad_request
 def ccg_price_per_unit(request, code):
-    date = _specified_or_last_date(request, "prescribing")
+    date = _specified_or_last_date(request, "dashboard_data")
     ccg = get_object_or_404(PCT, code=code)
     context = {
         "entity": ccg,
@@ -826,7 +826,7 @@ def ccg_price_per_unit(request, code):
 
 @handle_bad_request
 def all_england_price_per_unit(request):
-    date = _specified_or_last_date(request, "prescribing")
+    date = _specified_or_last_date(request, "dashboard_data")
     context = {
         "entity_name": "NHS England",
         "entity_name_and_status": "NHS England",
@@ -841,7 +841,7 @@ def all_england_price_per_unit(request):
 
 @handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
-    date = _specified_or_last_date(request, "prescribing")
+    date = _specified_or_last_date(request, "dashboard_data")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     primary_code = _get_primary_substitutable_bnf_code(bnf_code)
     if bnf_code != primary_code:
@@ -880,7 +880,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 
 @handle_bad_request
 def all_england_price_per_unit_by_presentation(request, bnf_code):
-    date = _specified_or_last_date(request, "prescribing")
+    date = _specified_or_last_date(request, "dashboard_data")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     primary_code = _get_primary_substitutable_bnf_code(bnf_code)
     if bnf_code != primary_code:
@@ -930,7 +930,7 @@ def _get_primary_substitutable_bnf_code(bnf_code):
 
 @handle_bad_request
 def ghost_generics_for_entity(request, code, entity_type):
-    date = _specified_or_last_date(request, "prescribing")
+    date = _specified_or_last_date(request, "dashboard_data")
     entity = _get_entity(entity_type, code)
     measure_for_entity_url = reverse(
         "measure_for_one_{}".format(entity_type.lower()),
@@ -1417,7 +1417,7 @@ def _home_page_context_for_entity(request, entity):
     }
     if not context["has_prescribing"]:
         return context
-    prescribing_date = ImportLog.objects.latest_in_category("prescribing").current_at
+    prescribing_date = ImportLog.objects.latest_in_category("dashboard_data").current_at
     six_months_ago = prescribing_date - relativedelta(months=6)
     mv_filter = {
         "month__gte": six_months_ago,
