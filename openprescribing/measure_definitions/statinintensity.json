@@ -29,8 +29,17 @@
   "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_query": [
-    "SELECT bnf_code FROM {hscic}.presentation",
-    "WHERE (name LIKE '%_Tab %' OR name LIKE '%Cap %')"
+    "SELECT bnf_code FROM {hscic}.presentation WHERE",
+    "name LIKE '%tablet%' OR",
+    "name LIKE '% tab %' OR",
+    "name LIKE '% tab' OR",
+    "name LIKE '% tabs %' OR",
+    "name LIKE '% tabs' OR",
+    "name LIKE '%capsule%' OR",
+    "name LIKE '% caps %' OR",
+    "name LIKE '% caps' OR",
+    "name LIKE '%caplet%' OR",
+    "name LIKE '%Chewtab%'"
   ],
   "numerator_bnf_codes_filter": [
     "0212000AA # Rosuvastatin Calcium",
