@@ -257,8 +257,17 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, "closed_entity_home_page.html")
 
 
+@copy_fixtures_to_matrixstore
 class TestFrontendViews(TestCase):
-    fixtures = ["chemicals", "sections", "orgs", "practices", "measures", "importlog"]
+    fixtures = [
+        "chemicals",
+        "sections",
+        "orgs",
+        "practices",
+        "measures",
+        "homepage_importlog",
+        "homepage_prescriptions",
+    ]
 
     def test_call_view_homepage(self):
         response = self.client.get("")
