@@ -190,12 +190,15 @@ def infer_tariff_price_for_presentations(db, bnf_codes, date):
     numpy_err = numpy.seterr(divide="ignore", invalid="ignore")
     prices = {}
     for bnf_code, quantity, net_cost in get_prescribing(db, list(bnf_codes), date):
+        # Depending on the sparsity of the data we may get back either a numpy
+        # ndarray or a scipy sparse matrix. Usually they behave similarly
+        # enough that it doesn't matter, but we can't divide mixed types so we
+        # need to make them consistent here.
+        if not isinstance(quantity, numpy.ndarray):
+            quantity = quantity.toarray()
+        if not isinstance(net_cost, numpy.ndarray):
+            net_cost = net_cost.toarray()
         ppu = net_cost / quantity
-        # Depending on the types of `net_cost` and `quantity` we can get either
-        # an ndarray or a matrix here. If it's the latter we want to convert it
-        # to an ndarray.
-        if isinstance(ppu, numpy.matrix):
-            ppu = ppu.A
         # We occasionally get instances where a practice has a postive net cost
         # for a drug but a quantity of zero, resulting in an infinite PPU. This
         # is due to rounding issues (see #1373). In this case we really can't
