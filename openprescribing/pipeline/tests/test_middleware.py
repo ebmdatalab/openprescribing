@@ -12,4 +12,4 @@ class TestImportWarningMiddleware(TestCase):
         TaskLog.objects.create(year=2017, month=7, task_name="task1")
         TaskLog.objects.create(year=2017, month=7, task_name="fetch_and_import")
         response = self.client.get("/")
-        self.assertNotContains(response, "We are currently importing")
+        self.assertContains(response, "We are currently importing")
