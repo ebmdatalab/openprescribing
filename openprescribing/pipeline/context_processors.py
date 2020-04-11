@@ -1,5 +1,5 @@
-# from pipeline.runner import in_progress
+from pipeline.runner import in_progress
 
 
 def import_in_progress(request):
-    return {"import_in_progress": True}
+    return {"import_in_progess": in_progress()}
