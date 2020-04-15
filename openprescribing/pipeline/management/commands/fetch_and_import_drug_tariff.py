@@ -108,6 +108,13 @@ def import_month(xls_file, date):
 
             d = dict(zip(headers, values))
 
+            if d["basic price"] is None:
+                msg = "Missing price for {} Drug Tariff for {}".format(
+                    d["medicine"], date
+                )
+                notify_slack(msg)
+                continue
+
             TariffPrice.objects.get_or_create(
                 date=date,
                 vmpp_id=d["vmpp snomed code"],
