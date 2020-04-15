@@ -1029,7 +1029,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
     )
     financial_ytd_total = _financial_ytd_total(monthly_totals)
     breakdown_date = request.GET.get("breakdown_date")
-    breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
+    breakdown_date = parse_date(breakdown_date) if breakdown_date else end_date
     breakdown = ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
     breakdown_metadata = [i for i in monthly_totals if i["month"] == breakdown_date][0]
     url_template = reverse("tariff", kwargs={"code": "AAA"}).replace(
