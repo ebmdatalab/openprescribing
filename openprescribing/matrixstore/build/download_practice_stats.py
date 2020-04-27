@@ -28,9 +28,11 @@ def ensure_stats_downloaded_for_date(date):
     filename = get_practice_stats_filename(date)
     if os.path.exists(filename):
         return
+    client = Client("hscic")
+    check_stats_in_bigquery(date, client)
     logger.info("Downloading practice statistics for %s", date)
     temp_name = get_temp_filename(filename)
-    result = Client("hscic").query(
+    result = client.query(
         """
         SELECT *
         FROM {hscic}.practice_statistics_all_years
@@ -38,9 +40,25 @@ def ensure_stats_downloaded_for_date(date):
         """
         % (date,)
     )
+
     with gzip.open(temp_name, "wt") as f:
         writer = csv.writer(f)
         writer.writerow(result.field_names)
         for row in result.rows:
             writer.writerow(row)
     os.rename(temp_name, filename)
+
+
+def check_stats_in_bigquery(date, client):
+    """
+    Assert that practice statistics for date is in BigQuery.
+    """
+    results = client.query(
+        """
+        SELECT COUNT(*)
+        FROM {hscic}.practice_statistics_all_years
+        WHERE month = TIMESTAMP("%s")
+        """
+        % (date,)
+    )
+    assert results.rows[0][0] > 0
