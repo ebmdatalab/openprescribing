@@ -11,7 +11,7 @@ cachetools==4.1.0         # via google-auth, premailer
 certifi==2020.4.5.1       # via requests
 cffi==1.14.0              # via bcrypt, cryptography, pynacl
 chardet==3.0.4            # via requests
-click==7.1.1              # via pip-tools
+click==7.1.2              # via pip-tools
 coverage==5.1             # via -r requirements.in
 cryptography==2.9.2       # via paramiko, pyopenssl, requests
 cssselect==1.1.0          # via premailer, pyquery
