@@ -175,6 +175,7 @@ def constraint_and_index_reconstructor(table_name):
         finally:
             # we're updating everything. This takes 52 minutes.
             # restore indexes
+            print("Recreating indexes, don't hit Control-C!")
             logger.info("Recreating indexes")
             for name, cmd in indexes.items():
                 cursor.execute(cmd)
