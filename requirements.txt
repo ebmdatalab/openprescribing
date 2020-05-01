@@ -62,7 +62,7 @@ pandas-gbq==0.13.1        # via -r requirements.in
 pandas==0.25.3            # via -r requirements.in, pandas-gbq
 paramiko==2.7.1           # via fabric3
 pathtools==0.1.2          # via watchdog
-pip-tools==5.1.0          # via -r requirements.in
+pip-tools==5.1.1          # via -r requirements.in
 premailer==3.6.1          # via -r requirements.in
 protobuf==3.11.3          # via google-api-core, google-cloud-bigquery, googleapis-common-protos
 psycopg2-binary==2.8.5    # via -r requirements.in
