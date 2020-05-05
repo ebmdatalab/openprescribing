@@ -298,8 +298,10 @@ class Command(BaseCommand):
             if bnf_code == "'" or snomed_id == "'":
                 continue
 
-            bnf_code = bnf_code.lstrip("'")
-            snomed_id = snomed_id.lstrip("'")
+            if isinstance(bnf_code, str):
+                bnf_code = bnf_code.lstrip("'")
+            if isinstance(snomed_id, str):
+                snomed_id = snomed_id.lstrip("'")
 
             try:
                 obj = model.objects.get(id=snomed_id)
