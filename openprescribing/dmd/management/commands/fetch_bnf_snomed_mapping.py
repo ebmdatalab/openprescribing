@@ -45,7 +45,6 @@ class Command(BaseCommand):
         zip_path = os.path.join(dir_path, filename)
 
         if glob.glob(os.path.join(dir_path, "*.xlsx")):
-            print("Already fetched")
             return
 
         mkdir_p(dir_path)
