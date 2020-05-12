@@ -29,10 +29,9 @@ django==2.2.12            # via -r requirements.in, django-anymail, django-cors-
 djangorestframework-csv==2.1.0  # via -r requirements.in
 djangorestframework==3.11.0  # via -r requirements.in, djangorestframework-csv
 easyprocess==0.2.10       # via pyvirtualdisplay
-entrypoints==0.3          # via flake8
 et-xmlfile==1.0.1         # via openpyxl
 fabric3==1.14.post1       # via -r requirements.in
-flake8==3.7.9             # via -r requirements.in
+flake8==3.8.1             # via -r requirements.in
 google-api-core==1.17.0   # via google-api-python-client, google-cloud-bigquery, google-cloud-core
 google-api-python-client==1.8.2  # via -r requirements.in
 google-auth-httplib2==0.0.3  # via google-api-python-client
@@ -69,10 +68,10 @@ psycopg2-binary==2.8.5    # via -r requirements.in
 pyarrow==0.15.1           # via -r requirements.in
 pyasn1-modules==0.2.8     # via google-auth
 pyasn1==0.4.8             # via pyasn1-modules, rsa
-pycodestyle==2.5.0        # via flake8
+pycodestyle==2.6.0        # via flake8
 pycparser==2.20           # via cffi
 pydata-google-auth==1.1.0  # via pandas-gbq
-pyflakes==2.1.1           # via flake8
+pyflakes==2.2.0           # via flake8
 pynacl==1.3.0             # via paramiko
 pyopenssl==19.1.0         # via requests
 pyquery==1.4.1            # via -r requirements.in
