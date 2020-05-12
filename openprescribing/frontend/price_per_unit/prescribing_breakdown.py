@@ -79,7 +79,7 @@ def get_ppu_breakdown(prescribing, org_type, org_id):
         if len(ppu_values):
             presentations.append(
                 {
-                    "name": names[bnf_code],
+                    "name": names.get(bnf_code, "{} (unknown)".format(bnf_code)),
                     "mean_ppu": net_costs.sum() / quantities.sum(),
                     "is_generic": bnf_code[9:11] == "AA",
                     "quantity_at_each_ppu": [
