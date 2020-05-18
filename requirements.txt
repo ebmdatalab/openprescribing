@@ -6,7 +6,7 @@
 #
 backports.csv==1.0.5      # via -r requirements.in
 bcrypt==3.1.7             # via paramiko
-beautifulsoup4==4.9.0     # via -r requirements.in
+beautifulsoup4==4.9.1     # via -r requirements.in
 cachetools==4.1.0         # via google-auth, premailer
 certifi==2020.4.5.1       # via requests
 cffi==1.14.0              # via bcrypt, cryptography, pynacl
