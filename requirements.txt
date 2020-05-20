@@ -45,7 +45,7 @@ googleapis-common-protos==1.51.0  # via google-api-core
 graphviz==0.14            # via -r requirements.in
 gunicorn==20.0.4          # via -r requirements.in
 html2text==2020.1.16      # via -r requirements.in
-httplib2==0.17.3          # via google-api-python-client, google-auth-httplib2
+httplib2==0.17.4          # via google-api-python-client, google-auth-httplib2
 idna==2.9                 # via requests
 jdcal==1.4.1              # via openpyxl
 lxml==4.5.0               # via -r requirements.in, premailer, pyquery
