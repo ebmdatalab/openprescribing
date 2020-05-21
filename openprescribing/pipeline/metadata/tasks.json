@@ -174,7 +174,7 @@
     "convert_hscic_prescribing": {
         "type": "convert",
         "source_id": "prescribing",
-        "command": "convert_hscic_prescribing --filename DPI_DETAIL_PRESCRIBING_*.csv",
+        "command": "convert_hscic_prescribing --filename EPD_*.csv",
         "dependencies": [
             "fetch_prescribing"
         ]
