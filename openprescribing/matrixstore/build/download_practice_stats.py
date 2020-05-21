@@ -7,6 +7,8 @@ import gzip
 import logging
 import os
 
+from django.conf import settings
+
 from gcutils.bigquery import Client
 
 from .common import get_practice_stats_filename, get_temp_filename
@@ -53,6 +55,8 @@ def check_stats_in_bigquery(date, client):
     """
     Assert that practice statistics for date is in BigQuery.
     """
+    if not settings.CHECK_DATA_IN_BQ:
+        return
     results = client.query(
         """
         SELECT COUNT(*)

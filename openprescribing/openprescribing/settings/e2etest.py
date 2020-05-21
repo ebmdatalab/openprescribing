@@ -28,3 +28,9 @@ BQ_DEFAULT_TABLE_EXPIRATION_MS = 24 * 60 * 60 * 1000  # 24 hours
 
 # We want to use the real measure definitions, not the test ones!
 MEASURE_DEFINITIONS_PATH = os.path.join(APPS_ROOT, "measure_definitions")
+
+# When building the matrixstore, should we check whether data is in BQ before
+# downloading it?  Usually we want to, but because only two months of data are
+# uploaded in the end-to-end tests, and because we try to download five years
+# of data, we need to disable the checks.
+CHECK_DATA_IN_BQ = False
