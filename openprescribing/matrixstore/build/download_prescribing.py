@@ -141,6 +141,8 @@ def check_prescribing_data_in_bigquery(date, bq_client):
     """
     Assert that prescribing data for date is in BigQuery.
     """
+    if not settings.CHECK_DATA_IN_BQ:
+        return
     results = bq_client.query(
         """
         SELECT COUNT(*)
