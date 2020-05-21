@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         workbook = load_workbook(kwargs["filename"])
 
-        details_sheet = workbook.get_sheet_by_name("PCN Details")
+        details_sheet = workbook.get_sheet_by_name("PCNDetails")
         members_sheet = workbook.get_sheet_by_name("PCN Core Partner Details")
         pcn_details = {}
         for code, name in self.get_pcn_details_from_sheet(details_sheet):
@@ -50,7 +50,7 @@ class Command(BaseCommand):
         rows = ([cell.value for cell in row] for row in sheet.rows)
         headers = next(rows)
 
-        PRACTICE_COL = headers.index("Partner Organisation Code")
+        PRACTICE_COL = headers.index("Partner\nOrganisation\nCode")
         PCN_COL = headers.index("PCN Code")
 
         for n, row in enumerate(rows, start=2):
