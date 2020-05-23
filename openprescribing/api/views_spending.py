@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
@@ -438,8 +439,12 @@ def spending_by_org(request, format=None, org_type=None):
     if org_type != "practice":
         orgs = orgs.only(code_field, "name")
 
-    data = _get_prescribing_entries(codes, orgs, org_type, date=date)
-    response = Response(list(data))
+    try:
+        data = list(_get_prescribing_entries(codes, orgs, org_type, date=date))
+    except KeyError:
+        raise Http404
+
+    response = Response(data)
     if request.accepted_renderer.format == "csv":
         filename = "spending-by-{}-{}.csv".format(org_type, "-".join(codes))
         response["content-disposition"] = "attachment; filename={}".format(filename)
