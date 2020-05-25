@@ -349,6 +349,18 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]["items"], "41")
         self.assertEqual(rows[0]["quantity"], "2544.0")
 
+    def test_total_spending_by_practice_with_old_date(self):
+        params = {"date": "1066-11-01"}
+        rsp = self._get(params)
+        self.assertContains(
+            rsp, "Date is outside the 5 years of data available", status_code=404
+        )
+
+    def test_total_spending_by_practice_with_malformed_date(self):
+        params = {"date": "2015-1-1"}
+        rsp = self._get(params)
+        self.assertContains(rsp, "Dates must be in YYYY-MM-DD format", status_code=404)
+
     def test_spending_by_practice_on_chemical(self):
         params = {"code": "0204000I0", "date": "2014-11-01"}
         rows = self._get_rows(params)

@@ -2,9 +2,9 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, NotFound
 
-from common.utils import nhs_titlecase
+from common.utils import nhs_titlecase, parse_date
 from frontend.models import Practice, PCT, STP, RegionalTeam, PCN, NCSOConcession
 from frontend.price_per_unit.prescribing_breakdown import (
     get_prescribing,
@@ -27,6 +27,21 @@ from . import view_utils as utils
 class NotValid(APIException):
     status_code = 400
     default_detail = "The code you provided is not valid"
+
+
+class BadDate(NotFound):
+    def __init__(self, date):
+        try:
+            parsed = parse_date(date)
+            # Ensures that strings like "2020-1-1" are treated as format errors
+            # even though they can be parsed correctly
+            if parsed.isoformat() != date:
+                raise ValueError()
+        except ValueError:
+            detail = "Dates must be in YYYY-MM-DD format"
+        else:
+            detail = "Date is outside the 5 years of data available"
+        super().__init__(detail)
 
 
 def _get_org_or_404(org_code, org_type=None):
@@ -438,8 +453,9 @@ def spending_by_org(request, format=None, org_type=None):
     if org_type != "practice":
         orgs = orgs.only(code_field, "name")
 
-    data = _get_prescribing_entries(codes, orgs, org_type, date=date)
-    response = Response(list(data))
+    data = list(_get_prescribing_entries(codes, orgs, org_type, date=date))
+
+    response = Response(data)
     if request.accepted_renderer.format == "csv":
         filename = "spending-by-{}-{}.csv".format(org_type, "-".join(codes))
         response["content-disposition"] = "attachment; filename={}".format(filename)
@@ -479,7 +495,10 @@ def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
     # Pair each date with its column offset (either all available dates or just
     # the specified one)
     if date:
-        date_offsets = [(date, db.date_offsets[date])]
+        try:
+            date_offsets = [(date, db.date_offsets[date])]
+        except KeyError:
+            raise BadDate(date)
     else:
         date_offsets = sorted(db.date_offsets.items())
     # Yield entries for each organisation on each date
