@@ -43,7 +43,7 @@ class CommandsFunctionalTestCase(TestCase):
         raw_data_path = (
             "frontend/tests/fixtures/commands/"
             + "convert_hscic_prescribing/2016_01/"
-            + "DPI_DETAIL_PRESCRIBING_201601.csv"
+            + "EPD_201601.csv"
         )
         year_and_month = ImportLog.objects.latest_in_category(
             "prescribing"
