@@ -30,9 +30,9 @@ class ConvertHscicPrescribingTests(TestCase):
         raw_data_path = (
             "frontend/tests/fixtures/commands/"
             + "convert_hscic_prescribing/2016_01/"
-            + "DPI_DETAIL_PRESCRIBING_201601.csv"
+            + "EPD_201601.csv"
         )
-        gcs_path = "hscic/prescribing_v2/2016_01/DPI_DETAIL_PRESCRIBING_201601.csv"
+        gcs_path = "hscic/prescribing_v2/2016_01/EPD_201601.csv"
 
         client = StorageClient()
         bucket = client.get_bucket()
