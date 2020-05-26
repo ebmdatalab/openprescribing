@@ -10,8 +10,10 @@
   "denominator_short": "1000 Patients",
   "why_it_matters": [
     "The <a href='https://ebmdatalab.net/what-is-the-dmd-the-nhs-dictionary-of-medicines-and-devices/'> NHS Dictionary of Medicines and Devices </a> designates certain",
-    "medicines as <b>hospital only</b> as the manufacturer has specified it should generally be used in hospitals. This measure suports review and audit",
-    " of appropriateness as sometimes they may be selected in error for example <a href='https://ebmdatalab.net/zuclopenthixol-acetate-a-new-kind-of-measure-on-openprescribing/'> zuclopenthixol acetate (blog here) </a>.",
+    "medicines as <b>hospital only</b> as the manufacturer has specified it should generally be used in hospitals. If you disagree with any of the hospital only designations",
+    " you should contact the NHS Business Services Authority who maintain the dm+d at <a href='mailto:nhsbsa.dmdenquiries@nhs.net?Subject=hospital%20only'>nhsbsa.dmdenquiries@nhs.net</a>",
+    "This measure suports review and audit",
+    " of appropriateness as sometimes a hosptal only medicine may be selected in error for example <a href='https://ebmdatalab.net/zuclopenthixol-acetate-a-new-kind-of-measure-on-openprescribing/'> zuclopenthixol acetate (blog here) </a>.",
     "<p>Please note that this is an experimental measure. We would be grateful for",
     "any feedback at <a href='mailto:feedback@openprescribing.net?Subject=hospital%20only'>feedback@openprescribing.net</a>"
   ],
