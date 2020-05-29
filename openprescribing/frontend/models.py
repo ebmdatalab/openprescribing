@@ -595,23 +595,12 @@ class Presentation(models.Model):
         return dict(name_map)
 
 
+# This model is no longer used at all in production. However several of our
+# test fixtures depend on it to create prescribing data which is then copied
+# into the MatrixStore (which is where all the prescribing data now lives in
+# production) so it's easiest to leave it in place for now rather than rewrite
+# a lot of old tests.
 class Prescription(models.Model):
-    """
-    Prescription items
-    Characters
-    -- 1 & 2 show the BNF Chapter,
-    -- 3 & 4 show the BNF Section,
-    -- 5 & 6 show the BNF paragraph,
-    -- 7 shows the BNF sub-paragraph and
-    -- 8 & 9 show the chemical substance
-    -- 10 & 11 show the Product
-    -- 12 & 13 show the Strength and Formulation
-    -- 14 & 15 show the equivalent generic code (always used)
-    """
-
-    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
-    # that was the previous default and the table is large enough that running
-    # the migration will take careful planning at some later stage
     pct = models.ForeignKey(
         PCT, db_constraint=False, null=True, on_delete=models.CASCADE
     )
@@ -620,7 +609,6 @@ class Prescription(models.Model):
     )
     presentation_code = models.CharField(max_length=15, validators=[isAlphaNumeric])
     total_items = models.IntegerField()
-    # XXX change this post-deploy; in fact we should not allow blanks
     net_cost = models.FloatField(blank=True, null=True)
     actual_cost = models.FloatField()
     quantity = models.FloatField()
@@ -1052,60 +1040,6 @@ class MailLog(models.Model):
             except EmailMessage.DoesNotExist:
                 pass
         return subject
-
-
-class GenericCodeMapping(models.Model):
-    """A mapping between BNF codes that allows us to collapse clinically
-    equivalent chemicals together.
-
-    See https://github.com/ebmdatalab/price-per-dose/issues/11 for
-    background.
-
-    A `to_code` may end in `%`, which means it's a special case which
-    should be treated as a stem against which to search for generics.
-
-    """
-
-    from_code = models.CharField(
-        max_length=15, primary_key=True, validators=[isAlphaNumeric], db_index=True
-    )
-    to_code = models.CharField(
-        max_length=15, validators=[isAlphaNumeric], db_index=True
-    )
-
-
-class PPUSaving(models.Model):
-    """A Price-per-unit Saving describes a possible saving for a CCG or a
-    practice for an individual presentation.
-
-    Records with a blank practice_id are for data at a CCG level;
-    those with a practice_id are for data at a practice level.
-
-    """
-
-    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
-    # that was the previous default and the table is large enough that running
-    # the migration will take careful planning at some later stage
-    date = models.DateField(db_index=True)
-    # Sometimes we there are codes in prescribing data which are not
-    # present in our presentations
-    presentation = models.ForeignKey(
-        Presentation,
-        db_column="bnf_code",
-        db_constraint=False,
-        on_delete=models.CASCADE,
-    )
-    lowest_decile = models.FloatField()
-    quantity = models.IntegerField()
-    price_per_unit = models.FloatField()
-    possible_savings = models.FloatField()
-    formulation_swap = models.TextField(null=True, blank=True)
-    pct = models.ForeignKey(
-        PCT, null=True, blank=True, db_index=True, on_delete=models.CASCADE
-    )
-    practice = models.ForeignKey(
-        Practice, null=True, blank=True, db_index=True, on_delete=models.CASCADE
-    )
 
 
 class TariffPrice(models.Model):
