@@ -595,23 +595,12 @@ class Presentation(models.Model):
         return dict(name_map)
 
 
+# This model is no longer used at all in production. However several of our
+# test fixtures depend on it to create prescribing data which is then copied
+# into the MatrixStore (which is where all the prescribing data now lives in
+# production) so it's easiest to leave it in place for now rather than rewrite
+# a lot of old tests.
 class Prescription(models.Model):
-    """
-    Prescription items
-    Characters
-    -- 1 & 2 show the BNF Chapter,
-    -- 3 & 4 show the BNF Section,
-    -- 5 & 6 show the BNF paragraph,
-    -- 7 shows the BNF sub-paragraph and
-    -- 8 & 9 show the chemical substance
-    -- 10 & 11 show the Product
-    -- 12 & 13 show the Strength and Formulation
-    -- 14 & 15 show the equivalent generic code (always used)
-    """
-
-    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
-    # that was the previous default and the table is large enough that running
-    # the migration will take careful planning at some later stage
     pct = models.ForeignKey(
         PCT, db_constraint=False, null=True, on_delete=models.CASCADE
     )
@@ -620,7 +609,6 @@ class Prescription(models.Model):
     )
     presentation_code = models.CharField(max_length=15, validators=[isAlphaNumeric])
     total_items = models.IntegerField()
-    # XXX change this post-deploy; in fact we should not allow blanks
     net_cost = models.FloatField(blank=True, null=True)
     actual_cost = models.FloatField()
     quantity = models.FloatField()
