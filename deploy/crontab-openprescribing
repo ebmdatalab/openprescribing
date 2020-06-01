@@ -6,3 +6,4 @@
 30 03 * * * hello /webapps/openprescribing/deploy/fetch_and_import_dmd.sh
 00 04 * * * hello /webapps/openprescribing/deploy/clean_up_bq_test_data.sh
 00 05 * * * hello /webapps/openprescribing/deploy/diskcache_garbage_collect.sh
+30 05 * * * hello /webapps/openprescribing/deploy/clearsessions.sh
