@@ -375,6 +375,15 @@ CACHES = {
             # that.
             "disk_min_file_size": cache_size_limit,
             "sqlite_mmap_size": cache_size_limit,
+            # This disables automatic deletion of older values when the cache
+            # exceeds its size limit. By default this is done automatically
+            # after each write (synchronously, as part of the same thread) but
+            # in our case, posssibly because we're storing unusually large
+            # objects in the db, this results in SQLite locking up and the
+            # request erroring out. So we disable this behaviour and instead do
+            # the garbage collection in the `diskcache_garbage_collect`
+            # management command triggered by a cron job.
+            "cull_limit": 0,
         },
     }
 }
