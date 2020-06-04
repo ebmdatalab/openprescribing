@@ -54,7 +54,7 @@ mccabe==0.6.1             # via flake8
 mock==3.0.5               # via -r requirements.in
 networkx==2.4             # via -r requirements.in
 newrelic==5.12.1.141      # via -r requirements.in
-numpy==1.18.4             # via -r requirements.in, pandas, pyarrow, scipy
+numpy==1.18.5             # via -r requirements.in, pandas, pyarrow, scipy
 oauthlib==3.1.0           # via requests-oauthlib
 openpyxl==2.6.3           # via -r requirements.in
 pandas-gbq==0.13.2        # via -r requirements.in
