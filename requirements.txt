@@ -49,7 +49,7 @@ httplib2==0.18.1          # via google-api-python-client, google-auth-httplib2
 idna==2.9                 # via requests
 jdcal==1.4.1              # via openpyxl
 lxml==4.5.1               # via -r requirements.in, premailer, pyquery
-lz4==3.0.2                # via -r requirements.in
+lz4==3.1.0                # via -r requirements.in
 mccabe==0.6.1             # via flake8
 mock==3.0.5               # via -r requirements.in
 networkx==2.4             # via -r requirements.in
