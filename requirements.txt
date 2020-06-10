@@ -31,7 +31,7 @@ djangorestframework==3.11.0  # via -r requirements.in, djangorestframework-csv
 easyprocess==0.3          # via pyvirtualdisplay
 et-xmlfile==1.0.1         # via openpyxl
 fabric3==1.14.post1       # via -r requirements.in
-flake8==3.8.2             # via -r requirements.in
+flake8==3.8.3             # via -r requirements.in
 google-api-core==1.20.0   # via google-api-python-client, google-cloud-bigquery, google-cloud-core
 google-api-python-client==1.9.2  # via -r requirements.in
 google-auth-httplib2==0.0.3  # via google-api-python-client
