@@ -19,6 +19,14 @@ matrix:
         - pip install black==19.3b0
         - pip install flake8==3.7.8
         - scripts/lint.sh
+  allow_failures:
+    # There is currently some kind of issue with our Saucelabs set up
+    # (presumably something has upgraded somewhere and introduced an
+    # incompatibility) so the functional tests no longer run, though they all
+    # still pass locally. As we don't have time to debug this now I'm setting
+    # these back to "allowed failures". At the point when we start doing
+    # significant work on OP again we can try to solve this properly.
+    - env: TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
 cache:
   directories:
     docker
