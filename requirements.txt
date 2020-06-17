@@ -19,7 +19,7 @@ cssutils==1.0.2           # via premailer
 decorator==4.4.2          # via networkx
 diskcache==4.1.0          # via -r requirements.in
 django-anymail[mailgun]==7.1.0  # via -r requirements.in
-django-cors-headers==3.3.0  # via -r requirements.in
+django-cors-headers==3.4.0  # via -r requirements.in
 django-crispy-forms==1.9.1  # via -r requirements.in
 django-debug-toolbar-template-timings==0.9  # via -r requirements.in
 django-debug-toolbar==2.2  # via -r requirements.in, django-debug-toolbar-template-timings
