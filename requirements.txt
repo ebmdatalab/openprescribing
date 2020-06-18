@@ -81,7 +81,7 @@ pyvirtualdisplay==1.3.2   # via -r requirements.in
 raven==6.10.0             # via -r requirements.in
 requests-futures==1.0.0   # via -r requirements.in
 requests-oauthlib==1.3.0  # via google-auth-oauthlib
-requests[security]==2.23.0  # via -r requirements.in, django-anymail, google-api-core, premailer, requests-futures, requests-oauthlib
+requests[security]==2.24.0  # via -r requirements.in, django-anymail, google-api-core, premailer, requests-futures, requests-oauthlib
 rsa==4.6                  # via google-auth
 scipy==1.4.1              # via -r requirements.in
 selenium==3.141.0         # via -r requirements.in
