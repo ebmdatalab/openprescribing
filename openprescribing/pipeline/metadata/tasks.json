@@ -96,7 +96,7 @@
     "import_stps": {
         "type": "import",
         "source_id": "stp_mapping",
-        "command": "import_stps --filename stps.csv",
+        "command": "import_stps --filename *.xslx",
         "dependencies": [
             "fetch_stps",
             "import_ccg_details"
