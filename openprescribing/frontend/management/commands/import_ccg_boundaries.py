@@ -33,11 +33,11 @@ Here's what I did:
   edit the zip one)
 * Click pencil to enter edit mode
 * Go to layer properties, remove all attributes except the CCG code one
-* Right click the layer - save as MapInfo TAB. If you are doing this
-  manually, it doesn't matter where you save it. If you have found
-  this comment during a pipeline import, then place the MapInfo files
-  in the location specified by the manual fetch process.  If doing
-  this manually, import the file with:
+* Right click the layer - save as MapInfo TAB, in WGS84 format.  If you are
+  doing this manually, it doesn't matter where you save it. If you have found
+  this comment during a pipeline import, then place the MapInfo files in the
+  location specified by the manual fetch process.  If doing this manually, import
+  the file with:
 
        python manage.py import_ccg_boundaries --filename /tmp/foo.tab
 
