@@ -47,7 +47,7 @@ Specifically, you should:
         mkdir_p(dir_path)
         zip_path = os.path.join(dir_path, "download.zip")
 
-        base_url = "https://apps.nhsbsa.nhs.uk/infosystems/data/"
+        base_url = "https://applications.nhsbsa.nhs.uk/infosystems/data/"
 
         session = requests.Session()
         session.cookies["JSESSIONID"] = kwargs["jsessionid"]
