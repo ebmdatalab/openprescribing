@@ -93,7 +93,7 @@ tqdm==4.46.1              # via -r requirements.in
 unicodecsv==0.14.1        # via djangorestframework-csv
 uritemplate==3.0.1        # via google-api-python-client
 urllib3==1.25.9           # via requests, selenium
-watchdog==0.10.2          # via when-changed
+watchdog==0.10.3          # via when-changed
 when-changed==0.3.0       # via -r requirements.in
 xlrd==1.2.0               # via -r requirements.in
 
