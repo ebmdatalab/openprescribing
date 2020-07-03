@@ -127,22 +127,13 @@ class TestMatrixStoreBuild(SimpleTestCase):
         self.assertNotIn(self.closed_practice["code"], practice_codes)
 
     def test_presentations_are_correct(self):
-        expected = list(self.presentations)
-        expected.append(self.updated_presentation)
-        expected.sort(key=lambda i: i["bnf_code"])
-        # Allow us to get results as dicts
-        self.connection.row_factory = sqlite3.Row
+        expected = [p["bnf_code"] for p in self.presentations]
+        expected.append(self.updated_presentation["bnf_code"])
+        expected.sort()
         results = self.connection.execute(
-            """
-            SELECT
-              bnf_code, is_generic, adq_per_quantity, name
-            FROM
-              presentation
-            ORDER BY
-              bnf_code
-            """
+            "SELECT bnf_code FROM presentation ORDER BY bnf_code"
         )
-        results = [dict(row) for row in results]
+        results = [row[0] for row in results]
         self.assertEqual(results, expected)
         self.assertNotIn(self.presentation_to_update, results)
         self.assertNotIn(self.presentation_without_prescribing, results)
