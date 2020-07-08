@@ -34,7 +34,7 @@ fabric3==1.14.post1       # via -r requirements.in
 flake8==3.8.3             # via -r requirements.in
 google-api-core==1.21.0   # via google-api-python-client, google-cloud-bigquery, google-cloud-core
 google-api-python-client==1.9.3  # via -r requirements.in
-google-auth-httplib2==0.0.3  # via google-api-python-client
+google-auth-httplib2==0.0.4  # via google-api-python-client
 google-auth-oauthlib==0.4.1  # via pandas-gbq, pydata-google-auth
 google-auth==1.18.0       # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-bigquery, google-cloud-storage, pandas-gbq, pydata-google-auth
 google-cloud-bigquery==1.25.0  # via -r requirements.in, pandas-gbq
@@ -85,7 +85,7 @@ requests[security]==2.24.0  # via -r requirements.in, django-anymail, google-api
 rsa==4.6                  # via google-auth
 scipy==1.4.1              # via -r requirements.in
 selenium==3.141.0         # via -r requirements.in
-six==1.15.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-cloud-bigquery, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
+six==1.15.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-auth-httplib2, google-cloud-bigquery, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
 soupsieve==2.0.1          # via beautifulsoup4
 sqlparse==0.3.1           # via django, django-debug-toolbar
 titlecase==0.12.0         # via -r requirements.in
