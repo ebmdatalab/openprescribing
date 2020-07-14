@@ -31,7 +31,7 @@
   ],
   "numerator_bnf_codes_filter": [
     "~0406000S0%CAC # Ondansetron HCl_Tab 8mg",
-    "~1501030G0% #glycopyronium products
+    "~1501030G0% #glycopyronium products"
     ],
   "denominator_type": "list_size",
   "authored_by": [
