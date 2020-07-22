@@ -31,7 +31,7 @@ pandas-gbq
 pandas
 premailer
 psycopg2-binary
-pyarrow
+pyarrow  # we use this implicity to download BQ results with Avro
 python-dateutil
 pytz
 raven
