@@ -47,6 +47,7 @@ gunicorn==20.0.4          # via -r requirements.in
 html2text==2020.1.16      # via -r requirements.in
 httplib2==0.18.1          # via google-api-python-client, google-auth-httplib2
 idna==2.10                # via requests
+importlib-metadata==1.7.0  # via flake8
 jdcal==1.4.1              # via openpyxl
 lxml==4.5.2               # via -r requirements.in, premailer, pyquery
 lz4==3.1.0                # via -r requirements.in
@@ -96,6 +97,7 @@ urllib3==1.25.9           # via requests, selenium
 watchdog==0.10.3          # via when-changed
 when-changed==0.3.0       # via -r requirements.in
 xlrd==1.2.0               # via -r requirements.in
+zipp==1.2.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
