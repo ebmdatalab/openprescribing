@@ -47,7 +47,7 @@ NEW_RELIC_LICENSE_KEY=new_relic_license_key
 
 # The path to a file containing your credentials for accessing Google Cloud
 # Platform services (eg BigQuery, Cloud Storage).
-GOOGLE_APPLICATION_CREDENTIALS=
+# GOOGLE_APPLICATION_CREDENTIALS=
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Only required for the pipeline
