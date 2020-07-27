@@ -29,11 +29,16 @@ class Command(BaseCommand):
         )
         doc = BeautifulSoup(rsp.text, "html.parser")
 
-        href = None
-        for a in doc.find_all("a"):
-            if a["href"].endswith(".zip"):
-                assert href is None, "Found more than one zipfile"
-                href = a["href"]
+        urls = set(
+            a["href"]
+            for a in doc.find_all("a", href=True)
+            if a["href"].endswith(".zip")
+        )
+        if len(urls) != 1:
+            raise RuntimeError(
+                "Expected exactly one zipfile URL, found {}".format(len(urls))
+            )
+        href = list(urls)[0]
 
         filename = href.split("/")[-1]
         datestamp = filename.split(".")[0].split("%20")[-1]
