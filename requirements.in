@@ -19,6 +19,7 @@ djangorestframework
 google-api-python-client
 google-cloud-bigquery
 google-cloud-storage
+google-cloud-bigquery-storage  # this speeds up access to BQ
 gunicorn
 html2text
 lxml
