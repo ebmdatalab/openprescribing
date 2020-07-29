@@ -35,7 +35,7 @@ var measures = {
         Handlebars.compile($(_this.el.panelTemplate).html());
     var NUM_MONTHS_FOR_RANKING = 6;
     var centiles = ['10', '20', '30', '40', '50', '60', '70', '80', '90'];
-    var selectedMeasure = window.location.hash;
+    var selectedMeasure = window.location.hash.substring(1);
     _this.allGraphsRendered = false;
     _this.graphsToRenderInitially = 24;
     var options = JSON.parse(document.getElementById('measure-options').innerHTML);
@@ -114,12 +114,13 @@ var measures = {
 
   highlightSelectedMeasure: function(selectedMeasure) {
     if ( ! selectedMeasure || selectedMeasure === '') return;
-    var measureId = '#measure_' + selectedMeasure.substring(selectedMeasure.indexOf('#') + 1);
-    if ($(measureId).length === 0) return;
+    var measureEl = document.getElementById('measure_' + selectedMeasure);
+    if ( ! measureEl) return;
+    var $measureEl = $(measureEl);
     $('#overlay').fadeIn(300);
-    $(measureId).css('z-index', '99999');
+    $measureEl.css('z-index', '99999');
     $('html, body').animate({
-      scrollTop: $(measureId).offset().top,
+      scrollTop: $measureEl.offset().top,
     }, 1000);
     $('#overlay').on('click', function() {
       $('#overlay').stop().fadeOut(300);
