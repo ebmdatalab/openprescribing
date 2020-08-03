@@ -25,7 +25,7 @@ django-debug-toolbar-template-timings==0.9  # via -r requirements.in
 django-debug-toolbar==2.2  # via -r requirements.in, django-debug-toolbar-template-timings
 django-dotenv==1.4.2      # via -r requirements.in
 django-extensions==3.0.3  # via -r requirements.in
-django==2.2.14            # via -r requirements.in, django-anymail, django-cors-headers, django-debug-toolbar, django-debug-toolbar-template-timings, djangorestframework
+django==2.2.15            # via -r requirements.in, django-anymail, django-cors-headers, django-debug-toolbar, django-debug-toolbar-template-timings, djangorestframework
 djangorestframework-csv==2.1.0  # via -r requirements.in
 djangorestframework==3.11.0  # via -r requirements.in, djangorestframework-csv
 easyprocess==0.3          # via pyvirtualdisplay
