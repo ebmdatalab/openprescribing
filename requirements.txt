@@ -24,7 +24,7 @@ django-crispy-forms==1.9.2  # via -r requirements.in
 django-debug-toolbar-template-timings==0.9  # via -r requirements.in
 django-debug-toolbar==2.2  # via -r requirements.in, django-debug-toolbar-template-timings
 django-dotenv==1.4.2      # via -r requirements.in
-django-extensions==3.0.3  # via -r requirements.in
+django-extensions==3.0.4  # via -r requirements.in
 django==2.2.15            # via -r requirements.in, django-anymail, django-cors-headers, django-debug-toolbar, django-debug-toolbar-template-timings, djangorestframework
 djangorestframework-csv==2.1.0  # via -r requirements.in
 djangorestframework==3.11.1  # via -r requirements.in, djangorestframework-csv
@@ -88,7 +88,7 @@ requests[security]==2.24.0  # via -r requirements.in, django-anymail, google-api
 rsa==4.6                  # via google-auth
 scipy==1.4.1              # via -r requirements.in
 selenium==3.141.0         # via -r requirements.in
-six==1.15.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-auth-httplib2, google-cloud-bigquery, google-resumable-media, grpcio, mock, pip-tools, protobuf, pynacl, pyopenssl, python-dateutil
+six==1.15.0               # via bcrypt, cryptography, django-anymail, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-auth-httplib2, google-cloud-bigquery, google-resumable-media, grpcio, mock, pip-tools, protobuf, pynacl, pyopenssl, python-dateutil
 soupsieve==2.0.1          # via beautifulsoup4
 sqlparse==0.3.1           # via django, django-debug-toolbar
 titlecase==0.12.0         # via -r requirements.in
