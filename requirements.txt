@@ -45,7 +45,7 @@ google-crc32c==0.1.0      # via google-resumable-media
 google-resumable-media==0.7.0  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.52.0  # via google-api-core
 graphviz==0.14.1          # via -r requirements.in
-grpcio==1.30.0            # via google-api-core
+grpcio==1.31.0            # via google-api-core
 gunicorn==20.0.4          # via -r requirements.in
 html2text==2020.1.16      # via -r requirements.in
 httplib2==0.18.1          # via google-api-python-client, google-auth-httplib2
