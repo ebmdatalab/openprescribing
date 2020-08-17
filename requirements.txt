@@ -5,7 +5,7 @@
 #    pip-compile
 #
 backports.csv==1.0.5      # via -r requirements.in
-bcrypt==3.1.7             # via paramiko
+bcrypt==3.2.0             # via paramiko
 beautifulsoup4==4.9.1     # via -r requirements.in
 cachetools==4.1.1         # via google-auth, premailer
 certifi==2020.6.20        # via requests
