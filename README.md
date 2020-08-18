@@ -35,6 +35,10 @@ Requires [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](ht
     cd openprescribing/ansible
     vagrant up   # invokes `vagrant provision` the first time it's run
 
+##### MacOS 10.15 (Catalina)
+
+If you're using MacOS 10.15 and have `openprescribing` checked out as a subdirectory of `Documents`, nfsd will not be able to access the folder. This will present as "stale file handle" for the directory `/openprescribing` inside the vagrant box. [Workaround](https://github.com/laravel/homestead/issues/1304#issuecomment-545391163) is to add `/sbin/nfsd` in System Preferences > Security & Privacy > Privacy > Full Disk Access. Click on the plus sign to add a program and then you can navigate to the /sbin folder by pressing Command-Shift-G.
+
 ### Start the server
 
     vagrant ssh  # also activates the virtualenv for you
