@@ -300,6 +300,21 @@ To interact with GCS, you will need to install [`gcloud`](https://cloud.google.c
 
     gcloud auth application-default login
 
+## Credentials for Github Actions
+
+To enable Github Actions to interact with GCS, credentials are stored in `google-credentials-githubactions.json.gpg`, encrypted with the key in the `GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE` Github Secret.
+
+If you need to update them:
+
+* Log in to Google Cloud Services
+* Go to `IAM` -> `Service accounts` -> `Create key` -> `json` 
+* Rename your file as `google-credentials-githubactions.json` & encrypt with:
+```bash
+$ gpg --symmetric --cipher-algo AES256 google-credentials.json
+```
+
+* Commit the new `google-credentials-githubactions.json.gpg`
+* Update the password in the `GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE` Github Secret
 
 # Editing JS and CSS
 
