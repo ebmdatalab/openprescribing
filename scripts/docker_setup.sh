@@ -3,7 +3,12 @@
 # Commands that should be run before starting a docker-based
 # application session via docker-compose
 
+# environment file required by wait_for_postgres
+cp ./environment-test ./environment
+# wait_for_postgres seems to be unnecessary for Travis & Github Actions,
+# other configurations not tested
 python ./scripts/wait_for_postgres.py
+
 pip install -q -U pip setuptools
 pip install -q -r requirements.txt
 if ! [ -r openprescribing/media/js/node_modules ]; then
@@ -13,5 +18,4 @@ else
 fi
 mkdir logs
 cd openprescribing/media/js
-npm cache clean
 npm install -s
