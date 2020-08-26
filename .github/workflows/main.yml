@@ -72,7 +72,7 @@ jobs:
 
   notify-slack:
     runs-on: ubuntu-latest
-    depends-on: all
+    needs: [ unit_test , ansible_buildout_test, linting ]
 
     steps:
       - name: Slack notification
