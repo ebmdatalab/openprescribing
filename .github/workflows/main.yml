@@ -69,6 +69,8 @@ jobs:
           pip install black==19.3b0
           pip install flake8==3.7.8
           scripts/lint.sh
+      - name: Force failure
+        run: false
       # - name: Slack notification Failure
       #   if: failure()
       #   env:
