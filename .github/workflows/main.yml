@@ -75,6 +75,8 @@ jobs:
     needs: [ unit_test , ansible_buildout_test, linting ]
 
     steps:
+      - name: Test
+        run: whoami
       - name: Slack notification
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
