@@ -100,7 +100,7 @@ jobs:
           # # attachment fields(not required)
           fallback: 'Plain text fallback field'
           # color: '#36a64f'
-          pretext: 'Github Actions CI ${{ github.repository }} ${{ github.ref }} passed'
+          pretext: 'Github Actions CI ${{ github.repository }} ${{ github.ref }} passed - ${{ github.event }} - ${{ github.event.ref }}'
           # author_name: 'John Doe'
           # author_link: 'http://jdoe.com/me/'
           # author_icon: 'http://imageurl.com/icons/icon.jpg'
