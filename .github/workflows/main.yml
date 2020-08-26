@@ -69,8 +69,6 @@ jobs:
           pip install black==19.3b0
           pip install flake8==3.7.8
           scripts/lint.sh
-      - name: Force failure
-        run: false
       - name: Slack notification Failure
         if: failure()
         env:
@@ -80,7 +78,7 @@ jobs:
           channel: '#technoise'
           icon_url: 'https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-07-20/215209949315_eb7b9d555efd1274773e_512.png'
           username: 'Github Actions - OpenPrescribing'
-          text: 'Linting failed {{ $GITHUB_REF }}'
+          text: 'Linting failed ${{ github.ref }}'
           fallback: 'Linting failed'
 
   notify_slack:
@@ -102,7 +100,7 @@ jobs:
           # # attachment fields(not required)
           fallback: 'Plain text fallback field'
           # color: '#36a64f'
-          pretext: 'Github Actions CI {{ $GITHUB_REPOSITORY }} {{ $GITHUB_REF }} passed'
+          pretext: 'Github Actions CI ${{ github.repository }} ${{ github.ref }} passed'
           # author_name: 'John Doe'
           # author_link: 'http://jdoe.com/me/'
           # author_icon: 'http://imageurl.com/icons/icon.jpg'
