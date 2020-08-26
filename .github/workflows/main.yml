@@ -82,7 +82,7 @@ jobs:
         with:
           # requirements fields for slack
           channel: '#technoise'
-          icon_url: 'slack user icon url'
+          icon_url: 'https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-07-20/215209949315_eb7b9d555efd1274773e_512.png'
           username: 'Github Actions - OpenPrescribing'
           # # attachment fields(not required)
           # fallback: 'Required plain-text summary of the attachment.'
