@@ -17,10 +17,10 @@ jobs:
       - name: Generate SAUCE_HOST
         run: |
           echo "::set-env name=SAUCE_HOST::$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)"
-      - name: Unit tests
-        run: docker-compose run --service-ports test && docker-compose run --service-ports test-production
-        env:
-          TEST_SUITE: nonfunctional
+      # - name: Unit tests
+      #   run: docker-compose run --service-ports test && docker-compose run --service-ports test-production
+      #   env:
+      #     TEST_SUITE: nonfunctional
 
   # Functional tests are failing on Travis too!
   #
@@ -49,10 +49,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Ansible buildout test
-        run: docker run -v ${GITHUB_WORKSPACE}:/openprescribing/ dockette/stretch /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
-        env:
-          LANG: en_US.UTF-8
+      # - name: Ansible buildout test
+      #   run: docker run -v ${GITHUB_WORKSPACE}:/openprescribing/ dockette/stretch /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
+      #   env:
+      #     LANG: en_US.UTF-8
 
   linting:
     runs-on: ubuntu-latest
