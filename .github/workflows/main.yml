@@ -69,17 +69,17 @@ jobs:
           pip install black==19.3b0
           pip install flake8==3.7.8
           scripts/lint.sh
-      - name: Slack notification Failure
-        if: failure()
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        uses: cemkiy/action-slacker@master
-        with:
-          channel: '#technoise'
-          icon_url: 'https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-07-20/215209949315_eb7b9d555efd1274773e_512.png'
-          username: 'Github Actions - OpenPrescribing'
-          text: 'Linting failed ${{ github.ref }}'
-          fallback: 'Linting failed'
+      # - name: Slack notification Failure
+      #   if: failure()
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #   uses: cemkiy/action-slacker@master
+      #   with:
+      #     channel: '#technoise'
+      #     icon_url: 'https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-07-20/215209949315_eb7b9d555efd1274773e_512.png'
+      #     username: 'Github Actions - OpenPrescribing'
+      #     text: 'Linting failed ${{ github.ref }}'
+      #     fallback: 'Linting failed'
 
   notify_slack:
     runs-on: ubuntu-latest
@@ -101,4 +101,5 @@ jobs:
               }]
             }
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
