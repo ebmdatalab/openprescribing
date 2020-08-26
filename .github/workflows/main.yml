@@ -69,6 +69,19 @@ jobs:
           pip install black==19.3b0
           pip install flake8==3.7.8
           scripts/lint.sh
+      - name: Force failure
+        run: false
+      - name: Slack notification Failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        uses: cemkiy/action-slacker@master
+        with:
+          channel: '#technoise'
+          icon_url: 'https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-07-20/215209949315_eb7b9d555efd1274773e_512.png'
+          username: 'Github Actions - OpenPrescribing'
+          text: 'Linting failed {{ $GITHUB_REF }}'
+          fallback: 'Linting failed'
 
   notify_slack:
     runs-on: ubuntu-latest
@@ -87,15 +100,15 @@ jobs:
           icon_url: 'https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-07-20/215209949315_eb7b9d555efd1274773e_512.png'
           username: 'Github Actions - OpenPrescribing'
           # # attachment fields(not required)
-          # fallback: 'Required plain-text summary of the attachment.'
+          fallback: 'Plain text fallback field'
           # color: '#36a64f'
-          # pretext: 'Optional text that appears above the attachment block'
+          pretext: 'Github Actions CI {{ $GITHUB_REPOSITORY }} {{ $GITHUB_REF }} passed'
           # author_name: 'John Doe'
           # author_link: 'http://jdoe.com/me/'
           # author_icon: 'http://imageurl.com/icons/icon.jpg'
-          # title: 'Slack API Documentation'
+          title: 'Title field'
           # title_link: 'https://api.slack.com/'
-          # text: 'Optional text that appears within the attachment'
+          text: 'Optional text field that appears within the attachment'
           # image_url: 'http://my-website.com/path/to/image.jpg'
           # thumb_url: 'http://example.com/path/to/thumb.png'
           # footer: 'Slack API'
