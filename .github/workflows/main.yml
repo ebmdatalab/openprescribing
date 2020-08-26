@@ -86,28 +86,18 @@ jobs:
     needs: [ unit_test , ansible_buildout_test, linting ]
 
     steps:
-      - name: Test
-        run: whoami
-      - name: Slack notification
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        uses: cemkiy/action-slacker@master
-        with:
-          # requirements fields for slack
-          channel: '#technoise'
-          icon_url: 'https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-07-20/215209949315_eb7b9d555efd1274773e_512.png'
-          username: 'Github Actions - OpenPrescribing'
-          # # attachment fields(not required)
-          fallback: 'Plain text fallback field'
-          # color: '#36a64f'
-          pretext: 'Github Actions CI ${{ github.repository }} ${{ github.ref }} passed - ${{ github.event }} - ${{ github.event.ref }}'
-          # author_name: 'John Doe'
-          # author_link: 'http://jdoe.com/me/'
-          # author_icon: 'http://imageurl.com/icons/icon.jpg'
-          title: 'Title field'
-          # title_link: 'https://api.slack.com/'
-          text: 'Optional text field that appears within the attachment'
-          # image_url: 'http://my-website.com/path/to/image.jpg'
-          # thumb_url: 'http://example.com/path/to/thumb.png'
-          # footer: 'Slack API'
-          # footer_icon: 'https://platform.slack-edge.com/img/default_application_icon.png'
+      - uses: 8398a7/action-slack@v3
+      with:
+        status: custom
+        fields: workflow,job,commit,repo,ref,author,took
+        custom_payload: |
+          {
+            username: 'action-slack',
+            icon_emoji: ':octocat:',
+            attachments: [{
+              color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+              text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} succeeded in ${process.env.AS_TOOK}`,
+            }]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
