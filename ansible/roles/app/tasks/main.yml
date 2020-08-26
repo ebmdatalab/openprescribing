@@ -33,6 +33,7 @@
     dest: "{{ HOME }}/.virtualenvs/postactivate"
     line: "cd {{ apps_root }}"
     create: yes
+    mode: 0600
 
 - name: Activate virtualenv on login
   lineinfile:
@@ -82,6 +83,8 @@
     src: "{{ repo_root }}/environment-sample"
     dest: "{{ repo_root }}/environment"
     force: yes
+    mode: 0660
+    owner: "{{ USER }}"
 
 - name: Set up environment file
   replace:
