@@ -36,7 +36,7 @@ google-api-core[grpc]==1.22.0  # via google-api-python-client, google-cloud-bigq
 google-api-python-client==1.11.0  # via -r requirements.in
 google-auth-httplib2==0.0.4  # via google-api-python-client
 google-auth-oauthlib==0.4.1  # via pandas-gbq, pydata-google-auth
-google-auth==1.20.1       # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq, pydata-google-auth
+google-auth==1.21.0       # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq, pydata-google-auth
 google-cloud-bigquery-storage==1.0.0  # via -r requirements.in
 google-cloud-bigquery==1.27.2  # via -r requirements.in, pandas-gbq
 google-cloud-core==1.4.1  # via google-cloud-bigquery, google-cloud-storage
