@@ -121,7 +121,7 @@ class TestSpendingViews(TestCase):
         url = "/practice/{}/concessions/".format(self.practice.code)
         data = {"email": "alice@example.com", "practice_id": self.practice.code}
         response = self.client.post(url, data, follow=True)
-        self.assertContains(response, "alerts about NCSO concessions for Practice 5")
+        self.assertContains(response, "alerts about price concessions for Practice 5")
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 2)
         bookmark = NCSOConcessionBookmark.objects.last()
@@ -139,7 +139,7 @@ class TestSpendingViews(TestCase):
         data = {"email": "alice@example.com"}
         response = self.client.post(url, data, follow=True)
         self.assertContains(
-            response, "alerts about NCSO concessions for the NHS in England"
+            response, "alerts about price concessions for the NHS in England"
         )
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 2)
