@@ -907,7 +907,7 @@ class NCSOConcessionBookmark(models.Model):
 
     @property
     def name(self):
-        return "NCSO concessions for {}".format(self.entity_cased_name)
+        return "price concessions for {}".format(self.entity_cased_name)
 
     def dashboard_url(self):
         if self.entity_type == "CCG":
