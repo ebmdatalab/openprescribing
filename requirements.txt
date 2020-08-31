@@ -62,7 +62,7 @@ oauthlib==3.1.0           # via requests-oauthlib
 openpyxl==2.6.4           # via -r requirements.in
 pandas-gbq==0.13.2        # via -r requirements.in
 pandas==0.25.3            # via -r requirements.in, pandas-gbq
-paramiko==2.7.1           # via fabric3
+paramiko==2.7.2           # via fabric3
 pathtools==0.1.2          # via watchdog
 pip-tools==5.3.1          # via -r requirements.in
 premailer==3.7.0          # via -r requirements.in
