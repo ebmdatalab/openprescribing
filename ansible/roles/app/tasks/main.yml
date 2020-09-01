@@ -1,11 +1,16 @@
 ---
-- name: Setup Virtualenv and upgrade setuptools and pip
+- name: Setup Virtualenv and upgrade pip
   pip:
     state: latest
     virtualenv: "{{ virtualenv_path }}"
     name:
-      - setuptools
       - pip
+
+- name: Upgrade setuptools
+  pip:
+    virtualenv: "{{ virtualenv_path }}"
+    name:
+      - setuptools==49.6.0
 
 - name: install virtualenvwrapper
   pip:
