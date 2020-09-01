@@ -65,7 +65,8 @@ Install library dependencies (current as of Debian Jessie):
 
 Ensure pip and setuptools are up to date:
 
-    pip install -U pip setuptools
+    pip install -U pip
+    pip install setuptools==49.6.0
 
 Install Python dependencies:
 
