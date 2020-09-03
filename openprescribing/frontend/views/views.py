@@ -24,7 +24,6 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
 
 from dateutil.relativedelta import relativedelta
@@ -33,7 +32,6 @@ from common.utils import parse_date
 from gcutils.bigquery import interpolate_sql
 from dmd.models import VMP
 from frontend.forms import BookmarkListForm
-from frontend.forms import FeedbackForm
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.forms import NCSOConcessionBookmarkForm
@@ -53,7 +51,6 @@ from frontend.models import Profile
 from frontend.models import RegionalTeam
 from frontend.models import STP
 from frontend.models import SearchBookmark
-from frontend.feedback import send_feedback_mail
 from frontend.views.spending_utils import (
     ncso_spending_for_entity,
     ncso_spending_breakdown_for_entity,
@@ -1280,40 +1277,8 @@ def gdoc_view(request, doc_id):
 
 
 def feedback_view(request):
-    url = request.GET.get("from_url", "/")
-    if request.POST:
-        form = FeedbackForm(request.POST)
-        if form.is_valid():
-            user_name = form.cleaned_data["name"].strip()
-            user_email_addr = form.cleaned_data["email"].strip()
-            send_feedback_mail(
-                user_name=user_name,
-                user_email_addr=user_email_addr,
-                subject=form.cleaned_data["subject"].strip(),
-                message=form.cleaned_data["message"],
-                url=url,
-            )
-
-            msg = (
-                "Thanks for sending your feedback/query! A copy of the "
-                "message has been sent to you at {}. Please check your spam "
-                "folder for our reply.".format(user_email_addr)
-            )
-            messages.success(request, msg)
-
-            if is_safe_url(url, allowed_hosts=[request.get_host()]):
-                redirect_url = url
-            else:
-                logger.error("Unsafe redirect URL: {}".format(url))
-                redirect_url = "/"
-            return HttpResponseRedirect(redirect_url)
-    else:
-        form = FeedbackForm()
-
-    show_warning = "/practice/" in url
-
     return render(
-        request, "feedback.html", {"form": form, "show_warning": show_warning}
+        request, "feedback.html", {"support_to_email": settings.SUPPORT_TO_EMAIL}
     )
 
 
