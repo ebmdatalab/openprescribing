@@ -52,13 +52,18 @@ class Command(BaseCommand):
 
         PRACTICE_COL = headers.index("Partner\nOrganisation\nCode")
         PCN_COL = headers.index("PCN Code")
+        END_DATE_COL = headers.index("Practice to PCN\nRelationship\nEnd Date")
 
         for n, row in enumerate(rows, start=2):
             practice_code = row[PRACTICE_COL]
             pcn_code = row[PCN_COL]
+            end_date = row[END_DATE_COL]
             # Skip blank lines
             if not practice_code and not pcn_code:
                 continue
             if not practice_code or not pcn_code:
                 raise ValueError("Blank code on row {}".format(n))
+            # Skip relationships that have ended
+            if end_date:
+                continue
             yield practice_code, pcn_code
