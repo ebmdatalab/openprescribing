@@ -1180,7 +1180,6 @@ def _handle_bookmark_post(request, bookmark_cls):
     """
 
     bookmark = _get_or_create_bookmark(request, bookmark_cls)
-    _send_alert_signup_confirmation(bookmark)
     _add_confirmation_message(request, bookmark)
     return redirect(bookmark.dashboard_url())
 
