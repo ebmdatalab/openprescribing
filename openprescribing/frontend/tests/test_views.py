@@ -7,11 +7,12 @@ from urllib.parse import parse_qs, urlparse
 from pyquery import PyQuery as pq
 
 from django.conf import settings
+from django.core import mail
 from django.core.management import call_command
 from django.http import QueryDict
 from django.test import TestCase, SimpleTestCase, override_settings
 
-from frontend.models import OrgBookmark, SearchBookmark, Measure
+from frontend.models import EmailMessage, OrgBookmark, SearchBookmark, Measure
 from frontend.views.views import BadRequestError, _get_measure_tag_filter, cached
 from frontend.price_per_unit.substitution_sets import (
     get_substitution_sets_by_presentation,
@@ -49,18 +50,18 @@ class TestAlertViews(TestCase):
         form_data["name"] = name
         return self.client.post("/analyse/", form_data, follow=True)
 
-    # def test_search_email_sent(self):
-    #     response = self._post_search_signup("stuff", "mysearch")
-    #     self.assertContains(response, "alerts about mysearch")
-    #     self.assertRedirects(response, "/analyse/#stuff")
-    #     self.assertEqual(len(mail.outbox), 1)
-    #     self.assertIn("about mysearch", mail.outbox[0].body)
+    def test_search_email_sent(self):
+        response = self._post_search_signup("stuff", "mysearch")
+        self.assertContains(response, "alerts about mysearch")
+        self.assertRedirects(response, "/analyse/#stuff")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("about mysearch", mail.outbox[0].body)
 
-    # def test_search_email_copy_kept(self):
-    #     self._post_search_signup("stuff", "mysearch")
-    #     msg = EmailMessage.objects.first()
-    #     self.assertIn("about mysearch", msg.message.body)
-    #     self.assertIn("foo@baz.com", msg.to)
+    def test_search_email_copy_kept(self):
+        self._post_search_signup("stuff", "mysearch")
+        msg = EmailMessage.objects.first()
+        self.assertIn("about mysearch", msg.message.body)
+        self.assertIn("foo@baz.com", msg.to)
 
     def test_search_bookmark_created(self):
         self.assertEqual(SearchBookmark.objects.count(), 0)
@@ -71,14 +72,14 @@ class TestAlertViews(TestCase):
         # Check the name is URL-decoded
         self.assertEqual(bookmark.name, "~mysearch")
 
-    # def test_ccg_email_sent(self):
-    #     email = "a@a.com"
-    #     response = self._post_org_signup("03V", email=email)
-    #     self.assertRedirects(response, "/ccg/03V/measures/")
-    #     self.assertContains(response, "alerts about prescribing in NHS Corby.")
-    #     self.assertEqual(len(mail.outbox), 1)
-    #     self.assertIn(email, mail.outbox[0].to)
-    #     self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
+    def test_ccg_email_sent(self):
+        email = "a@a.com"
+        response = self._post_org_signup("03V", email=email)
+        self.assertRedirects(response, "/ccg/03V/measures/")
+        self.assertContains(response, "alerts about prescribing in NHS Corby.")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(email, mail.outbox[0].to)
+        self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
 
     def test_ccg_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
@@ -105,14 +106,14 @@ class TestAlertViews(TestCase):
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, "03V")
 
-    # def test_practice_email_sent(self):
-    #     response = self._post_org_signup("P87629")
-    #     self.assertContains(
-    #         response, "alerts about prescribing in 1/ST Andrews Medical Practice"
-    #     )
-    #     self.assertRedirects(response, "/practice/P87629/measures/")
-    #     self.assertEqual(len(mail.outbox), 1)
-    #     self.assertIn("about prescribing in 1/ST Andrews", mail.outbox[0].body)
+    def test_practice_email_sent(self):
+        response = self._post_org_signup("P87629")
+        self.assertContains(
+            response, "alerts about prescribing in 1/ST Andrews Medical Practice"
+        )
+        self.assertRedirects(response, "/practice/P87629/measures/")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("about prescribing in 1/ST Andrews", mail.outbox[0].body)
 
     def test_practice_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
@@ -657,26 +658,26 @@ class TestFeedbackView(TestCase):
         rsp = self.client.get("/feedback/?from_url={}".format(from_url))
         self.assertEqual(rsp.status_code, 200)
 
-    # def test_post(self):
-    #     mail.outbox = []
+    def test_post(self):
+        mail.outbox = []
 
-    #     form_data = {
-    #         "name": "Alice Apple",
-    #         "email": "alice@example.com",
-    #         "subject": "An apple a day...",
-    #         "human_test": "health",
-    #         "message": "...keeps the doctor away",
-    #     }
+        form_data = {
+            "name": "Alice Apple",
+            "email": "alice@example.com",
+            "subject": "An apple a day...",
+            "human_test": "health",
+            "message": "...keeps the doctor away",
+        }
 
-    #     from_url = "http://testserver/bnf/"
+        from_url = "http://testserver/bnf/"
 
-    #     rsp = self.client.post(
-    #         "/feedback/?from_url={}".format(from_url), form_data, follow=True
-    #     )
+        rsp = self.client.post(
+            "/feedback/?from_url={}".format(from_url), form_data, follow=True
+        )
 
-    #     self.assertRedirects(rsp, from_url)
-    #     self.assertContains(rsp, "Thanks for sending your feedback")
-    #     self.assertEqual(len(mail.outbox), 2)
+        self.assertRedirects(rsp, from_url)
+        self.assertContains(rsp, "Thanks for sending your feedback")
+        self.assertEqual(len(mail.outbox), 2)
 
 
 @override_settings(
