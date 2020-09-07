@@ -40,7 +40,7 @@ google-auth==1.21.1       # via google-api-core, google-api-python-client, googl
 google-cloud-bigquery-storage==1.0.0  # via -r requirements.in
 google-cloud-bigquery==1.27.2  # via -r requirements.in, pandas-gbq
 google-cloud-core==1.4.1  # via google-cloud-bigquery, google-cloud-storage
-google-cloud-storage==1.30.0  # via -r requirements.in
+google-cloud-storage==1.31.0  # via -r requirements.in
 google-crc32c==1.0.0      # via google-resumable-media
 google-resumable-media==1.0.0  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.52.0  # via google-api-core
