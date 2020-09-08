@@ -3,8 +3,18 @@ from os.path import abspath, basename, dirname, join, normpath
 from sys import path
 from django.core.exceptions import ImproperlyConfigured
 from common import utils
+import warnings
 
 import sys
+
+# This `cryptography` warning is making our cronjobs chatty
+warnings.filterwarnings(
+    "ignore", "Python 3.5 support will be dropped in the next release"
+)
+if sys.version_info >= (3, 6):
+    warnings.warn(
+        "Warning supression on line above is now redundant and should be removed"
+    )
 
 
 # PATH CONFIGURATION
