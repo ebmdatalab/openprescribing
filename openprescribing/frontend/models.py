@@ -559,8 +559,7 @@ class Presentation(models.Model):
             return ", ".join(descrs)
 
     def prescribability_statuses(self):
-        """Return all prescribability statuses for this presentation.
-        """
+        """Return all prescribability statuses for this presentation."""
         vmps = VMP.objects.filter(bnf_code=self.bnf_code)
         return VirtualProductPresStatus.objects.filter(vmp__in=vmps).distinct()
 
@@ -756,8 +755,7 @@ class TruncatingCharField(models.CharField):
 
 
 class SearchBookmark(models.Model):
-    """A bookmark for an individual analyse search made by a user.
-    """
+    """A bookmark for an individual analyse search made by a user."""
 
     name = TruncatingCharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -768,14 +766,11 @@ class SearchBookmark(models.Model):
         return "Bookmark: " + self.name
 
     def topic(self):
-        """Sentence snippet describing the bookmark
-        """
+        """Sentence snippet describing the bookmark"""
         return self.name
 
     def dashboard_url(self):
-        """The 'home page' for this bookmark
-
-        """
+        """The 'home page' for this bookmark"""
         return "%s#%s" % (reverse("analyse"), self.url)
 
 
@@ -860,8 +855,7 @@ class OrgBookmark(models.Model):
             return "all_england"
 
     def topic(self):
-        """Sentence snippet describing the bookmark
-        """
+        """Sentence snippet describing the bookmark"""
         return "prescribing in %s" % self.name
 
     def get_absolute_url(self):

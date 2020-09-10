@@ -45,8 +45,7 @@ class Command(BaseCommand):
             self.fetch_and_extract_zipped_file("epcn", "pcn_details")
 
     def fetch_and_extract_zipped_file(self, base_filename, dest_dirname):
-        """Grab a zipfile from a url, and extract a single file from it.
-        """
+        """Grab a zipfile from a url, and extract a single file from it."""
 
         zip_filename = base_filename + ".zip"
         if base_filename == "epcn":

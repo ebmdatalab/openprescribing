@@ -74,8 +74,7 @@ class Command(BaseCommand):
 
 
 def update_bnf_table():
-    """Update `bnf` table from cloud-stored CSV
-    """
+    """Update `bnf` table from cloud-stored CSV"""
     storage_client = StorageClient()
     bucket = storage_client.get_bucket()
     blobs = bucket.list_blobs(prefix="hscic/bnf_codes/")

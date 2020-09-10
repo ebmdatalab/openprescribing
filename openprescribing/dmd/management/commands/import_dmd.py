@@ -443,8 +443,7 @@ class Command(BaseCommand):
             table.insert_rows_from_query(sql)
 
     def sql_for_cls(self, cls):
-        """Return SQL to build single fully denormalised BQ table for cls.
-        """
+        """Return SQL to build single fully denormalised BQ table for cls."""
 
         fields_by_name = {field.name: field for field in cls._meta.fields}
         rels_by_name = {rel.name: rel for rel in cls._meta.related_objects}

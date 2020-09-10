@@ -120,6 +120,5 @@ class MockApiServer(object):
 
     @classmethod
     def api_port(cls):
-        """A port suitable for running the API.
-        """
+        """A port suitable for running the API."""
         return 6060

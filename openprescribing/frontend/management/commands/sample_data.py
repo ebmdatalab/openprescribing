@@ -71,8 +71,7 @@ def dump_create_table(table, dest_dir):
 
 
 def quote_cols(cols):
-    """Quote SQL column names (because dm+d uses the reserved word `desc`)
-    """
+    """Quote SQL column names (because dm+d uses the reserved word `desc`)"""
     return ['"{}"'.format(item) for item in cols]
 
 

@@ -22,8 +22,7 @@ def notify_newrelic(revision, url, fab_env="production"):
 
 
 def notify_slack(message):
-    """Posts the message to #general
-    """
+    """Posts the message to #general"""
     # Set the webhook_url to the one provided by Slack when you create
     # the webhook at
     # https://my.slack.com/services/new/incoming-webhook/
