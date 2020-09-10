@@ -63,8 +63,7 @@ class Command(BaseCommand):
     """
 
     def check_definitions(self, measure_defs, start_date, end_date, verbose):
-        """Checks SQL definitions for measures.
-        """
+        """Checks SQL definitions for measures."""
 
         # We don't validate JSON here, as this is already done as a
         # side-effect of parsing the command options.
@@ -192,17 +191,14 @@ def load_measure_defs(measure_ids=None):
 
 
 def float_or_null(v):
-    """Return a value coerced to a float, unless it's a None.
-
-    """
+    """Return a value coerced to a float, unless it's a None."""
     if v is not None:
         v = float(v)
     return v
 
 
 def float_or_zero(v):
-    """Return a value coerced to a float; Nones become zero.
-    """
+    """Return a value coerced to a float; Nones become zero."""
     v = float_or_null(v)
     if v is None:
         v = 0.0
@@ -275,9 +271,7 @@ def arrays_to_strings(measure_def):
 
 
 def create_or_update_measure(measure_def, end_date):
-    """Create a measure object based on a measure definition
-
-    """
+    """Create a measure object based on a measure definition"""
     measure_id = measure_def["id"]
     v = arrays_to_strings(measure_def)
 
@@ -675,8 +669,7 @@ class MeasureCalculation(object):
         )
 
     def add_practice_percent_rank(self):
-        """Add a percentile rank to the ratios table
-        """
+        """Add a percentile rank to the ratios table"""
         self.insert_rows_from_query(
             "practice_percent_rank", self.table_name("practice"), {}
         )
@@ -778,15 +771,13 @@ class MeasureCalculation(object):
         )
 
     def add_org_percent_rank(self, org_type):
-        """Add a percentile rank to the ratios table
-        """
+        """Add a percentile rank to the ratios table"""
         self.insert_rows_from_query(
             "{}_percent_rank".format(org_type), self.table_name(org_type), {}
         )
 
     def calculate_global_centiles_for_orgs(self, org_type):
-        """Adds centiles to the already-existing centiles table
-        """
+        """Adds centiles to the already-existing centiles table"""
         extra_fields = []
         # Add prefixes to the select columns so we can reference the joined
         # tables (bigquery flattens columns names from subqueries using table
@@ -820,8 +811,7 @@ class MeasureCalculation(object):
         self.insert_rows_from_query(query_id, self.table_name(org_type), {})
 
     def write_org_ratios_to_database(self, org_type):
-        """Create measure values for organisation ratios.
-        """
+        """Create measure values for organisation ratios."""
         for datum in self.get_rows_as_dicts(self.table_name(org_type)):
             datum["measure_id"] = self.measure.id
             if self.measure.is_cost_based:
@@ -846,8 +836,7 @@ class MeasureCalculation(object):
         )
 
     def write_global_centiles_to_database(self):
-        """Write the globals data from BigQuery to the local database
-        """
+        """Write the globals data from BigQuery to the local database"""
         self.log(
             "Writing global centiles from %s to database" % self.table_name("global")
         )

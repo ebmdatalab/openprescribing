@@ -58,7 +58,7 @@ def email_as_text(html):
 
 
 def get_env_setting(setting, default=None):
-    """ Get the environment setting.
+    """Get the environment setting.
 
     Return the default, or raise an exception if none supplied
     """
@@ -73,7 +73,7 @@ def get_env_setting(setting, default=None):
 
 
 def get_env_setting_bool(setting, default=None):
-    """ Get the environment setting as a boolean
+    """Get the environment setting as a boolean
 
     Return the default, or raise an exception if none supplied
     """

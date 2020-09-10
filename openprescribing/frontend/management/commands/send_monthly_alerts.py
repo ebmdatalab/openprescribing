@@ -231,8 +231,10 @@ class Command(BaseCommand):
             print(message)
             send_all_england_alerts(recipient_email)
         else:
-            message = "Not sending All England alerts as found unhandled option: {}".format(
-                ", ".join(set_options.keys())
+            message = (
+                "Not sending All England alerts as found unhandled option: {}".format(
+                    ", ".join(set_options.keys())
+                )
             )
             logger.info(message)
             print(message)

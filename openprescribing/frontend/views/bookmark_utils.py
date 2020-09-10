@@ -657,8 +657,7 @@ def initialise_email(bookmark, campaign_source):
 
 
 def finalise_email(msg, template_name, context, tags):
-    """Set message body, add HTML alternative, and add some headers.
-    """
+    """Set message body, add HTML alternative, and add some headers."""
 
     template = get_template(template_name)
     html = template.render(context)

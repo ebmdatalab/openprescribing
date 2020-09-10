@@ -739,8 +739,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
 
     def _expected_savings(self):
         def autovivify(levels=1, final=dict):
-            """Create an arbitrarily-nested dict
-            """
+            """Create an arbitrarily-nested dict"""
             return (
                 defaultdict(final)
                 if levels < 2
