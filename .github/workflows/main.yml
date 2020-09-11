@@ -62,7 +62,14 @@ jobs:
         env:
           TEST_SUITE: functional
           BROWSER: ${{ matrix.browser }}
-      - name: 'BrowserStackLocal Stop'
+      # TODO: consider running these as a seperate target
+      - name: Production config tests
+        run: docker-compose run --service-ports test-production
+        env:
+          # TODO: verify if these are required
+          TEST_SUITE: functional
+          BROWSER: "IE:11.0:Windows:7" 
+       - name: 'BrowserStackLocal Stop'
         uses: 'browserstack/github-actions/setup-local@master'
         with:
           local-testing: stop
