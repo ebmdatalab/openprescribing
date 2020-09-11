@@ -54,7 +54,7 @@ jobs:
         env:
           GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE: ${{ secrets.GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE }}
       - name: Functional tests
-        run: docker-compose run --service-ports test && docker-compose run --service-ports test-production
+        run: docker-compose run --service-ports test
         env:
           TEST_SUITE: functional
           BROWSER: "IE:11.0:Windows:7"
