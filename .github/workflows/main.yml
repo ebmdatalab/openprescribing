@@ -30,26 +30,38 @@ jobs:
           status: "FAILURE (unit_test)"
           color: danger
 
-  # Functional tests are failing on Travis too!
-  #
-  # functional_tests:
-  #   runs-on: ubuntu-latest
-  #
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #     - name: Retrieve Google Cloud credentials
-  #       run: ./.github/scripts/decrypt_secret.sh
-  #       env:
-  #         GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE: ${{ secrets.GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE }}
-  #     - name: Generate SAUCE_HOST
-  #       run: |
-  #         echo "::set-env name=SAUCE_HOST::$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)"
-  #     - name: Functional tests
-  #       run: docker-compose run --service-ports test && docker-compose run --service-ports test-production
-  #       env:
-  #         TEST_SUITE: functional
-  #         BROWSER: "internet explorer:11.0:Windows 7"
+  functional_tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'BrowserStack Env Setup'
+        uses: 'browserstack/github-actions/setup-env@master'
+        with:
+          username:  ${{ secrets.BROWSERSTACK_USERNAME }}
+          access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          build-name: BUILD_INFO
+          project-name: REPO_NAME
+      - name: 'BrowserStack Local Tunnel Setup'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: start
+          local-identifier: random
+          local-logging-level: all-logs
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Retrieve Google Cloud credentials
+        run: ./.github/scripts/decrypt_secret.sh
+        env:
+          GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE: ${{ secrets.GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE }}
+      - name: Functional tests
+        run: docker-compose run --service-ports test
+        env:
+          TEST_SUITE: functional
+          BROWSER: "IE:11.0:Windows:7"
+      - name: 'BrowserStackLocal Stop'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: stop
 
   ansible_buildout_test:
     runs-on: ubuntu-latest
