@@ -69,7 +69,7 @@ jobs:
           # TODO: verify if these are required
           TEST_SUITE: functional
           BROWSER: "IE:11.0:Windows:7" 
-       - name: 'BrowserStackLocal Stop'
+      - name: 'BrowserStackLocal Stop'
         uses: 'browserstack/github-actions/setup-local@master'
         with:
           local-testing: stop
