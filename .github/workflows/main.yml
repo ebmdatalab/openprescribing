@@ -1,6 +1,11 @@
 name: "OpenPrescribing CI"
 
-on: [ pull_request ]
+on:
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   unit_test:
