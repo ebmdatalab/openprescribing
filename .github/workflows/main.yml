@@ -1,7 +1,6 @@
 name: "OpenPrescribing CI"
 
 on:
-on:
   push:
     branches:
       - master
