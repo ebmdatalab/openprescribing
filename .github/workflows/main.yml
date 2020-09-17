@@ -37,6 +37,9 @@ jobs:
   functional_tests:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        browser: [ "IE:11.0:Windows:7" , "Firefox:latest:OS X:Catalina" ]
     steps:
       - name: 'BrowserStack Env Setup'
         uses: 'browserstack/github-actions/setup-env@master'
@@ -61,7 +64,7 @@ jobs:
         run: docker-compose run --service-ports test
         env:
           TEST_SUITE: functional
-          BROWSER: "IE:11.0:Windows:7"
+          BROWSER: ${{ matrix.browser }}
       - name: 'BrowserStackLocal Stop'
         uses: 'browserstack/github-actions/setup-local@master'
         with:
