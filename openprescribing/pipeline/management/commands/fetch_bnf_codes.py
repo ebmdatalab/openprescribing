@@ -25,7 +25,7 @@ this command.
 
 Specifically, you should:
 
-    * Visit https://apps.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126 in your browser
+    * Visit https://applications.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126 in your browser
     * Solve the captcha and click on "Guest Login"
     * Copy the value of the JSESSIONID cookie
       * In Chrome, this can be found in the Application tab of Developer Tools
