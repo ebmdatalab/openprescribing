@@ -6,7 +6,6 @@ import zipfile
 
 from lxml import html
 import requests
-from tqdm import tqdm
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -84,16 +83,9 @@ Specifically, you should:
 
         url = base_url + "downloadAvailableReport.zip"
         params = {"requestId": request_id}
-        rsp = session.post(url, params=params, stream=True)
-
-        total_size = int(rsp.headers["content-length"])
-
+        rsp = session.post(url, params=params)
         with open(zip_path, "wb") as f:
-            tqdm_iterator = tqdm(
-                rsp.iter_content(32 * 1024), total=total_size, unit="B", unit_scale=True
-            )
-            for block in tqdm_iterator:
-                f.write(block)
+            f.write(rsp.content)
 
         with zipfile.ZipFile(zip_path) as zf:
             zf.extractall(dir_path)
