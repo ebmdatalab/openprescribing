@@ -4,7 +4,7 @@
         "source_id": "bnf_codes"
     },
     "fetch_ccg_boundaries": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "ccg_boundaries"
     },
     "fetch_prescribing": {
@@ -12,11 +12,11 @@
         "source_id": "prescribing"
     },
     "fetch_patient_list_weightings": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "patient_list_weightings"
     },
     "fetch_stps": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "stp_mapping"
     },
     "fetch_patient_list_size": {
