@@ -419,10 +419,6 @@ def run_all(year, month, under_test=False):
     last_imported = re.findall(r"/(\d{4}_\d{2})/", prescribing_path)[0]
 
     for task in tasks.by_type("post_process").ordered():
-        if under_test and "smoketest" in task.name:
-            # Smoketests run against live site, so we should skip when running
-            # under test
-            continue
         run_task(task, year, month, last_imported=last_imported)
 
     if not under_test:
@@ -441,16 +437,13 @@ def run_all(year, month, under_test=False):
     )
 
     activity = random.choice(
-        ["Put the kettle on", "Have a glass of wine", "Get up and stretch"]
+        ["put the kettle on", "have a glass of wine", "get up and stretch"]
     )
 
     msg = """
 Importing data for {}_{} complete!'
 
-You should now:
-* Tweet about it
-* Commit the changes to the smoke tests
-* {}
+You should now tweet about it and then {}
 
 (Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)
     """.strip().format(
