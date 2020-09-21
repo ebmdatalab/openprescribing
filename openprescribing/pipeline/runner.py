@@ -66,9 +66,13 @@ class Task(object):
             self.source_id = None
         else:
             self.source_id = attrs["source_id"]
-        if self.task_type != "manual_fetch":
+        if self.task_type not in ["manual_fetch", "manual_fetch_skip_for_now"]:
             self.command = attrs["command"]
-        if self.task_type not in ["manual_fetch", "auto_fetch"]:
+        if self.task_type not in [
+            "manual_fetch",
+            "manual_fetch_skip_for_now",
+            "auto_fetch",
+        ]:
             self.dependency_names = attrs["dependencies"]
         else:
             self.dependency_names = []
@@ -246,6 +250,7 @@ class PostProcessTask(Task):
 class TaskCollection(object):
     task_type_to_cls = {
         "manual_fetch": ManualFetchTask,
+        "manual_fetch_skip_for_now": ManualFetchTask,
         "auto_fetch": AutoFetchTask,
         "convert": ConvertTask,
         "import": ImportTask,
