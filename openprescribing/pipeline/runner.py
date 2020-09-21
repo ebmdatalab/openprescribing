@@ -448,7 +448,11 @@ def run_all(year, month, under_test=False):
     msg = """
 Importing data for {}_{} complete!'
 
-You should now tweet about it and then {}
+You should now:
+
+* tweet about it
+* run `sudo systemctl restart app.openprescribing.*.service`
+* {}
 
 (Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)
     """.strip().format(
