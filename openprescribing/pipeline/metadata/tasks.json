@@ -4,20 +4,21 @@
         "source_id": "bnf_codes"
     },
     "fetch_ccg_boundaries": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "ccg_boundaries"
     },
-    "fetch_prescribing": {
-        "type": "manual_fetch",
-        "source_id": "prescribing"
-    },
     "fetch_patient_list_weightings": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "patient_list_weightings"
     },
     "fetch_stps": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "stp_mapping"
+    },
+    "fetch_prescribing": {
+        "type": "auto_fetch",
+        "source_id": "prescribing",
+        "command": "fetch_prescribing_data {year} {month}"
     },
     "fetch_patient_list_size": {
         "type": "auto_fetch",
@@ -258,21 +259,6 @@
         "command": "backup_bq_tables",
         "dependencies": [
             "upload_to_bigquery"
-        ]
-    },
-    "update_smoketests": {
-        "type": "post_process",
-        "command": "update_smoketests {last_imported}",
-        "dependencies": [
-            "import_measures",
-            "publish_matrixstore"
-        ]
-    },
-    "run_smoketests": {
-        "type": "post_process",
-        "command": "run_smoketests {last_imported}",
-        "dependencies": [
-            "update_smoketests"
         ]
     },
     "build_matrixstore": {

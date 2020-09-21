@@ -40,7 +40,6 @@ requests-futures
 requests[security]
 scipy
 titlecase
-tqdm
 xlrd
 
 # test requirements
