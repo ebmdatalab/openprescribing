@@ -62,13 +62,43 @@ jobs:
         env:
           TEST_SUITE: functional
           BROWSER: ${{ matrix.browser }}
-      # TODO: consider running these as a seperate target
+      - name: 'BrowserStackLocal Stop'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: stop
+
+  production_tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        browser: [ "IE:11.0:Windows:7" , "Firefox:latest:OS X:Catalina" ]
+    steps:
+      - name: 'BrowserStack Env Setup'
+        uses: 'browserstack/github-actions/setup-env@master'
+        with:
+          username:  ${{ secrets.BROWSERSTACK_USERNAME }}
+          access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          build-name: BUILD_INFO
+          project-name: REPO_NAME
+      - name: 'BrowserStack Local Tunnel Setup'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: start
+          local-identifier: random
+          local-logging-level: all-logs
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Retrieve Google Cloud credentials
+        run: ./.github/scripts/decrypt_secret.sh
+        env:
+          GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE: ${{ secrets.GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE }}
       - name: Production config tests
         run: docker-compose run --service-ports test-production
         env:
           # TODO: verify if these are required
           TEST_SUITE: functional
-          BROWSER: "IE:11.0:Windows:7" 
+          BROWSER: ${{ matrix.browser }}
       - name: 'BrowserStackLocal Stop'
         uses: 'browserstack/github-actions/setup-local@master'
         with:
