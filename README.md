@@ -394,7 +394,7 @@ Details of the hooks are in .pre-commit-config.yaml
 
 # Maintenance
 
-## Dependabot
+## Dependency updates
 
 ### Python / pip
 
@@ -407,10 +407,6 @@ At the time of writing, we don't trust our JS test suite to notify us of failure
 ### Rebase
 
 Auto-rebase is disabled, because of CI failures due to the number of PRs requiring more browserstack workers than our current plan allows for. The bot will help if you leave a comment on the PR saying `@dependabot rebase`.
-
-### Ignored dependencies
-
-At the time of writing, we have lots of dependencies ignored due to dependabot commands, which you can view by [searching the repository](https://github.com/ebmdatalab/openprescribing/search?q=%22%40dependabot+ignore%22+in%3Acomments&type=issues).
 
 # Philosophy
 
