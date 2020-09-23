@@ -4,6 +4,7 @@ updates:
   directory: "/"
   schedule:
     interval: daily
+  rebase-strategy: "disabled"
   open-pull-requests-limit: 99
   allow:
   - dependency-type: direct
@@ -20,6 +21,12 @@ updates:
     versions:
     - "< 3"
     - ">= 2.a"
+  - dependency-name: mock
+    versions:
+    - "> 3.0.5"
+  - dependency-name: networkx
+    versions:
+    - "> 2.4"
   - dependency-name: numpy
     versions:
     - "> 1.18.5"
@@ -38,3 +45,6 @@ updates:
   - dependency-name: scipy
     versions:
     - "> 1.4.1"
+  - dependency-name: titlecase
+    versions:
+    - "> 0.12.0"
