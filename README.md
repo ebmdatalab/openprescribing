@@ -392,6 +392,26 @@ To install the hooks, run once:
 
 Details of the hooks are in .pre-commit-config.yaml
 
+# Maintenance
+
+## Dependabot
+
+### Python / pip
+
+Our policy is to keep python dependencies up to date as much as possible. Dependabot PRs should generally be merged if CI passes.
+
+### JavaScript / npm
+
+At the time of writing, we don't trust our JS test suite to notify us of failures, so dependabot is not currently enabled/encourage for these dependencies.
+
+### Rebase
+
+Auto-rebase is disabled, because of CI failures due to the number of PRs requiring more browserstack workers than our current plan allows for. The bot will help if you leave a comment on the PR saying `@dependabot rebase`.
+
+### Ignored dependencies
+
+At the time of writing, we have lots of dependencies ignored due to dependabot commands, which you can view by [searching the repository](https://github.com/ebmdatalab/openprescribing/search?q=%22%40dependabot+ignore%22+in%3Acomments&type=issues).
+
 # Philosophy
 
 This project follows design practices from [Two Scoops of Django](http://twoscoopspress.org/products/two-scoops-of-django-1-6).
