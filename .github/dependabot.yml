@@ -1,0 +1,40 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 99
+  allow:
+  - dependency-type: direct
+  - dependency-type: indirect
+  ignore:
+  - dependency-name: bcrypt
+    versions:
+    - "> 3.1.7"
+  - dependency-name: django
+    versions:
+    - ">= 3.a"
+    - "< 4"
+  - dependency-name: fabric
+    versions:
+    - "< 3"
+    - ">= 2.a"
+  - dependency-name: numpy
+    versions:
+    - "> 1.18.5"
+  - dependency-name: openpyxl
+    versions:
+    - ">= 3.a"
+    - "< 4"
+  - dependency-name: pandas
+    versions:
+    - ">= 1.a"
+    - "< 2"
+  - dependency-name: pandas-gbq
+    versions:
+    - ">= 0.11.a"
+    - "< 0.12"
+  - dependency-name: scipy
+    versions:
+    - "> 1.4.1"
