@@ -474,6 +474,16 @@
   "fields": {
     "descr": "Discontinued Flag"
   }
+},
+{
+  "model": "dmd.gtin",
+  "pk": 997194,
+  "fields": {
+    "ampp": 1389011000001108,
+    "gtin": 5036850012349,
+    "startdt": "2010-01-25",
+    "enddt": null
+  }
 }
 ]
 

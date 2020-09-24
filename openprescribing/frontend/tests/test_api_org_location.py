@@ -19,8 +19,8 @@ class TestAPIOrgLocationViews(TestCase):
         content = json.loads(response.content)
         self.assertEqual(len(content["features"]), 2)
         coord = content["features"][1]["geometry"]["coordinates"][0][0][0]
-        self.assertEqual(coord[0], -117.00000000000003)
-        self.assertEqual(coord[1], 33.97943076318428)
+        self.assertAlmostEqual(coord[0], -117.00000000000003)
+        self.assertAlmostEqual(coord[1], 33.97943076318428)
 
     def test_api_view_org_location_all_ccgs_excluding_closed(self):
         closed = PCT.objects.first()
@@ -39,8 +39,8 @@ class TestAPIOrgLocationViews(TestCase):
         content = json.loads(response.content)
         self.assertEqual(len(content["features"]), 2)
         coord = content["features"][0]["geometry"]["coordinates"][0][0][0]
-        self.assertEqual(coord[0], -117.00000000000003)
-        self.assertEqual(coord[1], 33.97943076318428)
+        self.assertAlmostEqual(coord[0], -117.00000000000003)
+        self.assertAlmostEqual(coord[1], 33.97943076318428)
 
     @unittest.skipIf(
         "TRAVIS" in os.environ and os.environ["TRAVIS"],

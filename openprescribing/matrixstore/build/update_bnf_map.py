@@ -123,7 +123,7 @@ def format_values_for_sqlite(row):
     """
     Accepts a list of matrices and formats them ready for insertion into SQLite
     """
-    return [sqlite3.Binary(serialize_compressed(value)) for value in row]
+    return [serialize_compressed(value) for value in row]
 
 
 def delete_presentations_with_no_prescribing(cursor):

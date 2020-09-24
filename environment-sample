@@ -20,17 +20,15 @@ SECRET_KEY=secret_key
 MAILGUN_WEBHOOK_USER=mailgun_webhook_user
 MAILGUN_WEBHOOK_PASS=mailgun_webhook_pass
 MAILGUN_API_KEY=mailgun_api_key
-MAILCHIMP_USER=mailchimp_user
-MAILCHIMP_API_KEY=mailchimp_api_key
 
-# If this is set to True then both REDIS_URL below must also be defined or the
-# application won't start
+# If this is set to True then SOURCE_COMMIT_ID must also be defined or the
+# application won't start (this is done automatically by the gunicorn_start
+# script)
 ENABLE_CACHING=False
 
-# URL of Redis instance to use for caching
-# Accepts any format handled by redis-py:
-# # https://redis-py.readthedocs.io/en/latest/#redis.Redis.from_url
-REDIS_URL=
+# Storage path for the DiskCache cache backend (by default we use
+# `<REPO_ROOT>/diskcache`)
+# DISKCACHE_PATH=
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Only required on the server
@@ -49,7 +47,7 @@ NEW_RELIC_LICENSE_KEY=new_relic_license_key
 
 # The path to a file containing your credentials for accessing Google Cloud
 # Platform services (eg BigQuery, Cloud Storage).
-GOOGLE_APPLICATION_CREDENTIALS=
+# GOOGLE_APPLICATION_CREDENTIALS=
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Only required for the pipeline

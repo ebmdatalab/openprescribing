@@ -46,17 +46,17 @@ class CommandTestCase(TestCase):
 
         # Create a bookmark, send alerts, and make sure one email is sent.
         factory.create_ncso_concessions_bookmark(self.ccg)
-        call_command("send_ncso_concessions_alerts", "2019-02-14")
+        call_command("send_ncso_concessions_alerts", date="2019-02-14")
         self.assertEqual(len(mail.outbox), 1)
 
         # Create another bookmark, send alerts for same date as above, and make
         # sure only one email is sent.
         mail.outbox = []
         factory.create_ncso_concessions_bookmark(self.practice)
-        call_command("send_ncso_concessions_alerts", "2019-02-14")
+        call_command("send_ncso_concessions_alerts", date="2019-02-14")
         self.assertEqual(len(mail.outbox), 1)
 
         # Send alerts for new date, and make sure two emails are sent.
         mail.outbox = []
-        call_command("send_ncso_concessions_alerts", "2019-02-15")
+        call_command("send_ncso_concessions_alerts", date="2019-02-15")
         self.assertEqual(len(mail.outbox), 2)

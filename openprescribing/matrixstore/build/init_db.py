@@ -20,9 +20,6 @@ logger = logging.getLogger(__name__)
 SCHEMA_SQL = """
     CREATE TABLE presentation (
         bnf_code TEXT,
-        is_generic BOOLEAN,
-        adq_per_quantity FLOAT,
-        name TEXT,
         -- The below columns will contain the actual prescribing data as
         -- serialized matrices of shape (number of practices, number of months)
         items BLOB,
@@ -85,7 +82,6 @@ def init_db(end_date, sqlite_path, months=None):
     dates = generate_dates(end_date, months=months)
     import_dates(sqlite_conn, dates)
     import_practices(bq_conn, sqlite_conn, dates)
-    import_presentations(bq_conn, sqlite_conn)
     sqlite_conn.commit()
     sqlite_conn.close()
     os.rename(temp_filename, sqlite_path)
@@ -112,7 +108,7 @@ def import_practices(bq_conn, sqlite_conn, dates):
         "Querying for active practice codes between %s and %s", date_start, date_end
     )
     sql = """
-        SELECT DISTINCT practice FROM {hscic}.prescribing
+        SELECT DISTINCT practice FROM {hscic}.prescribing_v2
           WHERE month BETWEEN TIMESTAMP('%(start)s') AND TIMESTAMP('%(end)s')
         UNION DISTINCT
         SELECT DISTINCT practice FROM {hscic}.practice_statistics_all_years
@@ -124,33 +120,4 @@ def import_practices(bq_conn, sqlite_conn, dates):
     logger.info("Writing %s practice codes to SQLite", len(practice_codes))
     sqlite_conn.executemany(
         "INSERT INTO practice (offset, code) VALUES (?, ?)", enumerate(practice_codes)
-    )
-
-
-def import_presentations(bq_conn, sqlite_conn):
-    """
-    Query BigQuery for BNF codes and metadata on all presentations and insert
-    into SQLite
-    """
-    # We initially pull in metadata for all presentations. After we have
-    # imported prescribing data and applied the "BNF map" to apply any changed
-    # to codes we can delete entries for presentations that don't have
-    # associated prescribing.
-    logger.info("Querying all presentation metadata")
-    result = bq_conn.query(
-        """
-        SELECT bnf_code, is_generic, adq_per_quantity, name
-          FROM {hscic}.presentation
-          ORDER BY bnf_code
-        """
-    )
-    rows = result.rows
-    logger.info("Writing %s presentations to SQLite", len(rows))
-    sqlite_conn.executemany(
-        """
-        INSERT INTO presentation
-          (bnf_code, is_generic, adq_per_quantity, name)
-          VALUES (?, ?, ?, ?)
-        """,
-        rows,
     )

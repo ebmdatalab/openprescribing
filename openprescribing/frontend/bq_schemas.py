@@ -44,17 +44,14 @@ CCG_SCHEMA = build_schema(
 
 PRESCRIBING_SCHEMA = build_schema(
     ("sha", "STRING"),
-    ("regional_team", "STRING"),
-    ("stp", "STRING"),
     ("pct", "STRING"),
-    ("pcn", "STRING"),
     ("practice", "STRING"),
     ("bnf_code", "STRING"),
     ("bnf_name", "STRING"),
     ("items", "INTEGER"),
     ("net_cost", "FLOAT"),
     ("actual_cost", "FLOAT"),
-    ("quantity", "INTEGER"),
+    ("quantity", "FLOAT"),
     ("month", "TIMESTAMP"),
 )
 
@@ -137,19 +134,7 @@ BNF_SCHEMA = build_schema(
     ("presentation_code", "STRING"),
 )
 
-PPU_SAVING_SCHEMA = build_schema(
-    ("date", "TIMESTAMP"),
-    ("bnf_code", "STRING"),
-    ("lowest_decile", "FLOAT"),
-    ("quantity", "INTEGER"),
-    ("price_per_unit", "FLOAT"),
-    ("possible_savings", "FLOAT"),
-    ("formulation_swap", "STRING"),
-    ("pct_id", "STRING"),
-    ("practice_id", "STRING"),
-)
-
-RAW_PRESCRIBING_SCHEMA = build_schema(
+RAW_PRESCRIBING_SCHEMA_V1 = build_schema(
     ("Regional_Office_Name", "STRING"),
     ("Regional_Office_Code", "STRING"),
     ("Area_Team_Name", "STRING"),
@@ -165,6 +150,35 @@ RAW_PRESCRIBING_SCHEMA = build_schema(
     ("ADQ_Usage", "FLOAT"),
     ("NIC", "FLOAT"),
     ("Actual_Cost", "FLOAT"),
+)
+
+RAW_PRESCRIBING_SCHEMA_V2 = build_schema(
+    ("YEAR_MONTH", "STRING"),
+    ("REGIONAL_OFFICE_NAME", "STRING"),
+    ("REGIONAL_OFFICE_CODE", "STRING"),
+    ("AREA_TEAM_NAME", "STRING"),
+    ("AREA_TEAM_CODE", "STRING"),
+    ("PCO_NAME", "STRING"),
+    ("PCO_CODE", "STRING"),
+    ("PRACTICE_NAME", "STRING"),
+    ("PRACTICE_CODE", "STRING"),
+    ("ADDRESS_1", "STRING"),
+    ("ADDRESS_2", "STRING"),
+    ("ADDRESS_3", "STRING"),
+    ("ADDRESS_4", "STRING"),
+    ("POSTCODE", "STRING"),
+    ("BNF_CHEMICAL_SUBSTANCE", "STRING"),
+    ("CHEMICAL_SUBSTANCE_BNF_DESCR", "STRING"),
+    ("BNF_CODE", "STRING"),
+    ("BNF_DESCRIPTION", "STRING"),
+    ("BNF_CHAPTER_PLUS_CODE", "STRING"),
+    ("QUANTITY", "FLOAT"),
+    ("ITEMS", "INTEGER"),
+    ("TOTAL_QUANTITY", "FLOAT"),
+    ("ADQUSAGE", "FLOAT"),
+    ("NIC", "FLOAT"),
+    ("ACTUAL_COST", "FLOAT"),
+    ("UNIDENTIFIED", "STRING"),
 )
 
 BDZ_ADQ_SCHEMA = build_schema(
@@ -219,10 +233,4 @@ def ccgs_transform(row):
         row[4] = "%s 00:00:00" % row[4]
     if row[5]:
         row[5] = "%s 00:00:00" % row[5]
-    return row
-
-
-def ppu_savings_transform(row):
-    if row[0]:
-        row[0] = "%s 00:00:00" % row[0]
     return row

@@ -318,6 +318,7 @@ var utils = {
     var chartTitleUrl;
     var chartExplanation = '';
     var measureUrl;
+    var measureDefinitionUrl;
     var oneEntityUrl;
     var tagsFocusUrl;
     var measureForAllPracticesUrl;
@@ -347,6 +348,10 @@ var utils = {
     );
     measureUrl = _this._buildUrl(
       options.measureUrlTemplate,
+      context
+    );
+    measureDefinitionUrl = _this._buildUrl(
+      options.measureDefinitionUrlTemplate,
       context
     );
     measureForAllPracticesUrl = _this._buildUrl(
@@ -424,6 +429,7 @@ var utils = {
       orgTypeHuman: options.orgTypeHuman,
       comparisonOrgTypeHuman: options.orgType == 'practice' ? 'CCG' : options.orgTypeHuman,
       measureUrl: measureUrl,
+      measureDefinitionUrl: measureDefinitionUrl,
       isAggregateEntity: isAggregateEntity,
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,

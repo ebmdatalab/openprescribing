@@ -12,6 +12,7 @@ from django.test import TestCase
 from common.alert_utils import BatchedEmailErrors
 from frontend.models import EmailMessage
 from frontend.models import Measure
+from frontend.models import PCN
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.views.bookmark_utils import BadAlertImageError
 from frontend.tests.test_bookmark_utils import _makeContext
@@ -81,6 +82,7 @@ class GetBookmarksTestCase(TestCase):
             recipient_email="s@s.com",
             ccg="03V",
             practice="P87629",
+            pcn=None,
             recipient_email_file=None,
             skip_email_file=None,
         )
@@ -136,7 +138,7 @@ class FailingEmailTestCase(TestCase):
         test_context = _makeContext(worst=[measure])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
-            call_mocked_command(test_context, finder, max_errors=4)
+            call_mocked_command(test_context, finder, max_errors="4")
         self.assertEqual(EmailMessage.objects.count(), 3)
         self.assertEqual(len(mail.outbox), 2)
 
@@ -145,7 +147,7 @@ class FailingEmailTestCase(TestCase):
         measure = MagicMock()
         measure.id = "measureid"
         test_context = _makeContext(worst=[measure])
-        call_mocked_command(test_context, finder, max_errors=0)
+        call_mocked_command(test_context, finder, max_errors="0")
         self.assertEqual(len(mail.outbox), 0)
 
     def test_max_errors(self, attach_image, finder):
@@ -155,7 +157,7 @@ class FailingEmailTestCase(TestCase):
         test_context = _makeContext(worst=[measure])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
-            call_mocked_command(test_context, finder, max_errors=0)
+            call_mocked_command(test_context, finder, max_errors="0")
         self.assertEqual(EmailMessage.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 0)
 
@@ -190,7 +192,7 @@ class OrgEmailTestCase(TestCase):
         # Name of the practice
         self.assertIn("1/ST Andrews Medical Practice", html)
         # Unsubscribe link
-        self.assertIn("/bookmarks/dummykey", html)
+        self.assertIn("/bookmarks/dummykey/", html)
         self.assertIn("We've no new information", html)
 
     def test_email_headers(self, attach_image, finder):
@@ -199,7 +201,7 @@ class OrgEmailTestCase(TestCase):
         message = mail.outbox[-1]
         self.assertIn(
             message.extra_headers["list-unsubscribe"],
-            "<http://localhost/bookmarks/dummykey>",
+            "<http://localhost/bookmarks/dummykey/>",
         )
 
     def test_email_body_text(self, attach_image, finder):
@@ -418,7 +420,7 @@ class SearchEmailTestCase(TestCase):
         )
         self.assertEqual(
             mail_queue.extra_headers["list-unsubscribe"],
-            "<http://localhost/bookmarks/dummykey>",
+            "<http://localhost/bookmarks/dummykey/>",
         )
 
     def test_email_body(self, attach_image):
@@ -434,7 +436,7 @@ class SearchEmailTestCase(TestCase):
         self.assertIn(opts["search_name"], html)
         self.assertEqual(mime_type, "text/html")
 
-        self.assertIn("/bookmarks/dummykey", html)
+        self.assertIn("/bookmarks/dummykey/", html)
         self.assertRegex(html, '<a href="http://localhost/analyse/.*#%s' % "something")
 
     def test_email_body_text(self, attach_image):
@@ -446,13 +448,13 @@ class SearchEmailTestCase(TestCase):
         call_command(CMD_NAME, **opts)
         text = mail.outbox[-1].body
         self.assertIn("**Hello!**", text)
-        self.assertIn("/bookmarks/dummykey", text)
+        self.assertIn("/bookmarks/dummykey/", text)
         self.assertRegex(text, "http://localhost/analyse/.*#%s" % "something")
 
 
 class AllEnglandAlertTestCase(ApiTestBase):
 
-    fixtures = ApiTestBase.fixtures + ["ppusavings", "functional-measures"]
+    fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     def test_all_england_alerts_sent(self):
         factory = DataFactory()
@@ -463,6 +465,24 @@ class AllEnglandAlertTestCase(ApiTestBase):
         call_command(CMD_NAME)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [bookmark.user.email])
+
+
+class PCNAlertTestCase(ApiTestBase):
+
+    fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
+
+    def test_pcn_alerts_sent(self):
+        """Create a PCN bookmark, send alerts, and make sure an email is sent
+        to correct user, and that its contents mention PCNs
+
+        """
+        factory = DataFactory()
+        pcn = PCN.objects.get(pk="E00000011")
+        bookmark = factory.create_org_bookmark(pcn)
+        call_command(CMD_NAME)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [bookmark.user.email])
+        self.assertIn("PCN", mail.outbox[0].body)
 
 
 def call_mocked_command(context, mock_finder, **opts):

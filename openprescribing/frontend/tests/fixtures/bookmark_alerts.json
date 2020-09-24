@@ -83,7 +83,6 @@
     "user": 1,
     "pct": "03V",
     "practice": null,
-    "approved": true,
     "created_at": "2000-01-01T12:00:00Z"
   }
 },
@@ -94,18 +93,6 @@
     "user": 1,
     "pct": null,
     "practice": "P87629",
-    "approved": true,
-    "created_at": "2000-01-01T12:00:00Z"
-  }
-},
-{
-  "model": "frontend.orgbookmark",
-  "pk": 3,
-  "fields": {
-    "user": 1,
-    "pct": null,
-    "practice": "P87629",
-    "approved": false,
     "created_at": "2000-01-01T12:00:00Z"
   }
 },
@@ -116,7 +103,6 @@
     "user": 4,
     "pct": null,
     "practice": "P87629",
-    "approved": true,
     "created_at": "2000-01-01T12:00:00Z"
   }
 },
@@ -127,7 +113,6 @@
     "user": 1,
     "url": "foo",
     "name": "foo",
-    "approved": true,
     "created_at": "2000-01-01T12:00:00Z"
   }
 },
@@ -138,7 +123,6 @@
     "user": 4,
     "url": "foo",
     "name": "foo-already-seen-user",
-    "approved": true,
     "created_at": "2000-01-01T12:00:00Z"
   }
 },
@@ -161,16 +145,6 @@
   }
 },
 {
-  "model": "account.emailaddress",
-  "pk": 1,
-  "fields": {
-    "user": 1,
-    "email": "foo@baz.com",
-    "verified": true,
-    "primary": false
-  }
-},
-{
   "model": "auth.user",
   "pk": 2,
   "fields": {
@@ -186,16 +160,6 @@
     "date_joined": "2016-09-28T15:08:58.446Z",
     "groups": [],
     "user_permissions": []
-  }
-},
-{
-  "model": "account.emailaddress",
-  "pk": 2,
-  "fields": {
-    "user": 2,
-    "email": "foo2@baz.com",
-    "verified": true,
-    "primary": false
   }
 },
 {

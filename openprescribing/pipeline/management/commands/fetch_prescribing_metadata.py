@@ -22,7 +22,7 @@ class Command(BaseCommand):
         rsp = requests.get(url)
         doc = BeautifulSoup(rsp.content, "html.parser")
         tag = doc.find("script", type="application/ld+json")
-        metadata = json.loads(tag.text)
+        metadata = json.loads(list(tag.descendants)[0])
 
         filename_fragment = {"addresses": "ADDR%20BNFT", "chemicals": "CHEM%20SUBS"}[
             kwargs["dataset"]

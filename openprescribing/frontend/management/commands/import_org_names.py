@@ -25,6 +25,11 @@ class Command(BaseCommand):
         ccgs = csv.reader(open(options["ccg"], "rU"))
         for row in ccgs:
             row = [r.strip() for r in row]
+            if row[2] == "Y99":
+                # This indicates a National Commissioning Hub which does not
+                # belong to a region, and which in any case we ignore.
+                continue
+
             ccg, created = PCT.objects.get_or_create(code=row[0])
             ccg.name = row[1]
             ccg.regional_team_id = row[2]

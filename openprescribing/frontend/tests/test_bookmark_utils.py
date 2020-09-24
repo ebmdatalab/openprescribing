@@ -228,35 +228,31 @@ class TestBookmarkUtilsPerforming(TestCase):
     # Worst performing
     # CCG bookmarks
     def test_hit_where_ccg_worst_in_specified_number_of_months(self):
-        finder = bookmark_utils.InterestingMeasureFinder(pct=self.pct)
+        finder = bookmark_utils.InterestingMeasureFinder(self.pct)
         worst_measures = finder.worst_performing_in_period(3)
         self.assertIn(self.measure, worst_measures)
         self.assertNotIn(self.exotic_measure, worst_measures)
 
     def test_miss_where_not_enough_global_data(self):
-        finder = bookmark_utils.InterestingMeasureFinder(pct=self.pct)
+        finder = bookmark_utils.InterestingMeasureFinder(self.pct)
         worst_measures = finder.worst_performing_in_period(6)
         self.assertFalse(worst_measures)
 
     def test_miss_where_not_worst_in_specified_number_of_months(self):
         MeasureValue.objects.all().delete()
-        finder = bookmark_utils.InterestingMeasureFinder(pct=self.pct)
+        finder = bookmark_utils.InterestingMeasureFinder(self.pct)
         worst_measures = finder.worst_performing_in_period(3)
         self.assertFalse(worst_measures)
 
     # Practice bookmarks
     def test_hit_where_practice_worst_in_specified_number_of_months(self):
-        finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.high_percentile_practice
-        )
+        finder = bookmark_utils.InterestingMeasureFinder(self.high_percentile_practice)
         worst_measures = finder.worst_performing_in_period(3)
         self.assertIn(self.measure, worst_measures)
 
     # Best performing
     def test_hit_where_practice_best_in_specified_number_of_months(self):
-        finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.low_percentile_practice
-        )
+        finder = bookmark_utils.InterestingMeasureFinder(self.low_percentile_practice)
         best_measures = finder.best_performing_in_period(3)
         self.assertIn(self.measure, best_measures)
 
@@ -334,7 +330,7 @@ class TestBookmarkUtilsChanging(TestCase):
 
     def test_high_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_high_change, interesting_change_window=10
+            self.practice_with_high_change, interesting_change_window=10
         )
         sorted_measure = finder.most_change_against_window(1)
         measure_info = sorted_measure["improvements"][0]
@@ -346,7 +342,7 @@ class TestBookmarkUtilsChanging(TestCase):
         self.measure.low_is_good = True
         self.measure.save()
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_high_change, interesting_change_window=10
+            self.practice_with_high_change, interesting_change_window=10
         )
         sorted_measure = finder.most_change_against_window(1)
         measure_info = sorted_measure["declines"][0]
@@ -356,7 +352,7 @@ class TestBookmarkUtilsChanging(TestCase):
 
     def test_high_negative_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_high_neg_change, interesting_change_window=10
+            self.practice_with_high_neg_change, interesting_change_window=10
         )
         sorted_measure = finder.most_change_against_window(1)
         measure_info = sorted_measure["declines"][0]
@@ -403,21 +399,21 @@ class TestBookmarkUtilsSavingsPossible(TestBookmarkUtilsSavingsBase):
         _makeCostSavingMeasureValues(self.measure, self.practice, [0, 1500, 2000])
 
     def test_possible_savings_for_practice(self):
-        finder = bookmark_utils.InterestingMeasureFinder(practice=self.practice)
+        finder = bookmark_utils.InterestingMeasureFinder(self.practice)
         savings = finder.top_and_total_savings_in_period(3)
         self.assertEqual(savings["possible_savings"], [(self.measure, 3500)])
         self.assertEqual(savings["achieved_savings"], [])
         self.assertEqual(savings["possible_top_savings_total"], 350000)
 
     def test_possible_savings_for_practice_not_enough_months(self):
-        finder = bookmark_utils.InterestingMeasureFinder(practice=self.practice)
+        finder = bookmark_utils.InterestingMeasureFinder(self.practice)
         savings = finder.top_and_total_savings_in_period(10)
         self.assertEqual(savings["possible_savings"], [])
         self.assertEqual(savings["achieved_savings"], [])
         self.assertEqual(savings["possible_top_savings_total"], 0)
 
     def test_possible_savings_for_ccg(self):
-        finder = bookmark_utils.InterestingMeasureFinder(pct=self.practice.ccg)
+        finder = bookmark_utils.InterestingMeasureFinder(self.practice.ccg)
         savings = finder.top_and_total_savings_in_period(3)
         self.assertEqual(savings["possible_savings"], [])
         self.assertEqual(savings["achieved_savings"], [])
@@ -426,7 +422,7 @@ class TestBookmarkUtilsSavingsPossible(TestBookmarkUtilsSavingsBase):
     def test_possible_savings_low_is_good(self):
         self.measure.low_is_good = True
         self.measure.save()
-        finder = bookmark_utils.InterestingMeasureFinder(practice=self.practice)
+        finder = bookmark_utils.InterestingMeasureFinder(self.practice)
         savings = finder.top_and_total_savings_in_period(3)
         self.assertEqual(savings["possible_savings"], [(self.measure, 3500)])
         self.assertEqual(savings["achieved_savings"], [])
@@ -439,7 +435,7 @@ class TestBookmarkUtilsSavingsAchieved(TestBookmarkUtilsSavingsBase):
         _makeCostSavingMeasureValues(self.measure, self.practice, [-1000, -500, 100])
 
     def test_achieved_savings(self):
-        finder = bookmark_utils.InterestingMeasureFinder(practice=self.practice)
+        finder = bookmark_utils.InterestingMeasureFinder(self.practice)
         savings = finder.top_and_total_savings_in_period(3)
         self.assertEqual(savings["possible_savings"], [])
         self.assertEqual(savings["achieved_savings"], [(self.measure, 1400)])
@@ -641,7 +637,7 @@ class TestContextForOrgEmail(unittest.TestCase):
             ordinal_measure_1,
             non_ordinal_measure_1,
         ]
-        finder = bookmark_utils.InterestingMeasureFinder(pct="foo")
+        finder = bookmark_utils.InterestingMeasureFinder(PCT.objects.create(code="000"))
         context = finder.context_for_org_email()
         self.assertCountEqual(
             context["most_changing_interesting"],
@@ -675,7 +671,7 @@ class TruncateSubjectTestCase(unittest.TestCase):
                     "Alverine Citrate + Boceprevir by All CCGs"
                 ),
                 "expected": (
-                    "Your monthly update about Items for Abacavir + Levocaba..."
+                    "Your monthly update about Items for Abacavir + Levocabastine + L..."
                     "by All CCGs"
                 ),
             },
@@ -686,7 +682,7 @@ class TruncateSubjectTestCase(unittest.TestCase):
                 ),
                 "expected": (
                     "Your monthly update about The Point Is That the Relative "
-                    "Freedom W..."
+                    "Freedom Which WE E..."
                 ),
             },
             {
@@ -698,7 +694,19 @@ class TruncateSubjectTestCase(unittest.TestCase):
                 ),
                 "expected": (
                     "Your monthly update about Items for Zopiclone + Zolpidem "
-                    "Tartrate ..."
+                    "Tartrate + Lorazep..."
+                ),
+            },
+            {
+                "input": (
+                    "Items for Apixaban + Edoxaban + Dabigatran Etexilate + "
+                    "Rivaroxaban vs Warfarin Sodium + Apixaban + Edoxaban + "
+                    "Dabigatran Etexilate + Rivaroxâ\x80¦ by practices in "
+                    "NHS SUNDERLAND CCG123456789"
+                ),
+                "expected": (
+                    "Your monthly update about Items ...by Practices in NHS "
+                    "SUNDERLAND CCG123456789"
                 ),
             },
         ]
@@ -791,7 +799,7 @@ class TestNCSOConcessions(TestCase):
         msg = bookmark_utils.make_ncso_concession_email(bookmark)
 
         self.assertEqual(
-            msg.subject, "Your update about NCSO Concessions for Practice 2"
+            msg.subject, "Your update about Price Concessions for Practice 2"
         )
         self.assertIn("published for **July 2018**", msg.body)
         self.assertIn("prescribed at Practice 2", msg.body)
@@ -808,7 +816,7 @@ class TestNCSOConcessions(TestCase):
 
         msg = bookmark_utils.make_ncso_concession_email(bookmark)
 
-        self.assertEqual(msg.subject, "Your update about NCSO Concessions for CCG 0")
+        self.assertEqual(msg.subject, "Your update about Price Concessions for CCG 0")
         self.assertIn("published for **July 2018**", msg.body)
         additional_cost = round(
             ncso_spending_for_entity(self.ccg, "ccg", 1)[0]["additional_cost"]
@@ -826,7 +834,7 @@ class TestNCSOConcessions(TestCase):
         msg = bookmark_utils.make_ncso_concession_email(bookmark)
 
         self.assertEqual(
-            msg.subject, "Your update about NCSO Concessions for the NHS in England"
+            msg.subject, "Your update about Price Concessions for the NHS in England"
         )
         self.assertIn("published for **July 2018**", msg.body)
         additional_cost = round(

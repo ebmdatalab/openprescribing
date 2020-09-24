@@ -237,26 +237,12 @@ Or specify a particular filename:
 ./manage.py matrixstore_set_live --filename matrixstore_2019-02_2019-04-18--18-59_063873dd6fda7f46.sqlite
 ```
 
-## Python 3 upgrade notes
 
-When we upgrade to Python 3, various bits of this code can be simplified
-or improved:
- * The various references to `sqlite3.Binary` can be removed. For
-   whatever reason, the sqlite3 module in Python 3 can handle the
-   buffer/bytes objects as they are.
- * We can remove the `to_pybytes` call in `serialize` for the same
-   reason.
- * We can use the `uri` option to `sqlite3.connect` to open the file in
-   immutable mode:
-   ```python
-   encoded_path = urllib.parse.quote(os.path.abspath(path))
-   self.connection = sqlite3.connect(
-       'file://{}?immutable=1&mode=ro'.format(encoded_path),
-       uri=True,
-       check_same_thread=False
-   )
-   ```
-   This should improve performance a bit when we have lots of
-   simultaneous requests, but more importantly it opens up the possiblity
-   of allowing users to make arbitrary SQL queries through the web
-   interface as it guarantees that the connection is read-only.
+## Profiling MatrixStore code
+
+Intuition turns out to be a poor guide to performance with the
+MatrixStore: operations which we might expect to be particularly fast or
+slow are not always so. There is a basic [profiling script](./profile.py)
+which helps in testing these assumptions. The
+[snakeviz](https://jiffyclub.github.io/snakeviz/) package provides a
+nice way of visualising the resulting `.prof` files.

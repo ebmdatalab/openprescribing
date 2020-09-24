@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from .selenium_base import SeleniumTestCase
 
@@ -13,7 +13,7 @@ class BookmarksTest(SeleniumTestCase):
 
     def _get_bookmark_url_for_user(self, username="bookmarks-user"):
         key = User.objects.get(username=username).profile.key
-        return reverse("bookmark-login", kwargs={"key": key})
+        return reverse("bookmarks", kwargs={"key": key})
 
     def test_unsubscribe_from_one_alert(self):
         url = self._get_bookmark_url_for_user()

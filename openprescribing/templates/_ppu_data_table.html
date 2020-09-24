@@ -45,5 +45,24 @@
 
 </table>
 
-<a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&aggregate={{ aggregate }}&entity_type={{ entity_type }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+<div class="btn-group" role="group">
+  <a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&aggregate={{ aggregate }}&entity_type={{ entity_type }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+
+  {% if by_ccg and not aggregate and not bnf_code %}
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&aggregate={{ aggregate }}&entity_type={{ entity_type }}&child_org_type=practice&format=csv">
+            Download data at practice level
+          </a>
+        </li>
+      </ul>
+    </div>
+  {% endif %}
+
+</div>
+
 <hr>

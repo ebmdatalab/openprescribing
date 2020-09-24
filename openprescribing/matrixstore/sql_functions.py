@@ -1,5 +1,3 @@
-import sqlite3
-
 from scipy.sparse import csc_matrix, _sparsetools
 
 from .matrix_ops import zeros_like
@@ -7,13 +5,20 @@ from .serializer import serialize, deserialize
 
 
 class MatrixSum(object):
+    """
+    Provides an optimised (for our use case) routine for summing matrices
+
+    Note the `step` and `finalize` methods are what allow this class to be used
+    as an SQLite custom aggregation function.
+    """
 
     accumulator = None
 
     def step(self, value):
-        if value is None:
-            return
-        matrix = deserialize(value)
+        if value is not None:
+            self.add(deserialize(value))
+
+    def add(self, matrix):
         if self.accumulator is None:
             # We need this to be in Fortran (i.e. column-major) order for the
             # fast addition path below to work
@@ -23,9 +28,14 @@ class MatrixSum(object):
         else:
             self.accumulator += matrix
 
+    def value(self):
+        if self.accumulator is None:
+            raise ValueError("No values added")
+        return self.accumulator
+
     def finalize(self):
         if self.accumulator is not None:
-            return sqlite3.Binary(serialize(self.accumulator))
+            return serialize(self.accumulator)
 
 
 def fast_in_place_add(ndarray, matrix):

@@ -6,6 +6,8 @@ set -e -o pipefail
 cd /openprescribing/ansible
 apt-get update && apt-get -qq -y install locales curl python3
 curl https://bootstrap.pypa.io/get-pip.py | python3
+echo "Downgrading setuptools to <50 for Debian/Ubuntu compatibility"
+pip install setuptools==49.6.0
 /usr/local/bin/pip install -r vagrant_requirements.txt
 
 # Set up the locale we use in postgres

@@ -9,7 +9,7 @@ SELECT
   pct,
   SUM(quantity*dose_per_unit*ome_multiplier) AS total_ome
 FROM
-  {project}.{hscic}.normalised_prescribing_standard AS presc
+  {project}.{hscic}.normalised_prescribing AS presc
 JOIN
   -- data in richard.opioid_measure comes from:
   -- https://docs.google.com/spreadsheets/d/1IjnHbYVszZKPmVSYydtMVzbDLPOmq8bOFq45QsSu6sE/edit?usp=sharing

@@ -8,26 +8,26 @@
 
 backports.csv
 beautifulsoup4
-django-allauth
+diskcache
 django-anymail[mailgun]
 django-cors-headers
 django-crispy-forms
 django-dotenv
-django==1.11.26
+django==2.2.16
 djangorestframework-csv
 djangorestframework
 google-api-python-client
 google-cloud-bigquery
 google-cloud-storage
+google-cloud-bigquery-storage  # this speeds up access to BQ
 gunicorn
 html2text
 lxml
 lz4
-mailchimp3
 networkx
 newrelic
 numpy
-openpyxl==2.6.3
+openpyxl==2.6.4
 pandas-gbq
 pandas
 premailer
@@ -40,12 +40,7 @@ requests-futures
 requests[security]
 scipy
 titlecase
-tqdm
 xlrd
-
-# redis
-django-redis
-hiredis
 
 # test requirements
 coverage

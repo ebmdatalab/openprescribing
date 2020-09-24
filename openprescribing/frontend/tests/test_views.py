@@ -1,4 +1,6 @@
-from mock import Mock, patch
+import mock
+from mock import Mock
+import os
 import datetime
 from urllib.parse import parse_qs, urlparse
 
@@ -6,22 +8,17 @@ from pyquery import PyQuery as pq
 
 from django.conf import settings
 from django.core import mail
+from django.core.management import call_command
 from django.http import QueryDict
 from django.test import TestCase, SimpleTestCase, override_settings
 
-from frontend.models import (
-    EmailMessage,
-    OrgBookmark,
-    SearchBookmark,
-    ImportLog,
-    PCT,
-    Practice,
-    MeasureValue,
-    Measure,
-)
+from frontend.models import EmailMessage, OrgBookmark, SearchBookmark, Measure
 from frontend.views.views import BadRequestError, _get_measure_tag_filter, cached
-
-from allauth.account.models import EmailAddress
+from frontend.price_per_unit.substitution_sets import (
+    get_substitution_sets_by_presentation,
+    get_substitution_sets,
+)
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
 class TestAlertViews(TestCase):
@@ -35,63 +32,28 @@ class TestAlertViews(TestCase):
         "importlog",
     ]
 
-    def _post_org_signup(
-        self, entity_id, email="foo@baz.com", alert=True, newsletter=False
-    ):
+    def _post_org_signup(self, entity_id, email="foo@baz.com", follow=True):
         form_data = {"email": email}
-        newsletter_types = []
-        if newsletter:
-            newsletter_types.append("newsletter")
-        if alert:
-            newsletter_types.append("alerts")
-        form_data["newsletters"] = newsletter_types
         if entity_id == "all_england":
-            url = "/all-england/"
+            url = "/national/england/"
         elif len(entity_id) == 3:
             url = "/ccg/%s/" % entity_id
-            form_data["pct"] = entity_id
+            form_data["pct_id"] = entity_id
         else:
             url = "/practice/%s/" % entity_id
-            form_data["practice"] = entity_id
-        return self.client.post(url, form_data, follow=True)
+            form_data["practice_id"] = entity_id
+        return self.client.post(url, form_data, follow=follow)
 
-    def _post_search_signup(
-        self, url, name, email="foo@baz.com", alert=True, newsletter=False
-    ):
+    def _post_search_signup(self, url, name, email="foo@baz.com"):
         form_data = {"email": email}
-        newsletter_types = []
-        if newsletter:
-            newsletter_types.append("newsletter")
-        if alert:
-            newsletter_types.append("alerts")
-        form_data["newsletters"] = newsletter_types
         form_data["url"] = url
         form_data["name"] = name
         return self.client.post("/analyse/", form_data, follow=True)
 
-    def _create_user_and_login(self, email, is_superuser=False):
-        from allauth.utils import get_user_model
-
-        user = get_user_model().objects.create(
-            username=email, email=email, is_active=True
-        )
-        user.set_unusable_password()
-        if is_superuser:
-            user.is_superuser = True
-        user.save()
-        EmailAddress.objects.create(user=user, email=email, primary=True, verified=True)
-        self.client.force_login(user, "django.contrib.auth.backends.ModelBackend")
-        return user
-
-    def test_search_email_invalid(self):
-        response = self._post_search_signup("stuff", "mysearch", email="boo")
-        self.assertContains(response, "Please enter a valid email address")
-
     def test_search_email_sent(self):
         response = self._post_search_signup("stuff", "mysearch")
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
+        self.assertContains(response, "alerts about mysearch")
+        self.assertRedirects(response, "/analyse/#stuff")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("about mysearch", mail.outbox[0].body)
 
@@ -109,165 +71,15 @@ class TestAlertViews(TestCase):
         self.assertEqual(bookmark.url, "stuff")
         # Check the name is URL-decoded
         self.assertEqual(bookmark.name, "~mysearch")
-        # Check that the bookmark is automatically approved
-        self.assertTrue(bookmark.approved)
-
-    @patch("frontend.views.views.mailchimp_subscribe")
-    def test_search_bookmark_newsletter(self, mailchimp):
-        email = "a@a.com"
-        response = self._post_search_signup(
-            "stuff", "%7Emysearch", email=email, alert=True, newsletter=True
-        )
-        self.assertTrue(response.context["user"].is_anonymous())
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
-        self.assertContains(response, "optionally tell us a little more")
-        # finish the signup
-        response = self.client.post(
-            "/finalise_signup/",
-            {
-                "email": "foo@baz.com",
-                "first_name": "",
-                "last_name": "",
-                "job_title": "",
-                "organisation": "",
-            },
-            follow=True,
-        )
-        mailchimp.assert_called()
-        self.assertContains(
-            response, "You have successfully signed up for the newsletter"
-        )
-
-    def test_ccg_email_invalid(self):
-        response = self._post_org_signup("03V", email="boo")
-        self.assertContains(response, "Please enter a valid email address")
 
     def test_ccg_email_sent(self):
         email = "a@a.com"
         response = self._post_org_signup("03V", email=email)
-        self.assertTrue(response.context["user"].is_anonymous())
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
-        self.assertNotContains(
-            response, "optionally tell us a little more"
-        )  # newsletter signup
+        self.assertRedirects(response, "/ccg/03V/measures/")
+        self.assertContains(response, "alerts about prescribing in NHS Corby.")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(email, mail.outbox[0].to)
         self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
-
-    @patch("frontend.views.views.mailchimp_subscribe")
-    def test_ccg_bookmark_with_newsletter(self, mailchimp):
-        email = "a@a.com"
-        response = self._post_org_signup(
-            "03V", email=email, alert=True, newsletter=True
-        )
-        self.assertTrue(response.context["user"].is_anonymous())
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
-        self.assertContains(response, "optionally tell us a little more")
-        # finish the signup
-        response = self.client.post(
-            "/finalise_signup/",
-            {
-                "email": "foo@baz.com",
-                "first_name": "",
-                "last_name": "",
-                "job_title": "",
-                "organisation": "",
-            },
-            follow=True,
-        )
-        mailchimp.assert_called()
-        self.assertContains(
-            response, "You have successfully signed up for the newsletter"
-        )
-        self.assertEqual(OrgBookmark.objects.count(), 1)
-
-    @patch("frontend.views.views.mailchimp_subscribe")
-    def test_ccg_bookmark_newsletter_without_alert(self, mailchimp):
-        email = "a@a.com"
-        response = self._post_org_signup(
-            "03V", email=email, alert=False, newsletter=True
-        )
-        self.assertTrue(response.context["user"].is_anonymous())
-        self.assertContains(response, "optionally tell us a little more")
-        # finish the signup
-        response = self.client.post(
-            "/finalise_signup/",
-            {
-                "email": "foo@baz.com",
-                "first_name": "",
-                "last_name": "",
-                "job_title": "",
-                "organisation": "",
-            },
-            follow=True,
-        )
-        mailchimp.assert_called()
-        self.assertContains(
-            response, "You have successfully signed up for the newsletter"
-        )
-        self.assertEqual(OrgBookmark.objects.count(), 0)
-
-    @patch("frontend.views.views.mailchimp_subscribe")
-    def test_ccg_bookmark_newsletter_alert_logged_in(self, mailchimp):
-        email = "a@a.com"
-        self._create_user_and_login(email)
-        response = self._post_org_signup(
-            "03V", email=email, alert=True, newsletter=True
-        )
-        self.assertContains(response, "optionally tell us a little more")
-
-    @patch("frontend.views.views.mailchimp_subscribe")
-    def test_ccg_bookmark_newsletter_no_alert_logged_in(self, mailchimp):
-        email = "a@a.com"
-        self._create_user_and_login(email)
-        response = self._post_org_signup(
-            "03V", email=email, alert=True, newsletter=False
-        )
-        self.assertFalse(response.context["user"].is_anonymous())
-        response = self._post_org_signup(
-            "03Q", email=email, alert=False, newsletter=True
-        )
-        self.assertContains(response, "optionally tell us a little more")
-        # finish the signup
-        response = self.client.post(
-            "/finalise_signup/",
-            {
-                "email": email,
-                "first_name": "",
-                "last_name": "",
-                "job_title": "",
-                "organisation": "",
-            },
-            follow=True,
-        )
-        mailchimp.assert_called()
-        self.assertContains(
-            response, "You have successfully signed up for the newsletter"
-        )
-
-    def test_ccg_bookmark_added_when_already_logged_in(self):
-        email = "a@a.com"
-        self._create_user_and_login(email)
-        response = self._post_org_signup("03V", email=email)
-        self.assertEqual(response.context["user"].email, email)
-        self.assertTemplateUsed(response, "measures_for_one_entity.html")
-        self.assertContains(response, "You're now subscribed")
-        self.assertEqual(len(mail.outbox), 0)
-        self.assertEqual(OrgBookmark.objects.count(), 1)
-        self.assertTrue(OrgBookmark.objects.last().approved)
-
-    def test_ccg_bookmark_added_for_new_user_when_already_logged_in(self):
-        self._create_user_and_login("a@a.com")
-        response = self._post_org_signup("03V", email="b@b.com")
-        self.assertTrue(response.context["user"].is_anonymous())
-        bookmark = OrgBookmark.objects.last()
-        self.assertEqual(bookmark.pct.code, "03V")
 
     def test_ccg_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
@@ -276,31 +88,30 @@ class TestAlertViews(TestCase):
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, "03V")
 
-    def test_ccg_bookmark_already_signed_up_message(self):
-        email = "a@a.com"
-        self._create_user_and_login(email)
-        response = self._post_org_signup(
-            "03V", email=email, alert=True, newsletter=False
-        )
-        response = response.client.get("/ccg/03V/")
-        self.assertContains(response, "You're already signed up")
-
-    def test_ccg_newsletter_signup(self):
+    def test_ccg_duplicate_bookmark_not_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
-        self._post_org_signup("03V", newsletter=False)
+        self._post_org_signup("03V")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        self._post_org_signup("03V")
         self.assertEqual(OrgBookmark.objects.count(), 1)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, "03V")
 
-    def test_practice_email_invalid(self):
-        response = self._post_org_signup("P87629", email="boo")
-        self.assertContains(response, "Please enter a valid email address")
+    def test_ccg_duplicate_bookmark_not_created_when_email_not_lowercase(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self._post_org_signup("03V")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        self._post_org_signup("03V", email="FOO@BAZ.COM")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.pct.code, "03V")
 
     def test_practice_email_sent(self):
         response = self._post_org_signup("P87629")
         self.assertContains(
-            response, "Check your email and click the confirmation link"
+            response, "alerts about prescribing in 1/ST Andrews Medical Practice"
         )
+        self.assertRedirects(response, "/practice/P87629/measures/")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("about prescribing in 1/ST Andrews", mail.outbox[0].body)
 
@@ -313,8 +124,30 @@ class TestAlertViews(TestCase):
 
     def test_all_england_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
-        self._post_org_signup("all_england")
+        # We don't follow the redirect, because we don't have the necessary test data for
+        # testing the all-england page.
+        response = self._post_org_signup("all_england", follow=False)
+        self.assertRedirects(
+            response, "/national/england/", fetch_redirect_response=False
+        )
         self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.practice, None)
+        self.assertEqual(bookmark.pct, None)
+        self.assertEqual(bookmark.org_type(), "all_england")
+
+    def test_all_england_bookmark_created_when_user_has_another_org_bookmark(self):
+        # Regression test for #2440
+
+        self._post_org_signup("P87629")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        # We don't follow the redirect, because we don't have the necessary test data for
+        # testing the all-england page.
+        response = self._post_org_signup("all_england", follow=False)
+        self.assertRedirects(
+            response, "/national/england/", fetch_redirect_response=False
+        )
+        self.assertEqual(OrgBookmark.objects.count(), 2)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.practice, None)
         self.assertEqual(bookmark.pct, None)
@@ -325,7 +158,7 @@ class TestAlertViews(TestCase):
         form_data = {
             "email": "foo@baz.com",
             "newsletters": ["alerts"],
-            "pcn": "PCN0001",
+            "pcn_id": "PCN0001",
         }
         url = "/pcn/{}/".format("PCN0001")
         self.client.post(url, form_data, follow=True)
@@ -334,18 +167,16 @@ class TestAlertViews(TestCase):
         self.assertEqual(bookmark.pcn.code, "PCN0001")
 
 
+@copy_fixtures_to_matrixstore
 class TestFrontendHomepageViews(TestCase):
     fixtures = [
         "practices",
         "orgs",
         "one_month_of_measures",
-        "importlog",
-        "ppusavings_entity_homepage",
+        "homepage_importlog",
         "dmd-subset",
+        "homepage_prescriptions",
     ]
-
-    def setUp(self):
-        ImportLog.objects.create(category="prescribing", current_at="2015-09-01")
 
     def test_call_regional_team_homepage(self):
         response = self.client.get("/regional-team/Y01/")
@@ -365,10 +196,10 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, "entity_home_page.html")
         self.assertEqual(response.context["measure"].id, "cerazette")
         self.assertEqual(response.context["measures_count"], 2)
-        self.assertEqual(response.context["possible_savings"], 200.0)
+        self.assertEqual(response.context["possible_savings"], 0.0)
         self.assertEqual(response.context["entity"].code, "02Q")
         self.assertEqual(response.context["entity_type"], "ccg")
-        self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        self.assertEqual(response.context["date"], datetime.date(2015, 9, 1))
         doc = pq(response.content)
         practices = doc(".practice-list li")
         self.assertEqual(len(practices), 7)
@@ -381,7 +212,7 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, "entity_home_page.html")
         self.assertEqual(response.context["entity"].code, "PCN001")
         self.assertEqual(response.context["entity_type"], "pcn")
-        self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        self.assertEqual(response.context["date"], datetime.date(2015, 9, 1))
         doc = pq(response.content)
         practices = doc(".practice-list li")
         self.assertEqual(len(practices), 5)
@@ -392,27 +223,61 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, "entity_home_page.html")
         self.assertEqual(response.context["measure"].id, "cerazette")
         self.assertEqual(response.context["measures_count"], 2)
-        self.assertEqual(response.context["possible_savings"], 200.0)
+        self.assertEqual(response.context["possible_savings"], 0.0)
         self.assertEqual(response.context["entity"].code, "C84001")
         self.assertEqual(response.context["entity_type"], "practice")
-        self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        self.assertEqual(response.context["date"], datetime.date(2015, 9, 1))
+        doc = pq(response.content)
+        title = doc("h1")
+        self.assertEqual(title.text(), "Larwood Surgery")
+
+    def test_call_view_regional_team_homepage_no_prescribing(self):
+        response = self.client.get("/regional-team/Y60/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_stp_homepage_no_prescribing(self):
+        response = self.client.get("/stp/E54000020/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_ccg_homepage_no_prescribing(self):
+        response = self.client.get("/ccg/03X/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_pcn_homepage_no_prescribing(self):
+        response = self.client.get("/pcn/PCN0002/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
+
+    def test_call_view_practice_homepage_no_prescribing(self):
+        response = self.client.get("/practice/P87629/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "closed_entity_home_page.html")
 
 
+@copy_fixtures_to_matrixstore
 class TestFrontendViews(TestCase):
     fixtures = [
         "chemicals",
         "sections",
         "orgs",
         "practices",
-        "prescriptions",
         "measures",
-        "importlog",
+        "homepage_importlog",
+        "homepage_prescriptions",
     ]
 
     def test_call_view_homepage(self):
         response = self.client.get("")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "index.html")
+
+    def test_robots_txt(self):
+        response = self.client.get("/robots.txt")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Disallow")
 
     def test_javascript_inclusion(self):
         with self.settings(DEBUG=False):
@@ -519,22 +384,6 @@ class TestFrontendViews(TestCase):
         ccgs = doc("a.ccg")
         self.assertEqual(len(ccgs), 2)
 
-    def test_call_view_ccg_section(self):
-        MeasureValue.objects.create(
-            pct=PCT.objects.get(code="03V"),
-            measure=Measure.objects.first(),
-            month="2015-09-01",
-            percentile=0.5,
-        )
-        response = self.client.get("/ccg/03V/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "entity_home_page.html")
-        doc = pq(response.content)
-        title = doc("h1")
-        self.assertEqual(title.text(), "NHS Corby")
-        practices = doc(".practice-list li")
-        self.assertEqual(len(practices), 2)
-
     def test_ccg_homepage_redirects_with_tags_query(self):
         response = self.client.get("/ccg/03V/?tags=lowpriority")
         self.assertEqual(response.status_code, 302)
@@ -564,29 +413,6 @@ class TestFrontendViews(TestCase):
         response = self.client.get("/pcn/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "all_pcns.html")
-
-    def test_call_view_practice_section(self):
-        MeasureValue.objects.create(
-            practice=Practice.objects.get(code="P87629"),
-            measure=Measure.objects.first(),
-            month="2015-09-01",
-            percentile=0.5,
-        )
-        response = self.client.get("/practice/P87629/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "entity_home_page.html")
-        doc = pq(response.content)
-        title = doc("h1")
-        self.assertEqual(title.text(), "1/ST Andrews Medical Practice")
-        lead = doc("#intro p:first")
-        self.assertEqual(
-            lead.text(),
-            (
-                "Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET "
-                "ECCLES, MANCHESTER, M30 0NU"
-            ),
-        )
-        lead = doc(".lead:last")
 
     def test_practice_homepage_redirects_with_tags_query(self):
         response = self.client.get("/practice/P87629/?tags=lowpriority")
@@ -666,14 +492,54 @@ class TestFrontendViews(TestCase):
         self.assertNotContains(response, "This list is filtered")
 
     def test_call_single_measure_for_all_england(self):
-        response = self.client.get("/measure/cerazette/all-england/")
+        response = self.client.get("/measure/cerazette/national/england/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "measure_for_one_entity.html")
+
+    def test_measure_definition(self):
+        response = self.client.get("/measure/cerazette/definition/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "SUM(quantity)")
+        self.assertTemplateUsed(response, "measure_definition.html")
 
     def test_gdoc_inclusion(self):
         for doc_id in settings.GDOC_DOCS.keys():
             response = self.client.get("/docs/%s/" % doc_id)
             self.assertEqual(response.status_code, 200)
+
+
+@override_settings(
+    MEASURE_DEFINITIONS_PATH=os.path.join(settings.APPS_ROOT, "measure_definitions")
+)
+class TestMeasureDefinitionViews(TestCase):
+    """
+    Import all measures and check that their definitions pages load correctly
+    """
+
+    # We need a prescribing import entry in order for the measure import
+    # command to run
+    fixtures = ["importlog"]
+
+    @classmethod
+    def setUpTestData(cls):
+        # We have to patch these functions as otherwise the measure import
+        # process tries to query BigQuery to get a list of matching BNF codes
+        fn1 = "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
+        fn2 = "frontend.management.commands.import_measures.get_bnf_codes"
+        with mock.patch(fn1) as get_num_or_denom_bnf_codes:
+            with mock.patch(fn2) as get_bnf_codes:
+                get_num_or_denom_bnf_codes.return_value = []
+                get_bnf_codes.return_value = []
+                call_command("import_measures", definitions_only=True)
+
+    def test_can_load_all_measure_definition_pages(self):
+        measure_ids = list(Measure.objects.values_list("id", flat=True))
+        self.assertGreater(len(measure_ids), 1)
+        for measure_id in measure_ids:
+            with self.subTest(measure_id=measure_id):
+                url = "/measure/{}/definition/".format(measure_id)
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
 
 
 class TestTariffView(TestCase):
@@ -698,8 +564,13 @@ class TestTariffView(TestCase):
         )
 
 
+@copy_fixtures_to_matrixstore
 class TestPPUViews(TestCase):
     fixtures = ["orgs", "importlog", "practices", "prescriptions", "presentations"]
+
+    def setUp(self):
+        get_substitution_sets.cache_clear()
+        get_substitution_sets_by_presentation.cache_clear()
 
     def test_practice_price_per_unit(self):
         response = self.client.get("/practice/P87629/price_per_unit/")
@@ -740,6 +611,12 @@ class TestPPUViews(TestCase):
                 "highlight": ["P87629"],
                 "date": ["2014-11-01"],
             },
+        )
+
+    def test_branded_code_redirects_to_generic(self):
+        response = self.client.get("/practice/P87629/0204000I0JKKKAL/price_per_unit/")
+        self.assertRedirects(
+            response, "/practice/P87629/0204000I0AAALAL/price_per_unit/"
         )
 
 
@@ -833,3 +710,33 @@ class TestCacheWrapper(SimpleTestCase):
             cached(test_func)
             cached(test_func)
         self.assertEqual(test_func.call_count, 2)
+
+
+class TestNationalRedirects(TestCase):
+    def test_dashboard(self):
+        self.assertRedirects(
+            self.client.get("/all-england/?foo=bar"),
+            "/national/england/?foo=bar",
+            fetch_redirect_response=False,
+        )
+
+    def test_price_per_unit(self):
+        self.assertRedirects(
+            self.client.get("/all-england/ABCD00001/price-per-unit/?date=2020-01"),
+            "/national/england/ABCD00001/price-per-unit/?date=2020-01",
+            fetch_redirect_response=False,
+        )
+
+    def test_concessions(self):
+        self.assertRedirects(
+            self.client.get("/all-england/concessions/"),
+            "/national/england/concessions/",
+            fetch_redirect_response=False,
+        )
+
+    def test_measures(self):
+        self.assertRedirects(
+            self.client.get("/measure/somemeasure/all-england/"),
+            "/measure/somemeasure/national/england/",
+            fetch_redirect_response=False,
+        )

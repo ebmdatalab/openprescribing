@@ -47,18 +47,6 @@ def init_db(sqlite_conn, data_factory, dates):
     sqlite_conn.executemany(
         "INSERT INTO practice (offset, code) VALUES (?, ?)", enumerate(practice_codes)
     )
-    presentations = (
-        (p["bnf_code"], p["is_generic"], p["adq_per_quantity"], p["name"])
-        for p in data_factory.presentations
-    )
-    sqlite_conn.executemany(
-        """
-        INSERT INTO presentation
-          (bnf_code, is_generic, adq_per_quantity, name)
-          VALUES (?, ?, ?, ?)
-        """,
-        presentations,
-    )
 
 
 def import_practice_stats(sqlite_conn, data_factory, dates):

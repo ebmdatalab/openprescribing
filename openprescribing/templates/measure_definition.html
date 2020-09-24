@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}{{ measure.name }}{% endblock %}
+
+{% block content %}
+
+  <h1>{{ measure.name }}</h1>
+
+  <p class="alert alert-info">
+    Below are the database queries which are used to create this measure. These
+    are run against a copy of the BSA <a href="{% url 'about' %}#sources">
+    prescribing data</a> which we store in Google BigQuery. We're
+    working on making our BigQuery tables publicly available at which point it
+    will be possible to run and modify these queries yourself. But even where
+    code and database queries are not directly useable by others we believe it
+    is always preferable to make them public.
+  </p>
+
+  <table class="table table-bordered">
+    <tr>
+      <th style="width: 11em">Description</th>
+      <td>{{ measure.description|safe }}</td>
+    </tr>
+    <tr>
+      <th>Why it matters</th>
+      <td>{{ measure.why_it_matters|safe }}</td>
+    </tr>
+    <tr>
+      <th>Tags</th>
+      <td>
+        {% for tag in measure_tags %}
+          <a href="{% url 'all_measures' %}?tags={{ tag.tag }}">
+            {{ tag.name }}{% if not forloop.last %},{% endif %}
+          </a>
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <th>Implies cost savings</th>
+      <td>{% if measure.is_cost_based %}Yes{% else %}No{% endif %}</td>
+    </tr>
+    {% if measure_details.authored_by %}
+      <tr>
+        <th>Authored by</th>
+        <td>{{ measure_details.authored_by|username_from_email }}</td>
+      </tr>
+    {% endif %}
+    {% if measure_details.checked_by %}
+      <tr>
+        <th>Checked by</th>
+        <td>{{ measure_details.checked_by|username_from_email }}</td>
+      </tr>
+    {% endif %}
+    {% if measure_details.date_reviewed %}
+      <tr>
+        <th>Last reviewed</th>
+        <td>{{ measure_details.date_reviewed }}</td>
+      </tr>
+    {% endif %}
+    {% if measure_details.next_review %}
+      <tr>
+        <th>Next review due</th>
+        <td>{{ measure_details.next_review }}</td>
+      </tr>
+    {% endif %}
+    {% if measure_details.measure_notebook_url %}
+      <tr>
+        <th>Associated notebook</th>
+        <td style="word-break: break-all">
+          <a href="{{ measure_details.measure_notebook_url }}">
+            {{ measure_details.measure_notebook_url }}
+          </a>
+        </td>
+      </tr>
+    {% endif %}
+    <tr>
+      <th>History</th>
+      <td>
+        <a href="https://github.com/ebmdatalab/openprescribing/commits/master/openprescribing/measure_definitions/{{ measure.id }}.json">
+          View change history on GitHub &rarr;
+        </a>
+      </td>
+    </tr>
+
+  </table>
+
+  <h3>Numerator SQL</h3>
+  <pre><code>{{ numerator_sql }}</code></pre>
+
+  <h3>Denominator SQL</h3>
+  <pre><code>{{ denominator_sql }}</code></pre>
+
+{% endblock %}

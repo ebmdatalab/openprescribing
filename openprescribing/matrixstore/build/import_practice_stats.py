@@ -50,7 +50,7 @@ def write_practice_stats(connection, practice_statistics):
             """
             UPDATE practice_statistic SET value=? WHERE name=?
             """,
-            [sqlite3.Binary(serialize_compressed(matrix)), statistic_name],
+            [serialize_compressed(matrix), statistic_name],
         )
 
 

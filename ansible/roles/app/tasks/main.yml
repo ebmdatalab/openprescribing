@@ -1,14 +1,20 @@
 ---
-- name: Setup Virtualenv and upgrade setuptools and pip
+- name: Setup Virtualenv and upgrade pip
   pip:
     state: latest
     virtualenv: "{{ virtualenv_path }}"
     name:
-      - setuptools
       - pip
+
+- name: Upgrade setuptools
+  pip:
+    virtualenv: "{{ virtualenv_path }}"
+    name:
+      - setuptools==49.6.0
 
 - name: install virtualenvwrapper
   pip:
+    executable: pip3
     name: virtualenvwrapper
 
 - name: Create the .virtualenvs directory
@@ -32,6 +38,7 @@
     dest: "{{ HOME }}/.virtualenvs/postactivate"
     line: "cd {{ apps_root }}"
     create: yes
+    mode: 0600
 
 - name: Activate virtualenv on login
   lineinfile:
@@ -65,11 +72,10 @@
   npm:
     path: "{{ apps_root }}/media/js"
 
-- name: Install ipdb (pinned for python 2.7)
+- name: Install ipdb
   pip:
     name: ipdb
     virtualenv: "{{ virtualenv_path }}"
-    version: 0.10.2
 
 - name: Make manage.py executable
   file:
@@ -82,6 +88,8 @@
     src: "{{ repo_root }}/environment-sample"
     dest: "{{ repo_root }}/environment"
     force: yes
+    mode: 0660
+    owner: "{{ USER }}"
 
 - name: Set up environment file
   replace:

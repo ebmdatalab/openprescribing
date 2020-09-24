@@ -10,20 +10,6 @@ from django.utils import timezone
 register = template.Library()
 
 
-try:
-    from django.utils.html import json_script
-except ImportError:
-    from ._json_script_backport import json_script
-
-    register.filter("json_script", json_script, is_safe=True)
-else:
-    raise RuntimeError(
-        "Please remove the `_json_script_backport` module now that we are "
-        "using a version of Django which provides the `json_script` "
-        "template tag by default"
-    )
-
-
 @register.simple_tag(takes_context=True)
 def conditional_js(context, script_name):
     suffix = "" if context.get("DEBUG", True) else ".min"
@@ -40,8 +26,7 @@ def wholenum(num):
 
 @register.filter
 def deltawords(num, arg):
-    """An adverb to come after the word 'improved' or 'slipped'
-    """
+    """An adverb to come after the word 'improved' or 'slipped'"""
     delta = abs(num - arg)
     # We only pick out changes over 10%; over 30% in 9 months is unheard of.
     if delta == 0:
@@ -109,3 +94,8 @@ def fancy_join(lst, sep=", ", final_sep=" and "):
         head, tail = lst[:-1], lst[-1]
         lst = [sep.join(head), tail]
     return final_sep.join(lst)
+
+
+@register.filter
+def username_from_email(email):
+    return email.split("@")[0]

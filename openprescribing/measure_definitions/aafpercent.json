@@ -3,47 +3,37 @@
   "title": [
     "Amino acid formula (AAF) as proportion of AAF and extensively hydrolysed formula (EHF)"
   ],
- "why_it_matters": [
+  "description": [
+    "Prescribing of amino acid formula (AAF) products as proportion of AAF and extensively hydrolysed formula (EHF) "
+  ],
+  "numerator_short": "AAF quantity (grams)",
+  "denominator_short": "AAF and EHF quantity (grams)",
+  "why_it_matters": [
     "These products are prescribed for a number of allergy indications, and are most commonly prescribed for Cow's Milk Protein Allergy ",
     "(CMPA).  Amino acid formula (AAF) products are almost three times more expensive than EHF and it is believed that only a small ",
     "proportion of infants ",
     "(<a href='https://doi.org/10.1016/j.jaip.2017.09.003'>thought to be around 10%</a>) ",
     "need to be started on AAF for CMPA in primary care."
   ],
-  "description": [
-    "Prescribing of amino acid formula (AAF) products as proportion of AAF and extensively hydrolysed formula (EHF) "
-  ],
-  "numerator_short": "AAF quantity (grams)",
-  "denominator_short": "AAF and EHF quantity (grams)",
-  "url": null,
-  "is_percentage": true,
-  "is_cost_based": false,
-  "low_is_good": true,
   "tags": [
     "nutrition",
     "core"
   ],
-  "numerator_type": "custom",
-  "numerator_columns": [
-    "SUM(quantity) AS numerator"
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_quantity",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.cmpa_products",
+    "WHERE type = 'AAF'"
   ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
-  "numerator_where": [
-    "r.type = 'AAF' --this filters to only products listed as 'AAF' in the products table"
-  ],
-  "denominator_type": "custom",
-  "denominator_columns": [
-    "SUM(quantity) AS denominator"
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
-  "denominator_where": [
-    "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
-  ],
-  "date_reviewed": [
-    "2019-03-25"
-  ],
-  "next_review": [
-    "2019-10-01"
+  "denominator_type": "bnf_quantity",
+  "denominator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.cmpa_products",
+    "WHERE type != 'exclude'"
   ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
@@ -51,10 +41,16 @@
   "checked_by": [
     "brian.mackenna@phc.ox.ac.uk"
   ],
-  "measure_complexity": [
-    "high"
+  "date_reviewed": [
+    "2019-03-25"
+  ],
+  "next_review": [
+    "2019-10-01"
   ],
   "measure_notebook_url": [
     "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/New%20Measure%20-%20Cow's%20Milk%20Protein%20Allergy.ipynb"
+  ],
+  "measure_complexity": [
+    "high"
   ]
 }

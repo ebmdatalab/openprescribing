@@ -1,5 +1,7 @@
 import datetime
+import json
 from lxml import html
+import os
 import re
 from urllib.parse import urlencode
 from urllib.parse import urlparse, urlunparse
@@ -10,40 +12,34 @@ import sys
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import BACKEND_SESSION_KEY
-from django.contrib.auth import HASH_SESSION_KEY
-from django.contrib.auth import SESSION_KEY
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.core.urlresolvers import get_resolver
-from django.db import connection
+from django.core.mail import EmailMultiAlternatives
+from django.urls import get_resolver
 from django.db.models import Avg, Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
 
-from allauth.account import app_settings
-from allauth.account.models import EmailAddress
-from allauth.account.utils import perform_login
 from dateutil.relativedelta import relativedelta
 
 from common.utils import parse_date
-from api.view_utils import dictfetchall
-from common.utils import ppu_sql
+from gcutils.bigquery import interpolate_sql
 from dmd.models import VMP
+from frontend.forms import BookmarkListForm
 from frontend.forms import FeedbackForm
-from frontend.forms import MonthlyOrgBookmarkForm
-from frontend.forms import NonMonthlyOrgBookmarkForm
+from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
+from frontend.forms import NCSOConcessionBookmarkForm
 from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Chemical
+from frontend.models import EmailMessage
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
@@ -53,6 +49,7 @@ from frontend.models import NCSOConcessionBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import PCN
 from frontend.models import Presentation
+from frontend.models import Profile
 from frontend.models import RegionalTeam
 from frontend.models import STP
 from frontend.models import SearchBookmark
@@ -62,7 +59,12 @@ from frontend.views.spending_utils import (
     ncso_spending_breakdown_for_entity,
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
 )
-from frontend.views.mailchimp_utils import mailchimp_subscribe
+from frontend.price_per_unit.savings import get_total_savings_for_org
+from frontend.price_per_unit.substitution_sets import (
+    get_substitution_sets_by_presentation,
+)
+from matrixstore.db import org_has_prescribing, latest_prescribing_date
+
 
 logger = logging.getLogger(__name__)
 
@@ -175,13 +177,17 @@ def all_practices(request):
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    form = _monthly_bookmark_and_newsletter_form(request, practice)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {"practice_id": practice_code})
     context = _home_page_context_for_entity(request, practice)
     context["form"] = form
-    request.session["came_from"] = request.path
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -205,9 +211,10 @@ def all_pcns(request):
 
 def pcn_home_page(request, pcn_code):
     pcn = get_object_or_404(PCN, code=pcn_code)
-    form = _monthly_bookmark_and_newsletter_form(request, pcn)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {"pcn_id": pcn_code})
     practices = Practice.objects.filter(pcn=pcn, setting=4).order_by("name")
     num_open_practices = len([p for p in practices if p.status_code == "A"])
     num_non_open_practices = len([p for p in practices if p.status_code != "A"])
@@ -219,8 +226,11 @@ def pcn_home_page(request, pcn_code):
         "form": form,
     }
     context.update(extra_context)
-    request.session["came_from"] = request.path
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -236,9 +246,10 @@ def all_ccgs(request):
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _monthly_bookmark_and_newsletter_form(request, ccg)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {"pct_id": ccg_code})
     practices = Practice.objects.filter(ccg=ccg, setting=4).order_by("name")
     num_open_practices = len([p for p in practices if p.status_code == "A"])
     num_non_open_practices = len([p for p in practices if p.status_code != "A"])
@@ -251,8 +262,11 @@ def ccg_home_page(request, ccg_code):
         "pcns": ccg.pcns(),
     }
     context.update(extra_context)
-    request.session["came_from"] = request.path
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -273,8 +287,11 @@ def stp_home_page(request, stp_code):
     ).order_by("name")
     context = _home_page_context_for_entity(request, stp)
     context["ccgs"] = ccgs
-    request.session["came_from"] = request.path
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -297,8 +314,11 @@ def regional_team_home_page(request, regional_team_code):
     ).order_by("name")
     context = _home_page_context_for_entity(request, regional_team)
     context["ccgs"] = ccgs
-    request.session["came_from"] = request.path
-    return render(request, "entity_home_page.html", context)
+    if context["has_prescribing"]:
+        template = "entity_home_page.html"
+    else:
+        template = "closed_entity_home_page.html"
+    return render(request, template, context)
 
 
 ##################################################
@@ -333,16 +353,17 @@ def cached(function, *args):
 
 @handle_bad_request
 def all_england(request):
-    form = _monthly_bookmark_and_newsletter_form(request, None)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {})
 
     tag_filter = _get_measure_tag_filter(request.GET)
     entity_type = request.GET.get("entity_type", "CCG")
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "dashboard_data")
+    ppu_savings = get_total_savings_for_org(str(date), "all_standard_practices", None)
     # We cache the results of these expensive function calls which only change
     # when `date` changes
-    ppu_savings = cached(all_england_ppu_savings, entity_type, date)
     measure_savings = cached(all_england_measure_savings, entity_type, date)
     low_priority_savings = cached(all_england_low_priority_savings, entity_type, date)
     low_priority_total = cached(all_england_low_priority_total, entity_type, date)
@@ -360,6 +381,7 @@ def all_england(request):
         "chartTitleUrlTemplate": _url_template("measure_for_all_ccgs"),
         "globalMeasuresUrl": _build_global_measures_url(tags=tag_filter["tags"]),
         "measureUrlTemplate": _url_template("measure_for_all_ccgs"),
+        "measureDefinitionUrlTemplate": _url_template("measure_definition"),
         "oneEntityUrlTemplate": _url_template("measure_for_all_england"),
         "orgName": "All {}s in England".format(entity_type),
         "orgType": entity_type.lower(),
@@ -385,7 +407,6 @@ def all_england(request):
         "date": date,
         "measure_options": measure_options,
         "form": form,
-        "signed_up_for_alert": _signed_up_for_alert(request, None, OrgBookmark),
     }
     return render(request, "all_england.html", context)
 
@@ -397,16 +418,11 @@ def all_england(request):
 
 def analyse(request):
     if request.method == "POST":
-        # should this be the _bookmark_and_newsletter_form?
-        form = _handle_bookmark_and_newsletter_post(
-            request, SearchBookmark, SearchBookmarkForm, "url", "name"
-        )
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        # Note that the (hidden) URL field is filled via javascript on
-        # page load (see `alertForm` in `chart.js`)
-        form = SearchBookmarkForm(initial={"email": getattr(request.user, "email", "")})
+        return _handle_bookmark_post(request, SearchBookmark)
+
+    # Note that the (hidden) URL field is filled via javascript on
+    # page load (see `alertForm` in `chart.js`)
+    form = _build_bookmark_form(SearchBookmark, {})
     return render(request, "analyse.html", {"form": form})
 
 
@@ -424,6 +440,62 @@ def all_measures(request):
     measures = Measure.objects.filter(**query).order_by("name")
     context = {"tag_filter": tag_filter, "measures": measures}
     return render(request, "all_measures.html", context)
+
+
+def measure_definition(request, measure):
+    measure = get_object_or_404(Measure, pk=measure)
+
+    context = {
+        "measure": measure,
+        "measure_details": _get_measure_details(measure.id),
+        "measure_tags": _get_tags_with_names(measure.tags),
+        "numerator_sql": _format_measure_sql(
+            columns=measure.numerator_columns,
+            from_=measure.numerator_from,
+            where=measure.numerator_where,
+        ),
+        "denominator_sql": _format_measure_sql(
+            columns=measure.denominator_columns,
+            from_=measure.denominator_from,
+            where=measure.denominator_where,
+        ),
+    }
+    return render(request, "measure_definition.html", context)
+
+
+def _format_measure_sql(**kwargs):
+    sql = interpolate_sql(
+        "SELECT\n"
+        "     CAST(month AS DATE) AS month,\n"
+        "     practice AS practice_id,\n"
+        "     {columns}\n"
+        " FROM {from_}\n"
+        " WHERE {where}\n"
+        " GROUP BY month, practice_id",
+        **kwargs
+    )
+    # Remove "1 = 1" WHERE conditions to avoid confusion and visual clutter
+    sql = re.sub(r"WHERE\s+1\s*=\s*1\s+GROUP BY", "GROUP BY", sql)
+    return sql
+
+
+# We cache these in memory to avoid hitting the disk every time
+@functools.lru_cache(maxsize=None)
+def _get_measure_details(measure_id):
+    """
+    Get extra measure data which is currently only stored in the JSON on disk,
+    not in the database
+    """
+    file = os.path.join(settings.MEASURE_DEFINITIONS_PATH, measure_id + ".json")
+    if not os.path.exists(file):
+        return {}
+    with open(file, "r") as f:
+        details = json.load(f)
+    formatted_details = {
+        key: value if not isinstance(value, list) else "\n".join(value)
+        for key, value in details.items()
+    }
+    return formatted_details
 
 
 def measure_for_one_entity(request, measure, entity_code, entity_type):
@@ -465,7 +537,11 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
         "measures_url_name": "measures_for_one_{}".format(entity_type),
         "measure": measure,
         "measure_options": measure_options,
-        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+        "current_at": parse_date(latest_prescribing_date()),
+        "numerator_breakdown_url": _build_api_url(
+            "measure_numerators_by_org",
+            {"org": entity.code, "org_type": entity_type, "measure": measure.id},
+        ),
     }
     return render(request, "measure_for_one_entity.html", context)
 
@@ -496,7 +572,11 @@ def measure_for_all_england(request, measure):
         "measures_url_name": "measures_for_one_{}".format(entity_type),
         "measure": measure,
         "measure_options": measure_options,
-        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+        "current_at": parse_date(latest_prescribing_date()),
+        "numerator_breakdown_url": _build_api_url(
+            "measure_numerators_by_org",
+            {"org": "", "org_type": entity_type, "measure": measure.id},
+        ),
     }
     return render(request, "measure_for_one_entity.html", context)
 
@@ -714,7 +794,7 @@ def measure_for_all_entities(request, measure, entity_type):
 
 @handle_bad_request
 def practice_price_per_unit(request, code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     practice = get_object_or_404(Practice, code=code)
     context = {
         "entity": practice,
@@ -730,7 +810,7 @@ def practice_price_per_unit(request, code):
 
 @handle_bad_request
 def ccg_price_per_unit(request, code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     ccg = get_object_or_404(PCT, code=code)
     context = {
         "entity": ccg,
@@ -746,7 +826,7 @@ def ccg_price_per_unit(request, code):
 
 @handle_bad_request
 def all_england_price_per_unit(request):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     context = {
         "entity_name": "NHS England",
         "entity_name_and_status": "NHS England",
@@ -761,8 +841,12 @@ def all_england_price_per_unit(request):
 
 @handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
+    primary_code = _get_primary_substitutable_bnf_code(bnf_code)
+    if bnf_code != primary_code:
+        url = request.get_full_path().replace(bnf_code, primary_code)
+        return HttpResponseRedirect(url)
     if len(entity_code) == 3:
         entity = get_object_or_404(PCT, code=entity_code)
     elif len(entity_code) == 6:
@@ -774,9 +858,6 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
         "highlight": entity.code,
         "date": date.strftime("%Y-%m-%d"),
     }
-
-    if "trim" in request.GET:
-        params["trim"] = request.GET["trim"]
 
     bubble_data_url = _build_api_url("bubble", params)
 
@@ -799,17 +880,18 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 
 @handle_bad_request
 def all_england_price_per_unit_by_presentation(request, bnf_code):
-    date = _specified_or_last_date(request, "ppu")
+    date = _specified_or_last_date(request, "prescribing")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
+    primary_code = _get_primary_substitutable_bnf_code(bnf_code)
+    if bnf_code != primary_code:
+        url = request.get_full_path().replace(bnf_code, primary_code)
+        return HttpResponseRedirect(url)
 
     params = {
         "format": "json",
         "bnf_code": presentation.bnf_code,
         "date": date.strftime("%Y-%m-%d"),
     }
-
-    if "trim" in request.GET:
-        params["trim"] = request.GET["trim"]
 
     bubble_data_url = _build_api_url("bubble", params)
 
@@ -826,6 +908,19 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
         "entity_type": "CCG",
     }
     return render(request, "price_per_unit.html", context)
+
+
+def _get_primary_substitutable_bnf_code(bnf_code):
+    """
+    If this BNF code belongs to a "substitution set" (e.g. it's a branded
+    version of a generic presentation) then return the primary code of that
+    substitution set.  Otherwise, just return the original code
+    """
+    substitution_sets = get_substitution_sets_by_presentation()
+    try:
+        return substitution_sets[bnf_code].id
+    except KeyError:
+        return bnf_code
 
 
 ##################################################
@@ -893,72 +988,6 @@ def tariff(request, code=None):
 
 
 ##################################################
-# Bookmarks
-##################################################
-
-
-def finalise_signup(request):
-    """Handle mailchimp signups.
-
-    Then redirect the logged in user to the CCG they last bookmarked, or if
-    they're not logged in, just go straight to the homepage -- both
-    with a message.
-
-    This method should be configured as the LOGIN_REDIRECT_URL,
-    i.e. the view that is called following any successful login, which
-    in our case is always performed by _handle_bookmark_and_newsletter_post.
-
-    """
-    # Users who are logged in are *REDIRECTED* here, which means the
-    # form is never shown.
-    next_url = None
-    if "newsletter_email" in request.session:
-        if request.POST:
-            success = mailchimp_subscribe(
-                request,
-                request.POST["email"],
-                request.POST["first_name"],
-                request.POST["last_name"],
-                request.POST["organisation"],
-                request.POST["job_title"],
-            )
-            if success:
-                messages.success(
-                    request, "You have successfully signed up for the newsletter."
-                )
-            else:
-                messages.error(
-                    request, "There was a problem signing you up for the newsletter."
-                )
-
-        else:
-            # Show the signup form
-            return render(request, "newsletter_signup.html")
-    if not request.user.is_authenticated():
-        if "alerts_requested" in request.session:
-            # Their first alert bookmark signup
-            del request.session["alerts_requested"]
-            messages.success(request, "Thanks, you're now subscribed to alerts.")
-        if next_url:
-            return redirect(next_url)
-        else:
-            return redirect(request.session.get("came_from", "home"))
-    else:
-        # The user is signing up to at least the second bookmark
-        # in this session.
-        last_bookmark = request.user.profile.most_recent_bookmark()
-        next_url = last_bookmark.dashboard_url()
-        messages.success(
-            request,
-            mark_safe(
-                "You're now subscribed to alerts about <em>%s</em>."
-                % last_bookmark.topic()
-            ),
-        )
-        return redirect(next_url)
-
-
-##################################################
 # Spending
 ##################################################
 
@@ -972,17 +1001,17 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     entity = _get_entity(entity_type, entity_code)
 
-    if entity_type in ("practice", "ccg", "CCG", "all_england"):
-        form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
-        signed_up_for_alert = _signed_up_for_alert(
-            request, entity, NCSOConcessionBookmark
-        )
+    if request.method == "POST":
+        return _handle_bookmark_post(request, NCSOConcessionBookmark)
+
+    if entity_type == "practice":
+        form = _build_bookmark_form(NCSOConcessionBookmark, {"practice_id": entity.pk})
+    elif entity_type.lower() == "ccg":
+        form = _build_bookmark_form(NCSOConcessionBookmark, {"pct_id": entity.pk})
+    elif entity_type == "all_england":
+        form = _build_bookmark_form(NCSOConcessionBookmark, {})
     else:
         form = None
-        signed_up_for_alert = False
-
-    if isinstance(form, HttpResponseRedirect):
-        return form
 
     current_month = _get_current_month()
     monthly_totals = ncso_spending_for_entity(
@@ -1000,7 +1029,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
     )
     financial_ytd_total = _financial_ytd_total(monthly_totals)
     breakdown_date = request.GET.get("breakdown_date")
-    breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
+    breakdown_date = parse_date(breakdown_date) if breakdown_date else end_date
     breakdown = ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
     breakdown_metadata = [i for i in monthly_totals if i["month"] == breakdown_date][0]
     url_template = reverse("tariff", kwargs={"code": "AAA"}).replace(
@@ -1033,10 +1062,8 @@ def spending_for_one_entity(request, entity_code, entity_type):
         "breakdown_is_incomplete_month": breakdown_metadata["is_incomplete_month"],
         "last_prescribing_date": last_prescribing_date,
         "national_average_discount_percentage": NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
-        "signed_up_for_alert": signed_up_for_alert,
         "form": form,
     }
-    request.session["came_from"] = request.path
     return render(request, "spending_for_one_entity.html", context)
 
 
@@ -1061,6 +1088,166 @@ def _financial_ytd_total(monthly_totals):
         for row in monthly_totals
         if row["month"] >= financial_year_start
     )
+
+
+##################################################
+# Bookmarks.
+##################################################
+
+
+def bookmarks(request, key):
+    profile = get_object_or_404(Profile, key=key)
+    user = profile.user
+
+    search_bookmarks = user.searchbookmark_set.all()
+    org_bookmarks = user.orgbookmark_set.all()
+    ncso_concessions_bookmarks = user.ncsoconcessionbookmark_set.all()
+
+    if request.method == "POST":
+        if not request.POST.get("unsuball"):
+            org_bookmarks = org_bookmarks.filter(
+                pk__in=request.POST.getlist("org_bookmarks")
+            )
+            search_bookmarks = search_bookmarks.filter(
+                pk__in=request.POST.getlist("search_bookmarks")
+            )
+            ncso_concessions_bookmarks = ncso_concessions_bookmarks.filter(
+                pk__in=request.POST.getlist("ncso_concessions_bookmarks")
+            )
+
+        # QuerySet.delete() returns a tuple whose first element is the number
+        # of records deleted.
+        count = (
+            org_bookmarks.delete()[0]
+            + search_bookmarks.delete()[0]
+            + ncso_concessions_bookmarks.delete()[0]
+        )
+
+        if count > 0:
+            msg = "Unsubscribed from %s alert" % count
+            if count > 1:
+                msg += "s"
+            messages.success(request, msg)
+
+        return redirect(reverse("bookmarks", args=[key]))
+
+    form = BookmarkListForm(
+        org_bookmarks=org_bookmarks,
+        search_bookmarks=search_bookmarks,
+        ncso_concessions_bookmarks=ncso_concessions_bookmarks,
+    )
+    count = (
+        search_bookmarks.count()
+        + org_bookmarks.count()
+        + ncso_concessions_bookmarks.count()
+    )
+
+    if count == 1:
+        single_bookmark = (
+            search_bookmarks.first()
+            or org_bookmarks.first()
+            or ncso_concessions_bookmarks.first()
+        )
+    else:
+        single_bookmark = None
+
+    ctx = {
+        "search_bookmarks": search_bookmarks,
+        "org_bookmarks": org_bookmarks,
+        "ncso_concessions_bookmarks": ncso_concessions_bookmarks,
+        "form": form,
+        "count": count,
+        "single_bookmark": single_bookmark,
+    }
+
+    return render(request, "bookmarks/bookmark_list.html", ctx)
+
+
+BOOKMARK_CLS_TO_FORM_CLS = {
+    OrgBookmark: OrgBookmarkForm,
+    SearchBookmark: SearchBookmarkForm,
+    NCSOConcessionBookmark: NCSOConcessionBookmarkForm,
+}
+
+
+def _build_bookmark_form(bookmark_cls, initial):
+    """Build form for alert signup."""
+
+    form_cls = BOOKMARK_CLS_TO_FORM_CLS[bookmark_cls]
+    return form_cls(initial=initial)
+
+
+def _handle_bookmark_post(request, bookmark_cls):
+    """Create a bookmark, email the user, add confirmation message, and
+    redirect to bookmark's dashboard URL.
+    """
+
+    bookmark = _get_or_create_bookmark(request, bookmark_cls)
+    _send_alert_signup_confirmation(bookmark)
+    _add_confirmation_message(request, bookmark)
+    return redirect(bookmark.dashboard_url())
+
+
+def _get_or_create_bookmark(request, bookmark_cls):
+    """Get or create bookmark object.
+
+    Note that this will raise a ValidationError if the email address is invalid
+    (which shouldn't happen because it should be validated by the browser) or
+    or an IntegrityError if the submitted pct_id/practice_id/pcn_id doesn't
+    correspond to an existing PCT/Practice/PCN (which shouldn't happen because
+    the entity id should be set in the initial form by _build_bookmark_form().)
+    """
+
+    form_cls = BOOKMARK_CLS_TO_FORM_CLS[bookmark_cls]
+    form = form_cls(request.POST)
+    form.full_clean()
+    email = form.cleaned_data["email"].lower()
+    user, _ = User.objects.get_or_create(username=email, defaults={"email": email})
+    bookmark_args = {k: v or None for k, v in form.cleaned_data.items() if k != "email"}
+    bookmark, _ = bookmark_cls.objects.get_or_create(user=user, **bookmark_args)
+    return bookmark
+
+
+def _send_alert_signup_confirmation(bookmark):
+    """Send email confirming that user has signed up for alert."""
+
+    user = bookmark.user
+    subject = "[OpenPrescribing] Your OpenPrescribing alert subscription"
+    context = {
+        "user": user,
+        "bookmark": bookmark,
+        "unsubscribe_link": settings.GRAB_HOST
+        + reverse("bookmarks", kwargs={"key": user.profile.key}),
+    }
+
+    bodies = {}
+    for ext in ["html", "txt"]:
+        template_name = "account/email/email_confirmation_signup_message." + ext
+        bodies[ext] = render_to_string(template_name, context).strip()
+
+    msg = EmailMultiAlternatives(
+        subject, bodies["txt"], settings.DEFAULT_FROM_EMAIL, [user.email]
+    )
+    msg.attach_alternative(bodies["html"], "text/html")
+
+    msg.extra_headers = {"message-id": msg.message()["message-id"]}
+    # pre-November 2019, these messages were tagged with "allauth"
+    msg.tags = ["alert_signup"]
+    msg = EmailMessage.objects.create_from_message(msg)
+    msg.send()
+
+
+def _add_confirmation_message(request, bookmark):
+    """Add message indicating success."""
+
+    message_lines = [
+        "Thanks, you're now subscribed to alerts about {}.".format(bookmark.topic()),
+        'Have you <a href="{}">signed up to our newsletter</a>?'.format(
+            reverse("contact")
+        ),
+    ]
+    message = mark_safe("\n".join(message_lines))
+    messages.success(request, message)
 
 
 ##################################################
@@ -1216,52 +1403,42 @@ def _specified_or_last_date(request, category):
         except ValueError:
             raise BadRequestError("Date not in valid YYYY-MM-DD format: %s" % date)
     else:
-        date = ImportLog.objects.latest_in_category(category).current_at
+        if category == "prescribing":
+            date = parse_date(latest_prescribing_date())
+        else:
+            date = ImportLog.objects.latest_in_category(category).current_at
     return date
 
 
-def _total_savings(entity, date):
-    conditions = " "
-    if isinstance(entity, PCT):
-        conditions += "AND {ppusavings_table}.pct_id = %(entity_code)s "
-        conditions += "AND {ppusavings_table}.practice_id IS NULL "
-    elif isinstance(entity, Practice):
-        conditions += "AND {ppusavings_table}.practice_id = %(entity_code)s "
-    sql = ppu_sql(conditions=conditions)
-    sql = (
-        "SELECT SUM(possible_savings) " "AS total_savings FROM ({}) all_savings"
-    ).format(sql)
-    params = {"date": date, "entity_code": entity.pk}
-    with connection.cursor() as cursor:
-        cursor.execute(sql, params)
-        return dictfetchall(cursor)[0]["total_savings"]
-
-
 def _home_page_context_for_entity(request, entity):
-    prescribing_date = ImportLog.objects.latest_in_category("prescribing").current_at
+    entity_type = _org_type_for_entity(entity)
+    context = {
+        "entity": entity,
+        "entity_type": entity_type,
+        "entity_type_human": _entity_type_human(entity_type),
+        "has_prescribing": org_has_prescribing(entity_type, entity.code),
+    }
+    if not context["has_prescribing"]:
+        return context
+    prescribing_date = parse_date(latest_prescribing_date())
     six_months_ago = prescribing_date - relativedelta(months=6)
     mv_filter = {
         "month__gte": six_months_ago,
         "measure__tags__contains": ["core"],
         "percentile__isnull": False,
     }
-    if isinstance(entity, Practice):
+    if entity_type == "practice":
         mv_filter["practice_id"] = entity.code
-        entity_type = "practice"
-    elif isinstance(entity, PCN):
+    elif entity_type == "pcn":
         mv_filter["pcn_id"] = entity.code
-        entity_type = "pcn"
-    elif isinstance(entity, PCT):
+    elif entity_type == "ccg":
         mv_filter["pct_id"] = entity.code
-        entity_type = "ccg"
-    elif isinstance(entity, STP):
+    elif entity_type == "stp":
         mv_filter["stp_id"] = entity.code
-        entity_type = "stp"
-    elif isinstance(entity, RegionalTeam):
+    elif entity_type == "regional_team":
         mv_filter["regional_team_id"] = entity.code
-        entity_type = "regional_team"
     else:
-        raise RuntimeError("Can't handle type: {!r}".format(entity))
+        raise RuntimeError("Can't handle type: {!r}".format(entity_type))
     # find the core measurevalue that is most outlierish
     extreme_measurevalue = (
         MeasureValue.objects.filter_by_org_type(entity_type)
@@ -1277,8 +1454,6 @@ def _home_page_context_for_entity(request, entity):
         extreme_measure = Measure.objects.get(pk=extreme_measurevalue["measure_id"])
     else:
         extreme_measure = None
-    ppu_date = _specified_or_last_date(request, "ppu")
-    total_possible_savings = _total_savings(entity, ppu_date)
     measures_count = Measure.objects.count()
 
     specific_measures = [
@@ -1323,50 +1498,54 @@ def _home_page_context_for_entity(request, entity):
     if entity_type == "practice":
         measure_options["parentOrgId"] = entity.ccg_id
 
-    context = {
-        "measure": extreme_measure,
-        "measures_count": measures_count,
-        "entity": entity,
-        "entity_type": entity_type,
-        "entity_type_human": _entity_type_human(entity_type),
-        "measures_for_one_entity_url": "measures_for_one_{}".format(
-            entity_type.lower().replace(" ", "_")
-        ),
-        "possible_savings": total_possible_savings,
-        "date": ppu_date,
-        "measure_options": measure_options,
-        "measure_tags": [
-            (k, v) for (k, v) in sorted(MEASURE_TAGS.items()) if k != "core"
-        ],
-        "ncso_spending": first_or_none(
-            ncso_spending_for_entity(entity, entity_type, num_months=1)
-        ),
-        "spending_for_one_entity_url": "spending_for_one_{}".format(
-            entity_type.lower()
-        ),
-    }
+    context.update(
+        {
+            "measure": extreme_measure,
+            "measures_count": measures_count,
+            "measures_for_one_entity_url": "measures_for_one_{}".format(
+                entity_type.lower().replace(" ", "_")
+            ),
+            "date": prescribing_date,
+            "measure_options": measure_options,
+            "measure_tags": [
+                (k, v) for (k, v) in sorted(MEASURE_TAGS.items()) if k != "core"
+            ],
+            "ncso_spending": first_or_none(
+                ncso_spending_for_entity(entity, entity_type, num_months=1)
+            ),
+            "spending_for_one_entity_url": "spending_for_one_{}".format(
+                entity_type.lower()
+            ),
+        }
+    )
 
     if entity_type in ["practice", "ccg"]:
         context["entity_price_per_unit_url"] = "{}_price_per_unit".format(
             entity_type.lower()
         )
-        context["date"] = _specified_or_last_date(request, "ppu")
-        context["possible_savings"] = _total_savings(entity, context["date"])
+        context["possible_savings"] = get_total_savings_for_org(
+            str(context["date"]), _org_type_for_entity(entity), entity.pk
+        )
         context["entity_ghost_generics_url"] = "{}_ghost_generics".format(
             entity_type.lower()
-        )
-        context["signed_up_for_alert"] = _signed_up_for_alert(
-            request, entity, OrgBookmark
         )
 
     return context
 
 
 def _url_template(view_name):
+    """Generate a URL template for a given view, to be interpolated by JS in
+    the browser.
+
+    >>> _url_template("measure_for_one_ccg")
+    '/measure/{measure}/ccg/{entity_code}/'
+    """
+
     resolver = get_resolver()
-    pattern = resolver.reverse_dict[view_name][1]
-    pattern = "/" + pattern.rstrip("$")
-    return re.sub("\(\?P<(\w+)>\[.*?]\+\)", "{\\1}", pattern)
+
+    # For the example above, `pattern` is "measure/%(measure)s/ccg/%(entity_code)s/"
+    pattern = resolver.reverse_dict[view_name][0][0][0]
+    return "/" + pattern.replace("%(", "{").replace(")s", "}")
 
 
 def _org_type_for_entity(entity):
@@ -1416,6 +1595,7 @@ def _add_measure_for_siblings_url(options, entity_type):
 
 
 def _add_measure_url(options, entity_type):
+    options["measureDefinitionUrlTemplate"] = _url_template("measure_definition")
     if entity_type == "practice":
         options["measureUrlTemplate"] = _url_template("measure_for_all_ccgs")
     # We're deliberately not showing a link to compare all PCNS for "political"
@@ -1487,31 +1667,6 @@ def _build_org_location_url(entity):
     return _build_api_url("org_location", params)
 
 
-def all_england_ppu_savings(entity_type, date):
-    conditions = " "
-    if entity_type == "CCG":
-        conditions += "AND {ppusavings_table}.pct_id IS NOT NULL "
-        conditions += "AND {ppusavings_table}.practice_id IS NULL "
-    elif entity_type == "practice":
-        conditions += "AND {ppusavings_table}.practice_id IS NOT NULL "
-    else:
-        raise BadRequestError("Unknown entity type: {}".format(entity_type))
-    sql = ppu_sql(conditions=conditions)
-    sql = (
-        "SELECT SUM(possible_savings) " "AS total_savings FROM ({}) all_savings"
-    ).format(sql)
-    params = {"date": date}
-    with connection.cursor() as cursor:
-        cursor.execute(sql, params)
-        savings = dictfetchall(cursor)[0]["total_savings"]
-
-    if savings is None:
-        # This might happen when testing.
-        return 0
-    else:
-        return savings
-
-
 def all_england_measure_savings(entity_type, date):
     return (
         MeasureValue.objects.filter_by_org_type(entity_type.lower())
@@ -1539,209 +1694,6 @@ def all_england_low_priority_total(entity_type, date):
         .aggregate(total=Sum("numerator"))
     )
     return result["total"]
-
-
-def _authenticate_possibly_new_user(email):
-    try:
-        user = User.objects.get(username=email)
-    except User.DoesNotExist:
-        user = User.objects.create_user(username=email, email=email)
-    return authenticate(key=user.profile.key)
-
-
-def _unverify_email_address_when_different_user(user, request):
-    # This is weird. Because entering any email address logs you in as that
-    # user (see force_login function below) we need to prevent accessing
-    # someone's bookmarks just by signing up using their email address. This is
-    # done by unverifying that email address if you're not already logged in as
-    # that user and then forcing a re-verification before you can access
-    # existing bookmarks.
-    emailaddress = EmailAddress.objects.filter(user=user)
-    if user != request.user:
-        emailaddress.update(verified=False)
-
-
-def _force_login_and_redirect(request, user):
-    """Force a new login.
-
-    This allows us to piggy-back on built-in redirect mechanisms,
-    deriving from both django's built-in auth system, and
-    django-allauth:
-
-      * Users that have never been verified are redirected to
-       `verification_sent.html` (thanks to django-allauth)
-
-      * Verified users are sent to `finalise_signup.html` (per
-        Django's LOGIN_REDIRECT_URL setting).
-
-    """
-    if hasattr(request, "user"):
-        # Log the user out. We don't use Django's built-in logout
-        # mechanism because that clears the entire session, too,
-        # and we want to know if someone's logged in previously in
-        # this session.
-        request.user = AnonymousUser()
-        for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
-            if k in request.session:
-                del request.session[k]
-    return perform_login(
-        request, user, app_settings.EmailVerificationMethod.MANDATORY, signup=True
-    )
-
-
-def _make_bookmark_args(user, form, subject_field_ids):
-    """Construct a dict of cleaned keyword args suitable for creating a
-    new bookmark
-    """
-    form_args = {"user": user}
-
-    for field in subject_field_ids:
-        form_args[field] = form.cleaned_data[field]
-
-    if not subject_field_ids:
-        # There is no practice or PCT.
-        form_args["practice"] = None
-        form_args["pct"] = None
-
-    return form_args
-
-
-def _entity_type_from_object(entity):
-    """Given either a PCT or Practice, return a string indicating its type
-    for use in bookmark query filters that reference pct/practice
-    foreign keys
-
-    """
-    if isinstance(entity, PCT):
-        return "pct"
-    elif isinstance(entity, Practice):
-        return "practice"
-    elif isinstance(entity, PCN):
-        return "pcn"
-    else:
-        raise RuntimeError("Entity must be Practice or PCT")
-
-
-def _signed_up_for_alert(request, entity, subject_class):
-    if request.user.is_authenticated():
-        if entity:
-            # Entity is a Practice or PCT
-            q = {_entity_type_from_object(entity): entity}
-        else:
-            # Entity is "All England"
-            q = {"practice_id__isnull": True, "pct_id__isnull": True}
-        return subject_class.objects.filter(user=request.user, **q).exists()
-    else:
-        return False
-
-
-def _monthly_bookmark_and_newsletter_form(request, entity):
-    """Build a form for newsletter/alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if entity is None:
-        return _monthly_bookmark_and_newsletter_form_for_all_england(request)
-
-    entity_type = _entity_type_from_object(entity)
-    if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, OrgBookmark, MonthlyOrgBookmarkForm, entity_type
-        )
-    else:
-        form = MonthlyOrgBookmarkForm(
-            initial={
-                entity_type: entity.pk,
-                "email": getattr(request.user, "email", ""),
-            }
-        )
-
-    return form
-
-
-def _monthly_bookmark_and_newsletter_form_for_all_england(request):
-    """Build a form for newsletter/alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, OrgBookmark, MonthlyOrgBookmarkForm
-        )
-    else:
-        form = MonthlyOrgBookmarkForm(
-            initial={"email": getattr(request.user, "email", "")}
-        )
-
-    return form
-
-
-def _ncso_concession_bookmark_and_newsletter_form(request, entity):
-    """Build a form for newsletter/alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if entity is None:
-        return _ncso_concession_bookmark_and_newsletter_form_for_all_england(request)
-
-    entity_type = _entity_type_from_object(entity)
-    if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, NCSOConcessionBookmark, NonMonthlyOrgBookmarkForm, entity_type
-        )
-    else:
-        form = NonMonthlyOrgBookmarkForm(
-            initial={
-                entity_type: entity.pk,
-                "email": getattr(request.user, "email", ""),
-            }
-        )
-
-    return form
-
-
-def _ncso_concession_bookmark_and_newsletter_form_for_all_england(request):
-    if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, NCSOConcessionBookmark, NonMonthlyOrgBookmarkForm
-        )
-    else:
-        form = NonMonthlyOrgBookmarkForm(
-            initial={"email": getattr(request.user, "email", "")}
-        )
-
-    return form
-
-
-def _handle_bookmark_and_newsletter_post(
-    request, subject_class, subject_form_class, *subject_field_ids
-):
-    """Handle search/org bookmark and newsletter signup form:
-
-    * create a search or org bookmark
-    * annotate the user's session (because newsletter signup can be
-      multi-stage)
-    * redirect to confirmation and/or newsletter signup page.
-
-    """
-    form = subject_form_class(request.POST)
-    if form.is_valid():
-        email = form.cleaned_data["email"]
-        if "newsletter" in form.cleaned_data["newsletters"]:
-            # add a session variable. Then handle it in the next page,
-            # which is either the verification page, or a dedicated
-            # "tell us a bit more" page.
-            request.session["newsletter_email"] = email
-        if "alerts" in form.cleaned_data["newsletters"]:
-            request.session["alerts_requested"] = 1
-            user = _authenticate_possibly_new_user(email)
-            form_args = _make_bookmark_args(user, form, subject_field_ids)
-            _unverify_email_address_when_different_user(user, request)
-            # We're automatically approving all alert signups from now on
-            # without waiting for the email address to be verified
-            form_args["approved"] = True
-            subject_class.objects.get_or_create(**form_args)
-            return _force_login_and_redirect(request, user)
-        else:
-            return redirect("newsletter-signup")
-    return form
 
 
 def _get_entity(entity_type, entity_code):

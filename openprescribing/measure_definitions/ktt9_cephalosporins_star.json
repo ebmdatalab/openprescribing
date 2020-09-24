@@ -8,27 +8,28 @@
   "description": [
     "Number of prescription items for co-amoxiclav, cephalosporins and quinolones per item-based STAR-PU "
   ],
-  "why_it_matters": [
-    "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
-    "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Evidence-context'> It is important that they are used sparingly, to avoid drug-resistant bacteria developing.</a> ", 
-    "This measure looks at the volume of these prescribed, versus the list size adjusted for need."
-  ],
   "numerator_short": "Selected items",
   "denominator_short": "STAR-PUs",
+  "why_it_matters": [
+    "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
+    "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Evidence-context'> It is important that they are used sparingly, to avoid drug-resistant bacteria developing.</a> ",
+    "This measure looks at the volume of these prescribed, versus the list size adjusted for need."
+  ],
+  "tags": [
+    "antimicrobial",
+    "core",
+    "infections",
+    "nice"
+  ],
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": [
-    "antimicrobial",
-    "core",
-    "infections"
-  ],
   "numerator_type": "bnf_items",
-  "numerator_where": [
-    "bnf_code LIKE '0501013K0%' OR --Co-Amoxiclav \n",
-    "bnf_code LIKE '0501021%' OR --Cephalosporins \n",
-    "bnf_code LIKE '050112%'     --Quinolones"
+  "numerator_bnf_codes_filter": [
+    "0501013K0 # Co-Amoxiclav",
+    "0501021 # Cephalosporins",
+    "050112 # Quinolones"
   ],
   "denominator_type": "star_pu_antibiotics"
 }

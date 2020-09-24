@@ -32,7 +32,7 @@ def upload_to_bigquery(data_factory):
         client, "presentation", schemas.PRESENTATION_SCHEMA, data_factory.presentations
     )
     create_and_populate_bq_table(
-        client, "prescribing", schemas.PRESCRIBING_SCHEMA, data_factory.prescribing
+        client, "prescribing_v2", schemas.PRESCRIBING_SCHEMA, data_factory.prescribing
     )
     create_and_populate_bq_table(
         client,

@@ -98,6 +98,7 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
         else:
             logger.error("Unhandled path %s" % self.path)
             self.send_response(requests.codes.not_found)
+            data = str(data)
         self.send_header("Content-Type", "application/json")
         self.send_header("access-control-allow-origin", "*")
         self.end_headers()
@@ -120,6 +121,5 @@ class MockApiServer(object):
 
     @classmethod
     def api_port(cls):
-        """A port suitable for running the API.
-        """
+        """A port suitable for running the API."""
         return 6060

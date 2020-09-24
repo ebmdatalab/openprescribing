@@ -44,7 +44,7 @@ class DataFactory(object):
             for i in range(0, num_months)
         ]
 
-    def create_practice(self, ccg=None, pcn=None):
+    def create_practice(self, ccg=None, pcn=None, setting=-1):
         if ccg is None:
             ccg = self.create_ccg()
         index = self.next_id()
@@ -53,6 +53,7 @@ class DataFactory(object):
             code="ABC{:03}".format(index),
             ccg=ccg,
             pcn=pcn,
+            setting=setting,
         )
 
     def create_ccg(self, stp=None, regional_team=None):
@@ -183,7 +184,7 @@ class DataFactory(object):
         return User.objects.create_user(username="User {}".format(index), email=email)
 
     def create_ncso_concessions_bookmark(self, org, user=None):
-        kwargs = {"user": user or self.create_user(), "approved": True}
+        kwargs = {"user": user or self.create_user()}
 
         if org is None:
             # All England
@@ -198,11 +199,13 @@ class DataFactory(object):
         return NCSOConcessionBookmark.objects.create(**kwargs)
 
     def create_org_bookmark(self, org, user=None):
-        kwargs = {"user": user or self.create_user(), "approved": True}
+        kwargs = {"user": user or self.create_user()}
 
         if org is None:
             # All England
             pass
+        elif isinstance(org, PCN):
+            kwargs["pcn"] = org
         elif isinstance(org, PCT):
             kwargs["pct"] = org
         elif isinstance(org, Practice):

@@ -6,7 +6,7 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models.functions import Coalesce
 
 from anymail.signals import EventType
@@ -189,8 +189,6 @@ class PCT(models.Model):
     address = models.CharField(max_length=400, null=True, blank=True)
     postcode = models.CharField(max_length=10, null=True, blank=True)
 
-    objects = models.GeoManager()
-
     def __str__(self):
         return self.name or ""
 
@@ -271,7 +269,6 @@ class Practice(models.Model):
     location = models.PointField(null=True, blank=True, srid=4326)
     boundary = models.GeometryField(null=True, blank=True, srid=4326)
     setting = models.IntegerField(choices=PRESCRIBING_SETTINGS, default=-1)
-    objects = models.GeoManager()
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
     join_provider_date = models.DateField(null=True, blank=True)
@@ -562,8 +559,7 @@ class Presentation(models.Model):
             return ", ".join(descrs)
 
     def prescribability_statuses(self):
-        """Return all prescribability statuses for this presentation.
-        """
+        """Return all prescribability statuses for this presentation."""
         vmps = VMP.objects.filter(bnf_code=self.bnf_code)
         return VirtualProductPresStatus.objects.filter(vmp__in=vmps).distinct()
 
@@ -598,23 +594,12 @@ class Presentation(models.Model):
         return dict(name_map)
 
 
+# This model is no longer used at all in production. However several of our
+# test fixtures depend on it to create prescribing data which is then copied
+# into the MatrixStore (which is where all the prescribing data now lives in
+# production) so it's easiest to leave it in place for now rather than rewrite
+# a lot of old tests.
 class Prescription(models.Model):
-    """
-    Prescription items
-    Characters
-    -- 1 & 2 show the BNF Chapter,
-    -- 3 & 4 show the BNF Section,
-    -- 5 & 6 show the BNF paragraph,
-    -- 7 shows the BNF sub-paragraph and
-    -- 8 & 9 show the chemical substance
-    -- 10 & 11 show the Product
-    -- 12 & 13 show the Strength and Formulation
-    -- 14 & 15 show the equivalent generic code (always used)
-    """
-
-    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
-    # that was the previous default and the table is large enough that running
-    # the migration will take careful planning at some later stage
     pct = models.ForeignKey(
         PCT, db_constraint=False, null=True, on_delete=models.CASCADE
     )
@@ -623,7 +608,6 @@ class Prescription(models.Model):
     )
     presentation_code = models.CharField(max_length=15, validators=[isAlphaNumeric])
     total_items = models.IntegerField()
-    # XXX change this post-deploy; in fact we should not allow blanks
     net_cost = models.FloatField(blank=True, null=True)
     actual_cost = models.FloatField()
     quantity = models.FloatField()
@@ -639,7 +623,6 @@ class Measure(models.Model):
     title = models.CharField(max_length=500)
     description = models.TextField()
     why_it_matters = models.TextField(null=True, blank=True)
-    numerator_short = models.CharField(max_length=100, null=True, blank=True)
     tags = ArrayField(models.CharField(max_length=30), blank=True)
     tags_focus = ArrayField(
         models.CharField(max_length=30),
@@ -651,28 +634,33 @@ class Measure(models.Model):
         ),
     )
     include_in_alerts = models.BooleanField(default=True)
-    denominator_short = models.CharField(max_length=100, null=True, blank=True)
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
-    numerator_type = models.CharField(max_length=20)
-    numerator_from = models.TextField()
-    numerator_where = models.TextField()
-    numerator_columns = models.TextField()
-    denominator_type = models.CharField(max_length=20)
-    denominator_from = models.TextField()
-    denominator_where = models.TextField()
-    denominator_columns = models.TextField()
     url = models.URLField(null=True, blank=True)
     is_percentage = models.NullBooleanField()
     is_cost_based = models.NullBooleanField()
     low_is_good = models.NullBooleanField()
-    numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
-    numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    analyse_url = models.CharField(max_length=5000, null=True)
+
+    numerator_type = models.CharField(max_length=20)
+    numerator_short = models.CharField(max_length=100)
+    numerator_columns = models.TextField()
+    numerator_from = models.TextField()
+    numerator_where = models.TextField()
     numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
-    denominator_bnf_codes = ArrayField(models.CharField(max_length=15))
-    denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    numerator_bnf_codes_filter = ArrayField(models.CharField(max_length=16), null=True)
+    numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    numerator_bnf_codes = ArrayField(models.CharField(max_length=15), null=True)
+
+    denominator_type = models.CharField(max_length=20)
+    denominator_short = models.CharField(max_length=100)
+    denominator_columns = models.TextField()
+    denominator_from = models.TextField()
+    denominator_where = models.TextField()
     denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
-    analyse_url = models.CharField(max_length=1000, null=True)
+    denominator_bnf_codes_filter = ArrayField(
+        models.CharField(max_length=16), null=True
+    )
+    denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    denominator_bnf_codes = ArrayField(models.CharField(max_length=15), null=True)
 
     def __str__(self):
         return self.name
@@ -767,27 +755,22 @@ class TruncatingCharField(models.CharField):
 
 
 class SearchBookmark(models.Model):
-    """A bookmark for an individual analyse search made by a user.
-    """
+    """A bookmark for an individual analyse search made by a user."""
 
     name = TruncatingCharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     url = models.CharField(max_length=1200)
     created_at = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)
 
     def __str__(self):
         return "Bookmark: " + self.name
 
     def topic(self):
-        """Sentence snippet describing the bookmark
-        """
+        """Sentence snippet describing the bookmark"""
         return self.name
 
     def dashboard_url(self):
-        """The 'home page' for this bookmark
-
-        """
+        """The 'home page' for this bookmark"""
         return "%s#%s" % (reverse("analyse"), self.url)
 
 
@@ -812,7 +795,6 @@ class OrgBookmark(models.Model):
     )
     pcn = models.ForeignKey(PCN, null=True, blank=True, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)
 
     def dashboard_url(self, measure=None):
         """The 'home page' for a measure for this bookmark, or for all
@@ -868,13 +850,12 @@ class OrgBookmark(models.Model):
         elif self.practice is not None:
             return "practice"
         elif self.pcn is not None:
-            return "pcn"
+            return "PCN"
         else:
             return "all_england"
 
     def topic(self):
-        """Sentence snippet describing the bookmark
-        """
+        """Sentence snippet describing the bookmark"""
         return "prescribing in %s" % self.name
 
     def get_absolute_url(self):
@@ -891,7 +872,6 @@ class NCSOConcessionBookmark(models.Model):
         Practice, null=True, blank=True, on_delete=models.PROTECT
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)
 
     @property
     def entity(self):
@@ -921,7 +901,7 @@ class NCSOConcessionBookmark(models.Model):
 
     @property
     def name(self):
-        return "NCSO concessions for {}".format(self.entity_cased_name)
+        return "price concessions for {}".format(self.entity_cased_name)
 
     def dashboard_url(self):
         if self.entity_type == "CCG":
@@ -967,18 +947,6 @@ class Profile(models.Model):
     emails_received = models.IntegerField(default=0)
     emails_opened = models.IntegerField(default=0)
     emails_clicked = models.IntegerField(default=0)
-
-    def most_recent_bookmark(self):
-        bookmarks = [
-            bookmark
-            for bookmark in [
-                self.user.orgbookmark_set.last(),
-                self.user.searchbookmark_set.last(),
-                self.user.ncsoconcessionbookmark_set.last(),
-            ]
-            if bookmark
-        ]
-        return sorted(bookmarks, key=lambda x: x.created_at)[-1]
 
 
 class EmailMessageManager(models.Manager):
@@ -1066,60 +1034,6 @@ class MailLog(models.Model):
             except EmailMessage.DoesNotExist:
                 pass
         return subject
-
-
-class GenericCodeMapping(models.Model):
-    """A mapping between BNF codes that allows us to collapse clinically
-    equivalent chemicals together.
-
-    See https://github.com/ebmdatalab/price-per-dose/issues/11 for
-    background.
-
-    A `to_code` may end in `%`, which means it's a special case which
-    should be treated as a stem against which to search for generics.
-
-    """
-
-    from_code = models.CharField(
-        max_length=15, primary_key=True, validators=[isAlphaNumeric], db_index=True
-    )
-    to_code = models.CharField(
-        max_length=15, validators=[isAlphaNumeric], db_index=True
-    )
-
-
-class PPUSaving(models.Model):
-    """A Price-per-unit Saving describes a possible saving for a CCG or a
-    practice for an individual presentation.
-
-    Records with a blank practice_id are for data at a CCG level;
-    those with a practice_id are for data at a practice level.
-
-    """
-
-    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
-    # that was the previous default and the table is large enough that running
-    # the migration will take careful planning at some later stage
-    date = models.DateField(db_index=True)
-    # Sometimes we there are codes in prescribing data which are not
-    # present in our presentations
-    presentation = models.ForeignKey(
-        Presentation,
-        db_column="bnf_code",
-        db_constraint=False,
-        on_delete=models.CASCADE,
-    )
-    lowest_decile = models.FloatField()
-    quantity = models.IntegerField()
-    price_per_unit = models.FloatField()
-    possible_savings = models.FloatField()
-    formulation_swap = models.TextField(null=True, blank=True)
-    pct = models.ForeignKey(
-        PCT, null=True, blank=True, db_index=True, on_delete=models.CASCADE
-    )
-    practice = models.ForeignKey(
-        Practice, null=True, blank=True, db_index=True, on_delete=models.CASCADE
-    )
 
 
 class TariffPrice(models.Model):

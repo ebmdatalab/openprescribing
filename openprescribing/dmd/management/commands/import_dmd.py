@@ -11,9 +11,12 @@ from django.conf import settings
 from django.core.management import BaseCommand, CommandError
 from django.db import connection, transaction
 from django.db.models import fields as django_fields
+from django.db.models import ForeignKey
 
 from dmd import models
 from dmd.models import AMP, AMPP, VMP, VMPP
+from dmd.view_schema import schema
+from dmd.obj_types import cls_to_obj_type
 from frontend.models import ImportLog, Presentation
 from gcutils.bigquery import Client
 from openprescribing.slack import notify_slack
@@ -295,8 +298,10 @@ class Command(BaseCommand):
             if bnf_code == "'" or snomed_id == "'":
                 continue
 
-            bnf_code = bnf_code.lstrip("'")
-            snomed_id = snomed_id.lstrip("'")
+            if isinstance(bnf_code, str):
+                bnf_code = bnf_code.lstrip("'")
+            if isinstance(snomed_id, str):
+                snomed_id = snomed_id.lstrip("'")
 
             try:
                 obj = model.objects.get(id=snomed_id)
@@ -431,6 +436,125 @@ class Command(BaseCommand):
         for model in apps.get_app_config("dmd").get_models():
             client.upload_model(model)
 
+        for model in [VMP, AMP, VMPP, AMPP]:
+            table_id = "{}_full".format(model.obj_type)
+            table = client.get_table(table_id)
+            sql = self.sql_for_cls(model)
+            table.insert_rows_from_query(sql)
+
+    def sql_for_cls(self, cls):
+        """Return SQL to build single fully denormalised BQ table for cls."""
+
+        fields_by_name = {field.name: field for field in cls._meta.fields}
+        rels_by_name = {rel.name: rel for rel in cls._meta.related_objects}
+
+        select_exprs = [cls.obj_type + ".id"]
+        join_exprs = []
+
+        t_alias_ix = 0
+        u_alias_ix = 0
+
+        for field_name in schema[cls.obj_type]["fields"]:
+            field = fields_by_name[field_name]
+
+            if isinstance(field, ForeignKey):
+                foreign_table_name = field.related_model.__name__.lower()
+
+                if field.related_model in cls_to_obj_type:
+                    foreign_table_id_field_name = "id"
+                    foreign_table_value_field_name = "id"
+                else:
+                    foreign_table_id_field_name = "cd"
+                    foreign_table_value_field_name = "descr"
+
+                select_exprs.append(
+                    "T{}.{} AS {}".format(
+                        t_alias_ix, foreign_table_value_field_name, field.name
+                    )
+                )
+
+                join_exprs.append(
+                    "dmd.{} T{} ON {}.{} = T{}.{}".format(
+                        foreign_table_name,
+                        t_alias_ix,
+                        cls.obj_type,
+                        field.name,
+                        t_alias_ix,
+                        foreign_table_id_field_name,
+                    )
+                )
+
+                t_alias_ix += 1
+            else:
+                select_exprs.append("{}.{}".format(cls.obj_type, field.name))
+
+        for rel_name in schema[cls.obj_type]["other_relations"]:
+            relname = rel_name.replace("_", "")
+            rel = rels_by_name[relname]
+
+            if rel.multiple:
+                continue
+
+            model = rel.related_model
+            rel_fields_by_name = {field.name: field for field in model._meta.fields}
+
+            for field_name in schema[rel_name]["fields"]:
+                if field_name == cls.obj_type:
+                    continue
+                field = rel_fields_by_name[field_name]
+
+                if isinstance(field, ForeignKey):
+                    foreign_table_name = field.related_model.__name__.lower()
+
+                    select_exprs.append(
+                        "U{}.descr AS {}_{}".format(u_alias_ix, relname, field_name)
+                    )
+
+                    join_exprs.append(
+                        "dmd.{} U{} ON T{}.{} = U{}.cd".format(
+                            foreign_table_name,
+                            u_alias_ix,
+                            t_alias_ix,
+                            field_name,
+                            u_alias_ix,
+                        )
+                    )
+
+                    u_alias_ix += 1
+
+                else:
+                    select_exprs.append(
+                        "T{}.{} AS {}_{}".format(
+                            t_alias_ix, field_name, relname, field_name
+                        )
+                    )
+
+            join_exprs.append(
+                "dmd.{} T{} ON {}.id = T{}.{}".format(
+                    relname, t_alias_ix, cls.obj_type, t_alias_ix, cls.obj_type
+                )
+            )
+
+            t_alias_ix += 1
+
+        def join_expr_sort_key(expr):
+            alias = expr.split()[1]
+            return alias[0], int(alias[1:])
+
+        join_exprs.sort(key=join_expr_sort_key)
+
+        return (
+            "SELECT "
+            + ", ".join(select_exprs)
+            + " FROM "
+            + "dmd."
+            + cls.obj_type
+            + " LEFT OUTER JOIN "
+            + " LEFT OUTER JOIN ".join(join_exprs)
+            + " ORDER BY "
+            + "{}.id".format(cls.obj_type)
+        )
+
     def log_other_oddities(self):
         """Log oddities in the data that are not captured elsewhere."""
 
@@ -530,10 +654,10 @@ class Command(BaseCommand):
     def get_mapping_path(self):
         """Return path to mapping spreadsheet.
 
-        It expects to find this at data/snomed_mapping/[datestamp]/XXX.xlsx
+        It expects to find this at data/bnf_snomed_mapping/[datestamp]/XXX.xlsx
         """
         glob_pattern = os.path.join(
-            settings.PIPELINE_DATA_BASEDIR, "snomed_mapping", "*", "*.xlsx"
+            settings.PIPELINE_DATA_BASEDIR, "bnf_snomed_mapping", "*", "*.xlsx"
         )
 
         paths = sorted(glob.glob(glob_pattern))

@@ -50,7 +50,7 @@ FROM (
     END
       )/1800 AS gaba_ddd -- and divides all by 1800 to get DDD (https://www.whocc.no/atc_ddd_index/?code=N03AX12)
   FROM
-    {project}.{hscic}.normalised_prescribing_standard
+    {project}.{hscic}.normalised_prescribing
   WHERE
     bnf_code LIKE '0408010G0%' --gabapentin
   GROUP BY

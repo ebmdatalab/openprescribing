@@ -2,7 +2,6 @@ from collections import defaultdict
 import csv
 import json
 
-from django.db import connection
 from django.test import TestCase
 
 from .api_test_base import ApiTestBase
@@ -10,10 +9,15 @@ from .api_test_base import ApiTestBase
 from frontend.models import Prescription
 from frontend.models import TariffPrice
 from frontend.tests.data_factory import DataFactory
-from api.views_spending import MIN_GHOST_GENERIC_DELTA
+from frontend.ghost_branded_generics import MIN_GHOST_GENERIC_DELTA
 from dmd.models import VMPP
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 import numpy as np
+
+
+def _parse_json_response(response):
+    return json.loads(response.content.decode("utf8"))
 
 
 class TestAPISpendingViewsTariff(ApiTestBase):
@@ -115,15 +119,15 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[25]["date"], "2013-04-01")
         self.assertEqual(rows[25]["actual_cost"], "3.12")
         self.assertEqual(rows[25]["items"], "2")
-        self.assertEqual(rows[25]["quantity"], "52")
+        self.assertEqual(rows[25]["quantity"], "52.0")
         self.assertEqual(rows[26]["date"], "2013-05-01")
         self.assertEqual(rows[26]["actual_cost"], "0.0")
         self.assertEqual(rows[26]["items"], "0")
-        self.assertEqual(rows[26]["quantity"], "0")
+        self.assertEqual(rows[26]["quantity"], "0.0")
         self.assertEqual(rows[44]["date"], "2014-11-01")
         self.assertEqual(rows[44]["actual_cost"], "230.54")
         self.assertEqual(rows[44]["items"], "96")
-        self.assertEqual(rows[44]["quantity"], "5143")
+        self.assertEqual(rows[44]["quantity"], "5143.0")
 
     def test_total_spending_by_bnf_section(self):
         rows = self._get_rows({"code": "2"})
@@ -131,11 +135,11 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[25]["date"], "2013-04-01")
         self.assertEqual(rows[25]["actual_cost"], "3.12")
         self.assertEqual(rows[25]["items"], "2")
-        self.assertEqual(rows[25]["quantity"], "52")
+        self.assertEqual(rows[25]["quantity"], "52.0")
         self.assertEqual(rows[44]["date"], "2014-11-01")
         self.assertEqual(rows[44]["actual_cost"], "230.54")
         self.assertEqual(rows[44]["items"], "96")
-        self.assertEqual(rows[44]["quantity"], "5143")
+        self.assertEqual(rows[44]["quantity"], "5143.0")
 
     def test_total_spending_by_bnf_section_full_code(self):
         rows = self._get_rows({"code": "02"})
@@ -143,11 +147,11 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[25]["date"], "2013-04-01")
         self.assertEqual(rows[25]["actual_cost"], "3.12")
         self.assertEqual(rows[25]["items"], "2")
-        self.assertEqual(rows[25]["quantity"], "52")
+        self.assertEqual(rows[25]["quantity"], "52.0")
         self.assertEqual(rows[44]["date"], "2014-11-01")
         self.assertEqual(rows[44]["actual_cost"], "230.54")
         self.assertEqual(rows[44]["items"], "96")
-        self.assertEqual(rows[44]["quantity"], "5143")
+        self.assertEqual(rows[44]["quantity"], "5143.0")
 
     def test_total_spending_by_code(self):
         rows = self._get_rows({"code": "0204000I0"})
@@ -155,7 +159,7 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[44]["date"], "2014-11-01")
         self.assertEqual(rows[44]["actual_cost"], "176.28")
         self.assertEqual(rows[44]["items"], "34")
-        self.assertEqual(rows[44]["quantity"], "2355")
+        self.assertEqual(rows[44]["quantity"], "2355.0")
 
     def test_total_spending_by_codes(self):
         rows = self._get_rows({"code": "0204000I0,0202010B0"})
@@ -163,7 +167,7 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[42]["date"], "2014-09-01")
         self.assertEqual(rows[42]["actual_cost"], "36.29")
         self.assertEqual(rows[42]["items"], "40")
-        self.assertEqual(rows[42]["quantity"], "1209")
+        self.assertEqual(rows[42]["quantity"], "1209.0")
 
 
 class TestSpendingByCCG(ApiTestBase):
@@ -185,7 +189,7 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[5]["date"], "2014-09-01")
         self.assertEqual(rows[5]["actual_cost"], "38.28")
         self.assertEqual(rows[5]["items"], "41")
-        self.assertEqual(rows[5]["quantity"], "1241")
+        self.assertEqual(rows[5]["quantity"], "1241.0")
 
     def test_total_spending_by_one_ccg(self):
         params = {"org": "03V"}
@@ -198,7 +202,7 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[-2]["date"], "2014-09-01")
         self.assertEqual(rows[-2]["actual_cost"], "38.28")
         self.assertEqual(rows[-2]["items"], "41")
-        self.assertEqual(rows[-2]["quantity"], "1241")
+        self.assertEqual(rows[-2]["quantity"], "1241.0")
 
     def test_total_spending_by_multiple_ccgs(self):
         params = {"org": "03V,03Q"}
@@ -211,7 +215,7 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[5]["date"], "2014-09-01")
         self.assertEqual(rows[5]["actual_cost"], "38.28")
         self.assertEqual(rows[5]["items"], "41")
-        self.assertEqual(rows[5]["quantity"], "1241")
+        self.assertEqual(rows[5]["quantity"], "1241.0")
 
     def test_spending_by_all_ccgs_on_chemical(self):
         params = {"code": "0202010B0"}
@@ -224,13 +228,13 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[0]["date"], "2013-04-01")
         self.assertEqual(rows[0]["actual_cost"], "3.12")
         self.assertEqual(rows[0]["items"], "2")
-        self.assertEqual(rows[0]["quantity"], "52")
+        self.assertEqual(rows[0]["quantity"], "52.0")
         self.assertEqual(rows[5]["row_id"], "03V")
         self.assertEqual(rows[5]["row_name"], "NHS Corby")
         self.assertEqual(rows[5]["date"], "2014-11-01")
         self.assertEqual(rows[5]["actual_cost"], "54.26")
         self.assertEqual(rows[5]["items"], "62")
-        self.assertEqual(rows[5]["quantity"], "2788")
+        self.assertEqual(rows[5]["quantity"], "2788.0")
 
     def test_spending_by_all_ccgs_on_multiple_chemicals(self):
         params = {"code": "0202010B0,0202010F0"}
@@ -242,13 +246,13 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[0]["date"], "2013-04-01")
         self.assertEqual(rows[0]["actual_cost"], "3.12")
         self.assertEqual(rows[0]["items"], "2")
-        self.assertEqual(rows[0]["quantity"], "52")
+        self.assertEqual(rows[0]["quantity"], "52.0")
         self.assertEqual(rows[-3]["row_id"], "03V")
         self.assertEqual(rows[-3]["row_name"], "NHS Corby")
         self.assertEqual(rows[-3]["date"], "2014-09-01")
         self.assertEqual(rows[-3]["actual_cost"], "38.28")
         self.assertEqual(rows[-3]["items"], "41")
-        self.assertEqual(rows[-3]["quantity"], "1241")
+        self.assertEqual(rows[-3]["quantity"], "1241.0")
 
     def test_spending_by_all_ccgs_on_product(self):
         params = {"code": "0204000I0BC"}
@@ -260,7 +264,7 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[0]["date"], "2014-11-01")
         self.assertEqual(rows[0]["actual_cost"], "32.26")
         self.assertEqual(rows[0]["items"], "29")
-        self.assertEqual(rows[0]["quantity"], "2350")
+        self.assertEqual(rows[0]["quantity"], "2350.0")
 
     def test_spending_by_all_ccgs_on_presentation(self):
         params = {"code": "0202010B0AAABAB"}
@@ -272,7 +276,7 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[2]["date"], "2014-11-01")
         self.assertEqual(rows[2]["actual_cost"], "54.26")
         self.assertEqual(rows[2]["items"], "62")
-        self.assertEqual(rows[2]["quantity"], "2788")
+        self.assertEqual(rows[2]["quantity"], "2788.0")
 
     def test_spending_by_all_ccgs_on_multiple_presentations(self):
         params = {"code": "0202010F0AAAAAA,0202010B0AAACAC"}
@@ -284,7 +288,7 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[0]["date"], "2013-04-01")
         self.assertEqual(rows[0]["actual_cost"], "1.56")
         self.assertEqual(rows[0]["items"], "1")
-        self.assertEqual(rows[0]["quantity"], "26")
+        self.assertEqual(rows[0]["quantity"], "26.0")
 
     def test_spending_by_all_ccgs_on_bnf_section(self):
         params = {"code": "2.2.1"}
@@ -296,13 +300,13 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[0]["date"], "2013-04-01")
         self.assertEqual(rows[0]["actual_cost"], "3.12")
         self.assertEqual(rows[0]["items"], "2")
-        self.assertEqual(rows[0]["quantity"], "52")
+        self.assertEqual(rows[0]["quantity"], "52.0")
         self.assertEqual(rows[-1]["row_id"], "03V")
         self.assertEqual(rows[-1]["row_name"], "NHS Corby")
         self.assertEqual(rows[-1]["date"], "2014-11-01")
         self.assertEqual(rows[-1]["actual_cost"], "54.26")
         self.assertEqual(rows[-1]["items"], "62")
-        self.assertEqual(rows[-1]["quantity"], "2788")
+        self.assertEqual(rows[-1]["quantity"], "2788.0")
 
     def test_spending_by_all_ccgs_on_multiple_bnf_sections(self):
         params = {"code": "2.2,2.4"}
@@ -314,7 +318,7 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[-1]["date"], "2014-11-01")
         self.assertEqual(rows[-1]["actual_cost"], "230.54")
         self.assertEqual(rows[-1]["items"], "96")
-        self.assertEqual(rows[-1]["quantity"], "5143")
+        self.assertEqual(rows[-1]["quantity"], "5143.0")
 
 
 class TestSpendingByPractice(ApiTestBase):
@@ -343,7 +347,19 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]["ccg"], "03V")
         self.assertEqual(rows[0]["actual_cost"], "166.28")
         self.assertEqual(rows[0]["items"], "41")
-        self.assertEqual(rows[0]["quantity"], "2544")
+        self.assertEqual(rows[0]["quantity"], "2544.0")
+
+    def test_total_spending_by_practice_with_old_date(self):
+        params = {"date": "1066-11-01"}
+        rsp = self._get(params)
+        self.assertContains(
+            rsp, "Date is outside the 5 years of data available", status_code=404
+        )
+
+    def test_total_spending_by_practice_with_malformed_date(self):
+        params = {"date": "2015-1-1"}
+        rsp = self._get(params)
+        self.assertContains(rsp, "Dates must be in YYYY-MM-DD format", status_code=404)
 
     def test_spending_by_practice_on_chemical(self):
         params = {"code": "0204000I0", "date": "2014-11-01"}
@@ -357,7 +373,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]["date"], "2014-11-01")
         self.assertEqual(rows[0]["actual_cost"], "154.15")
         self.assertEqual(rows[0]["items"], "17")
-        self.assertEqual(rows[0]["quantity"], "1155")
+        self.assertEqual(rows[0]["quantity"], "1155.0")
 
     def test_spending_by_all_practices_on_chemical_with_date(self):
         params = {"code": "0202010F0", "date": "2014-09-01"}
@@ -367,11 +383,11 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]["row_id"], "N84014")
         self.assertEqual(rows[0]["actual_cost"], "11.99")
         self.assertEqual(rows[0]["items"], "1")
-        self.assertEqual(rows[0]["quantity"], "128")
+        self.assertEqual(rows[0]["quantity"], "128.0")
         self.assertEqual(rows[1]["row_id"], "P87629")
         self.assertEqual(rows[1]["actual_cost"], "1.99")
         self.assertEqual(rows[1]["items"], "1")
-        self.assertEqual(rows[1]["quantity"], "32")
+        self.assertEqual(rows[1]["quantity"], "32.0")
 
     def test_spending_by_one_practice(self):
         params = {"org": "P87629"}
@@ -383,7 +399,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[-1]["date"], "2014-11-01")
         self.assertEqual(rows[-1]["actual_cost"], "64.26")
         self.assertEqual(rows[-1]["items"], "55")
-        self.assertEqual(rows[-1]["quantity"], "2599")
+        self.assertEqual(rows[-1]["quantity"], "2599.0")
 
     def test_spending_by_two_practices_with_date(self):
         params = {"org": "P87629,K83059", "date": "2014-11-01"}
@@ -395,7 +411,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[1]["date"], "2014-11-01")
         self.assertEqual(rows[1]["actual_cost"], "64.26")
         self.assertEqual(rows[1]["items"], "55")
-        self.assertEqual(rows[1]["quantity"], "2599")
+        self.assertEqual(rows[1]["quantity"], "2599.0")
 
     def test_spending_by_one_practice_on_chemical(self):
         params = {"code": "0202010B0", "org": "P87629"}
@@ -409,7 +425,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[-1]["date"], "2014-11-01")
         self.assertEqual(rows[-1]["actual_cost"], "42.13")
         self.assertEqual(rows[-1]["items"], "38")
-        self.assertEqual(rows[-1]["quantity"], "1399")
+        self.assertEqual(rows[-1]["quantity"], "1399.0")
 
     def test_spending_by_practice_on_multiple_chemicals(self):
         params = {"code": "0202010B0,0204000I0", "org": "P87629,K83059"}
@@ -421,7 +437,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[3]["date"], "2013-10-01")
         self.assertEqual(rows[3]["actual_cost"], "1.62")
         self.assertEqual(rows[3]["items"], "1")
-        self.assertEqual(rows[3]["quantity"], "24")
+        self.assertEqual(rows[3]["quantity"], "24.0")
 
     def test_spending_by_all_practices_on_product(self):
         params = {"code": "0202010B0AA", "date": "2014-11-01"}
@@ -431,11 +447,11 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]["row_id"], "K83059")
         self.assertEqual(rows[0]["actual_cost"], "12.13")
         self.assertEqual(rows[0]["items"], "24")
-        self.assertEqual(rows[0]["quantity"], "1389")
+        self.assertEqual(rows[0]["quantity"], "1389.0")
         self.assertEqual(rows[1]["row_id"], "P87629")
         self.assertEqual(rows[1]["actual_cost"], "42.13")
         self.assertEqual(rows[1]["items"], "38")
-        self.assertEqual(rows[1]["quantity"], "1399")
+        self.assertEqual(rows[1]["quantity"], "1399.0")
 
     def test_spending_by_all_practices_on_presentation(self):
         params = {"code": "0202010B0AAABAB", "date": "2014-11-01"}
@@ -445,11 +461,11 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]["row_id"], "K83059")
         self.assertEqual(rows[0]["actual_cost"], "12.13")
         self.assertEqual(rows[0]["items"], "24")
-        self.assertEqual(rows[0]["quantity"], "1389")
+        self.assertEqual(rows[0]["quantity"], "1389.0")
         self.assertEqual(rows[1]["row_id"], "P87629")
         self.assertEqual(rows[1]["actual_cost"], "42.13")
         self.assertEqual(rows[1]["items"], "38")
-        self.assertEqual(rows[1]["quantity"], "1399")
+        self.assertEqual(rows[1]["quantity"], "1399.0")
 
     def test_spending_by_practice_on_presentation(self):
         params = {"code": "0204000I0BCAAAB", "org": "03V"}
@@ -463,7 +479,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[1]["date"], "2014-11-01")
         self.assertEqual(rows[1]["actual_cost"], "22.13")
         self.assertEqual(rows[1]["items"], "17")
-        self.assertEqual(rows[1]["quantity"], "1200")
+        self.assertEqual(rows[1]["quantity"], "1200.0")
 
     def test_spending_by_practice_on_multiple_presentations(self):
         params = {"code": "0204000I0BCAAAB,0202010B0AAABAB", "org": "03V"}
@@ -475,7 +491,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[2]["date"], "2014-11-01")
         self.assertEqual(rows[2]["actual_cost"], "64.26")
         self.assertEqual(rows[2]["items"], "55")
-        self.assertEqual(rows[2]["quantity"], "2599")
+        self.assertEqual(rows[2]["quantity"], "2599.0")
 
     def test_spending_by_practice_on_section(self):
         params = {"code": "2", "org": "03V"}
@@ -487,7 +503,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[-1]["date"], "2014-11-01")
         self.assertEqual(rows[-1]["actual_cost"], "64.26")
         self.assertEqual(rows[-1]["items"], "55")
-        self.assertEqual(rows[-1]["quantity"], "2599")
+        self.assertEqual(rows[-1]["quantity"], "2599.0")
 
     def test_spending_by_practice_on_multiple_sections(self):
         params = {"code": "0202,0204", "org": "03Q"}
@@ -499,7 +515,7 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]["date"], "2013-08-01")
         self.assertEqual(rows[0]["actual_cost"], "1.53")
         self.assertEqual(rows[0]["items"], "1")
-        self.assertEqual(rows[0]["quantity"], "28")
+        self.assertEqual(rows[0]["quantity"], "28.0")
 
 
 class TestSpendingByOrg(ApiTestBase):
@@ -521,7 +537,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "actual_cost": "1.53",
                 "date": "2013-08-01",
                 "items": "1",
-                "quantity": "28",
+                "quantity": "28.0",
                 "row_id": "E54000006",
                 "row_name": "Humber, Coast and Vale",
             },
@@ -532,7 +548,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "actual_cost": "1.69",
                 "date": "2013-08-01",
                 "items": "1",
-                "quantity": "23",
+                "quantity": "23.0",
                 "row_id": "E54000020",
                 "row_name": "Northamptonshire",
             },
@@ -547,7 +563,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "actual_cost": "230.54",
                 "date": "2014-11-01",
                 "items": "96",
-                "quantity": "5143",
+                "quantity": "5143.0",
                 "row_id": "E54000020",
                 "row_name": "Northamptonshire",
             },
@@ -562,7 +578,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "actual_cost": "1.53",
                 "date": "2013-08-01",
                 "items": "1",
-                "quantity": "28",
+                "quantity": "28.0",
                 "row_id": "Y54",
                 "row_name": "NORTH OF ENGLAND COMMISSIONING REGION",
             },
@@ -573,7 +589,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "actual_cost": "1.69",
                 "date": "2013-08-01",
                 "items": "1",
-                "quantity": "23",
+                "quantity": "23.0",
                 "row_id": "Y55",
                 "row_name": "MIDLANDS AND EAST OF ENGLAND COMMISSIONING REGION",
             },
@@ -588,7 +604,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "actual_cost": "230.54",
                 "date": "2014-11-01",
                 "items": "96",
-                "quantity": "5143",
+                "quantity": "5143.0",
                 "row_id": "Y55",
                 "row_name": "MIDLANDS AND EAST OF ENGLAND COMMISSIONING REGION",
             },
@@ -603,7 +619,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "date": "2013-08-01",
                 "actual_cost": "3.22",
                 "items": "2",
-                "quantity": "51",
+                "quantity": "51.0",
                 "row_id": "PCN0001",
                 "row_name": "Transformational Sustainability",
             },
@@ -614,15 +630,17 @@ class TestSpendingByOrg(ApiTestBase):
                 "date": "2013-10-01",
                 "actual_cost": "1.62",
                 "items": "1",
-                "quantity": "24",
+                "quantity": "24.0",
                 "row_id": "PCN0001",
                 "row_name": "Transformational Sustainability",
             },
         )
 
 
+@copy_fixtures_to_matrixstore
 class TestAPISpendingViewsGhostGenerics(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(self):
         self.api_prefix = "/api/1.0"
         factory = DataFactory()
         self.months = factory.create_months_array(start_date="2018-02-01")
@@ -630,7 +648,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         self.practices = []
         for ccg in self.ccgs:
             for _ in range(2):
-                self.practices.append(factory.create_practice(ccg=ccg))
+                self.practices.append(factory.create_practice(ccg=ccg, setting=4))
         self.presentations = factory.create_presentations(2, vmpp_per_presentation=2)
         factory.create_tariff_and_ncso_costings_for_presentations(
             presentations=self.presentations, months=self.months
@@ -642,16 +660,11 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
                 practice, presentations=self.presentations, months=self.months
             )
 
-        # Refresh vw__medians_for_tariff materialized view
-        with connection.cursor() as cursor:
-            cursor.execute("REFRESH MATERIALIZED VIEW vw__medians_for_tariff")
-        super(TestAPISpendingViewsGhostGenerics, self).setUp()
-
     def _get(self, **data):
         data["format"] = "json"
         url = self.api_prefix + "/ghost_generics/"
         rsp = self.client.get(url, data, follow=True)
-        return json.loads(rsp.content)
+        return _parse_json_response(rsp)
 
     def _practice_savings_for_ccg(self, ccg, expected):
         practices_in_ccg = [x.code for x in ccg.practice_set.all()]
@@ -668,7 +681,10 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         # Are practice-level savings as expected?
         for practice in self.practices:
             practice_data = self._get(
-                entity_code=practice.code, entity_type="practice", date="2018-02-01"
+                entity_code=practice.code,
+                entity_type="practice",
+                date="2018-02-01",
+                group_by="presentation",
             )
             practice_expected = expected["practice_savings"][practice.code]
             for data in practice_data:
@@ -681,7 +697,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         ccg_data = self._get(
             entity_code=self.ccgs[0].code, entity_type="CCG", date="2018-02-01"
         )
-        self.assertTrue(all([x["pct"] == self.ccgs[0].code for x in ccg_data]))
+        self.assertTrue(all([x["ccg"] == self.ccgs[0].code for x in ccg_data]))
         savings_count = len(self._practice_savings_for_ccg(self.ccgs[0], expected))
         self.assertEqual(len(ccg_data), savings_count)
 
@@ -695,7 +711,8 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
 
         for d in grouped_ccg_data:
             self.assertEqual(
-                d["possible_savings"], expected["ccg_savings"][d["pct"]][d["bnf_code"]]
+                round(d["possible_savings"], 3),
+                round(expected["ccg_savings"][d["ccg"]][d["bnf_code"]], 3),
             )
 
         # Single presentations which have more than one tariff price
@@ -709,8 +726,6 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         price_to_alter = TariffPrice.objects.last()
         price_to_alter.price_pence *= 2
         price_to_alter.save()
-        with connection.cursor() as cursor:
-            cursor.execute("REFRESH MATERIALIZED VIEW vw__medians_for_tariff")
 
         # Now test the savings are as expected, and fewer than
         # previously
@@ -724,8 +739,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
 
     def _expected_savings(self):
         def autovivify(levels=1, final=dict):
-            """Create an arbitrarily-nested dict
-            """
+            """Create an arbitrarily-nested dict"""
             return (
                 defaultdict(final)
                 if levels < 2
@@ -740,7 +754,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
             for rx in Prescription.objects.filter(
                 presentation_code=presentation.bnf_code
             ):
-                net_costs.append(round(rx.net_cost / rx.quantity, 4))
+                net_costs.append(rx.net_cost / rx.quantity)
             presentation_medians[presentation.bnf_code] = np.percentile(
                 net_costs, 50, interpolation="lower"
             )
@@ -761,10 +775,9 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
                         - (presentation_medians[rx.presentation_code] * rx.quantity),
                         4,
                     )
-                    if (
-                        possible_saving <= -MIN_GHOST_GENERIC_DELTA
-                        or possible_saving >= MIN_GHOST_GENERIC_DELTA
-                    ):
+                    if possible_saving <= (
+                        -MIN_GHOST_GENERIC_DELTA / 100
+                    ) or possible_saving >= (MIN_GHOST_GENERIC_DELTA / 100):
                         practice_savings[practice.code][
                             rx.presentation_code
                         ] = possible_saving
@@ -778,199 +791,6 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         }
 
 
-class TestAPISpendingViewsPPUTable(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ["ppusavings", "dmd-subset", "ncso-concessions"]
-
-    def _get(self, **data):
-        data["format"] = "json"
-        url = self.api_prefix + "/price_per_unit/"
-        rsp = self.client.get(url, data, follow=True)
-        return json.loads(rsp.content)
-
-    def _expected_results(self, ids):
-        expected = [
-            {
-                "id": 1,
-                "lowest_decile": 0.1,
-                "presentation": "0202010F0AAAAAA",
-                "name": "Chlortalidone 50mg tablets",
-                "price_per_unit": 0.2,
-                "practice": "P87629",
-                "formulation_swap": None,
-                "pct": "03V",
-                "pct_name": "NHS Corby",
-                "practice_name": "1/ST Andrews Medical Practice",
-                "date": "2014-11-01",
-                "quantity": 1,
-                "possible_savings": 100.0,
-                "price_concession": True,
-            },
-            {
-                "id": 2,
-                "lowest_decile": 0.1,
-                "presentation": "0202010F0AAAAAA",
-                "name": "Chlortalidone 50mg tablets",
-                "price_per_unit": 0.2,
-                "practice": None,
-                "formulation_swap": None,
-                "pct": "03V",
-                "pct_name": "NHS Corby",
-                "practice_name": None,
-                "date": "2014-11-01",
-                "quantity": 1,
-                "possible_savings": 100.0,
-                "price_concession": True,
-            },
-            {
-                "id": 3,
-                "lowest_decile": 0.1,
-                "presentation": "0206020T0AAAGAG",
-                "name": "Verapamil HCl_Tab 160mg",
-                "price_per_unit": 0.2,
-                "practice": "P87629",
-                "formulation_swap": None,
-                "pct": "03V",
-                "pct_name": "NHS Corby",
-                "practice_name": "1/ST Andrews Medical Practice",
-                "date": "2014-11-01",
-                "quantity": 1,
-                "possible_savings": 100.0,
-                "price_concession": False,
-            },
-            {
-                "id": 4,
-                "lowest_decile": 0.1,
-                "presentation": "0206020T0AAAGAG",
-                "name": "Verapamil HCl_Tab 160mg",
-                "price_per_unit": 0.2,
-                "practice": None,
-                "formulation_swap": None,
-                "pct": "03V",
-                "pct_name": "NHS Corby",
-                "practice_name": None,
-                "date": "2014-11-01",
-                "quantity": 1,
-                "possible_savings": 100.0,
-                "price_concession": False,
-            },
-            {
-                "id": 5,
-                "lowest_decile": 0.1,
-                "presentation": "0202010F0AAAAAA",
-                "name": "Chlortalidone 50mg tablets",
-                "price_per_unit": 0.2,
-                "practice": "N84014",
-                "formulation_swap": None,
-                "pct": "03Q",
-                "pct_name": "NHS Vale of York",
-                "practice_name": "Ainsdale Village Surgery",
-                "date": "2014-11-01",
-                "quantity": 1,
-                "possible_savings": 100.0,
-                "price_concession": True,
-            },
-            {
-                "id": 6,
-                "lowest_decile": 0.1,
-                "presentation": "0202010F0AAAAAA",
-                "name": "Chlortalidone 50mg tablets",
-                "price_per_unit": 0.2,
-                "practice": None,
-                "formulation_swap": None,
-                "pct": "03Q",
-                "pct_name": "NHS Vale of York",
-                "practice_name": None,
-                "date": "2014-11-01",
-                "quantity": 1,
-                "possible_savings": 100.0,
-                "price_concession": True,
-            },
-        ]
-
-        return [r for r in expected if r["id"] in ids]
-
-    def test_bnf_code(self):
-        data = self._get(bnf_code="0202010F0AAAAAA", date="2014-11-01")
-        data.sort(key=lambda r: r["id"])
-        self.assertEqual(data, self._expected_results([1, 2, 5, 6]))
-
-    def test_bnf_code_no_data_for_month(self):
-        data = self._get(bnf_code="0202010F0AAAAAA", date="2014-12-01")
-        self.assertEqual(len(data), 0)
-
-    def test_invalid_bnf_code(self):
-        data = self._get(bnf_code="XYZ", date="2014-11-01")
-        self.assertEqual(data, {"detail": "Not found."})
-
-    def test_entity_code_practice(self):
-        data = self._get(entity_code="P87629", date="2014-11-01")
-        data.sort(key=lambda r: r["id"])
-        self.assertEqual(data, self._expected_results([1, 3]))
-
-    def test_entity_code_practice_no_data_for_month(self):
-        data = self._get(entity_code="P87629", date="2014-12-01")
-        self.assertEqual(len(data), 0)
-
-    def test_invalid_entity_code_practice(self):
-        data = self._get(entity_code="P00000", date="2014-11-01")
-        self.assertEqual(data, {"detail": "Not found."})
-
-    def test_entity_code_ccg(self):
-        data = self._get(entity_code="03V", date="2014-11-01")
-        data.sort(key=lambda r: r["id"])
-        self.assertEqual(data, self._expected_results([2, 4]))
-
-    def test_entity_code_ccg_and_bnf_code(self):
-        data = self._get(
-            entity_code="03V", bnf_code="0202010F0AAAAAA", date="2014-11-01"
-        )
-        self.assertEqual(data, self._expected_results([1]))
-
-    def test_entity_code_ccg_no_data_for_month(self):
-        data = self._get(entity_code="03V", date="2014-12-01")
-        self.assertEqual(len(data), 0)
-
-    def test_invalid_entity_code_ccg(self):
-        data = self._get(entity_code="000", date="2014-11-01")
-        self.assertEqual(data, {"detail": "Not found."})
-
-    def test_aggregate_over_ccgs(self):
-        data = self._get(entity_type="CCG", date="2014-11-01", aggregate="true")
-        expected = self._expected_results([2, 4])
-        expected[0].update(
-            pct=None, pct_name="NHS England", quantity=2, possible_savings=200.0
-        )
-        expected[1].update(
-            pct=None, pct_name="NHS England", quantity=1, possible_savings=100.0
-        )
-        expected[0].pop("id")
-        expected[1].pop("id")
-        self.assertEqual(data, expected)
-
-    def test_aggregate_over_practices(self):
-        data = self._get(entity_type="practice", date="2014-11-01", aggregate="true")
-        expected = self._expected_results([1, 3])
-        expected[0].update(
-            pct=None,
-            pct_name=None,
-            practice=None,
-            practice_name="NHS England",
-            quantity=2,
-            possible_savings=200.0,
-        )
-        expected[1].update(
-            pct=None,
-            pct_name=None,
-            practice=None,
-            practice_name="NHS England",
-            quantity=1,
-            possible_savings=100.0,
-        )
-        expected[0].pop("id")
-        expected[1].pop("id")
-        self.assertEqual(data, expected)
-
-
 class TestAPISpendingViewsPPUBubble(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ["importlog"]
 
@@ -979,7 +799,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(len(data["series"]), 1)  # Only Trandate prescribed
         self.assertEqual(len([x for x in data if x[1]]), 3)
 
@@ -988,7 +808,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAB&date=2000-01-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(len(data["series"]), 0)
 
     def test_highlight(self):
@@ -996,10 +816,10 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
-        # N.B. This is the mean of a *single* value; although there
-        # are two values in the raw data, one is trimmed as it is
-        # outside the 99th percentile
+        data = _parse_json_response(response)
+        # N.B. This is the mean of a *single* value; although there are two
+        # values in the raw data one is ignored as it belongs to a
+        # non-setting-4 practice
         self.assertEqual(data["plotline"], 0.0325)
 
     def test_code_without_matches(self):
@@ -1007,7 +827,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertIsNone(data["plotline"])
 
     def test_focus(self):
@@ -1016,7 +836,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&highlight=03V&focus=1"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(
             data,
             {
@@ -1024,12 +844,14 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
                     {
                         "y": 0.09,
                         "x": 1,
-                        "z": 32.0,
-                        "name": "Chlortalidone_Tab 50mg",
-                        "mean_ppu": 0.09,
+                        "z": 32,
+                        "name": "Chlortalidone 50mg tablets",
+                        "mean_ppu": 0.08875,
                     }
                 ],
-                "categories": [{"is_generic": True, "name": "Chlortalidone_Tab 50mg"}],
+                "categories": [
+                    {"is_generic": True, "name": "Chlortalidone 50mg tablets"}
+                ],
                 "plotline": 0.08875,
             },
         )
@@ -1040,7 +862,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url += "&highlight=03V"
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+        data = _parse_json_response(response)
         self.assertEqual(
             data,
             {
@@ -1048,66 +870,21 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
                     {
                         "y": 0.09,
                         "x": 1,
-                        "z": 32.0,
-                        "name": "Chlortalidone_Tab 50mg",
+                        "z": 32,
+                        "name": "Chlortalidone 50mg tablets",
                         "mean_ppu": 0.098,
                     },
                     {
                         "y": 0.1,
                         "x": 1,
-                        "z": 128.0,
-                        "name": "Chlortalidone_Tab 50mg",
+                        "z": 128,
+                        "name": "Chlortalidone 50mg tablets",
                         "mean_ppu": 0.098,
                     },
                 ],
-                "categories": [{"is_generic": True, "name": "Chlortalidone_Tab 50mg"}],
-                "plotline": 0.08875,
-            },
-        )
-
-    def test_trim(self):
-        url = "/bubble?format=json"
-        url += "&bnf_code=0202010F0AAAAAA&date=2014-09-01"
-        url += "&highlight=03V&trim=1"
-        url = self.api_prefix + url
-        response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
-        self.assertEqual(
-            data,
-            {
-                "series": [
-                    {
-                        "y": 0.09,
-                        "x": 1,
-                        "z": 32.0,
-                        "name": "Chlortalidone_Tab 50mg",
-                        "mean_ppu": 0.098,
-                    }
+                "categories": [
+                    {"is_generic": True, "name": "Chlortalidone 50mg tablets"}
                 ],
-                "categories": [{"is_generic": True, "name": "Chlortalidone_Tab 50mg"}],
                 "plotline": 0.08875,
             },
         )
-
-
-class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ["importlog", "genericcodemapping"]
-
-    def test_with_wildcard(self):
-        url = "/bubble?format=json"
-        url += "&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V"
-        url = self.api_prefix + url
-        response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
-        # Expecting the total to be quite different
-        self.assertEqual(data["plotline"], 0.0315505963832243)
-        # Bendroflumethiazide and Trandate:
-        self.assertEqual(len(data["series"]), 2)
-
-    def test_with_specific(self):
-        url = "/bubble?format=json"
-        url += "&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V"
-        url = self.api_prefix + url
-        response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
-        self.assertEqual(data["plotline"], 0.0325)

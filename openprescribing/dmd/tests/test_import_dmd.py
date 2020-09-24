@@ -30,16 +30,16 @@ class TestImportDmd2(TestCase):
             "pipeline/test-data/data/dmd/2019_07_01/nhsbsa_dmd_7.4.0_20190701000001",
         )
 
-        mkdir_p("pipeline/test-data/data/snomed_mapping/2019_07_01")
+        mkdir_p("pipeline/test-data/data/bnf_snomed_mapping/2019_07_01")
 
         shutil.copyfile(
-            "dmd/tests/data/bnf_code_mapping/mapping.xlsx",
-            "pipeline/test-data/data/snomed_mapping/2019_07_01/mapping.xlsx",
+            "dmd/tests/data/bnf_snomed_mapping/mapping.xlsx",
+            "pipeline/test-data/data/bnf_snomed_mapping/2019_07_01/mapping.xlsx",
         )
 
         # Import the data.  See dmd/tests/data/README.txt for details of what
         # objects will be created.
-        with patch("gcutils.bigquery.Client.upload_model"):
+        with patch("dmd.management.commands.import_dmd.Command.upload_to_bq"):
             call_command("import_dmd")
 
         # Copy another, later, dataset into the data directory, for tests that
@@ -52,7 +52,7 @@ class TestImportDmd2(TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree("pipeline/test-data/data/dmd")
-        shutil.rmtree("pipeline/test-data/data/snomed_mapping")
+        shutil.rmtree("pipeline/test-data/data/bnf_snomed_mapping")
         super(TestImportDmd2, cls).tearDownClass()
 
     def test_objects_created(self):
@@ -176,7 +176,7 @@ class TestImportDmd2(TestCase):
 
         vmpp.delete()
 
-        with patch("gcutils.bigquery.Client.upload_model"):
+        with patch("dmd.management.commands.import_dmd.Command.upload_to_bq"):
             call_command("import_dmd")
 
         # Check that no VMP present with old VPID, that a new VMP has been
@@ -195,7 +195,7 @@ class TestImportDmd2(TestCase):
         self.assertEqual(concession.vmpp, vmpp)
 
     def test_notify_slack(self):
-        with patch("gcutils.bigquery.Client.upload_model"):
+        with patch("dmd.management.commands.import_dmd.Command.upload_to_bq"):
             with patch("dmd.management.commands.import_dmd.notify_slack") as ns:
                 call_command("import_dmd")
                 ns.assert_called()
@@ -205,7 +205,7 @@ class TestImportDmd2(TestCase):
             category="dmd", filename="7.4.0_20190708000001", current_at="2019-07-08"
         )
 
-        with patch("gcutils.bigquery.Client.upload_model"):
+        with patch("dmd.management.commands.import_dmd.Command.upload_to_bq"):
             with patch("dmd.management.commands.import_dmd.notify_slack") as ns:
                 call_command("import_dmd")
                 ns.assert_not_called()

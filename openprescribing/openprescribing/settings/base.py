@@ -3,8 +3,18 @@ from os.path import abspath, basename, dirname, join, normpath
 from sys import path
 from django.core.exceptions import ImproperlyConfigured
 from common import utils
+import warnings
 
 import sys
+
+# This `cryptography` warning is making our cronjobs chatty
+warnings.filterwarnings(
+    "ignore", "Python 3.5 support will be dropped in the next release"
+)
+if sys.version_info >= (3, 6):
+    warnings.warn(
+        "Warning supression on line above is now redundant and should be removed"
+    )
 
 
 # PATH CONFIGURATION
@@ -165,7 +175,6 @@ MIDDLEWARE = (
     # Default Django middleware.
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "corsheaders.middleware.CorsPostCsrfMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -201,17 +210,7 @@ DJANGO_APPS = (
 # Apps specific for this project go here.
 LOCAL_APPS = ("frontend", "dmd", "pipeline", "gcutils", "matrixstore")
 
-CONTRIB_APPS = (
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    # 'allauth.socialaccount.providers.facebook',
-    # 'allauth.socialaccount.providers.google',
-    "allauth.socialaccount.providers.twitter",
-    "anymail",
-    "crispy_forms",
-    "raven.contrib.django.raven_compat",
-)
+CONTRIB_APPS = ("anymail", "crispy_forms", "raven.contrib.django.raven_compat")
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS
@@ -254,16 +253,6 @@ LOGGING = {
     },
 }
 # END LOGGING CONFIGURATION
-
-
-AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
-    # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
-    # custom backend to support logging in via a hash
-    "frontend.backends.SecretKeyBackend",
-)
 
 
 # WSGI CONFIGURATION
@@ -318,6 +307,7 @@ BQ_DMD_DATASET = "dmd"
 BQ_ARCHIVE_DATASET = "archive"
 BQ_PRESCRIBING_EXPORT_DATASET = "prescribing_export"
 BQ_PUBLIC_DATASET = "public_draft"
+BQ_SCMD_DATASET = "scmd"
 
 # Other BQ settings
 BQ_DEFAULT_TABLE_EXPIRATION_MS = None
@@ -338,17 +328,6 @@ ANYMAIL = {
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = "errors@openprescribing.net"
 
-# django-allauth configuration
-ACCOUNT_ADAPTER = "frontend.account.adapter.CustomAdapter"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "optional"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
-
-LOGIN_REDIRECT_URL = "finalise-signup"
-LOGIN_URL = "home"
-
 # Easy bootstrap styling of Django forms
 CRISPY_TEMPLATE_PACK = "bootstrap3"
 
@@ -359,31 +338,66 @@ GRAB_HOST = "https://openprescribing.net"
 SLACK_GENERAL_POST_KEY = utils.get_env_setting("SLACK_GENERAL_POST_KEY", default="")
 SLACK_SENDING_ACTIVE = True
 
-# Newsletter signup
-MAILCHIMP_LIST_ID = "b2b7873a73"
-
 
 ENABLE_CACHING = utils.get_env_setting_bool("ENABLE_CACHING", default=False)
 
-redis_url = utils.get_env_setting("REDIS_URL", default="")
 
-if redis_url:
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": redis_url,
-            "OPTIONS": {
-                # This C-based parser is much faster than the default pure
-                # Python one
-                "PARSER_CLASS": "redis.connection.HiredisParser"
-            },
-        }
+# Total on-disk size of the cache. We want _some_ limit here so it doesn't grow
+# without bound, but I don't think we need to be too fussy about exactly what
+# it is as we're not short on disk space.  For reference, a month's worth of
+# cached PPU data is about 850MB.
+cache_size_limit = 16 * 1024 ** 3
+
+CACHES = {
+    "default": {
+        # See: https://github.com/grantjenks/python-diskcache
+        "BACKEND": "diskcache.DjangoCache",
+        "LOCATION": utils.get_env_setting(
+            "DISKCACHE_PATH", default=join(REPO_ROOT, "diskcache")
+        ),
+        # How long to cache values for by default (we want "forever")
+        "TIMEOUT": None,
+        # DiskCache uses a "fan-out" system to prevent simultaneous writers
+        # from blocking each other (readers are never blocked). This involves
+        # splitting the cache into multiple shards (8 by default).  However
+        # this seems to have a noticeable impact on performance and given that
+        # our workload is extremely light on writes (the first few requests
+        # after a new data load will do a whole batch of writes and then
+        # nothing) we don't really need this. Setting the shard count to 1
+        # effectively disables the fan-out behaviour. See:
+        # http://www.grantjenks.com/docs/diskcache/tutorial.html#fanoutcache
+        "SHARDS": 1,
+        # In the event that a write does get blocked this timeout determines
+        # how long to wait before giving up and just not writing the value to
+        # the cache. It's by no means a disaster if this happens: we'll just
+        # cache the value the next time round.
+        "DATABASE_TIMEOUT": 0.1,
+        "OPTIONS": {
+            "size_limit": cache_size_limit,
+            # By default DiskCache writes larger values to individual files on
+            # disk and just uses SQLite for the index and to store smaller
+            # values. However by bumping the below limit up to something huge
+            # we can get it to store values of any size in SQLite. By also
+            # raising SQLite's memory-map limit to something large we can then
+            # access all these values via memory-mapping (just as we do with
+            # the MatrixStore). This gives us much better I/O performance when
+            # reading from the cache. Possibly this comes at the expense of
+            # worse write performance, but we're not particularly worried about
+            # that.
+            "disk_min_file_size": cache_size_limit,
+            "sqlite_mmap_size": cache_size_limit,
+            # This disables automatic deletion of older values when the cache
+            # exceeds its size limit. By default this is done automatically
+            # after each write (synchronously, as part of the same thread) but
+            # in our case, posssibly because we're storing unusually large
+            # objects in the db, this results in SQLite locking up and the
+            # request erroring out. So we disable this behaviour and instead do
+            # the garbage collection in the `diskcache_garbage_collect`
+            # management command triggered by a cron job.
+            "cull_limit": 0,
+        },
     }
-else:
-    # The dummy cache backend implements all the usual methods but never
-    # actually does any caching so it's perfect for development when you always
-    # want fresh values
-    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+}
 
 
 # The git sha of the currently running version of the code (will be empty in
@@ -396,9 +410,9 @@ if source_commit_id:
 
 
 # Guard against invalid configurations
-if ENABLE_CACHING and (not redis_url or not source_commit_id):
+if ENABLE_CACHING and not source_commit_id:
     raise ImproperlyConfigured(
-        "If ENABLE_CACHING is True then REDIS_URL and SOURCE_COMMIT_ID must be set"
+        "If ENABLE_CACHING is True then SOURCE_COMMIT_ID must be set"
     )
 
 
@@ -420,3 +434,7 @@ CHECK_NUMBERS_BASE_PATH = "/tmp/numbers-checker/"
 
 # Path of directory containing measure definitions.
 MEASURE_DEFINITIONS_PATH = join(APPS_ROOT, "measure_definitions")
+
+# When building the matrixstore, should we check whether data is in BQ before
+# downloading it?
+CHECK_DATA_IN_BQ = True

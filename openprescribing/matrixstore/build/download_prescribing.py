@@ -120,6 +120,7 @@ def extract_data_for_date(date, bq_client):
     """
     Extract prescribing data for the given month into its own table on BigQuery
     """
+    check_prescribing_data_in_bigquery(date, bq_client)
     table_id = table_id_for_date(date)
     logger.info("Extracting data for %s into table %s", date, table_id)
     table = bq_client.get_table(table_id)
@@ -128,12 +129,29 @@ def extract_data_for_date(date, bq_client):
         SELECT
           bnf_code, practice, month, items, quantity, net_cost, actual_cost
         FROM
-          {hscic}.prescribing
+          {hscic}.prescribing_v2
         WHERE
           month = TIMESTAMP("{month}")
         """,
         substitutions={"month": date},
     )
+
+
+def check_prescribing_data_in_bigquery(date, bq_client):
+    """
+    Assert that prescribing data for date is in BigQuery.
+    """
+    if not settings.CHECK_DATA_IN_BQ:
+        return
+    results = bq_client.query(
+        """
+        SELECT COUNT(*)
+        FROM {hscic}.prescribing_v2
+        WHERE month = TIMESTAMP("%s")
+        """
+        % (date,)
+    )
+    assert results.rows[0][0] > 0
 
 
 def export_data_for_date(date, bq_client, bucket):

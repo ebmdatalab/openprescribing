@@ -1,9 +1,7 @@
-from collections import namedtuple
 from contextlib import contextmanager
 from datetime import datetime
 from os import environ
 from titlecase import titlecase
-import argparse
 import html2text
 import logging
 import re
@@ -60,7 +58,7 @@ def email_as_text(html):
 
 
 def get_env_setting(setting, default=None):
-    """ Get the environment setting.
+    """Get the environment setting.
 
     Return the default, or raise an exception if none supplied
     """
@@ -75,7 +73,7 @@ def get_env_setting(setting, default=None):
 
 
 def get_env_setting_bool(setting, default=None):
-    """ Get the environment setting as a boolean
+    """Get the environment setting as a boolean
 
     Return the default, or raise an exception if none supplied
     """
@@ -177,6 +175,7 @@ def constraint_and_index_reconstructor(table_name):
         finally:
             # we're updating everything. This takes 52 minutes.
             # restore indexes
+            print("Recreating indexes, don't hit Control-C!")
             logger.info("Recreating indexes")
             for name, cmd in indexes.items():
                 cursor.execute(cmd)
@@ -195,89 +194,4 @@ def constraint_and_index_reconstructor(table_name):
 
 
 def parse_date(s):
-    return datetime.strptime(s, "%Y-%m-%d")
-
-
-def valid_date(s):
-    """Validate ISO-formatted dates. For use in argparse arguments.
-    """
-    try:
-        return parse_date(s)
-    except ValueError:
-        msg = "Not a valid date: '{0}'.".format(s)
-        raise argparse.ArgumentTypeError(msg)
-
-
-def namedtuplefetchall(cursor):
-    "Return all rows from a cursor as a namedtuple"
-    desc = cursor.description
-    nt_result = namedtuple("Result", [col[0] for col in desc])
-    return [nt_result(*row) for row in cursor.fetchall()]
-
-
-def ppu_sql(conditions=""):
-    # Model imports here because util module is used in Django's
-    # startup, before model registration is complete, leading to
-    # errors
-    from dmd.models import VMP, VMPP
-    from frontend.models import NCSOConcession
-    from frontend.models import PPUSaving
-    from frontend.models import Presentation
-    from frontend.models import Practice
-    from frontend.models import PCT
-
-    # See https://github.com/ebmdatalab/price-per-dose/issues/1 for an
-    # explanation of the extra BNF codes in vmp_bnf_codes below.
-
-    sql = """
-    WITH vmp_bnf_codes AS (
-        SELECT DISTINCT bnf_code FROM {vmp_table}
-        UNION ALL
-        SELECT '0601060D0AAA0A0'  -- "Glucose Blood Testing Reagents"
-        UNION ALL
-        SELECT '0601060U0AAA0A0'  -- "Urine Testing Reagents"
-    )
-
-    SELECT
-        {ppusavings_table}.id AS id,
-        {ppusavings_table}.date AS date,
-        {ppusavings_table}.lowest_decile AS lowest_decile,
-        {ppusavings_table}.quantity AS quantity,
-        {ppusavings_table}.price_per_unit AS price_per_unit,
-        {ppusavings_table}.possible_savings AS possible_savings,
-        {ppusavings_table}.formulation_swap AS formulation_swap,
-        {ppusavings_table}.pct_id AS pct,
-        {ppusavings_table}.practice_id AS practice,
-        {ppusavings_table}.bnf_code AS presentation,
-        {practice_table}.name AS practice_name,
-        {pct_table}.name AS pct_name,
-        subquery.price_concession IS NOT NULL as price_concession,
-        COALESCE({presentation_table}.dmd_name, {presentation_table}.name) AS name
-    FROM {ppusavings_table}
-    LEFT OUTER JOIN {presentation_table}
-        ON {ppusavings_table}.bnf_code = {presentation_table}.bnf_code
-    LEFT OUTER JOIN {practice_table}
-        ON {ppusavings_table}.practice_id = {practice_table}.code
-    LEFT OUTER JOIN {pct_table}
-        ON {ppusavings_table}.pct_id = {pct_table}.code
-    LEFT OUTER JOIN (SELECT DISTINCT bnf_code, 1 AS price_concession
-                     FROM {vmpp_table}
-                     INNER JOIN {ncsoconcession_table}
-                      ON {vmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
-                     WHERE {ncsoconcession_table}.date = %(date)s) AS subquery
-        ON {ppusavings_table}.bnf_code = subquery.bnf_code
-    WHERE
-        {ppusavings_table}.date = %(date)s
-        AND {ppusavings_table}.bnf_code IN (SELECT bnf_code FROM vmp_bnf_codes)
-    """
-
-    sql += conditions
-    return sql.format(
-        ppusavings_table=PPUSaving._meta.db_table,
-        practice_table=Practice._meta.db_table,
-        pct_table=PCT._meta.db_table,
-        presentation_table=Presentation._meta.db_table,
-        vmpp_table=VMPP._meta.db_table,
-        vmp_table=VMP._meta.db_table,
-        ncsoconcession_table=NCSOConcession._meta.db_table,
-    )
+    return datetime.strptime(s, "%Y-%m-%d").date()

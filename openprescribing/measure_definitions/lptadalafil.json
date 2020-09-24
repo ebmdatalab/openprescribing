@@ -6,27 +6,28 @@
   "description": [
     "Cost of tadalafil once daily per 1000 patients"
   ],
+  "numerator_short": "Tadalafil once daily cost (£)",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Tadalafil is a drug similar to sildenafil (Viagra), used for erectile dysfunction.  There is no evidence that taking the low ",
     "2.5mg or 5mg dose every day is more effective than taking a 10mg or 20mg dose when required."
   ],
-  "numerator_short": "Tadalafil once daily cost (£)",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": true,
-  "low_is_good": true,
   "tags": [
     "cost",
     "efficacy",
     "erectiledysfunction",
+    "iif",
     "lowpriority",
     "reproductive"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_where": [
-    "bnf_code LIKE '0704050R0%AC' OR --Tadalafil_Tab 2.5mg (brands and generic) \n",
-    "bnf_code LIKE '0704050R0%AD'    --Tadalafil_Tab 5mg (brands and generic)) "
+  "numerator_bnf_codes_filter": [
+    "0704050R0%AC # Tadalafil_Tab 2.5mg (brands and generic)",
+    "0704050R0%AD # Tadalafil_Tab 5mg (brands and generic))"
   ],
   "denominator_type": "list_size"
 }

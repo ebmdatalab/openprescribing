@@ -10,10 +10,10 @@ from frontend.tests.functional.mock_api_server import MockApiServer
 class AssetBuildingTestRunner(DiscoverRunner):
     """A custom test runner, to support:
 
-      * Building JS and CSS assets when running functional tests
-      * Only running functional tests when TEST_SUITE environment says so
-      * Custom settings to support running in SauceLabs
-      * Starting a mock API server
+    * Building JS and CSS assets when running functional tests
+    * Only running functional tests when TEST_SUITE environment says so
+    * Custom settings to support running in SauceLabs
+    * Starting a mock API server
     """
 
     # We must run the test server on a port supported by Saucelabs

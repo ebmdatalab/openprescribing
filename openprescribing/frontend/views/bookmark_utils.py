@@ -17,7 +17,7 @@ import pandas as pd
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.mail import EmailMultiAlternatives
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 
@@ -27,6 +27,7 @@ from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
 from frontend.models import NCSOConcessionBookmark
+from frontend.models import Practice, PCN, PCT
 from frontend.views.spending_utils import (
     ncso_spending_for_entity,
     ncso_spending_breakdown_for_entity,
@@ -37,7 +38,7 @@ from frontend.views.views import (
     all_england_low_priority_total,
     all_england_low_priority_savings,
     all_england_measure_savings,
-    all_england_ppu_savings,
+    get_total_savings_for_org,
 )
 
 GRAB_CMD = (
@@ -252,16 +253,16 @@ def percentiles_without_jaggedness(df2, is_percentage=False):
 
 
 class InterestingMeasureFinder(object):
-    def __init__(
-        self,
-        practice=None,
-        pct=None,
-        interesting_saving=1000,
-        interesting_change_window=12,
-    ):
-        assert practice or pct
-        self.practice = practice
-        self.pct = pct
+    def __init__(self, org, interesting_saving=1000, interesting_change_window=12):
+        if isinstance(org, Practice):
+            self.measure_filter_for_org = {"practice": org}
+        elif isinstance(org, PCN):
+            self.measure_filter_for_org = {"pcn": org, "practice": None}
+        elif isinstance(org, PCT):
+            self.measure_filter_for_org = {"pct": org, "practice": None}
+        else:
+            assert False, "Unexpected org {}".format(org)
+
         self.interesting_change_window = interesting_change_window
         self.interesting_saving = interesting_saving
 
@@ -276,11 +277,7 @@ class InterestingMeasureFinder(object):
             "month__gte": self.months_ago(period),
             "measure__include_in_alerts": True,
         }
-        if self.practice:
-            measure_filter["practice"] = self.practice
-        else:
-            measure_filter["pct"] = self.pct
-            measure_filter["practice"] = None
+        measure_filter.update(self.measure_filter_for_org)
         invert_percentile_for_comparison = False
         if best_or_worst == "worst":
             invert_percentile_for_comparison = True
@@ -338,11 +335,7 @@ class InterestingMeasureFinder(object):
             "month__gte": self.months_ago(window_plus),
             "measure__include_in_alerts": True,
         }
-        if self.practice:
-            measure_filter["practice"] = self.practice
-        else:
-            measure_filter["pct"] = self.pct
-            measure_filter["practice"] = None
+        measure_filter.update(self.measure_filter_for_org)
         df = self.measurevalues_dataframe(
             MeasureValue.objects.filter(**measure_filter), "percentile"
         )
@@ -407,11 +400,7 @@ class InterestingMeasureFinder(object):
             "month__gte": self.months_ago(period),
             "measure__include_in_alerts": True,
         }
-        if self.practice:
-            measure_filter["practice"] = self.practice
-        else:
-            measure_filter["pct"] = self.pct
-            measure_filter["practice"] = None
+        measure_filter.update(self.measure_filter_for_org)
         df = self.measurevalues_dataframe(
             MeasureValue.objects.filter(**measure_filter), "cost_savings"
         )
@@ -623,18 +612,18 @@ def ga_tracking_qs(context):
 
 def truncate_subject(prefix, subject):
     assert subject, "Subject must not be empty"
-    max_length = 78 - len(prefix) - len(settings.EMAIL_SUBJECT_PREFIX)
+    max_length = 78 - len(prefix)
     ellipsis = "..."
     subject = nhs_titlecase(subject)
     if len(subject) <= max_length:
         truncated = subject
     else:
-        if "by" in subject:
-            end_bit = subject.split("by")[-1]
-            end_bit = "by" + end_bit
+        if " by " in subject:
+            end_bit = subject.split(" by ")[-1]
+            end_bit = "by " + end_bit
         else:
             end_bit = ""
-        if len(end_bit) > max_length:
+        if len(end_bit) + len(ellipsis) > max_length:
             end_bit = ""
         start_bit = subject[: (max_length - len(end_bit) - len(ellipsis))]
         truncated = start_bit + ellipsis + end_bit
@@ -668,8 +657,7 @@ def initialise_email(bookmark, campaign_source):
 
 
 def finalise_email(msg, template_name, context, tags):
-    """Set message body, add HTML alternative, and add some headers.
-    """
+    """Set message body, add HTML alternative, and add some headers."""
 
     template = get_template(template_name)
     html = template.render(context)
@@ -730,7 +718,7 @@ def make_org_email(org_bookmark, stats, tag=None):
             interesting_img = None
 
     unsubscribe_link = settings.GRAB_HOST + reverse(
-        "bookmark-login", kwargs={"key": org_bookmark.user.profile.key}
+        "bookmarks", kwargs={"key": org_bookmark.user.profile.key}
     )
 
     context = {
@@ -775,7 +763,7 @@ def make_search_email(search_bookmark, tag=None):
         )
 
     unsubscribe_link = settings.GRAB_HOST + reverse(
-        "bookmark-login", kwargs={"key": search_bookmark.user.profile.key}
+        "bookmarks", kwargs={"key": search_bookmark.user.profile.key}
     )
 
     context = {
@@ -829,9 +817,7 @@ def make_ncso_concession_email(bookmark, tag=None):
     dashboard_path = reverse(dashboard_view_name, kwargs=dashboard_kwargs)
     dashboard_url = settings.GRAB_HOST + dashboard_path
 
-    unsubscribe_path = reverse(
-        "bookmark-login", kwargs={"key": bookmark.user.profile.key}
-    )
+    unsubscribe_path = reverse("bookmarks", kwargs={"key": bookmark.user.profile.key})
     unsubscribe_link = settings.GRAB_HOST + unsubscribe_path
 
     with NamedTemporaryFile(suffix=".png") as f:
@@ -877,13 +863,13 @@ def make_all_england_email(bookmark, tag=None):
     msg = initialise_email(bookmark, "all-england-alerts")
     msg.subject = "Your monthly update on prescribing across NHS England"
 
-    date = ImportLog.objects.latest_in_category("ppu").current_at
+    date = ImportLog.objects.latest_in_category("dashboard_data").current_at
 
     # This allows us to switch between calculating savings at the practice or
     # CCG level. We use CCG at present for performance reasons but we may want
     # to switch in future.
     entity_type = "CCG"
-    ppu_savings = cached(all_england_ppu_savings, entity_type, date)
+    ppu_savings = get_total_savings_for_org(str(date), "all_standard_practices", None)
     measure_savings = cached(all_england_measure_savings, entity_type, date)
     low_priority_savings = cached(all_england_low_priority_savings, entity_type, date)
     low_priority_total = cached(all_england_low_priority_total, entity_type, date)
@@ -891,9 +877,7 @@ def make_all_england_email(bookmark, tag=None):
         ncso_spending_for_entity(None, "all_england", num_months=1)
     )
 
-    unsubscribe_path = reverse(
-        "bookmark-login", kwargs={"key": bookmark.user.profile.key}
-    )
+    unsubscribe_path = reverse("bookmarks", kwargs={"key": bookmark.user.profile.key})
     unsubscribe_link = settings.GRAB_HOST + unsubscribe_path
 
     context = {

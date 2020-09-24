@@ -1,5 +1,7 @@
 import numpy
 import scipy.sparse
+from scipy.sparse import csc_matrix
+from scipy.sparse.compressed import _process_slice, get_csr_submatrix
 
 
 def sparse_matrix(shape, integer=False):
@@ -112,3 +114,37 @@ def smallest_int_type_for_range(minimum, maximum):
         return numpy.uint64
     else:
         return numpy.int64
+
+
+def get_submatrix(matrix, rows=slice(None, None), cols=slice(None, None)):
+    """
+    Return a submatrix sliced by the supplied rows and columns, with a special
+    fast path for Compressed Sparse Column matrices
+
+    Workaroud for https://github.com/scipy/scipy/issues/11496
+    """
+    # Default slicing behaviour for types which don't need the fast path
+    if not isinstance(matrix, csc_matrix):
+        return matrix[rows, cols]
+    # This is based on the code found in the following file, but skips the
+    # redundant initialisation checks that would get run on the new matrix
+    # instance:
+    # scipy/sparse/compressed.py:_cs_matrix._get_submatrix
+    N, M = matrix.shape
+    i0, i1 = _process_slice(cols, M)
+    j0, j1 = _process_slice(rows, N)
+    if i0 == 0 and j0 == 0 and i1 == M and j1 == N:
+        return matrix
+    indptr, indices, data = get_csr_submatrix(
+        M, N, matrix.indptr, matrix.indices, matrix.data, i0, i1, j0, j1
+    )
+    shape = (j1 - j0, i1 - i0)
+    # Construct the new matrix instance by directly assigning its members,
+    # rather than using `__init__` which runs additional checks that we don't
+    # need
+    new_matrix = csc_matrix.__new__(csc_matrix)
+    new_matrix.data = data
+    new_matrix.indices = indices
+    new_matrix.indptr = indptr
+    new_matrix._shape = shape
+    return new_matrix

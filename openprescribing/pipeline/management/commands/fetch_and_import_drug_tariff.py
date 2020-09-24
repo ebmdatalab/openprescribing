@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
         imported_months = []
 
-        for a in doc.findAll("a", href=re.compile("Part%20VIIIA")):
+        for a in doc.findAll("a", href=re.compile(r"Part%20VIIIA.+\.xlsx$")):
             # a.attrs['href'] typically has a filename part like
             # Part%20VIIIA%20September%202017.xlsx
             #
@@ -107,6 +107,13 @@ def import_month(xls_file, date):
                 continue
 
             d = dict(zip(headers, values))
+
+            if d["basic price"] is None:
+                msg = "Missing price for {} Drug Tariff for {}".format(
+                    d["medicine"], date
+                )
+                notify_slack(msg)
+                continue
 
             TariffPrice.objects.get_or_create(
                 date=date,

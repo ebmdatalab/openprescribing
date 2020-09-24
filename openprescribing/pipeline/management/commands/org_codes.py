@@ -42,17 +42,17 @@ class Command(BaseCommand):
         if kwargs["region"]:
             self.fetch_and_extract_zipped_file("eauth", "region_details")
         if kwargs["pcn"]:
-            self.fetch_and_extract_zipped_file(
-                "ePCN", "pcn_details", filename="ePCN.xlsx"
-            )
+            self.fetch_and_extract_zipped_file("epcn", "pcn_details")
 
-    def fetch_and_extract_zipped_file(self, base_filename, dest_dirname, filename=None):
-        """Grab a zipfile from a url, and extract a single file from it.
-        """
+    def fetch_and_extract_zipped_file(self, base_filename, dest_dirname):
+        """Grab a zipfile from a url, and extract a single file from it."""
 
         zip_filename = base_filename + ".zip"
-        url = "https://files.digital.nhs.uk/assets/ods/current/" + zip_filename
-        if filename is None:
+        if base_filename == "epcn":
+            url = "https://digital.nhs.uk/binaries/content/assets/website-assets/services/ods/data-downloads-other-nhs-organisations/epcn.zip"
+            filename = "ePCN.xlsx"
+        else:
+            url = "https://files.digital.nhs.uk/assets/ods/current/" + zip_filename
             filename = base_filename + ".csv"
 
         buf = BytesIO()

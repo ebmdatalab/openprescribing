@@ -27,6 +27,10 @@ def use_saucelabs():
     return os.environ.get("TRAVIS") or os.environ.get("USE_SAUCELABS")
 
 
+def use_browserstack():
+    return os.environ.get("GITHUB_ACTIONS") or os.environ.get("USE_BROWSERSTACK")
+
+
 @unittest.skipIf(
     os.environ.get("TEST_SUITE") == "nonfunctional",
     "nonfunctional tests specified in TEST_SUITE environment variable",
@@ -53,6 +57,8 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     def get_browser(cls):
         if use_saucelabs():
             return cls.get_saucelabs_browser()
+        elif use_browserstack():
+            return cls.get_browserstack_browser()
         else:
             if cls.use_xvfb():
                 from pyvirtualdisplay import Display
@@ -91,6 +97,44 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             hub_url = "%s:%s@localhost:4445" % (username, access_key)
         return webdriver.Remote(
             desired_capabilities=caps, command_executor="http://%s/wd/hub" % hub_url
+        )
+
+    @classmethod
+    def get_browserstack_browser(cls):
+        browser, browser_version, browserstack_os, browserstack_os_version = os.environ[
+            "BROWSER"
+        ].split(":")
+        local_identifier = os.environ["BROWSERSTACK_LOCAL_IDENTIFIER"]
+        caps = {
+            # 'browser' has precedence over 'browserName'
+            # 'browserName': browser,
+            "resolution": "1600x1200",
+            "browser": browser,
+            "browser_version": browser_version,
+            "os": browserstack_os,
+            "os_version": browserstack_os_version,
+            "browserstack.local": "true",
+            "browserstack.localIdentifier": local_identifier,
+            "project": os.environ["BROWSERSTACK_PROJECT_NAME"],
+            "name": os.environ["BROWSERSTACK_BUILD_NAME"],
+        }
+        # Disable slow script warning in IE
+        caps["prerun"] = {
+            "executable": (
+                "https://raw.githubusercontent.com/"
+                "ebmdatalab/openprescribing/"
+                "master/scripts/setup_ie_8.bat"
+            ),
+            "background": "false",
+        }
+        username = os.environ["BROWSERSTACK_USERNAME"]
+        access_key = os.environ["BROWSERSTACK_ACCESS_KEY"]
+        hub_url = "https://%s:%s@hub-cloud.browserstack.com/wd/hub" % (
+            username,
+            access_key,
+        )
+        return webdriver.Remote(
+            desired_capabilities=caps, command_executor="%s" % hub_url
         )
 
     @classmethod

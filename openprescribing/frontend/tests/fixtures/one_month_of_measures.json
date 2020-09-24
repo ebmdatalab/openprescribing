@@ -322,7 +322,7 @@
       "numerator_short": "Cerazette quantity",
       "numerator_type": "bnf_quantity",
       "numerator_columns": "SUM(quantity) AS numerator, ",
-      "numerator_from": "{hscic}.normalised_prescribing_standard",
+      "numerator_from": "{hscic}.normalised_prescribing",
       "numerator_where": "(bnf_code LIKE '0205%')",
       "numerator_bnf_codes": ["0205010F0AAAAAA"],
       "denominator_type": "bnf_quantity",
@@ -335,8 +335,6 @@
         "core"
       ],
       "tags_focus": ["baz", "foo"],
-      "start_date": null,
-      "end_date": null,
       "url": null,
       "is_percentage": true,
       "is_cost_based": true,
@@ -367,8 +365,6 @@
         "core"
       ],
       "tags_focus": ["baz", "foo"],
-      "start_date": null,
-      "end_date": null,
       "url": null,
       "is_percentage": true,
       "is_cost_based": true,

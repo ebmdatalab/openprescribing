@@ -2,7 +2,9 @@ from __future__ import print_function
 
 import csv
 import itertools
+import json
 import os
+import re
 import tempfile
 from mock import patch
 from random import Random
@@ -29,7 +31,10 @@ from frontend.models import (
     STP,
     RegionalTeam,
 )
-from frontend.management.commands.import_measures import load_measure_defs
+from frontend.management.commands.import_measures import (
+    load_measure_defs,
+    build_bnf_codes_query,
+)
 from gcutils.bigquery import Client
 from matrixstore.tests.contextmanagers import (
     patched_global_matrixstore_from_data_factory,
@@ -54,6 +59,7 @@ class ImportMeasuresTests(TestCase):
         create_import_log()
         create_organisations(random)
         upload_ccgs_and_practices()
+        upload_presentations()
         cls.prescriptions = upload_prescribing(random.randint)
         cls.practice_stats = upload_practice_statistics(random.randint)
         cls.factory = build_factory()
@@ -127,7 +133,7 @@ class ImportMeasuresTests(TestCase):
         # set.
         m = Measure.objects.get(id="coproxamol")
         self.assertEqual(m.numerator_bnf_codes, ["0407010Q0AAAAAA"])
-        self.assertEqual(m.denominator_bnf_codes, [])
+        self.assertEqual(m.denominator_bnf_codes, None)
 
         # Check that analyse_url has been set.
         querystring = m.analyse_url.split("#")[1]
@@ -372,6 +378,76 @@ class ImportMeasuresTests(TestCase):
             self.assertAlmostEqual(mv.cost_savings["10"], series["cost_saving_10"])
 
 
+class BuildMeasureSQLTests(TestCase):
+    def test_build_bnf_codes_query(self):
+        base_query = "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '% Tab'"
+        filter_ = [
+            "010101 # Everything in 1.1.1",
+            "~010101000BBABA0 # Langdales_Cinnamon Tab",
+            "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
+        ]
+
+        expected_sql = """
+        WITH subquery AS (SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '% Tab')
+        SELECT bnf_code
+        FROM subquery
+        WHERE (bnf_code LIKE '010101%') AND NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
+        """
+
+        self.assertEqual(build_bnf_codes_query(base_query, filter_), expected_sql)
+
+    def test_build_bnf_codes_query_without_base_query(self):
+        filter_ = [
+            "010101 # Everything in 1.1.1",
+            "~010101000BBABA0 # Langdales_Cinnamon Tab",
+            "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
+        ]
+
+        expected_sql = """
+        WITH subquery AS (SELECT bnf_code FROM {hscic}.presentation)
+        SELECT bnf_code
+        FROM subquery
+        WHERE (bnf_code LIKE '010101%') AND NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
+        """
+
+        self.assertEqual(build_bnf_codes_query(None, filter_), expected_sql)
+
+    def test_build_bnf_codes_query_includes_only(self):
+        filter_ = [
+            "010101000BBABA0 # Langdales_Cinnamon Tab",
+            "0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
+        ]
+
+        expected_sql = """
+        WITH subquery AS (SELECT bnf_code FROM {hscic}.presentation)
+        SELECT bnf_code
+        FROM subquery
+        WHERE (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
+        """
+
+        self.assertEqual(build_bnf_codes_query(None, filter_), expected_sql)
+
+    def test_build_bnf_codes_query_excludes_only(self):
+        filter_ = [
+            "~010101000BBABA0 # Langdales_Cinnamon Tab",
+            "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
+        ]
+
+        expected_sql = """
+        WITH subquery AS (SELECT bnf_code FROM {hscic}.presentation)
+        SELECT bnf_code
+        FROM subquery
+        WHERE NOT (bnf_code = '010101000BBABA0' OR bnf_code LIKE '0302000N0%AV')
+        """
+
+        self.assertEqual(build_bnf_codes_query(None, filter_), expected_sql)
+
+    def test_build_bnf_codes_query_without_filter(self):
+        base_query = "SELECT bnf_code FROM {hscic}.presentation WHERE name LIKE '% Tab'"
+
+        self.assertEqual(build_bnf_codes_query(base_query, None), base_query)
+
+
 class ImportMeasuresDefinitionsOnlyTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -387,8 +463,12 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
             with patch(
                 "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
             ) as get_num_or_denom_bnf_codes:
-                get_num_or_denom_bnf_codes.return_value = []
-                call_command("import_measures", definitions_only=True)
+                with patch(
+                    "frontend.management.commands.import_measures.get_bnf_codes"
+                ) as get_bnf_codes:
+                    get_num_or_denom_bnf_codes.return_value = []
+                    get_bnf_codes.return_value = []
+                    call_command("import_measures", definitions_only=True)
 
         measure = Measure.objects.get(id="desogestrel")
         self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
@@ -399,6 +479,7 @@ class CheckMeasureDefinitionsTests(TestCase):
     def setUpTestData(cls):
         create_import_log()
         set_up_bq()
+        upload_presentations()
 
     def test_check_definition(self):
         upload_dummy_prescribing(["0703021Q0AAAAAA", "0703021Q0BBAAAA"])
@@ -449,25 +530,71 @@ class LoadMeasureDefsTests(TestCase):
         self.assertEqual(len(measure_defs), 2)
 
 
+class LowPriorityOmnibusTest(TestCase):
+    """
+    The Low Priority Omnibus measure is manually created from the list of Low
+    Priority measures and we want to make sure they don't get out of sync
+    """
+
+    def test_low_priority_omnibus_divisor(self):
+        measure_path = os.path.join(
+            settings.APPS_ROOT, "measure_definitions", "lpzomnibus.json"
+        )
+        with open(measure_path, "r") as f:
+            denominator_columns = "\n".join(json.load(f)["denominator_columns"])
+        divisor_match = re.search(r"/([0-9]+)", denominator_columns)
+        self.assertIsNotNone(divisor_match)
+        divisor_count = int(divisor_match.group(1))
+        self.assertEqual(divisor_count, len(self.get_low_priority_tables()))
+
+    def test_low_priority_tables_match_measures(self):
+        self.assertEqual(
+            sorted(self.get_low_priority_tables()),
+            sorted(self.get_low_priority_measures()),
+        )
+
+    def get_low_priority_tables(self):
+        sql_path = os.path.join(
+            settings.APPS_ROOT,
+            "frontend/management/commands/measure_sql",
+            "practice_data_all_low_priority.sql",
+        )
+        with open(sql_path, "r") as f:
+            all_low_priority_sql = f.read()
+        return re.findall(r"\{measures\}\.practice_data_(\w+)", all_low_priority_sql)
+
+    def get_low_priority_measures(self):
+        files = os.listdir(os.path.join(settings.APPS_ROOT, "measure_definitions"))
+        return [
+            name[: -len(".json")]
+            for name in files
+            if (
+                name.startswith("lp")
+                and name.endswith(".json")
+                and name != "lpzomnibus.json"
+            )
+        ]
+
+
 class ConstraintsTests(TestCase):
     @patch("common.utils.db")
-    def test_reconstructor_not_called_when_measures_specified(self, db):
+    def test_reconstructor_not_called_when_not_enabled(self, db):
         from frontend.management.commands.import_measures import (
             conditional_constraint_and_index_reconstructor,
         )
 
-        with conditional_constraint_and_index_reconstructor({"measure": "thingy"}):
+        with conditional_constraint_and_index_reconstructor(False):
             pass
         execute = db.connection.cursor.return_value.__enter__.return_value.execute
         execute.assert_not_called()
 
     @patch("common.utils.db")
-    def test_reconstructor_called_when_no_measures_specified(self, db):
+    def test_reconstructor_called_when_enabled(self, db):
         from frontend.management.commands.import_measures import (
             conditional_constraint_and_index_reconstructor,
         )
 
-        with conditional_constraint_and_index_reconstructor({"measure": None}):
+        with conditional_constraint_and_index_reconstructor(True):
             pass
         execute = db.connection.cursor.return_value.__enter__.return_value.execute
         execute.assert_called()
@@ -484,12 +611,11 @@ def set_up_bq():
     client = Client("hscic")
     client.get_or_create_table("ccgs", schemas.CCG_SCHEMA)
     client.get_or_create_table("practices", schemas.PRACTICE_SCHEMA)
-    client.get_or_create_table(
-        "normalised_prescribing_standard", schemas.PRESCRIBING_SCHEMA
-    )
+    client.get_or_create_table("normalised_prescribing", schemas.PRESCRIBING_SCHEMA)
     client.get_or_create_table(
         "practice_statistics", schemas.PRACTICE_STATISTICS_SCHEMA
     )
+    client.get_or_create_table("presentation", schemas.PRESENTATION_SCHEMA)
 
 
 def upload_dummy_prescribing(bnf_codes):
@@ -499,23 +625,20 @@ def upload_dummy_prescribing(bnf_codes):
     prescribing_rows = []
     for bnf_code in bnf_codes:
         row = [
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            bnf_code,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
+            None,  # sha
+            None,  # pct
+            None,  # practice
+            bnf_code,  # bnf_code
+            None,  # bnf_name
+            None,  # items
+            None,  # net_cost
+            None,  # actual_cost
+            None,  # quantity
+            None,  # month
         ]
         prescribing_rows.append(row)
 
-    table = Client("hscic").get_table("normalised_prescribing_standard")
+    table = Client("hscic").get_table("normalised_prescribing")
     with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in prescribing_rows:
@@ -595,6 +718,28 @@ def upload_ccgs_and_practices():
     )
     table = Client("hscic").get_table("practices")
     table.insert_rows_from_pg(Practice, schemas.PRACTICE_SCHEMA)
+
+
+def upload_presentations():
+    """Upload presentations to BQ."""
+
+    table = Client("hscic").get_table("presentation")
+
+    presentations = [
+        ("0703021Q0AAAAAA", "Desogestrel_Tab 75mcg"),
+        ("0703021Q0BBAAAA", "Cerazette_Tab 75mcg"),
+        ("076543210AAAAAA", "Etynodiol Diacet_Tab 500mcg"),
+        ("0407010Q0AAAAAA", "Co-Proxamol_Tab 32.5mg/325mg"),
+        ("0904010AUBBAAAA", "Mrs Crimble's_G/F W/F Cheese Bites Orig"),
+    ]
+
+    with tempfile.NamedTemporaryFile("wt") as f:
+        writer = csv.writer(f)
+        for presentation in presentations:
+            row = presentation + (None, None)
+            writer.writerow(row)
+        f.seek(0)
+        table.insert_rows_from_csv(f.name, schemas.PRESENTATION_SCHEMA)
 
 
 def upload_prescribing(randint):
@@ -702,34 +847,42 @@ def upload_prescribing(randint):
 
                 prescribing_rows.append(row)
 
-    # In production, normalised_prescribing_standard is actually a view,
+    # In production, normalised_prescribing is actually a view,
     # but for the tests it's much easier to set it up as a normal table.
-    table = Client("hscic").get_table("normalised_prescribing_standard")
+    table = Client("hscic").get_table("normalised_prescribing")
+
+    headers = [
+        "sha",
+        "regional_team_id",
+        "stp_id",
+        "ccg_id",
+        "pcn_id",
+        "practice_id",
+        "bnf_code",
+        "bnf_name",
+        "items",
+        "net_cost",
+        "actual_cost",
+        "quantity",
+        "month",
+    ]
+
+    headers_to_exclude_from_bq = ["regional_team_id", "stp_id", "pcn_id"]
 
     with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in prescribing_rows:
-            writer.writerow(row)
+            row_to_upload = [
+                item
+                for item, header in zip(row, headers)
+                if header not in headers_to_exclude_from_bq
+            ]
+            writer.writerow(row_to_upload)
         f.seek(0)
         table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
 
-        headers = [
-            "sha",
-            "regional_team_id",
-            "stp_id",
-            "ccg_id",
-            "pcn_id",
-            "practice_id",
-            "bnf_code",
-            "bnf_name",
-            "items",
-            "net_cost",
-            "actual_cost",
-            "quantity",
-            "month",
-        ]
-        prescriptions = pd.read_csv(f.name, names=headers)
-        prescriptions["month"] = prescriptions["month"].str[:10]
+    prescriptions = pd.DataFrame.from_records(prescribing_rows, columns=headers)
+    prescriptions["month"] = prescriptions["month"].str[:10]
 
     return prescriptions
 
@@ -831,9 +984,5 @@ def build_factory():
         "0904010AVBBAAAA",  # Mrs Crimble's_W/F Dutch Apple Cake
     ]
     factory = DataFactory()
-    month = factory.create_months("2018-10-01", 1)[0]
-    practice = factory.create_practices(1)[0]
-    for bnf_code in bnf_codes:
-        presentation = factory.create_presentation(bnf_code)
-        factory.create_prescription(presentation, practice, month)
+    factory.create_prescribing_for_bnf_codes(bnf_codes)
     return factory

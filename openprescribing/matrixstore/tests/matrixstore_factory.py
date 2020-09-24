@@ -1,6 +1,7 @@
 import mock
 import sqlite3
 
+from frontend.price_per_unit.substitution_sets import get_substitution_sets
 from matrixstore.connection import MatrixStore
 from matrixstore import db
 from matrixstore.tests.import_test_data_fast import import_test_data_fast
@@ -33,11 +34,13 @@ def patch_global_matrixstore(matrixstore):
     # There are memoized functions so we clear any previously memoized value
     db.get_db.cache_clear()
     db.get_row_grouper.cache_clear()
+    get_substitution_sets.cache_clear()
 
     def stop_patching():
         patcher.stop()
         db.get_db.cache_clear()
         db.get_row_grouper.cache_clear()
+        get_substitution_sets.cache_clear()
         matrixstore.close()
 
     return stop_patching

@@ -7,17 +7,13 @@ from fabric.contrib.files import exists
 from datetime import datetime
 import json
 import os
-
-import dotenv
-
-basedir = os.path.dirname(os.path.abspath(__file__))
-dotenv.read_dotenv(os.path.join(basedir, "environment"))
+import shlex
 
 
 env.hosts = ["web2.openprescribing.net"]
 env.forward_agent = True
 env.colorize_errors = True
-env.user = "hello"
+env.user = "ebmbot"
 
 environments = {"production": "openprescribing", "staging": "openprescribing_staging"}
 
@@ -305,28 +301,21 @@ def deploy(environment, force_build=False, branch="master"):
 
 
 @task
-def call_management_command(command_name, environment, args, kwargs):
+def call_management_command(command_name, environment, *args, **kwargs):
     """Invokes management command in environment.
 
-    Returns output of command.
-
-    args and kwargs are passed to the command, with some best-effort shell
-    quoting.  (When we upgrade to Python 3, we can use shlex.quote.)
+    Prints output of command.
     """
 
     cmd = "python openprescribing/manage.py {}".format(command_name)
 
     for arg in args:
-        assert '"' not in arg
-        cmd += ' "{}"'.format(arg)
+        cmd += " {}".format(shlex.quote(arg))
 
     for k, v in kwargs.items():
-        assert '"' not in v
-        cmd += ' --{}="{}"'.format(k, v)
+        cmd += " --{}={}".format(shlex.quote(k), shlex.quote(v))
 
     setup_env_from_environment(environment)
     with cd(env.path):
         with prefix("source .venv/bin/activate"):
-            output = run(cmd)
-
-    return output
+            print(run(cmd))

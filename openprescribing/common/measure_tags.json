@@ -43,9 +43,17 @@
     "name": "Generic prescribing",
     "description": "The NHS has a policy of prescribing medicines by their generic name unless there is a clinical reason why the medicine must be prescribed by brand. Generic prescribing has saved the NHS significant amounts of money and is believed to be safer. The following measures identify medicines that should either be prescribed generically, or prescribed by brand for safety reasons."
   },
+    "greenernhs": {
+    "name": "Greener NHS",
+    "description": "These measures support work to reduce the impact of medicines on overall enviromental impact of the NHS."
+  },
   "infections": {
     "name": "Infections",
     "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings."
+  },
+  "iif": {
+    "name": "NHS England Investment and Impact Fund",
+    "description": "The <a href=\"https://www.england.nhs.uk/wp-content/uploads/2020/02/update-to-the-gp-contract-agreement-2021-2324.pdf\">Investment and Impact Fund</a> is an NHS England scheme that rewards Primary Care Networks (PCNs) for delivering objectives in the NHS Long Term Plan. These measures are all included in the IIF and PCNs can use them to review the success of any interventions they make. Please note that some of the prescribing measures (e.g. gastroprotective prescribing) are not displayed here as the NHS does not publish the information, you can <a href=\"https://ebmdatalab.net/nhs-england-investment-and-impact-fund-a-new-dashboard-on-openprescribing/\">read more about this on our blog here</a>."
   },
   "lowpriority": {
     "name": "NHS England Low Priority",
@@ -58,6 +66,10 @@
     "mentalhealth": {
     "name": "Mental Health",
     "description": "These measures are for treatments commonly used for treating mental health conditions."
+  },
+    "nice": {
+    "name": "NICE",
+    "description": "These measures are derived from guidance from the National Institute for Health and Care Excellence (NICE). This prescribing dashboard can be used to support implementation of NICE's recommendation through open audit and review."
   },
   "nutrition": {
     "name": "Nutrition",

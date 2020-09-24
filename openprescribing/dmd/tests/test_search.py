@@ -1,10 +1,17 @@
+from urllib.parse import parse_qs
+
 from django.db.models import Q
 from django.test import TestCase
+
+from matrixstore.tests.contextmanagers import (
+    patched_global_matrixstore_from_data_factory,
+)
+from matrixstore.tests.data_factory import DataFactory
 
 from dmd.build_search_query import build_query_obj
 from dmd.build_rules import build_rules
 from dmd.models import AMP, AMPP, VMP, VMPP
-from dmd.search import search
+from dmd.search import advanced_search, search
 
 
 class TestSearch(TestCase):
@@ -12,6 +19,9 @@ class TestSearch(TestCase):
 
     def test_by_snomed_code(self):
         self.assertSearchResults({"q": "318412000"}, {VMP: [318412000]})
+
+    def test_by_gtin(self):
+        self.assertSearchResults({"q": "5036850012349"}, {AMPP: [1389011000001108]})
 
     def test_by_term(self):
         self.assertSearchResults(
@@ -103,6 +113,36 @@ class TestSearch(TestCase):
         self.assertEqual(result_ids, exp_result_ids)
 
 
+class TestAdvancedSearch(TestCase):
+    fixtures = ["dmd-objs"]
+
+    def test_advanced_search(self):
+        bnf_codes = [
+            "0204000C0AAAAAA",  # Acebut HCl_Cap 100mg
+            "0204000C0BBAAAA",  # Sectral_Cap 100mg
+            "0204000D0AAAAAA",  # Practolol_Inj 2mg/ml 5ml Amp
+        ]
+
+        factory = DataFactory()
+        factory.create_prescribing_for_bnf_codes(bnf_codes)
+
+        search = ["nm", "contains", "acebutolol"]
+
+        with patched_global_matrixstore_from_data_factory(factory):
+            results = advanced_search(AMP, search, ["unavailable"])
+
+        self.assertFalse(results["too_many_results"])
+        self.assertCountEqual(
+            results["objs"],
+            AMP.objects.filter(pk__in=[10347111000001100, 4814811000001108]),
+        )
+        querystring = results["analyse_url"].split("#")[1]
+        params = parse_qs(querystring)
+        self.assertEqual(
+            params, {"numIds": ["0204000C0AA"], "denom": ["total_list_size"]}
+        )
+
+
 class TestAdvancedSearchHelpers(TestCase):
     search = [
         "or",
@@ -117,7 +157,7 @@ class TestAdvancedSearchHelpers(TestCase):
         q2 = Q(nm__icontains="gluten") & Q(glu_f=False)
         expected_query_obj = q1 | q2
 
-        self.assertTreesEqual(build_query_obj(VMP, self.search), expected_query_obj)
+        self.assertEqual(build_query_obj(VMP, self.search), expected_query_obj)
 
     def test_build_rules(self):
         expected_rules = {
@@ -141,17 +181,3 @@ class TestAdvancedSearchHelpers(TestCase):
         }
 
         self.assertEqual(build_rules(self.search), expected_rules)
-
-    def assertTreesEqual(self, t1, t2):
-        # Once we upgrade to 2.0, we can drop this as Q.__eq__ will be defined.
-        if not isinstance(t1, Q):
-            self.assertEqual(t1, t2)
-            return
-
-        self.assertEqual(t1.__class__, t2.__class__)
-        self.assertEqual(t1.connector, t2.connector)
-        self.assertEqual(t1.negated, t2.negated)
-        self.assertEqual(len(t1.children), len(t2.children))
-
-        for c1, c2 in zip(t1.children, t2.children):
-            self.assertTreesEqual(c1, c2)

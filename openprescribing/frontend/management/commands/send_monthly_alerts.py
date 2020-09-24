@@ -12,6 +12,7 @@ from frontend.models import OrgBookmark
 from frontend.models import Profile
 from frontend.models import SearchBookmark
 from frontend.models import User
+from frontend.models import Practice, PCT, PCN
 
 from common.alert_utils import EmailErrorDeferrer
 from frontend.views import bookmark_utils
@@ -54,6 +55,13 @@ class Command(BaseCommand):
             ),
         )
         parser.add_argument(
+            "--pcn",
+            help=(
+                "If specified, a PCN code for which a test alert "
+                "should be sent to `recipient-email`"
+            ),
+        )
+        parser.add_argument(
             "--practice",
             help=(
                 "If specified, a Practice code for which a test alert "
@@ -83,19 +91,21 @@ class Command(BaseCommand):
         )
 
     def get_org_bookmarks(self, now_month, **options):
-        """Get approved OrgBookmarks for active users who have not been sent a
+        """Get all OrgBookmarks for active users who have not been sent a
         message tagged with `now_month`
 
         """
         query = (
-            Q(approved=True, user__is_active=True)
+            Q(user__is_active=True)
             & ~Q(user__emailmessage__tags__contains=["measures", now_month])
             &
-            # Only include bookmarks for either a practice or pct: when both
-            # are NULL this indicates an All England or PCN bookmark
-            (Q(practice__isnull=False) | Q(pct__isnull=False))
+            # Only include bookmarks for either a practice or pct or PCN: when all
+            # are NULL this indicates an All England bookmark
+            (Q(practice__isnull=False) | Q(pct__isnull=False) | Q(pcn__isnull=False))
         )
-        if options["recipient_email"] and (options["ccg"] or options["practice"]):
+        if options["recipient_email"] and (
+            options["ccg"] or options["practice"] or options["pcn"]
+        ):
             dummy_user = User(email=options["recipient_email"], id="dummyid")
             dummy_user.profile = Profile(key="dummykey")
             bookmarks = [
@@ -103,6 +113,7 @@ class Command(BaseCommand):
                     user=dummy_user,
                     pct_id=options["ccg"],
                     practice_id=options["practice"],
+                    pcn_id=options["pcn"],
                 )
             ]
             logger.info("Created a single test org bookmark")
@@ -126,7 +137,7 @@ class Command(BaseCommand):
         return bookmarks
 
     def get_search_bookmarks(self, now_month, **options):
-        query = Q(approved=True, user__is_active=True) & ~Q(
+        query = Q(user__is_active=True) & ~Q(
             user__emailmessage__tags__contains=["analyse", now_month]
         )
         if options["recipient_email"] and options["url"]:
@@ -161,10 +172,17 @@ class Command(BaseCommand):
             )
 
     def send_org_bookmark_email(self, org_bookmark, now_month, options):
-        stats = bookmark_utils.InterestingMeasureFinder(
-            practice=org_bookmark.practice or options["practice"],
-            pct=org_bookmark.pct or options["ccg"],
-        ).context_for_org_email()
+        if org_bookmark.practice or options["practice"]:
+            org = org_bookmark.practice or Practice.objects.get(pk=options["practice"])
+        elif org_bookmark.pct or options["ccg"]:
+            org = org_bookmark.pct or PCT.objects.get(pk=options["ccg"])
+        elif org_bookmark.pcn or options["pcn"]:
+            org = org_bookmark.pcn or PCN.objects.get(pk=options["pcn"])
+        else:
+            assert False
+
+        stats = bookmark_utils.InterestingMeasureFinder(org).context_for_org_email()
+
         try:
             msg = bookmark_utils.make_org_email(org_bookmark, stats, tag=now_month)
             msg = EmailMessage.objects.create_from_message(msg)
@@ -200,6 +218,7 @@ class Command(BaseCommand):
             "traceback",
             "settings",
             "no_color",
+            "force_color",
             "max_errors",
             "skip_checks",
         ]:
@@ -212,8 +231,10 @@ class Command(BaseCommand):
             print(message)
             send_all_england_alerts(recipient_email)
         else:
-            message = "Not sending All England alerts as found unhandled option: {}".format(
-                ", ".join(set_options.keys())
+            message = (
+                "Not sending All England alerts as found unhandled option: {}".format(
+                    ", ".join(set_options.keys())
+                )
             )
             logger.info(message)
             print(message)
@@ -225,7 +246,7 @@ class Command(BaseCommand):
             .current_at.strftime("%Y-%m-%d")
             .lower()
         )
-        with EmailErrorDeferrer(options["max_errors"]) as error_deferrer:
+        with EmailErrorDeferrer(int(options["max_errors"])) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
                 error_deferrer.try_email(
                     self.send_org_bookmark_email, org_bookmark, now_month, options

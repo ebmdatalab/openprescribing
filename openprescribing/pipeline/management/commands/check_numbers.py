@@ -22,7 +22,7 @@ from glob import glob
 
 from django.conf import settings
 from django.core.management import BaseCommand
-from django.core.urlresolvers import get_resolver
+from django.urls import get_resolver
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -118,7 +118,7 @@ def paths_to_scrape():
 
         # Ignore any URLs that are not either parameterisable (these static
         # pages or lists of entities) or for All England.
-        if "%" not in pattern and "all-england" not in pattern:
+        if "%" not in pattern and "national/england" not in pattern:
             continue
 
         path = build_path(pattern, keys)
@@ -162,8 +162,7 @@ def build_path(pattern, keys):
 
 
 def get_page_source(browser, path, name, log_path):
-    """Request URL, write copy of response to log_path, and return page source.
-    """
+    """Request URL, write copy of response to log_path, and return page source."""
 
     url = "https://openprescribing.net/" + path
     try:
@@ -212,8 +211,7 @@ def extract_numbers(source):
 
 
 def compare_numbers(previous_numbers, numbers):
-    """Compare dictionaries of numbers, returning list of any differences.
-    """
+    """Compare dictionaries of numbers, returning list of any differences."""
 
     differences = []
 

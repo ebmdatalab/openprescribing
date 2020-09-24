@@ -65,7 +65,8 @@ Install library dependencies (current as of Debian Jessie):
 
 Ensure pip and setuptools are up to date:
 
-    pip install -U pip setuptools
+    pip install -U pip
+    pip install setuptools==49.6.0
 
 Install Python dependencies:
 
@@ -183,15 +184,6 @@ Run migrations:
 
     python manage.py migrate
 
-
-## Example data
-
-You can load a small set of example data (which should be enough to get
-the site to run locally) by running:
-
-    ./manage.py load_development_data
-
-
 ## Sampling live data
 
 You can copy everything from the production server, if you want, but
@@ -219,7 +211,7 @@ If required, you can run individual Django tests as follows:
     python manage.py test frontend.tests.test_api_views
 
 We support IE9 and above. We have a free account for testing across
-multiple browsers, thanks to [BrowserStack](www.browserstack.com).
+multiple browsers, thanks to [BrowserStack](https://www.browserstack.com).
 
 ![image](https://user-images.githubusercontent.com/211271/29110431-887941d2-7cde-11e7-8c2f-199d85c5a3b5.png)
 
@@ -309,6 +301,21 @@ To interact with GCS, you will need to install [`gcloud`](https://cloud.google.c
 
     gcloud auth application-default login
 
+## Credentials for Github Actions
+
+To enable Github Actions to interact with GCS, credentials are stored in `google-credentials-githubactions.json.gpg`, encrypted with the key in the `GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE` Github Secret.
+
+If you need to update them:
+
+* Log in to Google Cloud Services
+* Go to `IAM` -> `Service accounts` -> `Create key` -> `json` 
+* Rename your file as `google-credentials-githubactions.json` & encrypt with:
+```bash
+$ gpg --symmetric --cipher-algo AES256 google-credentials.json
+```
+
+* Commit the new `google-credentials-githubactions.json.gpg`
+* Update the password in the `GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE` Github Secret
 
 # Editing JS and CSS
 
@@ -384,6 +391,22 @@ To install the hooks, run once:
     pre-commit install
 
 Details of the hooks are in .pre-commit-config.yaml
+
+# Maintenance
+
+## Dependency updates
+
+### Python / pip
+
+Our policy is to keep python dependencies up to date as much as possible. Dependabot PRs should generally be merged if CI passes.
+
+### JavaScript / npm
+
+At the time of writing, we don't trust our JS test suite to notify us of failures, so dependabot is not currently enabled/encourage for these dependencies.
+
+### Rebase
+
+Auto-rebase is disabled, because of CI failures due to the number of PRs requiring more browserstack workers than our current plan allows for. The bot will help if you leave a comment on the PR saying `@dependabot rebase`.
 
 # Philosophy
 

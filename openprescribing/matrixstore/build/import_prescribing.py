@@ -112,7 +112,7 @@ def parse_prescribing_csv(input_stream):
             # We only need the YYYY-MM-DD part of the date
             row[date_col][:10],
             int(row[items_col]),
-            int(row[quantity_col]),
+            float(row[quantity_col]),
             pounds_to_pence(row[actual_cost_col]),
             pounds_to_pence(row[net_cost_col]),
         )
@@ -139,7 +139,7 @@ def build_matrices(prescriptions, practices, dates):
     grouped_by_bnf_code = groupby(prescriptions, lambda row: row[0])
     for bnf_code, row_group in grouped_by_bnf_code:
         items_matrix = sparse_matrix(shape, integer=True)
-        quantity_matrix = sparse_matrix(shape, integer=True)
+        quantity_matrix = sparse_matrix(shape, integer=False)
         actual_cost_matrix = sparse_matrix(shape, integer=True)
         net_cost_matrix = sparse_matrix(shape, integer=True)
         for _, practice, date, items, quantity, actual_cost, net_cost in row_group:
@@ -180,10 +180,10 @@ def format_as_sql_rows(matrices, connection):
                 "Writing data for %s (%s/%s)", row.bnf_code, count, num_presentations
             )
         yield (
-            sqlite3.Binary(serialize_compressed(row.items)),
-            sqlite3.Binary(serialize_compressed(row.quantity)),
-            sqlite3.Binary(serialize_compressed(row.actual_cost)),
-            sqlite3.Binary(serialize_compressed(row.net_cost)),
+            serialize_compressed(row.items),
+            serialize_compressed(row.quantity),
+            serialize_compressed(row.actual_cost),
+            serialize_compressed(row.net_cost),
             row.bnf_code,
         )
     logger.info("Finished writing data for %s presentations", count)

@@ -3,7 +3,7 @@
 {% load template_extras %}
 
 {% block title %}Prescribing on {{ measure.name }} for {{ entity.name }}{% endblock %}
-{% block active_class %}{{ entity_type }}{% endblock %}
+{% block active_class %}dashboards{% endblock %}
 
 {% block extra_css %}
   <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
@@ -69,7 +69,7 @@
       </tbody>
     </table>
 
-    <a class="btn btn-primary" href="{% url 'measure_numerators_by_org' %}?org={{ entity.code }}&measure={{ measure.id }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+    <a class="btn btn-primary" href="{{ numerator_breakdown_url }}&amp;format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
 
     <hr>
 

@@ -6,6 +6,8 @@
   "description": [
     "Prescribing of Freestyle Libre per 1000 patients"
   ],
+  "numerator_short": "Freestyle Libre quantity",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "Freestyle Libre is a new continuous blood glucose monitoring system for people with diabetes, which reduces the amount of times a person may need to use a 'finger prick test'. ",
     "It is relatively expensive, and there has been some debate about its place in therapy.  Consequently CCGs have different funding ",
@@ -13,19 +15,17 @@
     "NHS England has confirmed that funding will be available</a> to patients who meet the clinical criteria. ",
     "The current recommendations from the NHS Regional Medicines Optimisation Committee can be found <a href='https://www.sps.nhs.uk/wp-content/uploads/2017/11/Flash-Glucose-monitoring-System-RMOC-Statement-final-2.pdf'>here</a>."
   ],
-  "numerator_short": "Freestyle Libre quantity",
-  "denominator_short": "1000 patients",
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": null,
   "tags": [
     "core",
     "diabetes"
   ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
   "numerator_type": "bnf_quantity",
-  "numerator_where": [
-    "(bnf_code LIKE '21480000100%') --FreeStyle Libre Sensor Kit"
+  "numerator_bnf_codes_filter": [
+    "21480000100 # FreeStyle Libre Sensor Kit"
   ],
   "denominator_type": "list_size"
 }

@@ -35,26 +35,19 @@
 
 <hr/>
 
-{% if form and not signed_up_for_alert %}
+{% if form %}
 <form method="post" class="form form-inline">
  {% csrf_token %}
  <p>
    <img src="{% static 'img/bang.jpg' %}" style="float: left; margin-right: 10px">
    Get email updates (roughly weekly) for {{ entity_name }} when new price
-   concession data is available.  You can also sign up for our monthly
-   newsletter.
+   concession data is available.
   <p>
   {{ form.non_field_errors }}
   {{ form | crispy }}
   <input class="btn btn-primary" type="submit" value="Subscribe">
   </p>
 </form>
-<hr/>
-{% elif form %}
-<p>
-  You're already signed up for alerts. You can
-  <a href="{% url 'bookmark-list' %}">change your subscriptions here</a>.
-</p>
 <hr/>
 {% endif %}
 

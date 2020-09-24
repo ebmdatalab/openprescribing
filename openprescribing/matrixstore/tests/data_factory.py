@@ -33,7 +33,8 @@ class DataFactory(object):
         return months
 
     def create_practice(self):
-        practice = {"code": "ABC{:03}".format(self.next_id())}
+        i = self.next_id()
+        practice = {"code": "ABC{:03}".format(i), "name": "Practice {}".format(i)}
         self.practices.append(practice)
         return practice
 
@@ -112,7 +113,7 @@ class DataFactory(object):
             "bnf_code": presentation["bnf_code"],
             "bnf_name": presentation["name"],
             "items": self.random.randint(1, 100),
-            "quantity": self.random.randint(1, 100),
+            "quantity": self.random.uniform(1, 100),
             # Costs should be in pounds to two decimal places
             "net_cost": self.random.randint(1, 10000) / 100,
             "actual_cost": self.random.randint(1, 10000) / 100,
@@ -147,6 +148,13 @@ class DataFactory(object):
                         self.create_prescription(presentation, practice, month)
                     )
         return prescribing
+
+    def create_prescribing_for_bnf_codes(self, bnf_codes):
+        month = self.create_months("2018-10-01", 1)[0]
+        practice = self.create_practices(1)[0]
+        for bnf_code in bnf_codes:
+            presentation = self.create_presentation(bnf_code)
+            self.create_prescription(presentation, practice, month)
 
     def update_bnf_code(self, presentation):
         new_bnf_code = self.create_bnf_code(self.next_id())

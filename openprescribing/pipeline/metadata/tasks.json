@@ -4,20 +4,21 @@
         "source_id": "bnf_codes"
     },
     "fetch_ccg_boundaries": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "ccg_boundaries"
     },
-    "fetch_prescribing": {
-        "type": "manual_fetch",
-        "source_id": "prescribing"
-    },
     "fetch_patient_list_weightings": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "patient_list_weightings"
     },
     "fetch_stps": {
-        "type": "manual_fetch",
+        "type": "manual_fetch_skip_for_now",
         "source_id": "stp_mapping"
+    },
+    "fetch_prescribing": {
+        "type": "auto_fetch",
+        "source_id": "prescribing",
+        "command": "fetch_prescribing_data {year} {month}"
     },
     "fetch_patient_list_size": {
         "type": "auto_fetch",
@@ -96,7 +97,7 @@
     "import_stps": {
         "type": "import",
         "source_id": "stp_mapping",
-        "command": "import_stps --filename stps.csv",
+        "command": "import_stps --filename *.xslx",
         "dependencies": [
             "fetch_stps",
             "import_ccg_details"
@@ -107,7 +108,8 @@
         "command": "import_adqs",
         "source_id": "prescribing",
         "dependencies": [
-          "import_hscic_prescribing"
+          "import_bnf_codes",
+          "convert_hscic_prescribing"
         ]
     },
     "import_patient_list_weightings": {
@@ -173,21 +175,9 @@
     "convert_hscic_prescribing": {
         "type": "convert",
         "source_id": "prescribing",
-        "command": "convert_hscic_prescribing --filename *Detailed_Prescribing_Information.csv",
+        "command": "convert_hscic_prescribing --filename EPD_*.csv",
         "dependencies": [
             "fetch_prescribing"
-        ]
-    },
-    "import_hscic_prescribing": {
-        "type": "import",
-        "source_id": "prescribing",
-        "command": "import_hscic_prescribing --filename *Detailed_Prescribing_Information_formatted.CSV",
-        "dependencies": [
-            "convert_hscic_prescribing",
-            "import_hscic_practices",
-            "import_bnf_codes",
-            "import_ccg_details",
-            "import_practice_details"
         ]
     },
     "import_dispensing_practices": {
@@ -225,7 +215,6 @@
             "convert_hscic_prescribing",
             "import_patient_list_size",
             "import_hscic_practices",
-            "import_hscic_prescribing",
             "import_ccg_details",
             "import_practice_details"
         ]
@@ -237,10 +226,12 @@
             "upload_to_bigquery"
         ]
     },
-    "import_measure_definitions": {
+    "create_bq_public_measure_tables": {
         "type": "post_process",
-        "command": "import_measures --definitions_only",
-        "dependencies": ["create_bq_measure_views", "build_matrixstore"]
+        "command": "create_bq_public_measure_tables",
+        "dependencies": [
+            "create_bq_public_tables"
+        ]
     },
     "create_bq_measure_views": {
         "type": "post_process",
@@ -252,29 +243,15 @@
         "command": "import_measures",
         "dependencies": [
             "upload_to_bigquery",
-            "import_measure_definitions",
-            "create_bq_measure_views"
+            "create_bq_measure_views",
+            "publish_matrixstore"
         ]
     },
-    "refresh_views": {
+    "create_importlog_for_dashboard_data": {
         "type": "post_process",
-        "command": "refresh_views",
+        "command": "create_importlog_for_dashboard_data",
         "dependencies": [
-            "upload_to_bigquery"
-        ]
-    },
-    "generate_ppu": {
-        "type": "post_process",
-        "command": "import_ppu_savings",
-        "dependencies": [
-            "upload_to_bigquery"
-        ]
-    },
-    "import_generic_mappings": {
-        "type": "post_process",
-        "command": "import_generic_mappings",
-        "dependencies": [
-            "import_bnf_codes"
+            "import_measures"
         ]
     },
     "backup_bq_tables": {
@@ -282,21 +259,6 @@
         "command": "backup_bq_tables",
         "dependencies": [
             "upload_to_bigquery"
-        ]
-    },
-    "update_smoketests": {
-        "type": "post_process",
-        "command": "update_smoketests {last_imported}",
-        "dependencies": [
-            "import_measures",
-            "refresh_views"
-        ]
-    },
-    "run_smoketests": {
-        "type": "post_process",
-        "command": "run_smoketests {last_imported}",
-        "dependencies": [
-            "update_smoketests"
         ]
     },
     "build_matrixstore": {
@@ -311,6 +273,13 @@
         "command": "matrixstore_set_live --date {last_imported}",
         "dependencies": [
             "build_matrixstore"
+        ]
+    },
+    "refresh_bnf_class_currency": {
+        "type": "post_process",
+        "command": "refresh_bnf_class_currency",
+        "dependencies": [
+            "publish_matrixstore"
         ]
     }
 }

@@ -8,7 +8,7 @@ from frontend.models import Presentation
 from gcutils.bigquery import Client
 from gcutils.bigquery import NotFound
 
-from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA
+from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V2
 from frontend.models import ImportLog
 
 
@@ -43,16 +43,16 @@ class CommandsFunctionalTestCase(TestCase):
         raw_data_path = (
             "frontend/tests/fixtures/commands/"
             + "convert_hscic_prescribing/2016_01/"
-            + "Detailed_Prescribing_Information.csv"
+            + "EPD_201601.csv"
         )
         year_and_month = ImportLog.objects.latest_in_category(
             "prescribing"
         ).current_at.strftime("%Y_%m")
         self.table_name = "raw_prescribing_data_{}".format(year_and_month)
         self.client = Client("tmp_eu")
-        t1 = self.client.get_or_create_table(self.table_name, RAW_PRESCRIBING_SCHEMA)
+        t1 = self.client.get_or_create_table(self.table_name, RAW_PRESCRIBING_SCHEMA_V2)
         t1.insert_rows_from_csv(
-            raw_data_path, RAW_PRESCRIBING_SCHEMA, skip_leading_rows=1
+            raw_data_path, RAW_PRESCRIBING_SCHEMA_V2, skip_leading_rows=1
         )
 
         call_command("import_adqs")

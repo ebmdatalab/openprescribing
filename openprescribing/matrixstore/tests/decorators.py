@@ -1,4 +1,8 @@
 import json
+import warnings
+
+from django.core.cache import CacheKeyWarning
+from django.test import override_settings
 
 from frontend.models import (
     Practice,
@@ -11,6 +15,11 @@ from matrixstore.tests.matrixstore_factory import (
     matrixstore_from_data_factory,
     patch_global_matrixstore,
 )
+
+
+# The dummy cache backend we use in testing warns that our binary cache keys
+# won't be compatible with memcached, but we really don't care
+warnings.simplefilter("ignore", CacheKeyWarning)
 
 
 def copy_fixtures_to_matrixstore(cls):
@@ -32,9 +41,17 @@ def copy_fixtures_to_matrixstore(cls):
         # Have to wrap this in a staticmethod decorator otherwise Python thinks
         # we're trying to create a new class method
         inner_cls._stop_patching = staticmethod(stop_patching)
+        new_settings = override_settings(
+            CACHES={
+                "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+            }
+        )
+        new_settings.enable()
+        inner_cls._new_settings = new_settings
 
     def tearDownClass(inner_cls):
         inner_cls._stop_patching()
+        inner_cls._new_settings.disable()
         decorated_tearDownClass(inner_cls)
 
     cls.setUpClass = classmethod(setUpClass)
@@ -69,7 +86,7 @@ class _DatabaseFixtures(object):
                 "practice": p.practice_id,
                 "bnf_code": p.presentation_code,
                 "items": p.total_items,
-                "quantity": int(p.quantity),
+                "quantity": p.quantity,
                 # Net cost shouldn't really ever be null, but it is in some of
                 # our old test fixtures
                 "net_cost": p.net_cost or 0,

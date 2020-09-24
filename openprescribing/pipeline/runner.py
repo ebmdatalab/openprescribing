@@ -66,9 +66,13 @@ class Task(object):
             self.source_id = None
         else:
             self.source_id = attrs["source_id"]
-        if self.task_type != "manual_fetch":
+        if self.task_type not in ["manual_fetch", "manual_fetch_skip_for_now"]:
             self.command = attrs["command"]
-        if self.task_type not in ["manual_fetch", "auto_fetch"]:
+        if self.task_type not in [
+            "manual_fetch",
+            "manual_fetch_skip_for_now",
+            "auto_fetch",
+        ]:
             self.dependency_names = attrs["dependencies"]
         else:
             self.dependency_names = []
@@ -246,6 +250,7 @@ class PostProcessTask(Task):
 class TaskCollection(object):
     task_type_to_cls = {
         "manual_fetch": ManualFetchTask,
+        "manual_fetch_skip_for_now": ManualFetchTask,
         "auto_fetch": AutoFetchTask,
         "convert": ConvertTask,
         "import": ImportTask,
@@ -415,14 +420,10 @@ def run_all(year, month, under_test=False):
     for task in tasks.by_type("import").ordered():
         run_task(task, year, month)
 
-    prescribing_path = tasks["import_hscic_prescribing"].imported_paths()[-1]
+    prescribing_path = tasks["convert_hscic_prescribing"].imported_paths()[-1]
     last_imported = re.findall(r"/(\d{4}_\d{2})/", prescribing_path)[0]
 
     for task in tasks.by_type("post_process").ordered():
-        if under_test and "smoketest" in task.name:
-            # Smoketests run against live site, so we should skip when running
-            # under test
-            continue
         run_task(task, year, month, last_imported=last_imported)
 
     if not under_test:
@@ -441,15 +442,16 @@ def run_all(year, month, under_test=False):
     )
 
     activity = random.choice(
-        ["Put the kettle on", "Have a glass of wine", "Get up and stretch"]
+        ["put the kettle on", "have a glass of wine", "get up and stretch"]
     )
 
     msg = """
 Importing data for {}_{} complete!'
 
 You should now:
-* Tweet about it
-* Commit the changes to the smoke tests
+
+* tweet about it
+* run `sudo systemctl restart app.openprescribing.*.service`
 * {}
 
 (Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)

@@ -6,7 +6,6 @@ import zipfile
 
 from lxml import html
 import requests
-from tqdm import tqdm
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -25,7 +24,7 @@ this command.
 
 Specifically, you should:
 
-    * Visit https://apps.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126 in your browser
+    * Visit https://applications.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126 in your browser
     * Solve the captcha and click on "Guest Login"
     * Copy the value of the JSESSIONID cookie
       * In Chrome, this can be found in the Application tab of Developer Tools
@@ -47,7 +46,7 @@ Specifically, you should:
         mkdir_p(dir_path)
         zip_path = os.path.join(dir_path, "download.zip")
 
-        base_url = "https://apps.nhsbsa.nhs.uk/infosystems/data/"
+        base_url = "https://applications.nhsbsa.nhs.uk/infosystems/data/"
 
         session = requests.Session()
         session.cookies["JSESSIONID"] = kwargs["jsessionid"]
@@ -84,16 +83,9 @@ Specifically, you should:
 
         url = base_url + "downloadAvailableReport.zip"
         params = {"requestId": request_id}
-        rsp = session.post(url, params=params, stream=True)
-
-        total_size = int(rsp.headers["content-length"])
-
+        rsp = session.post(url, params=params)
         with open(zip_path, "wb") as f:
-            tqdm_iterator = tqdm(
-                rsp.iter_content(32 * 1024), total=total_size, unit="B", unit_scale=True
-            )
-            for block in tqdm_iterator:
-                f.write(block)
+            f.write(rsp.content)
 
         with zipfile.ZipFile(zip_path) as zf:
             zf.extractall(dir_path)
