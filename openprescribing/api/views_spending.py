@@ -123,6 +123,7 @@ def price_per_unit(request, format=None):
     """
     entity_code = request.query_params.get("entity_code", "")
     entity_type = request.query_params.get("entity_type", "").lower()
+    child_org_type = request.query_params.get("child_org_type", "")
     date = request.query_params.get("date")
     bnf_code = request.query_params.get("bnf_code")
     aggregate = bool(request.query_params.get("aggregate"))
@@ -163,8 +164,9 @@ def price_per_unit(request, format=None):
             entity_codes = get_row_grouper(entity_type).ids
         else:
             # When looking at a specific BNF code for a specific CCG we
-            # actually want the results over its practices
-            if entity_type == "ccg" and bnf_code:
+            # actually want the results over its practices. And the same goes
+            # if we've explicitly asked for practice level data
+            if entity_type == "ccg" and (bnf_code or child_org_type == "practice"):
                 entity_type = "practice"
                 entity_codes = _get_practice_codes_for_ccg(entity_code)
             # Otherwise we should just show the specified org
