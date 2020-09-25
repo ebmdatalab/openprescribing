@@ -22,7 +22,7 @@ django-anymail[mailgun]==8.0  # via -r requirements.in
 django-cors-headers==3.5.0  # via -r requirements.in
 django-crispy-forms==1.9.2  # via -r requirements.in
 django-debug-toolbar-template-timings==0.9  # via -r requirements.in
-django-debug-toolbar==3.1  # via -r requirements.in, django-debug-toolbar-template-timings
+django-debug-toolbar==3.1.1  # via -r requirements.in, django-debug-toolbar-template-timings
 django-dotenv==1.4.2      # via -r requirements.in
 django-extensions==3.0.9  # via -r requirements.in
 django==2.2.16            # via -r requirements.in, django-anymail, django-cors-headers, django-debug-toolbar, django-debug-toolbar-template-timings, djangorestframework
