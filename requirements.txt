@@ -4,13 +4,16 @@
 #
 #    pip-compile
 #
+aiohttp==3.6.2            # via google-auth
+async-timeout==3.0.1      # via aiohttp
+attrs==20.2.0             # via aiohttp
 backports.csv==1.0.5      # via -r requirements.in
 bcrypt==3.1.7             # via paramiko
 beautifulsoup4==4.9.2     # via -r requirements.in
 cachetools==4.1.1         # via google-auth, premailer
 certifi==2020.6.20        # via requests
 cffi==1.14.3              # via bcrypt, cryptography, google-crc32c, pynacl
-chardet==3.0.4            # via requests
+chardet==3.0.4            # via aiohttp, requests
 click==7.1.2              # via pip-tools
 coverage==5.3             # via -r requirements.in
 cryptography==3.1.1       # via paramiko, pyopenssl, requests
@@ -36,7 +39,7 @@ google-api-core[grpc]==1.22.0  # via google-api-python-client, google-cloud-bigq
 google-api-python-client==1.12.2  # via -r requirements.in
 google-auth-httplib2==0.0.4  # via google-api-python-client
 google-auth-oauthlib==0.4.1  # via pandas-gbq, pydata-google-auth
-google-auth==1.21.3       # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq, pydata-google-auth
+google-auth==1.22.0       # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq, pydata-google-auth
 google-cloud-bigquery-storage==1.1.0  # via -r requirements.in
 google-cloud-bigquery==1.28.0  # via -r requirements.in, pandas-gbq
 google-cloud-core==1.4.1  # via google-cloud-bigquery, google-cloud-storage
@@ -49,12 +52,13 @@ grpcio==1.32.0            # via google-api-core
 gunicorn==20.0.4          # via -r requirements.in
 html2text==2020.1.16      # via -r requirements.in
 httplib2==0.18.1          # via google-api-python-client, google-auth-httplib2
-idna==2.10                # via requests
+idna==2.10                # via requests, yarl
 jdcal==1.4.1              # via openpyxl
 lxml==4.5.2               # via -r requirements.in, premailer, pyquery
 lz4==3.1.0                # via -r requirements.in
 mccabe==0.6.1             # via flake8
 mock==3.0.5               # via -r requirements.in
+multidict==4.7.6          # via aiohttp, yarl
 networkx==2.4             # via -r requirements.in
 newrelic==5.20.0.149      # via -r requirements.in
 numpy==1.18.5             # via -r requirements.in, pandas, pyarrow, scipy
@@ -98,6 +102,7 @@ urllib3==1.25.10          # via requests, selenium
 watchdog==0.10.3          # via when-changed
 when-changed==0.3.0       # via -r requirements.in
 xlrd==1.2.0               # via -r requirements.in
+yarl==1.6.0               # via aiohttp
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
