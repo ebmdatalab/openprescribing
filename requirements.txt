@@ -30,7 +30,7 @@ django-dotenv==1.4.2      # via -r requirements.in
 django-extensions==3.0.9  # via -r requirements.in
 django==2.2.16            # via -r requirements.in, django-anymail, django-cors-headers, django-debug-toolbar, django-debug-toolbar-template-timings, djangorestframework
 djangorestframework-csv==2.1.0  # via -r requirements.in
-djangorestframework==3.11.1  # via -r requirements.in, djangorestframework-csv
+djangorestframework==3.12.1  # via -r requirements.in, djangorestframework-csv
 easyprocess==0.3          # via pyvirtualdisplay
 et-xmlfile==1.0.1         # via openpyxl
 fabric3==1.14.post1       # via -r requirements.in
