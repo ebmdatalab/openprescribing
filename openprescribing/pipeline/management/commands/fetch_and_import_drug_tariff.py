@@ -108,7 +108,7 @@ def import_month(xls_file, date):
 
             d = dict(zip(headers, values))
 
-            if d["basic price"] is None:
+            if d["basicprice"] is None:
                 msg = "Missing price for {} Drug Tariff for {}".format(
                     d["medicine"], date
                 )
@@ -117,9 +117,9 @@ def import_month(xls_file, date):
 
             TariffPrice.objects.get_or_create(
                 date=date,
-                vmpp_id=d["vmpp snomed code"],
-                tariff_category_id=get_tariff_cat_id(d["drug tariff category"]),
-                price_pence=int(d["basic price"]),
+                vmpp_id=d["vmppsnomedcode"],
+                tariff_category_id=get_tariff_cat_id(d["drugtariffcategory"]),
+                price_pence=int(d["basicprice"]),
             )
 
         ImportLog.objects.create(category="tariff", current_at=date, filename="none")
