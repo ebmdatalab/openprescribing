@@ -90,14 +90,14 @@ def import_month(xls_file, date):
 
     # The third row is column headings
     header_row = next(rows)
-    headers = [(c.value or "?").lower() for c in header_row]
+    headers = ["".join((c.value or "?").lower().split()) for c in header_row]
     assert headers == [
         "medicine",
-        "pack size",
+        "packsize",
         "?",
-        "vmpp snomed code",
-        "drug tariff category",
-        "basic price",
+        "vmppsnomedcode",
+        "drugtariffcategory",
+        "basicprice",
     ]
 
     with transaction.atomic():
