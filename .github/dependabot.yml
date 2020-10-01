@@ -21,6 +21,12 @@ updates:
     versions:
     - "< 3"
     - ">= 2.a"
+  - dependency-name: google-cloud-bigquery
+    versions:
+    - "< 2.0.0"
+  - dependency-name: google-cloud-bigquery-storage
+    versions:
+    - "< 2.0.0"
   - dependency-name: mock
     versions:
     - "> 3.0.5"
