@@ -32,13 +32,13 @@ easyprocess==0.3          # via pyvirtualdisplay
 et-xmlfile==1.0.1         # via openpyxl
 fabric3==1.14.post1       # via -r requirements.in
 flake8==3.8.4             # via -r requirements.in
-google-api-core[grpc]==1.22.0  # via google-api-python-client, google-cloud-bigquery, google-cloud-bigquery-storage, google-cloud-core
+google-api-core[grpc]==1.22.4  # via google-api-python-client, google-cloud-bigquery, google-cloud-bigquery-storage, google-cloud-core
 google-api-python-client==1.12.3  # via -r requirements.in
 google-auth-httplib2==0.0.4  # via google-api-python-client
 google-auth-oauthlib==0.4.1  # via pandas-gbq, pydata-google-auth
 google-auth==1.22.1       # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq, pydata-google-auth
 google-cloud-bigquery-storage==1.1.0  # via -r requirements.in
-google-cloud-bigquery==1.28.0  # via -r requirements.in, pandas-gbq
+google-cloud-bigquery==2.1.0  # via -r requirements.in, pandas-gbq
 google-cloud-core==1.4.3  # via google-cloud-bigquery, google-cloud-storage
 google-cloud-storage==1.31.2  # via -r requirements.in
 google-crc32c==1.0.0      # via google-resumable-media
@@ -66,7 +66,8 @@ paramiko==2.7.2           # via fabric3
 pathtools==0.1.2          # via watchdog
 pip-tools==5.3.1          # via -r requirements.in
 premailer==3.7.0          # via -r requirements.in
-protobuf==3.13.0          # via google-api-core, googleapis-common-protos
+proto-plus==1.10.1        # via google-cloud-bigquery
+protobuf==3.13.0          # via google-api-core, googleapis-common-protos, proto-plus
 psycopg2-binary==2.8.6    # via -r requirements.in
 pyarrow==1.0.1            # via -r requirements.in
 pyasn1-modules==0.2.8     # via google-auth
