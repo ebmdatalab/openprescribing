@@ -40,24 +40,32 @@ class Command(BaseCommand):
             # Part%20VIIIA%20September%202017.xlsx
             #
             # We split that into ['Part', 'VIIIA', 'September', '2017']
-            words = re.split(
-                r"[ -]+",
-                unquote(os.path.splitext(os.path.basename(a.attrs["href"]))[0]),
+            base_filename = unquote(
+                os.path.splitext(os.path.basename(a.attrs["href"]))[0]
             )
-            month_name, year = words[-2:]
 
-            # We have seen the last token in `words` be "19_0".  The year is
-            # reported to us via Slack, so if we pull out some nonsense here we
-            # *should* notice.
-            year = re.match("\d+", year).group()
-            if len(year) == 2:
-                year = "20" + year
+            if base_filename == "Part VIIIA Nov 20 updated":
+                # November 2020 has a different filename.  In general we want to be
+                # warned (through the scraper crashing) about updates (because we have
+                # to delete all records for the month in question, and reimport) so
+                # special-casing is appropriate here.
+                date = datetime.date(2020, 11, 1)
 
-            # We have seen the month be `September`, `Sept`, and `Sep`.
-            month_abbr = month_name.lower()[:3]
-            month = month_abbrs.index(month_abbr)
+            else:
+                words = re.split(r"[ -]+", base_filename)
+                month_name, year = words[-2:]
 
-            date = datetime.date(int(year), month, 1)
+                # We have seen the last token in `words` be "19_0".  The year is
+                # reported to us via Slack, so if we pull out some nonsense here we
+                # *should* notice.
+                year = re.match("\d+", year).group()
+                if len(year) == 2:
+                    year = "20" + year
+
+                # We have seen the month be `September`, `Sept`, and `Sep`.
+                month_abbr = month_name.lower()[:3]
+                month = month_abbrs.index(month_abbr)
+                date = datetime.date(int(year), month, 1)
 
             if ImportLog.objects.filter(category="tariff", current_at=date).exists():
                 continue
