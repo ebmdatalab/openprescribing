@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 # warned (through the scraper crashing) about updates (because we have
                 # to delete all records for the month in question, and reimport) so
                 # special-casing is appropriate here.
-                date = datetime.date(2020, 11, 1)
+                year, month = "2020", 11
 
             else:
                 words = re.split(r"[ -]+", base_filename)
@@ -65,8 +65,8 @@ class Command(BaseCommand):
                 # We have seen the month be `September`, `Sept`, and `Sep`.
                 month_abbr = month_name.lower()[:3]
                 month = month_abbrs.index(month_abbr)
-                date = datetime.date(int(year), month, 1)
 
+            date = datetime.date(int(year), month, 1)
             if ImportLog.objects.filter(category="tariff", current_at=date).exists():
                 continue
 
