@@ -57,6 +57,8 @@ class Command(BaseCommand):
             "vw__median_price_per_unit",
             "vw__ghost_generic_measure",
             "vw__herbal_list",
+            "vw__opioids_total_dmd",
+            "vw__opioids_total_ome",
             # This references pregabalin_total_mg, so must come afterwards
             "gaba_total_ddd",
         ]:
