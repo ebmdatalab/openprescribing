@@ -13,9 +13,10 @@ django-anymail[mailgun]
 django-cors-headers
 django-crispy-forms
 django-dotenv
+django-import-export
 django==2.2.16
-djangorestframework-csv
 djangorestframework
+djangorestframework-csv
 google-api-python-client
 google-cloud-bigquery
 google-cloud-storage
