@@ -210,7 +210,12 @@ DJANGO_APPS = (
 # Apps specific for this project go here.
 LOCAL_APPS = ("frontend", "dmd", "pipeline", "gcutils", "matrixstore")
 
-CONTRIB_APPS = ("anymail", "crispy_forms", "raven.contrib.django.raven_compat")
+CONTRIB_APPS = (
+    "anymail",
+    "crispy_forms",
+    "raven.contrib.django.raven_compat",
+    "import_export",
+)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS

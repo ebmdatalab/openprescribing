@@ -17,9 +17,6 @@ jobs:
         run: ./.github/scripts/decrypt_secret.sh
         env:
           GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE: ${{ secrets.GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE }}
-      - name: Generate SAUCE_HOST
-        run: |
-          echo "::set-env name=SAUCE_HOST::$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)"
       - name: Unit tests
         run: docker-compose run --service-ports test && docker-compose run --service-ports test-production
         env:
