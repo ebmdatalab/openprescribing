@@ -20,7 +20,7 @@
 {% if entity_type == 'practice' %}
 <p>
   We estimate that in {{ latest_month|date:"F Y" }} total price concessions for
-  out-of-stock medicines prescribed at {{ entity_name }} will cost your CCG an
+  products reported to only be available above Drug Tariff price at {{ entity_name }} will cost your CCG an
   additional <b>£{{ additional_cost|sigfigs:5|floatformat:"0"|intcomma }}</b>.
   This is for information only; you should discuss with your CCG before
   modifying a patient's medicine treatments based solely on Price Concessions.
@@ -28,7 +28,7 @@
 {% else %}
 <p>
   We estimate that in {{ latest_month|date:"F Y" }} total price concessions for
-  out-of-stock medicines will cost {{ entity_name }} an additional
+  products reported to only be available above Drug Tariff price will cost {{ entity_name }} an additional
   <b>£{{ additional_cost|sigfigs:5|floatformat:"0"|intcomma }}</b>.
 </p>
 {% endif %}
