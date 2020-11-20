@@ -298,6 +298,7 @@ def create_or_update_measure(measure_def, end_date):
     m.is_cost_based = v["is_cost_based"]
     m.is_percentage = v["is_percentage"]
     m.low_is_good = v["low_is_good"]
+    m.include_in_alerts = v.get("include_in_alerts", False)
 
     m.numerator_type = v["numerator_type"]
 
