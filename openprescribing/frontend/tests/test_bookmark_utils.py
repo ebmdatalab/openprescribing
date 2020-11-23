@@ -802,11 +802,11 @@ class TestNCSOConcessions(TestCase):
             msg.subject, "Your update about Price Concessions for Practice 2"
         )
         self.assertIn("published for **July 2018**", msg.body)
-        self.assertIn("prescribed at Practice 2", msg.body)
+        self.assertIn("at Practice 2", msg.body)
         additional_cost = round(
             ncso_spending_for_entity(self.practice, "practice", 1)[0]["additional_cost"]
         )
-        self.assertIn("an additional **\xa3{:,}**".format(additional_cost), msg.body)
+        self.assertIn("**\xa3{:,}**".format(additional_cost), msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
@@ -821,9 +821,7 @@ class TestNCSOConcessions(TestCase):
         additional_cost = round(
             ncso_spending_for_entity(self.ccg, "ccg", 1)[0]["additional_cost"]
         )
-        self.assertIn(
-            "cost CCG 0 an additional **\xa3{:,}**".format(additional_cost), msg.body
-        )
+        self.assertIn("**\xa3{:,}**".format(additional_cost), msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
@@ -840,12 +838,7 @@ class TestNCSOConcessions(TestCase):
         additional_cost = round(
             ncso_spending_for_entity(None, "all_england", 1)[0]["additional_cost"]
         )
-        self.assertIn(
-            "cost the NHS in England an additional **\xa3{:,}**".format(
-                additional_cost
-            ),
-            msg.body,
-        )
+        self.assertIn("**\xa3{:,}**".format(additional_cost), msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
