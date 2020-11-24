@@ -126,6 +126,11 @@ urlpatterns = [
     # All England
     path(r"national/england/", views.all_england, name="all_england"),
     path(r"all-england/", all_england_redirects),
+    path(
+        r"hospitals/",
+        TemplateView.as_view(template_name="all_hospitals.html"),
+        name="hospitals",
+    ),
     # Analyse
     path(r"analyse/", views.analyse, name="analyse"),
     # Price per unit
