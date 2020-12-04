@@ -142,8 +142,10 @@ var measures = {
       var maxZoom = _this.zoomLevelForOrgType(options.orgType);
       var map = L.mapbox.map(
         _this.el.mapPanel,
-        'mapbox.streets',
-        {zoomControl: false}).setView([52.905, -1.79], maxZoom);
+        null,
+        {zoomControl: false});
+      map.setView([52.905, -1.79], maxZoom);
+      map.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
       map.scrollWheelZoom.disable();
       var layer = L.mapbox.featureLayer()
           .loadURL(options['orgLocationUrl'])
