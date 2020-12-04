@@ -231,10 +231,8 @@ class Command(BaseCommand):
             print(message)
             send_all_england_alerts(recipient_email)
         else:
-            message = (
-                "Not sending All England alerts as found unhandled option: {}".format(
-                    ", ".join(set_options.keys())
-                )
+            message = "Not sending All England alerts as found unhandled option: {}".format(
+                ", ".join(set_options.keys())
             )
             logger.info(message)
             print(message)
@@ -246,6 +244,7 @@ class Command(BaseCommand):
             .current_at.strftime("%Y-%m-%d")
             .lower()
         )
+        self.send_all_england_alerts(options)
         with EmailErrorDeferrer(int(options["max_errors"])) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
                 error_deferrer.try_email(
@@ -256,4 +255,4 @@ class Command(BaseCommand):
                 error_deferrer.try_email(
                     self.send_search_bookmark_email, search_bookmark, now_month
                 )
-        self.send_all_england_alerts(options)
+
