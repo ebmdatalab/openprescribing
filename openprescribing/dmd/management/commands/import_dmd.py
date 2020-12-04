@@ -292,16 +292,13 @@ class Command(BaseCommand):
             bnf_code = row[2].value
             snomed_id = row[4].value
 
-            if bnf_code is None or snomed_id is None:
-                continue
-
-            if bnf_code == "'" or snomed_id == "'":
-                continue
-
             if isinstance(bnf_code, str):
                 bnf_code = bnf_code.lstrip("'")
             if isinstance(snomed_id, str):
                 snomed_id = snomed_id.lstrip("'")
+
+            if not bnf_code or not snomed_id:
+                continue
 
             try:
                 obj = model.objects.get(id=snomed_id)
