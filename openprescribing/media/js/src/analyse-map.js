@@ -23,7 +23,8 @@ var analyseMap = {
     _this.activeNames = _.pluck(options.orgIds, 'name');
     L.mapbox.accessToken = window.MAPBOX_PUBLIC_TOKEN;
     if (typeof _this.map === 'undefined') {
-      _this.map = L.mapbox.map('map', 'mapbox.streets');
+      _this.map = L.mapbox.map('map', null);
+      _this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
       _this.map.scrollWheelZoom.disable();
     } else {
       _this.map.removeLayer(_this.orgLayer);
