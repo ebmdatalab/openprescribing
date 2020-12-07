@@ -506,6 +506,9 @@ def attach_image(msg, url, file_path, selector, dimensions="1024x1024"):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         universal_newlines=True,
+        # Fix for PhantomJS under new versions of Debian/Ubuntu
+        # See https://github.com/ariya/phantomjs/issues/15449
+        env=dict(os.environ, OPENSSL_CONF="/etc/ssl"),
     )
     if response.returncode > 0:
         raise BadAlertImageError(
