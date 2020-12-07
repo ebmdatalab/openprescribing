@@ -51,8 +51,14 @@ def init_db(sqlite_conn, data_factory, dates):
 
 def import_practice_stats(sqlite_conn, data_factory, dates):
     filtered_practice_stats = _filter_by_date(data_factory.practice_statistics, dates)
-    practice_statistics_csv = _dicts_to_csv(filtered_practice_stats)
-    practice_statistics = parse_practice_statistics_csv(practice_statistics_csv)
+    filtered_practice_stats = list(filtered_practice_stats)
+    if filtered_practice_stats:
+        practice_statistics_csv = _dicts_to_csv(filtered_practice_stats)
+        # This blows up if we give it an empty CSV because it can't find the
+        # headers it expects
+        practice_statistics = parse_practice_statistics_csv(practice_statistics_csv)
+    else:
+        practice_statistics = []
     write_practice_stats(sqlite_conn, practice_statistics)
 
 

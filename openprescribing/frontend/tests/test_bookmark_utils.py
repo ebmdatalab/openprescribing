@@ -516,8 +516,9 @@ class GenerateImageTestCase(unittest.TestCase):
             if e.errno != errno.ENOENT:
                 raise
 
-    @patch("subprocess.check_output")
-    def test_empty_image_raises(self, check_output):
+    @patch("subprocess.run")
+    def test_empty_image_raises(self, run):
+        run.return_value.returncode = 0
         with open(self.file_path, "a"):
             # create an empty file
             os.utime(self.file_path, None)
