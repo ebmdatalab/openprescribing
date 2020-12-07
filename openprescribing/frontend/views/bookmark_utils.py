@@ -500,8 +500,24 @@ def attach_image(msg, url, file_path, selector, dimensions="1024x1024"):
         dimensions=dimensions,
         wait=wait,
     )
-    result = subprocess.check_output(cmd, shell=True)
-    logger.debug("Command %s completed with output %s" % (cmd, result.strip()))
+    response = subprocess.run(
+        cmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+    )
+    if response.returncode > 0:
+        raise BadAlertImageError(
+            f"phantomjs command failed with code {response.returncode}\n\n"
+            f"cmd:\n{cmd}\n\n"
+            f"stdout:\n{response.stdout}\n\n"
+            f"stderr:\n{response.stderr}"
+        )
+    else:
+        logger.debug(
+            "Command %s completed with output %s" % (cmd, response.stdout.strip())
+        )
     if os.path.getsize(file_path) == 0:
         msg = "File at %s empty (generated from url %s)" % (file_path, url)
         raise BadAlertImageError(msg)
