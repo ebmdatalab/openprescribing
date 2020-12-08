@@ -180,7 +180,9 @@ class Command(BaseCommand):
             org = org_bookmark.pcn or PCN.objects.get(pk=options["pcn"])
         else:
             assert False
-
+        if getattr(org, "close_date", None):
+            logger.info("Skipping sending alert for closed org %s", org.pk)
+            return
         stats = bookmark_utils.InterestingMeasureFinder(org).context_for_org_email()
 
         try:
@@ -246,6 +248,7 @@ class Command(BaseCommand):
             .current_at.strftime("%Y-%m-%d")
             .lower()
         )
+        self.send_all_england_alerts(options)
         with EmailErrorDeferrer(int(options["max_errors"])) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
                 error_deferrer.try_email(
@@ -256,4 +259,3 @@ class Command(BaseCommand):
                 error_deferrer.try_email(
                     self.send_search_bookmark_email, search_bookmark, now_month
                 )
-        self.send_all_england_alerts(options)
