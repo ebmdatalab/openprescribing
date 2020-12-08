@@ -1,6 +1,6 @@
-FROM python:3.5
+FROM python:3.8
 
-MAINTAINER Seb Bacon version: 0.1
+MAINTAINER Seb Bacon version: 0.2
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /code
 WORKDIR /code
