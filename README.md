@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ebmdatalab/openprescribing.svg?branch=master)](https://travis-ci.org/ebmdatalab/openprescribing)
+![OpenPrescribing CI](https://github.com/ebmdatalab/openprescribing/workflows/OpenPrescribing%20CI/badge.svg)
 
 # Open Prescribing
 
@@ -20,10 +20,11 @@ Which to use?
   may well switch to using ansible in the medium term. Use this route
   if you don't want to mess around with virtualisation for some
   reason.
-* Our tests are run in Travis using Docker - they have to, because
-  there's no pre-built postgis docker environment.  Use this route to
-  reproduce the travis test environment exactly (i.e. you probably
-  don't want to use this route!)
+* Our tests are run in Github Actions using Docker - they do this because 
+  they reproduce identically the previous Travis build process. 
+  Travis had to do this because there was no pre-built postgis docker 
+  environment.  Use this route to reproduce the Github Actions test 
+  environment exactly (i.e. you probably don't want to use this route!)
 
 ## Using vagrant
 
@@ -245,25 +246,23 @@ And the inverse is:
 
     TEST_SUITE=nonfunctional make test
 
-### Run the functional tests in Saucelabs
+### Run the functional tests in BrowserStack
 
-In our CI environment we use [Saucelabs](http://saucelabs.com) to run
+In our CI environment we use [BrowserStack](https://www.browserstack.com/) to run
 the functional tests in various browsers. If you are connected to the
-internet, you can run these tests against Saucelabs by
-[installing Sauce Connect](https://wiki.saucelabs.com/display/DOCS/Setting+Up+Sauce+Connect),
-and running:
+internet, you can run these tests using BrowserStack, refer to 
+[their proxy documentation](https://www.browserstack.com/docs/automate/selenium/test-behind-proxy/configure-settings) for how to set this up.
 
-    # Start the Sauce Connect proxy
-    ./sc -u $SAUCE_USERNAME -k $SAUCE_ACCESS_KEY
+```bash
+# Start the BrowserStack proxy
+./BrowserStackLocal --key YOUR_ACCESS_KEY --proxy-host <proxy_host> --proxy-port <proxy_port>
 
-    # Run the tests using Saucelabs
-    USE_SAUCELABS=1 BROWSER="firefox:47:Windows 2012" make test
+# Run the tests using BrowserStack
+TEST_SUITE="functional" BROWSER="Firefox:latest:OS X:Catalina" make test
+```
 
-You can work out the browser string to use for your desired platform /
-browser combination using
-[this Saucelabs tool](https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/).
-You can find the combinations we use for our Travis CI in
-[`.travis.yml`](.travis.yml).
+You can find the combinations we use for our Github Actions CI in
+[`.github/workflows/main.yml`](.github/workflows/main.yml).
 
 ### Skip the functional tests
 
