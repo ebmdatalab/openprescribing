@@ -33,8 +33,6 @@ ACCESS_LOGFILE="$LOGDIR/gunicorn-access.log"
 
 # Export environment variables that depend on $ENV or $REPO_ROOT
 export PYTHONPATH=$REPO_ROOT/openprescribing:$PYTHONPATH
-export NEW_RELIC_CONFIG_FILE="$REPO_ROOT/newrelic.ini"
-export NEW_RELIC_ENVIRONMENT=$ENV
 
 # This is set here rather than with the rest of the config as we only want
 # caching enabled for the web process not e.g. cron jobs or ad-hoc management
@@ -63,8 +61,7 @@ if [[ -z "$PORT" && -z "$LISTEN_FDS" ]]; then
   exit 1
 fi
 
-# Start gunicorn via newrelic-admin
-cmd="newrelic-admin run-program gunicorn openprescribing.wsgi:application \
+cmd="gunicorn openprescribing.wsgi:application \
   --name $NAME \
   --workers $GUNICORN_NUM_WORKERS \
   --timeout $GUNICORN_TIMEOUT \

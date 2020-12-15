@@ -26,7 +26,6 @@ html2text
 lxml
 lz4
 networkx
-newrelic
 numpy
 openpyxl==2.6.4
 pandas-gbq
