@@ -1,6 +1,7 @@
 import os
 
 import requests
+from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -15,18 +16,21 @@ class Command(BaseCommand):
 
     def handle(self, year, month, **kwargs):
         year_and_month = "{year}_{month:02d}".format(year=year, month=month)
-        filename = "EPD_{year}{month:02d}.csv".format(year=year, month=month)
-
         dir_path = os.path.join(
             settings.PIPELINE_DATA_BASEDIR, "prescribing_v2", year_and_month
         )
-        csv_path = os.path.join(dir_path, filename)
         mkdir_p(dir_path)
 
-        url = "https://storage.googleapis.com/datopian-nhs/csv/" + filename
-        rsp = requests.get(url, stream=True)
+        rsp = requests.get(
+            "https://opendata.nhsbsa.net/dataset/english-prescribing-data-epd"
+        )
+        doc = BeautifulSoup(rsp.text, "html.parser")
+        filename = "epd_{year}{month:02d}.csv".format(year=year, month=month)
+        urls = [a["href"] for a in doc.find_all("a") if filename in a["href"]]
+        assert len(urls) == 1, urls
+        rsp = requests.get(urls[0], stream=True)
         assert rsp.ok
 
-        with open(csv_path, "wb") as f:
+        with open(os.path.join(dir_path, filename), "wb") as f:
             for block in rsp.iter_content(32 * 1024):
                 f.write(block)
