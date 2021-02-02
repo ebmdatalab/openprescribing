@@ -54,7 +54,7 @@
 	],
 	"denominator_from": "{hscic}.raw_prescribing_normalised",
 	"denominator_where": [
-		"bnf_code LIKE '0601023AW%' --Semaglutide"
+		"bnf_code LIKE '0601023AW%' --Semaglutide",
 		"AND",
 		 "(",
 	    "bnf_name  NOT LIKE '%tablet%' OR",
