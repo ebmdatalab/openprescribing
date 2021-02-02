@@ -33,7 +33,20 @@
 	"numerator_where": [
 		"quantity_per_item>3",
 		"AND",
-		"bnf_code LIKE '0601023AW%' --Semaglutide"
+		"bnf_code LIKE '0601023AW%' --Semaglutide",
+		"AND",
+		 "(",
+	    "bnf_name  NOT LIKE '%tablet%' OR",
+	    "bnf_name  NOT LIKE '% tab %' OR",
+	    "bnf_name  NOT LIKE '% tab' OR",
+	    "bnf_name  NOT LIKE '% tabs %' OR",
+	    "bnf_name  NOT LIKE '% tabs' OR",
+	    "bnf_name  NOT LIKE '%capsule%' OR",
+	    "bnf_name  NOT LIKE '% caps %' OR",
+	    "bnf_name  NOT LIKE '% caps' OR",
+	    "bnf_name  NOT LIKE '%caplet%' OR",
+	    "bnf_name  NOT LIKE '%Chewtab%'",
+    		")"
 	],
 	"denominator_type": "custom",
 	"denominator_columns": [
@@ -42,12 +55,25 @@
 	"denominator_from": "{hscic}.raw_prescribing_normalised",
 	"denominator_where": [
 		"bnf_code LIKE '0601023AW%' --Semaglutide"
+		"AND",
+		 "(",
+	    "bnf_name  NOT LIKE '%tablet%' OR",
+	    "bnf_name  NOT LIKE '% tab %' OR",
+	    "bnf_name  NOT LIKE '% tab' OR",
+	    "bnf_name  NOT LIKE '% tabs %' OR",
+	    "bnf_name  NOT LIKE '% tabs' OR",
+	    "bnf_name  NOT LIKE '%capsule%' OR",
+	    "bnf_name  NOT LIKE '% caps %' OR",
+	    "bnf_name  NOT LIKE '% caps' OR",
+	    "bnf_name  NOT LIKE '%caplet%' OR",
+	    "bnf_name  NOT LIKE '%Chewtab%'",
+    		")"
 	],
 "date_reviewed": [
-    "2020-05-03"
+    "2021-02-02"
   ],
   "next_review": [
-    "2020-11-21"
+    "2021-11-21"
   ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
