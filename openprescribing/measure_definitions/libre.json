@@ -25,7 +25,8 @@
   "low_is_good": null,
   "numerator_type": "bnf_quantity",
   "numerator_bnf_codes_filter": [
-    "21480000100 # FreeStyle Libre Sensor Kit"
+    "21480000100 # FreeStyle Libre Sensor Kit 1",
+    "21480000100 # FreeStyle Libre Sensor Kit 2"
   ],
   "denominator_type": "list_size"
 }
