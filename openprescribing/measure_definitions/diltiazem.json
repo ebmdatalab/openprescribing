@@ -12,7 +12,8 @@
   "why_it_matters": [
     "<a href='https://bnf.nice.org.uk/drug/diltiazem-hydrochloride.html#prescribingAndDispensingInformations'>The BNF states</a>: ",
     "Different versions of modified-release preparations containing more than 60 mg diltiazem hydrochloride may not have the same clinical effect. ",
-    "To avoid confusion between these different formulations of diltiazem, prescribers should specify the brand to be dispensed."
+    "To avoid confusion between these different formulations of diltiazem, prescribers should specify the brand to be dispensed.",
+    "You can read more in our detailed paper on <a href='https://doi.org/10.2196/17003'> unsafe prescribing of diltiazem</a>."
   ],
   "tags": [
     "cardiovascular",
