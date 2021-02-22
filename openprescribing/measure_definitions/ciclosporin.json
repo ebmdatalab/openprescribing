@@ -13,7 +13,8 @@
   "why_it_matters": [
     "It is recommended for both <a href='https://bnf.nice.org.uk/drug/ciclosporin.html#prescribingAndDispensingInformations'> ciclosporin </a>",
     "and  <a href='https://bnf.nice.org.uk/drug/tacrolimus.html#importantSafetyInformations'> tacrolimus </a>",
-    "that patients are prescribed and dispensed by brand name, to reduce the problems of patients switching formulations. "
+    "that patients are prescribed and dispensed by brand name, to reduce the problems of patients switching formulations.",
+    "You can read more in our detailed paper on <a href='https://doi.org/10.2196/17003'> unsafe prescribing of tacrolimus and ciclosporin</a>."
   ],
   "tags": [
     "core",
