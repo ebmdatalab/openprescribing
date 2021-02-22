@@ -35,18 +35,7 @@
 		"AND",
 		"bnf_code LIKE '0601023AW%' --Semaglutide",
 		"AND",
-		 "(",
-	    "bnf_name  NOT LIKE '%tablet%' OR",
-	    "bnf_name  NOT LIKE '% tab %' OR",
-	    "bnf_name  NOT LIKE '% tab' OR",
-	    "bnf_name  NOT LIKE '% tabs %' OR",
-	    "bnf_name  NOT LIKE '% tabs' OR",
-	    "bnf_name  NOT LIKE '%capsule%' OR",
-	    "bnf_name  NOT LIKE '% caps %' OR",
-	    "bnf_name  NOT LIKE '% caps' OR",
-	    "bnf_name  NOT LIKE '%caplet%' OR",
-	    "bnf_name  NOT LIKE '%Chewtab%'",
-    		")"
+	        "bnf_name  LIKE '%inj%'"
 	],
 	"denominator_type": "custom",
 	"denominator_columns": [
@@ -56,21 +45,10 @@
 	"denominator_where": [
 		"bnf_code LIKE '0601023AW%' --Semaglutide",
 		"AND",
-		 "(",
-	    "bnf_name  NOT LIKE '%tablet%' OR",
-	    "bnf_name  NOT LIKE '% tab %' OR",
-	    "bnf_name  NOT LIKE '% tab' OR",
-	    "bnf_name  NOT LIKE '% tabs %' OR",
-	    "bnf_name  NOT LIKE '% tabs' OR",
-	    "bnf_name  NOT LIKE '%capsule%' OR",
-	    "bnf_name  NOT LIKE '% caps %' OR",
-	    "bnf_name  NOT LIKE '% caps' OR",
-	    "bnf_name  NOT LIKE '%caplet%' OR",
-	    "bnf_name  NOT LIKE '%Chewtab%'",
-    		")"
+		 "bnf_name  LIKE '%inj%'"
 	],
 "date_reviewed": [
-    "2021-02-02"
+    "2021-02-22"
   ],
   "next_review": [
     "2021-11-21"
