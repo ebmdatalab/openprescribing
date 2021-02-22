@@ -10,10 +10,10 @@
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "Freestyle Libre is a new continuous blood glucose monitoring system for people with diabetes, which reduces the amount of times a person may need to use a 'finger prick test'. ",
-    "It is relatively expensive, and there has been some debate about its place in therapy.  Consequently CCGs have different funding ",
-    "policies, although from April 2019 <a href='https://www.england.nhs.uk/2018/11/nhs-to-provide-life-changing-glucose-monitors-for-type-1-diabetes-patients/'> ",
-    "NHS England has confirmed that funding will be available</a> to patients who meet the clinical criteria. ",
-    "The current recommendations from the NHS Regional Medicines Optimisation Committee can be found <a href='https://www.sps.nhs.uk/wp-content/uploads/2017/11/Flash-Glucose-monitoring-System-RMOC-Statement-final-2.pdf'>here</a>."
+    "It is relatively expensive, and there has been some debate about its place in therapy.  Consequently CCGs originally had different funding ",
+    "policies, although <a href='https://www.england.nhs.uk/publication/flash-glucose-monitoring-national-arrangements-for-funding-of-relevant-diabetes-patients/'> ",
+    "in 2019 NHS England confirmed that national funding was available to offer Freestyle Libre</a> to patients who meet the clinical criteria. ",
+    "In 2020 Freestyle Libre 2, an updated version of the device requiring different sensors was released.  Both types of sensor are included in this marker."
   ],
   "tags": [
     "core",
@@ -26,7 +26,7 @@
   "numerator_type": "bnf_quantity",
   "numerator_bnf_codes_filter": [
     "21480000100 # FreeStyle Libre Sensor Kit 1",
-    "21480000100 # FreeStyle Libre Sensor Kit 2"
+    "21480000101 # FreeStyle Libre Sensor Kit 2"
   ],
   "denominator_type": "list_size"
 }
