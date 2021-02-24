@@ -14,7 +14,7 @@ from django.db.models import fields as django_fields
 from django.db.models import ForeignKey
 
 from dmd import models
-from dmd.models import AMP, AMPP, VMP, VMPP
+from dmd.models import AMP, AMPP, VMP, VMPP, AvailabilityRestriction
 from dmd.view_schema import schema
 from dmd.obj_types import cls_to_obj_type
 from frontend.models import ImportLog, Presentation
@@ -217,7 +217,12 @@ class Command(BaseCommand):
     def import_model(self, model, elements):
         """Import model instances from list of XML elements."""
 
-        model.objects.all().delete()
+        if model == AvailabilityRestriction:
+            # AvailabilityRestriction 8 (Hospital Only) has been removed from the dm+d
+            # releases, but is still referenced by ~1500 AMPs.
+            model.objects.exclude(pk=8).delete()
+        else:
+            model.objects.all().delete()
 
         boolean_field_names = [
             f.name
