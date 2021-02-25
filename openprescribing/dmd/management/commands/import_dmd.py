@@ -262,7 +262,7 @@ class Command(BaseCommand):
         if model == AvailabilityRestriction:
             # This has been removed from the dm+d releases, but is still currently
             # referenced by ~1500 AMPs.
-            row = {'cd': '8', 'descr': 'Hospital Only'}
+            row = {"cd": "8", "descr": "Hospital Only"}
             values.append([row.get(name) for name in column_names])
 
         with connection.cursor() as cursor:
