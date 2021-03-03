@@ -14,7 +14,7 @@ from django.db.models import fields as django_fields
 from django.db.models import ForeignKey
 
 from dmd import models
-from dmd.models import AMP, AMPP, VMP, VMPP, AvailabilityRestriction
+from dmd.models import AMP, AMPP, VMP, VMPP
 from dmd.view_schema import schema
 from dmd.obj_types import cls_to_obj_type
 from frontend.models import ImportLog, Presentation
@@ -257,12 +257,6 @@ class Command(BaseCommand):
             for name in boolean_field_names:
                 row[name] = name in row
 
-            values.append([row.get(name) for name in column_names])
-
-        if model == AvailabilityRestriction:
-            # This has been removed from the dm+d releases, but is still currently
-            # referenced by ~1500 AMPs.
-            row = {"cd": "8", "descr": "Hospital Only"}
             values.append([row.get(name) for name in column_names])
 
         with connection.cursor() as cursor:
