@@ -287,6 +287,9 @@ class Command(BaseCommand):
         AMPP.objects.update(bnf_code=None)
 
         for row in rows:
+            if row[1].value is None:
+                continue
+
             model = type_to_model[row[1].value]
 
             bnf_code = row[2].value
