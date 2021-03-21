@@ -30,7 +30,7 @@ class Command(BaseCommand):
         dir_path = os.path.join(
             settings.PIPELINE_DATA_BASEDIR,
             "prescribing_v2",
-            "{year}{month:02d}".format(year=year, month=month),
+            "{year}_{month:02d}".format(year=year, month=month),
         )
         mkdir_p(dir_path)
         filename = "epd_{year}{month:02d}.csv".format(year=year, month=month)
