@@ -83,7 +83,7 @@ def _normalise_org_type(q, is_exact, org_type):
         return org_type
     # Otherwise we determine the default based on the behaviour of the old API
     if is_exact:
-        if len(q) == 3:
+        if len(q) in [3, 5]:
             return "ccg"
         else:
             return "practice"

@@ -96,7 +96,7 @@ def _get_org_type_and_id_from_request(request):
         # using the API.  Now we have measures for regional teams, we cannot
         # guess the type of an org by the length of its code, as both CCGs and
         # regional teams have codes of length 3.
-        if len(org_id) == 3:
+        if len(org_id) in [3, 5]:
             org_type = "ccg"
         elif len(org_id) == 6:
             org_type = "practice"
@@ -272,9 +272,8 @@ def _measure_by_org(request, org_type):
     if parent_org_type is None:
         if org_type == "practice" and org_ids:
             l = len(org_ids[0])
-            assert all(len(org_id) == l for org_id in org_ids)
 
-            if l == 3:
+            if l in [3, 5]:
                 parent_org_type = "pct"
             elif l == 6:
                 parent_org_type = "practice"
