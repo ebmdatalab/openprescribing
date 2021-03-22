@@ -170,7 +170,7 @@ class PCT(models.Model):
         ("Unknown", "Unknown"),
     )
     code = models.CharField(
-        max_length=3, primary_key=True, help_text="Primary care trust code"
+        max_length=5, primary_key=True, help_text="Primary care trust code"
     )
 
     # These are NULLable, because not every PCT belongs to either a
