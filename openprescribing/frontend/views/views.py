@@ -847,7 +847,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
     if bnf_code != primary_code:
         url = request.get_full_path().replace(bnf_code, primary_code)
         return HttpResponseRedirect(url)
-    if len(entity_code) == 3:
+    if len(entity_code) in [3, 5]:
         entity = get_object_or_404(PCT, code=entity_code)
     elif len(entity_code) == 6:
         entity = get_object_or_404(Practice, code=entity_code)

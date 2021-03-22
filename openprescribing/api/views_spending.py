@@ -46,7 +46,7 @@ class BadDate(NotFound):
 
 def _get_org_or_404(org_code, org_type=None):
     if not org_type and org_code:
-        org_type = "ccg" if len(org_code) == 3 else "practice"
+        org_type = "ccg" if len(org_code) in [3, 5] else "practice"
     if org_type.lower() == "ccg":
         org = get_object_or_404(PCT, pk=org_code)
     elif org_type == "practice":
@@ -72,7 +72,7 @@ def bubble(request, format=None):
     if highlight:
         highlight_org_id = highlight
         highlight_org_type = (
-            "standard_ccg" if len(highlight_org_id) == 3 else "practice"
+            "standard_ccg" if len(highlight_org_id) in [3, 5] else "practice"
         )
     else:
         highlight_org_type = "all_standard_practices"
@@ -135,7 +135,7 @@ def price_per_unit(request, format=None):
             "aggregate flag"
         )
     if not entity_type:
-        entity_type = "ccg" if len(entity_code) == 3 else "practice"
+        entity_type = "ccg" if len(entity_code) in [3, 5] else "practice"
 
     filename = date
     if bnf_code:

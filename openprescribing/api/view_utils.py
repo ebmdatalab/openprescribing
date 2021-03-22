@@ -35,7 +35,7 @@ def get_practice_ids_from_org(org_codes):
 
     practices = []
     for i, org in enumerate(org_codes):
-        if len(org) == 3:
+        if len(org) in [3, 5]:
             practices_for_ccg = Practice.objects.filter(ccg_id=org)
             for p in practices_for_ccg:
                 practices.append(p.code)
