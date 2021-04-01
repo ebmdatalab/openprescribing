@@ -66,7 +66,7 @@
 - name: Add NodeSource 10.x apt repository
   become: yes
   apt_repository:
-    repo: 'deb https://deb.nodesource.com/node_10.x stretch main'
+    repo: 'deb https://deb.nodesource.com/node_10.x buster main'
     update_cache: yes
     mode: 0644
 
@@ -85,7 +85,7 @@
 - name: ensure postgres apt repository exists
   become: yes
   apt_repository:
-    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main'
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main'
     update_cache: yes
     mode: 0644
 

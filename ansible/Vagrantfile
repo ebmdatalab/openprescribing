@@ -7,7 +7,7 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # define the box
-    config.vm.box = "debian/contrib-stretch64"
+    config.vm.box = "debian/contrib-buster64"
 
     config.vm.hostname = "openprescribing"
 
