@@ -92,7 +92,7 @@ requests-futures==1.0.0   # via -r requirements.in
 requests-oauthlib==1.3.0  # via google-auth-oauthlib
 requests[security]==2.24.0  # via -r requirements.in, django-anymail, google-api-core, google-cloud-storage, premailer, requests-futures, requests-oauthlib
 rsa==4.6                  # via google-auth
-scipy==1.4.1              # via -r requirements.in
+scipy==1.5.4              # via -r requirements.in
 selenium==3.141.0         # via -r requirements.in
 six==1.15.0               # via bcrypt, cryptography, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-auth-httplib2, google-cloud-bigquery, google-resumable-media, grpcio, mock, pip-tools, protobuf, pynacl, pyopenssl, python-dateutil
 soupsieve==2.0.1          # via beautifulsoup4
