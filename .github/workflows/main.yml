@@ -74,7 +74,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Ansible buildout test
-        run: docker run -v ${GITHUB_WORKSPACE}:/openprescribing/ dockette/buster /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
+        run: docker run -v ${GITHUB_WORKSPACE}:/openprescribing/ dockette/debian:buster /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
         env:
           LANG: en_US.UTF-8
       - name: Notify slack failure
