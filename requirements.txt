@@ -41,7 +41,7 @@ cssutils==1.0.2
     # via premailer
 decorator==4.4.2
     # via networkx
-defusedxml==0.6.0
+defusedxml==0.7.1
     # via odfpy
 diff-match-patch==20200713
     # via django-import-export
