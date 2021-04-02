@@ -214,7 +214,7 @@ pyflakes==2.2.0
     # via flake8
 pynacl==1.4.0
     # via paramiko
-pyopenssl==19.1.0
+pyopenssl==20.0.1
     # via requests
 pyparsing==2.4.7
     # via httplib2
