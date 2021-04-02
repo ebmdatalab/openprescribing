@@ -296,7 +296,7 @@ watchdog==0.10.3
     # via when-changed
 when-changed==0.3.0
     # via -r requirements.in
-xlrd==1.2.0
+xlrd==2.0.1
     # via
     #   -r requirements.in
     #   tablib
