@@ -135,7 +135,7 @@ graphviz==0.14.2
     # via -r requirements.in
 grpcio==1.32.0
     # via google-api-core
-gunicorn==20.0.4
+gunicorn==20.1.0
     # via -r requirements.in
 html2text==2020.1.16
     # via -r requirements.in
