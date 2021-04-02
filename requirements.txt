@@ -232,7 +232,7 @@ pytz==2020.1
     #   pandas
 pyvirtualdisplay==1.3.2
     # via -r requirements.in
-pyyaml==5.4
+pyyaml==5.4.1
     # via tablib
 raven==6.10.0
     # via -r requirements.in
