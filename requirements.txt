@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+asgiref==3.3.1
+    # via django
 backports.csv==1.0.5
     # via -r requirements.in
 bcrypt==3.1.7
@@ -65,7 +67,7 @@ django-extensions==3.0.9
     # via -r requirements.in
 django-import-export==2.4.0
     # via -r requirements.in
-django==2.2.16
+django==3.1.7
     # via
     #   -r requirements.in
     #   django-anymail
