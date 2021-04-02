@@ -102,12 +102,13 @@ google-auth-oauthlib==0.4.1
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-auth==1.22.1
+google-auth==1.28.0
     # via
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
     #   google-auth-oauthlib
+    #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
     #   pydata-google-auth
@@ -117,7 +118,7 @@ google-cloud-bigquery==1.28.0
     # via
     #   -r requirements.in
     #   pandas-gbq
-google-cloud-core==1.4.3
+google-cloud-core==1.6.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
@@ -266,6 +267,7 @@ six==1.15.0
     #   google-auth
     #   google-auth-httplib2
     #   google-cloud-bigquery
+    #   google-cloud-core
     #   google-resumable-media
     #   grpcio
     #   mock
