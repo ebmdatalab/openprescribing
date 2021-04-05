@@ -160,7 +160,7 @@ mccabe==0.6.1
     # via flake8
 mock==3.0.5
     # via -r requirements.in
-networkx==2.4
+networkx==2.5.1
     # via -r requirements.in
 numpy==1.18.5
     # via
