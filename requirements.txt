@@ -162,7 +162,7 @@ mock==3.0.5
     # via -r requirements.in
 networkx==2.4
     # via -r requirements.in
-numpy==1.18.5
+numpy==1.20.2
     # via
     #   -r requirements.in
     #   pandas
