@@ -45,7 +45,7 @@ defusedxml==0.6.0
     # via odfpy
 diff-match-patch==20200713
     # via django-import-export
-diskcache==5.0.3
+diskcache==5.2.1
     # via -r requirements.in
 django-anymail[mailgun]==8.1
     # via -r requirements.in
