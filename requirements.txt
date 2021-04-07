@@ -65,7 +65,7 @@ django-extensions==3.0.9
     # via -r requirements.in
 django-import-export==2.4.0
     # via -r requirements.in
-django==2.2.16
+django==2.2.18
     # via
     #   -r requirements.in
     #   django-anymail
