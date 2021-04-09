@@ -6,6 +6,14 @@ from common import utils
 
 import sys
 
+# Replace stdlib sqlite3 with a more up-to-date version. This bit of
+# monkey-patching is required because we want the DiskCache library to use this
+# version as well and we can't (easily) rewrite its imports. And also, because
+# this is an experiment for now this is a quick and non-invasive way of trying
+# it out. Longer term we can change our own code to import pysqlite3 directly
+# and do some more targetted monkey patching for DiskCache.
+__import__("pysqlite3")
+sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 
 # PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
