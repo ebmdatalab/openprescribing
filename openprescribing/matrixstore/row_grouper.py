@@ -1,8 +1,21 @@
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 import hashlib
 
 import numpy
 import scipy.sparse
+
+
+class UnknownGroupError(KeyError):
+    pass
+
+
+class GroupsDict(dict):
+    def __missing__(self, key):
+        """
+        Raise a specific error for unknown group IDs, rather than a generic
+        KeyError to make these easier to catch elsewhere
+        """
+        raise UnknownGroupError(key)
 
 
 class RowGrouper(object):
@@ -51,7 +64,7 @@ class RowGrouper(object):
             group_id: group_offset for (group_offset, group_id) in enumerate(self.ids)
         }
         # Maps group ID to the numpy object which selects the rows of that group
-        self._group_selectors = OrderedDict(
+        self._group_selectors = GroupsDict(
             [(group_id, numpy.array(groups[group_id])) for group_id in self.ids]
         )
         # Where each group contains only one row (which is the case whenever
