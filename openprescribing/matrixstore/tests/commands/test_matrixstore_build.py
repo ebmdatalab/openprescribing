@@ -21,6 +21,7 @@ import json
 import numbers
 import shutil
 import sqlite3
+import sys
 import tempfile
 
 from django.test import SimpleTestCase
@@ -266,12 +267,22 @@ class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
         self.connection.close()
 
     def test_same_file_produced_by_import_test_data_fast(self):
+        # This is awful: we do some sys.module munging in settings.base to
+        # globally replace sqlite3 with pysqlite3. However we were also using
+        # `iterdump` as a lazy way of comparing the contents of two databases
+        # and it turns out that pysqlite3 doesn't include that. So we
+        # temporarily undo the monkey patch and grab `iterdump` from the
+        # stdlib. Nice.
+        orig_sqlite3 = sys.modules.pop("sqlite3")
+        from sqlite3.dump import _iterdump
+
+        sys.modules["sqlite3"] = orig_sqlite3
         other_connection = sqlite3.connect(":memory:")
         import_test_data_fast(
             other_connection, self.data_factory, self.end_date, self.number_of_months
         )
-        db_dump = list(self.connection.iterdump())
-        other_db_dump = list(other_connection.iterdump())
+        db_dump = list(_iterdump(self.connection))
+        other_db_dump = list(_iterdump(other_connection))
         self.assertEqual(db_dump, other_db_dump)
 
 
