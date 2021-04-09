@@ -14,6 +14,10 @@ from frontend.models import Practice
 from .connection import MatrixStore
 from .row_grouper import RowGrouper
 
+# We don't raise this directly here but consumers of the module should be able
+# to catch this exception without having to import from `row_grouper` directly,
+# which violates the abstraction
+from .row_grouper import UnknownGroupError as UnknownOrgIDError  # noqa
 
 # Create a memoize decorator (i.e. a decorator which caches the return value
 # for a given set of arguments). Here `maxsize=None` means "don't apply any
