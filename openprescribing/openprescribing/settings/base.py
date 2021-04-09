@@ -272,6 +272,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
     ),
+    "EXCEPTION_HANDLER": "api.exception_handler.custom_exception_handler",
 }
 
 CORS_URLS_REGEX = r"^/api/.*$"
