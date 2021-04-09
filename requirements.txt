@@ -145,8 +145,6 @@ httplib2==0.19.0
     #   google-auth-httplib2
 idna==2.10
     # via requests
-jdcal==1.4.1
-    # via openpyxl
 lxml==4.6.3
     # via
     #   -r requirements.in
@@ -172,7 +170,7 @@ oauthlib==3.1.0
     # via requests-oauthlib
 odfpy==1.4.1
     # via tablib
-openpyxl==2.6.4
+openpyxl==3.0.7
     # via
     #   -r requirements.in
     #   tablib
