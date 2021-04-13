@@ -178,7 +178,7 @@ openpyxl==2.6.4
     #   tablib
 pandas-gbq==0.13.2
     # via -r requirements.in
-pandas==0.25.3
+pandas==1.2.4
     # via
     #   -r requirements.in
     #   pandas-gbq
