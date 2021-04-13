@@ -218,7 +218,7 @@ pyopenssl==19.1.0
     # via requests
 pyparsing==2.4.7
     # via httplib2
-pyquery==1.4.1
+pyquery==1.4.3
     # via -r requirements.in
 pysqlite3-binary==0.4.6
     # via -r requirements.in
