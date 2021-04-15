@@ -112,8 +112,10 @@ google-auth==1.22.1
     #   pandas-gbq
     #   pydata-google-auth
 google-cloud-bigquery-storage==1.1.0
-    # via -r requirements.in
-google-cloud-bigquery==1.28.0
+    # via
+    #   -r requirements.in
+    #   google-cloud-bigquery
+google-cloud-bigquery[bqstorage,pandas]==1.28.0
     # via
     #   -r requirements.in
     #   pandas-gbq
@@ -134,7 +136,9 @@ googleapis-common-protos==1.52.0
 graphviz==0.14.2
     # via -r requirements.in
 grpcio==1.32.0
-    # via google-api-core
+    # via
+    #   google-api-core
+    #   google-cloud-bigquery
 gunicorn==20.0.4
     # via -r requirements.in
 html2text==2020.1.16
@@ -176,11 +180,12 @@ openpyxl==2.6.4
     # via
     #   -r requirements.in
     #   tablib
-pandas-gbq==0.13.2
+pandas-gbq==0.15.0
     # via -r requirements.in
 pandas==0.25.3
     # via
     #   -r requirements.in
+    #   google-cloud-bigquery
     #   pandas-gbq
 paramiko==2.7.2
     # via fabric3
@@ -196,8 +201,10 @@ protobuf==3.13.0
     #   googleapis-common-protos
 psycopg2-binary==2.8.6
     # via -r requirements.in
-pyarrow==3.0.0
-    # via -r requirements.in
+pyarrow==1.0.1
+    # via
+    #   -r requirements.in
+    #   google-cloud-bigquery
 pyasn1-modules==0.2.8
     # via google-auth
 pyasn1==0.4.8
