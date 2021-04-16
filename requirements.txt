@@ -102,7 +102,7 @@ google-auth-oauthlib==0.4.1
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-auth==1.22.1
+google-auth==1.29.0
     # via
     #   google-api-core
     #   google-api-python-client
