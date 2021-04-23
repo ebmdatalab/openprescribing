@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 import numpy
 
-from frontend.models import NCSOConcession, Presentation
+from frontend.models import NCSOConcession, Presentation, TariffPrice
 from matrixstore.db import get_db, get_row_grouper
 
 
@@ -31,11 +31,13 @@ ConcessionCostMatrices = namedtuple(
 
 def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None):
     org_type, org_id = _get_org_type_and_id(entity, entity_type)
-    end_date = NCSOConcession.objects.aggregate(Max("date"))["date__max"]
-    # In practice, we always have at least one NCSOConcession object but we
-    # need to handle the empty case in testing
-    if not end_date:
+    max_ncso_date = NCSOConcession.objects.aggregate(Max("date"))["date__max"]
+    max_tariff_date = TariffPrice.objects.aggregate(Max("date"))["date__max"]
+    # In practice, we always have at least one NCSOConcession object and one
+    # TariffPrice object but we need to handle the empty case in testing
+    if not max_ncso_date or not max_tariff_date:
         return []
+    end_date = min(max_ncso_date, max_tariff_date)
     start_date = end_date - relativedelta(months=num_months - 1)
     last_prescribing_date = parse_date(get_db().dates[-1]).date()
     costs = _get_concession_cost_matrices(start_date, end_date, org_type, org_id)
