@@ -32,10 +32,8 @@
 	"numerator_from": "{hscic}.raw_prescribing_normalised",
 	"numerator_where": [
 		"quantity_per_item>3",
-		"AND",
-		"bnf_code LIKE '0601023AW%' --Semaglutide",
-		"AND",
-	        "bnf_name  LIKE '%inj%'"
+		"AND bnf_code LIKE '0601023AW%' --Semaglutide \n",
+		"AND bnf_name LIKE '%inj%'"
 	],
 	"denominator_type": "custom",
 	"denominator_columns": [
@@ -43,15 +41,14 @@
 	],
 	"denominator_from": "{hscic}.raw_prescribing_normalised",
 	"denominator_where": [
-		"bnf_code LIKE '0601023AW%' --Semaglutide",
-		"AND",
-		 "bnf_name  LIKE '%inj%'"
+		"bnf_code LIKE '0601023AW%' --Semaglutide \n", 
+		"AND bnf_name LIKE '%inj%'"
 	],
 "date_reviewed": [
-    "2021-02-22"
+    "2021-04-26"
   ],
   "next_review": [
-    "2021-11-21"
+    "2022-04-26"
   ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
