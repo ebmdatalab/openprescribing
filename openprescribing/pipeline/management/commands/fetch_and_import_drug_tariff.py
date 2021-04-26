@@ -1,17 +1,17 @@
 """
 Fetches Drug Tariff from NHSBSA website, and saves to CSV
 """
-from io import BytesIO
+from io import StringIO
 import datetime
 from urllib.parse import unquote, urljoin
 import logging
 import os
 import re
 import requests
+import csv
 
 import bs4
 import calendar
-from openpyxl import load_workbook
 
 from django.core.management import BaseCommand
 from django.db import transaction
@@ -35,9 +35,9 @@ class Command(BaseCommand):
 
         imported_months = []
 
-        for a in doc.findAll("a", href=re.compile(r"Part%20VIIIA.+\.xlsx$")):
+        for a in doc.findAll("a", href=re.compile(r"Part%20VIIIA.+\.csv$")):
             # a.attrs['href'] typically has a filename part like
-            # Part%20VIIIA%20September%202017.xlsx
+            # Part%20VIIIA%20September%202017.csv
             #
             # We split that into ['Part', 'VIIIA', 'September', '2017']
             base_filename = unquote(
@@ -70,10 +70,11 @@ class Command(BaseCommand):
             if ImportLog.objects.filter(category="tariff", current_at=date).exists():
                 continue
 
-            xls_url = urljoin(url, a.attrs["href"])
-            xls_file = BytesIO(requests.get(xls_url).content)
+            csv_url = urljoin(url, a.attrs["href"])
+            csv_data = requests.get(csv_url).text
+            rows = csv.reader(StringIO(csv_data))
 
-            import_month(xls_file, date)
+            import_month(rows, date)
             imported_months.append((year, month))
 
         if imported_months:
@@ -88,17 +89,14 @@ class Command(BaseCommand):
             notify_slack(msg)
 
 
-def import_month(xls_file, date):
-    wb = load_workbook(xls_file)
-    rows = wb.active.rows
-
+def import_month(rows, date):
     # The first row is a title, and the second is empty
     next(rows)
     next(rows)
 
     # The third row is column headings
     header_row = next(rows)
-    headers = ["".join((c.value or "?").lower().split()) for c in header_row]
+    headers = ["".join((c or "?").lower().split()) for c in header_row]
     assert headers == [
         "medicine",
         "packsize",
@@ -110,11 +108,10 @@ def import_month(xls_file, date):
 
     with transaction.atomic():
         for row in rows:
-            values = [c.value for c in row]
-            if all(v is None for v in values):
+            if all(v is None for v in row):
                 continue
 
-            d = dict(zip(headers, values))
+            d = dict(zip(headers, row))
 
             if d["basicprice"] is None:
                 msg = "Missing price for {} Drug Tariff for {}".format(
