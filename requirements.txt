@@ -121,11 +121,11 @@ google-cloud-core==1.4.3
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-storage==1.32.0
+google-cloud-storage==1.38.0
     # via -r requirements.in
 google-crc32c==1.0.0
     # via google-resumable-media
-google-resumable-media==1.1.0
+google-resumable-media==1.2.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
