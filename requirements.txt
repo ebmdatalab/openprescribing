@@ -10,7 +10,7 @@ bcrypt==3.1.7
     # via paramiko
 beautifulsoup4==4.9.3
     # via -r requirements.in
-cachetools==4.1.1
+cachetools==4.2.2
     # via
     #   google-auth
     #   premailer
