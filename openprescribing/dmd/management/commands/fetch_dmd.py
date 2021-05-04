@@ -42,7 +42,7 @@ class Command(BaseCommand):
         doc = BeautifulSoup(rsp.text, "html.parser")
         latest_release_div = doc.find("div", class_="release")
         p = latest_release_div.find_all("p")[1]
-        text = " ".join(p.text.splitlines()).strip()
+        text = " ".join(p.text.splitlines()).strip().rstrip(".")
         release_date = datetime.strptime(text, "Released on %A, %d %B %Y").strftime(
             "%Y_%m_%d"
         )
