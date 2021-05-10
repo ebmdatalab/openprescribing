@@ -86,7 +86,7 @@ et-xmlfile==1.0.1
     # via openpyxl
 fabric3==1.14.post1
     # via -r requirements.in
-flake8==3.8.4
+flake8==3.9.2
     # via -r requirements.in
 google-api-core[grpc]==1.22.0
     # via
@@ -204,13 +204,13 @@ pyasn1==0.4.8
     # via
     #   pyasn1-modules
     #   rsa
-pycodestyle==2.6.0
+pycodestyle==2.7.0
     # via flake8
 pycparser==2.20
     # via cffi
 pydata-google-auth==1.1.0
     # via pandas-gbq
-pyflakes==2.2.0
+pyflakes==2.3.1
     # via flake8
 pynacl==1.4.0
     # via paramiko
