@@ -184,8 +184,6 @@ pandas==0.25.3
     #   pandas-gbq
 paramiko==2.7.2
     # via fabric3
-pathtools==0.1.2
-    # via watchdog
 pip-tools==5.3.1
     # via -r requirements.in
 premailer==3.7.0
@@ -294,7 +292,7 @@ urllib3==1.25.11
     # via
     #   requests
     #   selenium
-watchdog==0.10.3
+watchdog==2.1.2
     # via when-changed
 when-changed==0.3.0
     # via -r requirements.in
