@@ -232,7 +232,7 @@ pytz==2020.1
     #   django
     #   google-api-core
     #   pandas
-pyvirtualdisplay==1.3.2
+pyvirtualdisplay==2.2
     # via -r requirements.in
 pyyaml==5.4
     # via tablib
