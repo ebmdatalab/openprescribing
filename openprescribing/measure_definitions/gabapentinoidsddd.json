@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Gabapentin total DDD prescribed + pregabalin total DDD prescribed",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "Gabapentin and pregabalin",
   "why_it_matters": [
     "Gabapentin and pregabalin are increasingly used in neuropathic and other types of pain, and use is ",
     "rising rapidly in the NHS. There are also concerns about the ",

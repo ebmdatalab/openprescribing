@@ -10,6 +10,8 @@
   ],
   "numerator_short": "Soluble paracetamol and co-codamol",
   "denominator_short": "All paracetamol and co-codamol tabs and caps",
+  "openc_numerator_name": "Soluble paracetamol and co-codamol",
+  "openc_denominator_name": "All paracetamol and co-codamol tabs and caps",
   "why_it_matters": [
     "Soluble and effervescent preparations of analgesics contain <a href='https://www.sps.nhs.uk/wp-content/uploads/2014/09/NW-QA145.6-What-is-the-sodium-content-of-medicines-1.doc'>",
     "high sodium content.</a> 8 soluble paracetamol per day will exceed the recommended sodium intake for an adult of 2.4g (6g salt). ",

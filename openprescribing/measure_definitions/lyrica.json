@@ -10,6 +10,8 @@
   ],
   "numerator_short": "Lyrica capsules quantity",
   "denominator_short": "Pregabalin capsules quantity",
+  "openc_numerator_name": "Lyrica capsules",
+  "openc_denominator_name": "Pregabalin capsules",
   "why_it_matters": [
     "<a href='https://www.england.nhs.uk/wp-content/uploads/2015/03/pregabalin-guidance.pdf'>In 2015 NHS England were ",
     "required to recommend to GPs that when used for pain</a> pregabalin should be prescribed as the branded product Lyrica, ",

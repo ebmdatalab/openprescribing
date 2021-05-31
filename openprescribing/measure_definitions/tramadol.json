@@ -10,6 +10,8 @@
   ],
   "numerator_short": "High cost tramadol items ",
   "denominator_short": "All tramadol items",
+  "openc_numerator_name": "High cost tramadol",
+  "openc_denominator_name": "All tramadol",
   "why_it_matters": [
     "Modified release and non-standard tramadol preparations vary widely in cost. Generic tramadol 50mg capsules are low-cost. ",
     "Ideally modified-release and other high cost preparations should be reserved for patients who have compliance issues."

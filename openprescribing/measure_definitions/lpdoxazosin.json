@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Doxazosin modified release cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - doxazosin modified release",
   "why_it_matters": [
     "Doxazosin is a drug used to treat hypertension. the modified release (MR) version is more expensive than standard release with no clear benefits."
   ],

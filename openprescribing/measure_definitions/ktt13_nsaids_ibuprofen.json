@@ -10,6 +10,8 @@
   ],
   "numerator_short": "NSAID items (excl naproxen and ibuprofen)",
   "denominator_short": "NSAID items",
+  "openc_numerator_name": "NSAIDs (including COX-2 inhibitors)",
+  "openc_denominator_name": "NSAIDs",
   "why_it_matters": [
     "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, including COX-2 inhibitors and some ",
     "'traditional' NSAIDS, for their effects on the stomach, kidneys and the risk of blood clots.  ",

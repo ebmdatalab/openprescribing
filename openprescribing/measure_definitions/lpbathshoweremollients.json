@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Bath and Shower emollients cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - Bath and Shower emollients",
   "why_it_matters": [
     "The <a href='https://www.bmj.com/content/361/bmj.k1332'>BATHE study</a>",
     "found that there was no evidence",

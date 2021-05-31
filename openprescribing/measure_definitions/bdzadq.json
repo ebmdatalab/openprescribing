@@ -9,6 +9,8 @@
   ],
   "numerator_short": "Anxiolytics and Hypnotics ADQ",
   "denominator_short": "Prescription items",
+  "openc_numerator_name": "Anxiolytics and Hypnotics",
+  "openc_denominator_name": "Anxiolytics and Hypnotics",
   "why_it_matters": [
     "Anxiolytics and Hypnotics are drugs that are prescribed for short-term treatment of conditions such as",
     "anxiety and sleep problems. <a href='https://www.rcpsych.ac.uk/expertadvice/treatments/benzodiazepines.aspx'> The Royal College of Psychiatrists states</a> ",

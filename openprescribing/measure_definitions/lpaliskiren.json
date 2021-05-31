@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Aliskiren cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - Aliskiren",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/cg127/evidence'> NICE hypertension guidance states</a> there is insufficient",
     "evidence of its effectiveness to determine its suitability for use in resistant hypertension.",

@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Omega-3 cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - omega-3 fatty acid compounds",
   "why_it_matters": [
     "Omega-3 fatty acid compounds are licensed to treat elevated triglycerides, but evidence of benefit is weak. ",
     "<a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations'> NICE recommend that they are not prescribed for primary prevention of cardiovascular disease</a>. "

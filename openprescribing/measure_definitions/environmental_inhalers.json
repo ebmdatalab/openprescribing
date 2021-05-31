@@ -8,6 +8,8 @@
   ],
   "numerator_short": "MDI (Total Items)",
   "denominator_short": "Total Inhalers",
+  "openc_numerator_name": "Metered dose inhalers",
+  "openc_denominator_name": "All inhalers",
   "why_it_matters": [
     "The NHS has <a href='https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf'>committed",
     "to reducing its carbon footprint by 51% by 2025</a> to meet the target in the Climate Change Act, including a shift to dry powdered",

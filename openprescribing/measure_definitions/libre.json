@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Freestyle Libre quantity",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "Freestyle Libre",
   "why_it_matters": [
     "Freestyle Libre is a new continuous blood glucose monitoring system for people with diabetes, which reduces the amount of times a person may need to use a 'finger prick test'. ",
     "It is relatively expensive, and there has been some debate about its place in therapy.  Consequently CCGs originally had different funding ",

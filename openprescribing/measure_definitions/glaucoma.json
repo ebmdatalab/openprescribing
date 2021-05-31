@@ -9,6 +9,8 @@
   ],
   "numerator_short": "Branded eye drop items",
   "denominator_short": "All eye drop items",
+  "openc_numerator_name": "Branded eye drops",
+  "openc_denominator_name": "All eye drops",
   "why_it_matters": [
     "There are a number of generic preparations available to treat glaucoma. Generic preparations are generally cheaper than the branded equivalents."
   ],

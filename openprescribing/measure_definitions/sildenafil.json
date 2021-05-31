@@ -10,6 +10,8 @@
   ],
   "numerator_short": "Drugs for erectile dysfunction excl generic sildenafil tablets items",
   "denominator_short": "Drugs for erectile dysfunction items",
+  "openc_numerator_name": "Drugs for erectile dysfunction excl generic sildenafil tablets",
+  "openc_denominator_name": "Drugs for erectile dysfunction",
   "why_it_matters": [
     "The main drugs used to treat erectile dysfunction are probably equally effective <a href='https://cks.nice.org.uk/erectile-dysfunction'>(CKS 2014)</a>.",
     "Sildenafil has been significantly cheaper than other drugs, and therefore should probably be considered as the first-line agent.",

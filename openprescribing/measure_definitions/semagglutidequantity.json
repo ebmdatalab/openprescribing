@@ -15,6 +15,7 @@
   ],
 	"numerator_short": "Number of pens on prescription of four or more",
 	"denominator_short": "total number of pens",
+        "openc_denominator_name": "Semaglutide pens",
 	"url": null,
 	"is_percentage": true,
 	"is_cost_based": false,

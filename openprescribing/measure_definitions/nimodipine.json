@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Nimodipine quantity",
   "denominator_short": "1000 Patients",
+  "openc_numerator_name": "Nimodipine",
   "why_it_matters": [
     "The only indication in the BNF for the prescription of nimodipine is in the prevention of ischaemic neurological defects following aneurysmal subarachnoid haemorrhage. The course length is 21 days but most patients will complete the course while admitted or be discharged with the remainder. Extension of this course in primary care may be due to error or miscommunication."
   ],

@@ -10,6 +10,8 @@
   ],
   "numerator_short": "Vitamin B complex items",
   "denominator_short": "Vitamin B complex and thiamine items",
+  "openc_numerator_name": "Vitamin B complex",
+  "openc_denominator_name": "Vitamin B complex and thiamine",
   "why_it_matters": [
     "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol ",
     "disorders. However, the latest position statment from the Regional Medicines Optimisation Committee (RMOC) ",

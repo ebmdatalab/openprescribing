@@ -15,6 +15,8 @@
   ],
   "numerator_short": "Selected ADQs",
   "denominator_short": "Selected items",
+  "openc_numerator_name": "XXX",
+  "openc_denominator_name": "XXX",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Evidence-context'>NICE KTT on antimicrobial stewardship</a> ",
     "states that for most women (who are not pregnant) with no fever or flank pain, a three-day course of antibiotics ",

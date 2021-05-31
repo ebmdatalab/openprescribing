@@ -8,6 +8,7 @@
   ],
   "numerator_short": "cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England low priority treatments",
   "why_it_matters": [
     "NHS England have recently published a <a href='https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/'>number of areas which should not be routinely prescribed in primary care</a> (updated June 2019).",
     "This is the combined cost per 1000 patients for all of these measures. "

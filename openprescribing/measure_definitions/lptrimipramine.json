@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Trimipramine cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - trimipramine",
   "why_it_matters": [
     "Trimipramine is an older tricyclic antidepressant. The cost has increased significantly recently, ",
     "and there are newer, cheaper alternatives are available, which are ",

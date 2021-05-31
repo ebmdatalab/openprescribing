@@ -10,6 +10,8 @@
   ],
   "numerator_short": "Items for 10mg methotrexate tablets",
   "denominator_short": "Items for 2.5mg and 10mg methotrexate tablets",
+  "openc_numerator_name": "Methotrexate 10mg",
+  "openc_denominator_name": "Methotrexate 2.5mg and 10mg",
   "why_it_matters": [
     "<a href='https://bnf.nice.org.uk/drug/methotrexate.html#importantSafetyInformations'>The BNF states: </a>",
     "To avoid error with low-dose methotrexate, it is recommended that: ",

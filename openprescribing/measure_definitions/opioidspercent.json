@@ -8,6 +8,8 @@
   ],
   "numerator_short": "High dose opioid items",
   "denominator_short": "All opioid items",
+  "openc_numerator_name": "High dose opioids",
+  "openc_denominator_name": "All opioids",
   "why_it_matters": [
     "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
     "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",

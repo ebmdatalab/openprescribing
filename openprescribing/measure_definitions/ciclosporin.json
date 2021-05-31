@@ -10,6 +10,8 @@
   ],
   "numerator_short": "Generic ciclosporin and tacrolimus items",
   "denominator_short": "Ciclosporin and tacrolimus items",
+  "openc_numerator_name": "Generic ciclosporin and tacrolimus",
+  "openc_denominator_name": "Ciclosporin and tacrolimus",
   "why_it_matters": [
     "It is recommended for both <a href='https://bnf.nice.org.uk/drug/ciclosporin.html#prescribingAndDispensingInformations'> ciclosporin </a>",
     "and  <a href='https://bnf.nice.org.uk/drug/tacrolimus.html#importantSafetyInformations'> tacrolimus </a>",

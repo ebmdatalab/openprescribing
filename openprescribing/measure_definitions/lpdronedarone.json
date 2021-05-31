@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Dronedarone cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - Dronedarone",
   "why_it_matters": [
     "Dronedarone was originally approved to prevent recurrence of atrial fibrillation, or to lower the heart rate ",
     "in adults who have had or have non-permanent atrial fibrillation. In September 2011 this indication was restricted",

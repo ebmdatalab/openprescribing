@@ -8,6 +8,8 @@
   ],
   "numerator_short": "Trimethoprim items",
   "denominator_short": "Total trimethoprim and nitrofurantoin items",
+  "openc_numerator_name": "Trimethoprim",
+  "openc_denominator_name": "Trimethoprim and nitrofurantoin",
   "why_it_matters": [
     "Resistance to trimethoprim is increasing, and therefore Public Health England ",
     "is recommending that <a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/664740/Managing_common_infections_guidance_for_consultation_and_adaptation.pdf'> ",

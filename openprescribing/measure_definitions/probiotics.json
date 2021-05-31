@@ -23,6 +23,7 @@
     ],
   "numerator_short": "Probiotics cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "VSL#3 and Vivomixx",
   "url": null,
   "is_percentage": false,
   "is_cost_based": true,

@@ -11,6 +11,8 @@
   ],
   "numerator_short": "High-cost ARBs quantity",
   "denominator_short": "All included ARBs quantity",
+  "openc_numerator_name": "High-cost ARBs",
+  "openc_denominator_name": "ARBs",
   "why_it_matters": [
     "Various angiotensin-II receptor blockers (ARBs) are available. A number of them are now available generically, and are of low cost. ",
     "<a href='https://www.nice.org.uk/guidance/cg127/chapter/1-guidance#choosing-antihypertensive-drug-treatment-2'>",

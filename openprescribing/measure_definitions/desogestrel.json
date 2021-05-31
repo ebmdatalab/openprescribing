@@ -9,6 +9,8 @@
   ],
   "numerator_short": "Branded desogestrel quantity",
   "denominator_short": "Total desogestrel quantity",
+  "openc_numerator_name": "Branded desogestrel",
+  "openc_denominator_name": "Desogestrel",
   "why_it_matters": [
     "Desogestrel is available as both generic tablets and as a number of brands. ",
     "For a time some of these brands were cheaper than the generic tablets, so CCGs started to use them. ",

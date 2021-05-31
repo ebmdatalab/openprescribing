@@ -10,6 +10,8 @@
   ],
   "numerator_short": "SABA quantity",
   "denominator_short": "ICS and SABA quantity",
+  "openc_numerator_name": "Short acting beta agonist inhalers",
+  "openc_denominator_name": "Inhaled corticosteroid and short acting beta agonist inhalers",
   "why_it_matters": [
     "<a href='https://www.rcplondon.ac.uk/projects/outputs/why-asthma-still-kills'> Why Asthma Still Kills</a> ",
     "reports that high use of short acting beta agonists (salbutamol and terbutaline) and poor adherence in the use of ",

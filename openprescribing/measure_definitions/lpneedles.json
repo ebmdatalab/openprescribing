@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Higher cost pen needles cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - Higher Cost Insulin Pen Needles",
   "why_it_matters": [
     "Insulin pen needles range in price between approximately £3.95 to £30.00 per box. There is no evidence that suggests ",
     "that there are any significant differences between brands of needles, although there are reommendations about length of needle. ",

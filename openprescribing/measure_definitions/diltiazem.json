@@ -8,7 +8,9 @@
     "as a proportion of total items of all dilitiazem modified-release items (>60mg)"
   ],
   "numerator_short": "Generic diltiazem items",
-  "denominator_short": "Dilitazem items",
+  "denominator_short": "Diltiazem items",
+  "openc_numerator_name": "Generic diltiazem",
+  "openc_denominator_name": "Diltiazem",
   "why_it_matters": [
     "<a href='https://bnf.nice.org.uk/drug/diltiazem-hydrochloride.html#prescribingAndDispensingInformations'>The BNF states</a>: ",
     "Different versions of modified-release preparations containing more than 60 mg diltiazem hydrochloride may not have the same clinical effect. ",

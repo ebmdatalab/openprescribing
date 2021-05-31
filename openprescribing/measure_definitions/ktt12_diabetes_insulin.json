@@ -9,6 +9,8 @@
   ],
   "numerator_short": "Selected items",
   "denominator_short": "Selected items",
+  "openc_numerator_name": "Long-acting insulin analogues",
+  "openc_denominator_name": "XXX",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/ng28/chapter/1-Recommendations'>NICE recommend that</a> for patients with type 2 ",
     "diabetes requiring insulin, 'neutral protamine Hagedorn' (NPH) insulin is the preferred starting therapy with insulin, and ",

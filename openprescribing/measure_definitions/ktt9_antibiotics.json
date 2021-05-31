@@ -9,6 +9,7 @@
   ],
   "numerator_short": "Antibacterials items",
   "denominator_short": "STAR-PUs",
+  "openc_numerator_name": "Antibacterials",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Options-for-local-implementation'>",
     "Antimicrobial resistance poses a significant threat to public health, ",

@@ -10,6 +10,7 @@
   ],
   "numerator_short": "Topical antifungal items",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "Topical antifungals",
   "why_it_matters": [
     "These treatments have <a href='http://www.bad.org.uk/for-the-public/patient-information-leaflets/fungal-infections-of-the-nails'>a ",
     "low cure rate</a>, and treatment is required for three to six months.",

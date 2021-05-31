@@ -11,6 +11,8 @@
   ],
   "numerator_short": "High-cost PPIs quantity",
   "denominator_short": "All included PPIs quantity",
+  "openc_numerator_name": "High-cost PPIs",
+  "openc_denominator_name": "All PPIs",
   "why_it_matters": [
     "Proton-pump inhibitors (PPIs) have been generic for several years, and the generic is significantly cheaper than the branded product. ",
     "Therefore the vast majority of patients can be prescribed the generic"

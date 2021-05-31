@@ -11,6 +11,8 @@
   ],
   "numerator_short": "High-cost ACEs quantity",
   "denominator_short": "All included ACEs quantity",
+  "openc_numerator_name": "High-cost ACE inhibitors",
+  "openc_denominator_name": "ACE inhibitors",
   "why_it_matters": [
     "All commonly-used ACE inhibitors are now available generically and are low-cost. There is no difference between these generic versions and the more expensive brands, and so it’s important that practices prescribe the most cost-effective version possible."
   ],

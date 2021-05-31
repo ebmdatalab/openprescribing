@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Dosulepin cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - dosulepin",
   "why_it_matters": [
     "Dosulepin (formerly known as dothiepin) is an antidepressant. ",
     "<a href='https://www.nice.org.uk/donotdo/do-not-switch-to-or-start-dosulepin-because-evidence-supporting-its-tolerability-relative-to-other-antidepressants-is-outweighed-by-the-increased-cardiac-risk-and-toxicity-in-overdose'> NICE recommends that it is not used for new patients due to safety concerns</a>. ",

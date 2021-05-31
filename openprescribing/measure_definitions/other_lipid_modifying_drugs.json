@@ -10,6 +10,7 @@
   ],
   "numerator_short": "Cost of selected items (£)",
   "denominator_short": "100 patients",
+  "openc_numerator_name": "Other lipid-modifying drugs",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations'>NICE guidance suggests</a> that, for the vast ",
     "majority of people who need treatment for high cholesterol, these drugs should not be used. ",

@@ -10,6 +10,8 @@
   ],
   "numerator_short": "Nebivolol 2.5mg items",
   "denominator_short": "All nebivolol items",
+  "openc_numerator_name": "Nebivolol 2.5mg",
+  "openc_denominator_name": "All nebivolol",
   "why_it_matters": [
     "Nebivolol is a beta-blocker used in heart failure. Many patients can't tolerate a full 5mg dose. ",
     "However, the 2.5mg tablet is <a href='https://openprescribing.net/tariff/?codes=0204000ABAAABAB&codes=0204000ABAAAAAA'>",

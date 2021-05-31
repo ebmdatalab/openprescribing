@@ -8,6 +8,8 @@
   ],
   "numerator_short": "Zuclopenthixol Acetate Items",
   "denominator_short": "All injectable zuclopenthixol items",
+  "openc_numerator_name": "Zuclopenthixol Acetate",
+  "openc_denominator_name": "All Injectable Zuclopenthixol",
   "why_it_matters": [
     "The <a href='https://bnf.nice.org.uk/drug/zuclopenthixol-acetate.html'> BNF has a safety warning advising that</a>",
     "zuclopenthixol <b>acetate</b> should only be used in hospitals as it is a relatively short-acting antipsychotic.",

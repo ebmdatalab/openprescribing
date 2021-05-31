@@ -8,6 +8,8 @@
   ],
   "numerator_short": "AAF quantity (grams)",
   "denominator_short": "AAF and EHF quantity (grams)",
+  "openc_numerator_name": "Amino Acid Formula",
+  "openc_denominator_name": "Amino Acid Formula and Extensively Hydrolysed Formula",
   "why_it_matters": [
     "These products are prescribed for a number of allergy indications, and are most commonly prescribed for Cow's Milk Protein Allergy ",
     "(CMPA).  Amino acid formula (AAF) products are almost three times more expensive than EHF and it is believed that only a small ",

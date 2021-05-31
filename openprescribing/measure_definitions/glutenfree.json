@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Gluten-free products cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "Gluten-free products",
   "why_it_matters": [
     "Gluten-free products are available on prescription for patients who have a biopsy-confirmed diagnosis of coeliac disease. ",
     "These products are also now available to purchase, e.g. from supermarkets, and many NHS areas are considering stopping or ",

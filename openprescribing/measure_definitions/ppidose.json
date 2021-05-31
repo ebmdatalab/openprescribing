@@ -10,6 +10,8 @@
   ],
   "numerator_short": "Higher dose PPI items (excluding liquids)",
   "denominator_short": "All PPI items (excluding liquids)",
+  "openc_numerator_name": "Higher dose PPIs (excluding liquids)",
+  "openc_denominator_name": "All PPIs (excluding liquids)",
   "why_it_matters": [
     "PPIs are used to reduce acid levels in the stomach, in order to treat conditions such as gastro-oesphogeal reflux disease. ",
     "NICE guidance recommends that the lowest dose is used to treat the symptoms. ",

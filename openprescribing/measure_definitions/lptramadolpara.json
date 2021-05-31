@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Paracetamol and tramadol combination cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - paracetamol and tramadol combination",
   "why_it_matters": [
     "Prescribing the combination product of paracetamol and tramadol costs more than prescribing the preparations separately. ",
     "The doses are also different (32.5mg of tramadol, 325mg of paracetamol) than those generally used (50mg tramadol, 500mg paracetamol)."

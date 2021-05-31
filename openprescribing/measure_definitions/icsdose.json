@@ -10,6 +10,8 @@
   ],
   "numerator_short": "High dose ICS items",
   "denominator_short": "All ICS items",
+  "openc_numerator_name": "High dose inhaled corticosteroids",
+  "openc_denominator_name": "All inhaled corticosteroids",
   "why_it_matters": [
     "<p><a href='https://www.brit-thoracic.org.uk/quality-improvement/guidelines/asthma/'> ",
     "Latest BTS/SIGN guidance </a> on the treatment of asthma recommends that patients should be maintained at the lowest possible ",

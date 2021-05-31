@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Rubefacients cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - rubefacients",
   "why_it_matters": [
     "Rubifacients deep heat rubs and ointments are used to provide pain relief in musculoskeletal conditions. ",
     "However, the BNF states that <a href='https://bnf.nice.org.uk/treatment-summary/soft-tissue-disorders.html'>the evidence ",

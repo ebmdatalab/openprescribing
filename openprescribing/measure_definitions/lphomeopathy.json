@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Homeopathy cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - homeopathy",
   "why_it_matters": [
     "In 2010 House of Commons Science and Technology Committee found that the use of homeopathy was ",
     "<a href='https://publications.parliament.uk/pa/cm200910/cmselect/cmsctech/45/4504.htm#a18'>not evidence-based, and any benefits to patients was due to placebo effect</a>. "

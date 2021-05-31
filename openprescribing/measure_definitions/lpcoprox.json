@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Co-proxamol cost (£)",
   "denominator_short": "1000 patients",
+  "openc_numerator_name": "NHS England Low Priority Treatment - co-proxamol",
   "why_it_matters": [
     "Co-proxamol is a painkiller which was withdrawn in 2005 due to safety concerns.  All marketing authorisations were cancelled at the end of 2007. ",
     "There remains some prescribing of co-proxamol (which is now unlicensed) at a cost of over £100 per box."

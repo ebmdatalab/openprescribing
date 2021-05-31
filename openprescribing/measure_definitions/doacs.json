@@ -8,6 +8,8 @@
   ],
   "numerator_short": "DOAC items",
   "denominator_short": "DOAC and warfarin items",
+  "openc_numerator_name": "Direct oral anticoagulants",
+  "openc_denominator_name": "Direct oral anticoagulants and warfarin",
   "why_it_matters": [
     "Direct Oral Anticoagulants (DOACs - also known as Novel Oral Anticoagulants - NOACs) are recommended in various NICE guidance, ",
     "including for the <a href='https://www.nice.org.uk/guidance/CG180/chapter/1-Recommendations#interventions-to-prevent-stroke-2'>prevention of stroke in patients with Atrial Fibrillation (AF)</a>. ",
