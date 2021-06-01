@@ -12,8 +12,8 @@
   ],
   "numerator_short": "Selected items",
   "denominator_short": "Other selected items",
-  "openc_numerator_name": "Co-amoxiclav, cephalosporins and quinolones",
-  "openc_denominator_name": "XXX",
+  "openc_numerator_name": "NICE KTT9 - Co-amoxiclav, cephalosporins and quinolones",
+  "openc_denominator_name": "NICE KTT9 - commonly prescribed antibiotics",
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
     "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Evidence-context'> It is important that they are used sparingly, to avoid drug-resistant bacteria developing.</a> ",
