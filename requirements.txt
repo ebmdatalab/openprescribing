@@ -253,7 +253,7 @@ requests[security]==2.25.1
     #   requests-oauthlib
 rsa==4.7.2
     # via google-auth
-scipy==1.5.4
+scipy==1.6.3
     # via -r requirements.in
 selenium==3.141.0
     # via -r requirements.in
