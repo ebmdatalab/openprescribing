@@ -88,7 +88,7 @@ fabric3==1.14.post1
     # via -r requirements.in
 flake8==3.8.4
     # via -r requirements.in
-google-api-core[grpc]==1.22.0
+google-api-core[grpc]==1.29.0
     # via
     #   google-api-python-client
     #   google-cloud-bigquery
@@ -102,7 +102,7 @@ google-auth-oauthlib==0.4.1
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-auth==1.22.1
+google-auth==1.30.1
     # via
     #   google-api-core
     #   google-api-python-client
@@ -113,7 +113,7 @@ google-auth==1.22.1
     #   pydata-google-auth
 google-cloud-bigquery-storage==1.1.0
     # via -r requirements.in
-google-cloud-bigquery==1.28.0
+google-cloud-bigquery==2.20.0
     # via
     #   -r requirements.in
     #   pandas-gbq
@@ -176,6 +176,10 @@ openpyxl==2.6.4
     # via
     #   -r requirements.in
     #   tablib
+packaging==20.9
+    # via
+    #   google-api-core
+    #   google-cloud-bigquery
 pandas-gbq==0.13.2
     # via -r requirements.in
 pandas==0.25.3
@@ -190,10 +194,14 @@ pip-tools==5.3.1
     # via -r requirements.in
 premailer==3.7.0
     # via -r requirements.in
+proto-plus==1.18.1
+    # via google-cloud-bigquery
 protobuf==3.13.0
     # via
     #   google-api-core
+    #   google-cloud-bigquery
     #   googleapis-common-protos
+    #   proto-plus
 psycopg2-binary==2.8.6
     # via -r requirements.in
 pyarrow==3.0.0
@@ -217,7 +225,9 @@ pynacl==1.4.0
 pyopenssl==19.1.0
     # via requests
 pyparsing==2.4.7
-    # via httplib2
+    # via
+    #   httplib2
+    #   packaging
 pyquery==1.4.1
     # via -r requirements.in
 pysqlite3-binary==0.4.6
@@ -247,6 +257,7 @@ requests[security]==2.25.1
     #   -r requirements.in
     #   django-anymail
     #   google-api-core
+    #   google-cloud-bigquery
     #   google-cloud-storage
     #   premailer
     #   requests-futures
@@ -267,7 +278,6 @@ six==1.15.0
     #   google-api-python-client
     #   google-auth
     #   google-auth-httplib2
-    #   google-cloud-bigquery
     #   google-resumable-media
     #   grpcio
     #   mock
