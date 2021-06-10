@@ -17,4 +17,4 @@ updates:
     - "> 0.12.0"
   - dependency-name: django
     versions:
-    - "> 3.0"
+    - ">= 3.0"
