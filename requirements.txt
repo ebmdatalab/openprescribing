@@ -22,7 +22,7 @@ cffi==1.14.3
     #   cryptography
     #   google-crc32c
     #   pynacl
-chardet==3.0.4
+chardet==4.0.0
     # via requests
 click==7.1.2
     # via pip-tools
@@ -190,7 +190,7 @@ pip-tools==5.3.1
     # via -r requirements.in
 premailer==3.7.0
     # via -r requirements.in
-protobuf==3.13.0
+protobuf==3.17.3
     # via
     #   google-api-core
     #   googleapis-common-protos
