@@ -168,7 +168,7 @@ numpy==1.18.5
     #   pandas
     #   pyarrow
     #   scipy
-oauthlib==3.1.0
+oauthlib==3.1.1
     # via requests-oauthlib
 odfpy==1.4.1
     # via tablib
