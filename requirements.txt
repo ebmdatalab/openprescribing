@@ -74,7 +74,7 @@ django==2.2.22
     #   django-debug-toolbar-template-timings
     #   django-import-export
     #   djangorestframework
-djangorestframework-csv==2.1.0
+djangorestframework-csv==2.1.1
     # via -r requirements.in
 djangorestframework==3.12.1
     # via
@@ -190,7 +190,7 @@ pip-tools==5.3.1
     # via -r requirements.in
 premailer==3.7.0
     # via -r requirements.in
-protobuf==3.13.0
+protobuf==3.17.3
     # via
     #   google-api-core
     #   googleapis-common-protos
