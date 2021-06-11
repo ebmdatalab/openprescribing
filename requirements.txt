@@ -168,7 +168,7 @@ numpy==1.18.5
     #   pandas
     #   pyarrow
     #   scipy
-oauthlib==3.1.0
+oauthlib==3.1.1
     # via requests-oauthlib
 odfpy==1.4.1
     # via tablib
@@ -190,7 +190,7 @@ pip-tools==5.3.1
     # via -r requirements.in
 premailer==3.7.0
     # via -r requirements.in
-protobuf==3.13.0
+protobuf==3.17.3
     # via
     #   google-api-core
     #   googleapis-common-protos
