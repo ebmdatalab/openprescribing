@@ -82,7 +82,7 @@ djangorestframework==3.12.1
     #   djangorestframework-csv
 easyprocess==0.3
     # via pyvirtualdisplay
-et-xmlfile==1.0.1
+et-xmlfile==1.1.0
     # via openpyxl
 fabric3==1.14.post1
     # via -r requirements.in
