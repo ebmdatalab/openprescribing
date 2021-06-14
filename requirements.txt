@@ -196,7 +196,7 @@ protobuf==3.17.3
     #   googleapis-common-protos
 psycopg2-binary==2.8.6
     # via -r requirements.in
-pyarrow==3.0.0
+pyarrow==4.0.1
     # via -r requirements.in
 pyasn1-modules==0.2.8
     # via google-auth
