@@ -24,7 +24,7 @@ cffi==1.14.3
     #   pynacl
 chardet==4.0.0
     # via requests
-click==7.1.2
+click==8.0.1
     # via pip-tools
 coverage==5.3
     # via -r requirements.in
