@@ -1,8 +1,19 @@
 import struct
+import warnings
 
 import lz4.frame
 import pyarrow
 from scipy.sparse import csc_matrix
+
+
+# When we get the time to work on this we can just get rid of pyarrow
+# altogether. The new pickle protocol (pickle 5) allows for zero-copy
+# deserialisation and I've benchmarked this as being faster than pyarrow even
+# with crude proof-of-concept code. See:
+# https://gist.github.com/evansd/3707bc002938784632855f2c95c96be8
+warnings.filterwarnings(
+    "ignore", message="'pyarrow.SerializationContext' is deprecated", module="."
+)
 
 
 # The magic intial bytes which tell us that a given binary chunk is LZ4
