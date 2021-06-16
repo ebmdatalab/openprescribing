@@ -3,7 +3,7 @@ name: "OpenPrescribing CI"
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -39,14 +39,14 @@ jobs:
         browser: [ "IE:11.0:Windows:7" , "Firefox:latest:OS X:Catalina" ]
     steps:
       - name: 'BrowserStack Env Setup'
-        uses: 'browserstack/github-actions/setup-env@master'
+        uses: 'browserstack/github-actions/setup-env@main'
         with:
           username:  ${{ secrets.BROWSERSTACK_USERNAME }}
           access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
           build-name: BUILD_INFO
           project-name: REPO_NAME
       - name: 'BrowserStack Local Tunnel Setup'
-        uses: 'browserstack/github-actions/setup-local@master'
+        uses: 'browserstack/github-actions/setup-local@main'
         with:
           local-testing: start
           local-identifier: random
@@ -63,7 +63,7 @@ jobs:
           TEST_SUITE: functional
           BROWSER: ${{ matrix.browser }}
       - name: 'BrowserStackLocal Stop'
-        uses: 'browserstack/github-actions/setup-local@master'
+        uses: 'browserstack/github-actions/setup-local@main'
         with:
           local-testing: stop
 

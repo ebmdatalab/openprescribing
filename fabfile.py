@@ -63,7 +63,7 @@ def git_init():
         "git remote add origin "
         "https://github.com/ebmdatalab/openprescribing.git && "
         "git fetch origin && "
-        "git branch --set-upstream master origin/master"
+        "git branch --set-upstream main origin/main"
     )
 
 
@@ -223,7 +223,7 @@ def build_changed_measures():
         changed_files = run(
             "git diff --name-only "
             "$(diff --old-line-format='' --new-line-format='' "
-            '<(git rev-list --first-parent "${1:-master}") '
+            '<(git rev-list --first-parent "${1:-main}") '
             '<(git rev-list --first-parent "${2:-HEAD}") | head -1)',
             pty=False,
         ).splitlines()
@@ -278,7 +278,7 @@ def clear_cloudflare():
 
 
 @task
-def deploy(environment, force_build=False, branch="master"):
+def deploy(environment, force_build=False, branch="main"):
     setup_env_from_environment(environment)
     env.branch = branch
     setup_sudo()
