@@ -47,24 +47,6 @@ diff-match-patch==20200713
     # via django-import-export
 diskcache==5.0.3
     # via -r requirements.in
-django-anymail[mailgun]==8.4
-    # via -r requirements.in
-django-cors-headers==3.5.0
-    # via -r requirements.in
-django-crispy-forms==1.12.0
-    # via -r requirements.in
-django-debug-toolbar-template-timings==0.9
-    # via -r requirements.in
-django-debug-toolbar==3.2.1
-    # via
-    #   -r requirements.in
-    #   django-debug-toolbar-template-timings
-django-dotenv==1.4.2
-    # via -r requirements.in
-django-extensions==3.0.9
-    # via -r requirements.in
-django-import-export==2.4.0
-    # via -r requirements.in
 django==2.2.24
     # via
     #   -r requirements.in
@@ -74,12 +56,30 @@ django==2.2.24
     #   django-debug-toolbar-template-timings
     #   django-import-export
     #   djangorestframework
-djangorestframework-csv==2.1.1
+django-anymail[mailgun]==8.4
+    # via -r requirements.in
+django-cors-headers==3.5.0
+    # via -r requirements.in
+django-crispy-forms==1.12.0
+    # via -r requirements.in
+django-debug-toolbar==3.2.1
+    # via
+    #   -r requirements.in
+    #   django-debug-toolbar-template-timings
+django-debug-toolbar-template-timings==0.9
+    # via -r requirements.in
+django-dotenv==1.4.2
+    # via -r requirements.in
+django-extensions==3.0.9
+    # via -r requirements.in
+django-import-export==2.4.0
     # via -r requirements.in
 djangorestframework==3.12.1
     # via
     #   -r requirements.in
     #   djangorestframework-csv
+djangorestframework-csv==2.1.1
+    # via -r requirements.in
 easyprocess==0.3
     # via pyvirtualdisplay
 et-xmlfile==1.1.0
@@ -96,13 +96,7 @@ google-api-core[grpc]==1.22.0
     #   google-cloud-core
 google-api-python-client==2.9.0
     # via -r requirements.in
-google-auth-httplib2==0.1.0
-    # via google-api-python-client
-google-auth-oauthlib==0.4.1
-    # via
-    #   pandas-gbq
-    #   pydata-google-auth
-google-auth==1.31.0
+google-auth==1.32.1
     # via
     #   google-api-core
     #   google-api-python-client
@@ -112,12 +106,18 @@ google-auth==1.31.0
     #   google-cloud-storage
     #   pandas-gbq
     #   pydata-google-auth
-google-cloud-bigquery-storage==1.1.0
-    # via -r requirements.in
+google-auth-httplib2==0.1.0
+    # via google-api-python-client
+google-auth-oauthlib==0.4.1
+    # via
+    #   pandas-gbq
+    #   pydata-google-auth
 google-cloud-bigquery==1.28.0
     # via
     #   -r requirements.in
     #   pandas-gbq
+google-cloud-bigquery-storage==1.1.0
+    # via -r requirements.in
 google-cloud-core==1.7.0
     # via
     #   google-cloud-bigquery
@@ -177,12 +177,12 @@ openpyxl==2.6.4
     # via
     #   -r requirements.in
     #   tablib
-pandas-gbq==0.13.2
-    # via -r requirements.in
 pandas==0.25.3
     # via
     #   -r requirements.in
     #   pandas-gbq
+pandas-gbq==0.13.2
+    # via -r requirements.in
 paramiko==2.7.2
     # via fabric3
 pathtools==0.1.2
@@ -199,12 +199,12 @@ psycopg2-binary==2.8.6
     # via -r requirements.in
 pyarrow==4.0.1
     # via -r requirements.in
-pyasn1-modules==0.2.8
-    # via google-auth
 pyasn1==0.4.8
     # via
     #   pyasn1-modules
     #   rsa
+pyasn1-modules==0.2.8
+    # via google-auth
 pycodestyle==2.6.0
     # via flake8
 pycparser==2.20
@@ -239,10 +239,6 @@ pyyaml==5.4
     # via tablib
 raven==6.10.0
     # via -r requirements.in
-requests-futures==1.0.0
-    # via -r requirements.in
-requests-oauthlib==1.3.0
-    # via google-auth-oauthlib
 requests[security]==2.25.1
     # via
     #   -r requirements.in
@@ -252,6 +248,10 @@ requests[security]==2.25.1
     #   premailer
     #   requests-futures
     #   requests-oauthlib
+requests-futures==1.0.0
+    # via -r requirements.in
+requests-oauthlib==1.3.0
+    # via google-auth-oauthlib
 rsa==4.7.2
     # via google-auth
 scipy==1.5.4
