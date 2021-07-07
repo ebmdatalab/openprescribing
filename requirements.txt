@@ -94,7 +94,7 @@ google-api-core[grpc]==1.22.0
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
     #   google-cloud-core
-google-api-python-client==2.9.0
+google-api-python-client==2.11.0
     # via -r requirements.in
 google-auth==1.32.1
     # via
