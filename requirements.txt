@@ -293,7 +293,7 @@ unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==3.0.1
     # via google-api-python-client
-urllib3==1.26.5
+urllib3==1.26.6
     # via
     #   requests
     #   selenium
