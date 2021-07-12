@@ -16,7 +16,7 @@ cachetools==4.1.1
     #   premailer
 certifi==2020.6.20
     # via requests
-cffi==1.14.3
+cffi==1.14.6
     # via
     #   bcrypt
     #   cryptography
@@ -118,7 +118,7 @@ google-cloud-bigquery==1.28.0
     #   pandas-gbq
 google-cloud-bigquery-storage==1.1.0
     # via -r requirements.in
-google-cloud-core==1.7.0
+google-cloud-core==1.7.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
