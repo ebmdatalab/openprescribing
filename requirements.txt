@@ -118,7 +118,7 @@ google-cloud-bigquery==1.28.0
     #   pandas-gbq
 google-cloud-bigquery-storage==1.1.0
     # via -r requirements.in
-google-cloud-core==1.7.0
+google-cloud-core==1.7.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
@@ -293,7 +293,7 @@ unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==3.0.1
     # via google-api-python-client
-urllib3==1.26.5
+urllib3==1.26.6
     # via
     #   requests
     #   selenium
