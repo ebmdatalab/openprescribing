@@ -131,7 +131,7 @@ googleapis-common-protos==1.52.0
     # via google-api-core
 graphviz==0.14.2
     # via -r requirements.in
-grpcio==1.38.1
+grpcio==1.39.0
     # via google-api-core
 gunicorn==20.0.4
     # via -r requirements.in
