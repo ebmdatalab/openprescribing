@@ -36,8 +36,6 @@ cssselect==1.1.0
     #   pyquery
 cssutils==1.0.2
     # via premailer
-decorator==4.4.2
-    # via networkx
 defusedxml==0.6.0
     # via odfpy
 diff-match-patch==20200713
@@ -91,7 +89,7 @@ google-api-core[grpc]==1.22.0
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
     #   google-cloud-core
-google-api-python-client==2.12.0
+google-api-python-client==2.15.0
     # via -r requirements.in
 google-auth==1.33.1
     # via
@@ -158,7 +156,7 @@ mccabe==0.6.1
     # via flake8
 mock==3.0.5
     # via -r requirements.in
-networkx==2.4
+networkx==2.6.2
     # via -r requirements.in
 numpy==1.18.5
     # via
@@ -260,7 +258,6 @@ six==1.16.0
     #   djangorestframework-csv
     #   fabric3
     #   google-api-core
-    #   google-api-python-client
     #   google-auth
     #   google-auth-httplib2
     #   google-cloud-bigquery
