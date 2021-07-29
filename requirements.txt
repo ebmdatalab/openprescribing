@@ -103,7 +103,7 @@ google-auth==1.34.0
     #   pydata-google-auth
 google-auth-httplib2==0.1.0
     # via google-api-python-client
-google-auth-oauthlib==0.4.1
+google-auth-oauthlib==0.4.5
     # via
     #   pandas-gbq
     #   pydata-google-auth
