@@ -192,7 +192,7 @@ protobuf==3.17.3
     #   googleapis-common-protos
 psycopg2-binary==2.8.6
     # via -r requirements.in
-pyarrow==4.0.1
+pyarrow==5.0.0
     # via -r requirements.in
 pyasn1==0.4.8
     # via
@@ -278,7 +278,7 @@ tablib[html,ods,xls,xlsx,yaml]==2.0.0
     # via django-import-export
 titlecase==0.12.0
     # via -r requirements.in
-tomli==1.0.4
+tomli==1.1.0
     # via pep517
 unicodecsv==0.14.1
     # via djangorestframework-csv
