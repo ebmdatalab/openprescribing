@@ -91,7 +91,7 @@ google-api-core[grpc]==1.22.0
     #   google-cloud-core
 google-api-python-client==2.15.0
     # via -r requirements.in
-google-auth==1.33.1
+google-auth==1.34.0
     # via
     #   google-api-core
     #   google-api-python-client
@@ -278,7 +278,7 @@ tablib[html,ods,xls,xlsx,yaml]==2.0.0
     # via django-import-export
 titlecase==0.12.0
     # via -r requirements.in
-tomli==1.0.4
+tomli==1.1.0
     # via pep517
 unicodecsv==0.14.1
     # via djangorestframework-csv
