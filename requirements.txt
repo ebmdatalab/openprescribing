@@ -22,7 +22,7 @@ cffi==1.14.6
     #   cryptography
     #   google-crc32c
     #   pynacl
-charset-normalizer==2.0.3
+charset-normalizer==2.0.4
     # via requests
 click==8.0.1
     # via pip-tools
@@ -247,7 +247,7 @@ requests-oauthlib==1.3.0
     # via google-auth-oauthlib
 rsa==4.7.2
     # via google-auth
-scipy==1.7.0
+scipy==1.7.1
     # via -r requirements.in
 selenium==3.141.0
     # via -r requirements.in
