@@ -83,15 +83,16 @@ fabric3==1.14.post1
     # via -r requirements.in
 flake8==3.8.4
     # via -r requirements.in
-google-api-core[grpc]==1.22.0
+google-api-core[grpc]==1.31.2
     # via
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
     #   google-cloud-core
+    #   google-cloud-storage
 google-api-python-client==2.15.0
     # via -r requirements.in
-google-auth==1.34.0
+google-auth==1.35.0
     # via
     #   google-api-core
     #   google-api-python-client
@@ -117,7 +118,7 @@ google-cloud-core==1.7.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-storage==1.41.1
+google-cloud-storage==1.42.0
     # via -r requirements.in
 google-crc32c==1.0.0
     # via google-resumable-media
@@ -172,6 +173,8 @@ openpyxl==2.6.4
     # via
     #   -r requirements.in
     #   tablib
+packaging==21.0
+    # via google-api-core
 pandas==0.25.3
     # via
     #   -r requirements.in
@@ -211,7 +214,9 @@ pyflakes==2.2.0
 pynacl==1.4.0
     # via paramiko
 pyparsing==2.4.7
-    # via httplib2
+    # via
+    #   httplib2
+    #   packaging
 pyquery==1.4.1
     # via -r requirements.in
 pysqlite3-binary==0.4.6
