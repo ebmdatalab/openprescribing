@@ -28,7 +28,7 @@ click==8.0.1
     # via pip-tools
 coverage==5.3
     # via -r requirements.in
-cryptography==3.3.2
+cryptography==3.4.8
     # via paramiko
 cssselect==1.1.0
     # via
@@ -259,7 +259,6 @@ selenium==3.141.0
 six==1.16.0
     # via
     #   bcrypt
-    #   cryptography
     #   djangorestframework-csv
     #   fabric3
     #   google-api-core
