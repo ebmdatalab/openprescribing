@@ -112,7 +112,7 @@ google-cloud-bigquery==1.28.0
     # via
     #   -r requirements.in
     #   pandas-gbq
-google-cloud-bigquery-storage==1.1.0
+google-cloud-bigquery-storage==2.7.0
     # via -r requirements.in
 google-cloud-core==1.7.2
     # via
@@ -144,6 +144,8 @@ idna==3.2
     # via requests
 jdcal==1.4.1
     # via openpyxl
+libcst==0.3.20
+    # via google-cloud-bigquery-storage
 lxml==4.6.3
     # via
     #   -r requirements.in
@@ -157,6 +159,8 @@ mccabe==0.6.1
     # via flake8
 mock==3.0.5
     # via -r requirements.in
+mypy-extensions==0.4.3
+    # via typing-inspect
 networkx==2.6.2
     # via -r requirements.in
 numpy==1.18.5
@@ -174,7 +178,9 @@ openpyxl==2.6.4
     #   -r requirements.in
     #   tablib
 packaging==21.0
-    # via google-api-core
+    # via
+    #   google-api-core
+    #   google-cloud-bigquery-storage
 pandas==0.25.3
     # via
     #   -r requirements.in
@@ -189,10 +195,13 @@ pip-tools==6.2.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
+proto-plus==1.19.0
+    # via google-cloud-bigquery-storage
 protobuf==3.17.3
     # via
     #   google-api-core
     #   googleapis-common-protos
+    #   proto-plus
 psycopg2-binary==2.8.6
     # via -r requirements.in
 pyarrow==5.0.0
@@ -234,7 +243,9 @@ pytz==2020.1
 pyvirtualdisplay==1.3.2
     # via -r requirements.in
 pyyaml==5.4
-    # via tablib
+    # via
+    #   libcst
+    #   tablib
 raven==6.10.0
     # via -r requirements.in
 requests[security]==2.26.0
@@ -284,6 +295,12 @@ titlecase==0.12.0
     # via -r requirements.in
 tomli==1.2.1
     # via pep517
+typing-extensions==3.10.0.2
+    # via
+    #   libcst
+    #   typing-inspect
+typing-inspect==0.7.1
+    # via libcst
 unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==3.0.1
