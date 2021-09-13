@@ -274,7 +274,7 @@ six==1.16.0
     #   python-dateutil
 soupsieve==2.0.1
     # via beautifulsoup4
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via
     #   django
     #   django-debug-toolbar
