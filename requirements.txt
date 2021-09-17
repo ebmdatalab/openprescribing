@@ -118,7 +118,7 @@ google-cloud-core==1.7.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-storage==1.42.0
+google-cloud-storage==1.42.2
     # via -r requirements.in
 google-crc32c==1.0.0
     # via google-resumable-media
@@ -192,6 +192,7 @@ premailer==3.10.0
 protobuf==3.17.3
     # via
     #   google-api-core
+    #   google-cloud-storage
     #   googleapis-common-protos
 psycopg2-binary==2.8.6
     # via -r requirements.in
@@ -266,6 +267,7 @@ six==1.16.0
     #   google-auth-httplib2
     #   google-cloud-bigquery
     #   google-cloud-core
+    #   google-cloud-storage
     #   google-resumable-media
     #   grpcio
     #   mock
