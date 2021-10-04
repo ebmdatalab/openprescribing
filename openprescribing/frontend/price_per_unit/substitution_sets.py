@@ -170,8 +170,6 @@ def get_substitution_sets_from_bnf_codes(bnf_codes, formulation_swaps_file):
             formulation_swaps=swap_descriptions.get(code),
         )
         for code, presentations in sorted(presentation_sets.items())
-        # There's no point in a substitution set with only one member
-        if len(presentations) > 1
     ]
     return DictWithCacheID([(s.id, s) for s in substitution_sets])
 
