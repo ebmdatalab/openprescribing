@@ -175,7 +175,7 @@ openpyxl==2.6.4
     #   tablib
 packaging==21.0
     # via google-api-core
-pandas==0.25.3
+pandas==1.3.4
     # via
     #   -r requirements.in
     #   pandas-gbq
