@@ -114,7 +114,7 @@ jobs:
 
   notify_slack:
     runs-on: ubuntu-latest
-    needs: [ unit_test , ansible_buildout_test, linting ]
+    needs: [ unit_test , functional_tests , ansible_buildout_test, linting ]
 
     steps:
       - name: Notify slack success
