@@ -66,6 +66,16 @@ jobs:
         uses: 'browserstack/github-actions/setup-local@master'
         with:
           local-testing: stop
+      - name: Notify slack failure
+        if: failure()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          BROWSER: ${{ matrix.browser }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: technoise
+          status: "FAILURE (functional test $BROWSER)"
+          color: danger
 
   ansible_buildout_test:
     runs-on: ubuntu-latest
