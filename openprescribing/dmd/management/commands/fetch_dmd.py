@@ -26,7 +26,7 @@ class Command(BaseCommand):
         base_url = "https://isd.digital.nhs.uk/"
         session = requests.Session()
 
-        login_url = base_url + "trud3/security/j_spring_security_check"
+        login_url = base_url + "trud/security/j_spring_security_check"
         params = {
             "j_username": settings.TRUD_USERNAME,
             "j_password": settings.TRUD_PASSWORD,
@@ -35,18 +35,21 @@ class Command(BaseCommand):
         rsp = session.post(login_url, params)
 
         index_url = (
-            base_url + "trud3/user/authenticated/group/0/pack/6/subpack/24/releases"
+            base_url
+            + "trud/users/authenticated/filters/0/categories/6/items/24/releases"
         )
         rsp = session.get(index_url)
 
         doc = BeautifulSoup(rsp.text, "html.parser")
         latest_release_div = doc.find("div", class_="release")
-        p = latest_release_div.find_all("p")[1]
-        text = " ".join(p.text.splitlines()).strip().rstrip(".")
-        release_date = datetime.strptime(text, "Released on %A, %d %B %Y").strftime(
-            "%Y_%m_%d"
-        )
-        download_href = latest_release_div.find("a", class_="download-release")["href"]
+        detail_divs = latest_release_div.find_all(class_="release-details__value")
+        release_date = datetime.strptime(
+            detail_divs[2].text.strip(), "%d %B %Y"
+        ).strftime("%Y_%m_%d")
+        download_href = latest_release_div.find(
+            "div", class_="release-details__value--release-file"
+        ).find("a")["href"]
+        download_href = download_href.split("?")[0]
         filename = download_href.split("/")[-1]
 
         dir_path = os.path.join(settings.PIPELINE_DATA_BASEDIR, "dmd", release_date)
@@ -56,7 +59,7 @@ class Command(BaseCommand):
         if os.path.exists(zip_path):
             return
 
-        rsp = session.get(base_url + download_href, stream=True)
+        rsp = session.get(download_href, stream=True)
 
         mkdir_p(dir_path)
 
