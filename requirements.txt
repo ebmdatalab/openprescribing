@@ -108,7 +108,7 @@ google-auth-oauthlib==0.4.6
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-cloud-bigquery==1.28.0
+google-cloud-bigquery==2.29.0
     # via
     #   -r requirements.in
     #   pandas-gbq
@@ -131,7 +131,9 @@ googleapis-common-protos==1.52.0
 graphviz==0.17
     # via -r requirements.in
 grpcio==1.39.0
-    # via google-api-core
+    # via
+    #   google-api-core
+    #   google-cloud-bigquery
 gunicorn==20.0.4
     # via -r requirements.in
 html2text==2020.1.16
@@ -174,7 +176,9 @@ openpyxl==2.6.4
     #   -r requirements.in
     #   tablib
 packaging==21.0
-    # via google-api-core
+    # via
+    #   google-api-core
+    #   google-cloud-bigquery
 pandas==0.25.3
     # via
     #   -r requirements.in
@@ -189,10 +193,14 @@ pip-tools==6.2.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
-protobuf==3.17.3
+proto-plus==1.19.7
+    # via google-cloud-bigquery
+protobuf==3.19.0
     # via
     #   google-api-core
+    #   google-cloud-bigquery
     #   googleapis-common-protos
+    #   proto-plus
 psycopg2-binary==2.8.6
     # via -r requirements.in
 pyarrow==5.0.0
@@ -224,6 +232,7 @@ pysqlite3-binary==0.4.6
 python-dateutil==2.8.2
     # via
     #   -r requirements.in
+    #   google-cloud-bigquery
     #   pandas
 pytz==2020.1
     # via
@@ -242,6 +251,7 @@ requests[security]==2.26.0
     #   -r requirements.in
     #   django-anymail
     #   google-api-core
+    #   google-cloud-bigquery
     #   google-cloud-storage
     #   premailer
     #   requests-futures
@@ -264,12 +274,10 @@ six==1.16.0
     #   google-api-core
     #   google-auth
     #   google-auth-httplib2
-    #   google-cloud-bigquery
     #   google-cloud-core
     #   google-resumable-media
     #   grpcio
     #   mock
-    #   protobuf
     #   pynacl
     #   python-dateutil
 soupsieve==2.0.1
