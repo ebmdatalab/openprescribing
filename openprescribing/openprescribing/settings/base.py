@@ -339,7 +339,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap3"
 GRAB_HOST = "https://openprescribing.net"
 
 # For sending messages to Slack
-SLACK_GENERAL_POST_KEY = utils.get_env_setting("SLACK_GENERAL_POST_KEY", default="")
+# Webhook URLs for posting to different channels can be configured at
+# https://api.slack.com/apps/A6B85C8KC/incoming-webhooks
+SLACK_TECHNOISE_POST_KEY = utils.get_env_setting("SLACK_TECHNOISE_POST_KEY", default="")
 SLACK_SENDING_ACTIVE = True
 
 
