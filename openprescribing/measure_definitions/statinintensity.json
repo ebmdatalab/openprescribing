@@ -40,7 +40,8 @@
     "name LIKE '% caps %' OR",
     "name LIKE '% caps' OR",
     "name LIKE '%caplet%' OR",
-    "name LIKE '%Chewtab%'"
+    "name LIKE '%Chewtab%' OR",
+    "name LIKE '%chewable tablet%'"
   ],
   "numerator_bnf_codes_filter": [
     "0212000AA # Rosuvastatin Calcium",
@@ -51,13 +52,17 @@
     "0212000X0 # Pravastatin Sodium",
     "0212000Y0 # Simvastatin",
     "~0212000AA%AA # Rosuvastatin Calc_Tab 10mg (brand, generic)",
+    "~0212000AA%AG # Rosuvastatin 10mg capsules (brand, generic)",
     "~0212000AA%AB # Rosuvastatin Calc_Tab 20mg (brand, generic)",
+    "~0212000AA%AH # Rosuvastatin 20mg capsules (brand, generic)",
     "~0212000AA%AC # Rosuvastatin Calc_Tab 40mg (brand, generic)",
+    "~0212000AA%AI # Rosuvastatin 40mg capsules (brand, generic)",
     "~0212000B0%AB # Atorvastatin_Tab 20mg (brand, generic)",
-    "~0212000B0%AC # Atorvastatin_Tab 40mg (brand, generic)",
-    "~0212000B0%AD # Atorvastatin_Tab 80mg (brand, generic)",
+    "~0212000B0%AM # Atorvastatin 20mg chewable tablets sugar free (brand, generic)",
     "~0212000B0%AN # Atorvastatin_Tab 30mg (brand, generic)",
+    "~0212000B0%AC # Atorvastatin_Tab 40mg (brand, generic)",
     "~0212000B0%AP # Atorvastatin_Tab 60mg (brand, generic)",
+    "~0212000B0%AD # Atorvastatin_Tab 80mg (brand, generic)",
     "~0212000Y0%AH # Simvastatin_Tab 80mg (brand, generic)",
     "~0212000AC%AC # Simvastatin/Ezetimibe_Tab 80mg/10mg (brand, generic)"
   ],
@@ -73,7 +78,8 @@
     "name LIKE '% caps %' OR",
     "name LIKE '% caps' OR",
     "name LIKE '%caplet%' OR",
-    "name LIKE '%Chewtab%'"
+    "name LIKE '%Chewtab%' OR",
+    "name LIKE '%chewable tablet%'"
   ],
   "denominator_bnf_codes_filter": [
     "0212000AA # Rosuvastatin Calcium",
@@ -91,10 +97,10 @@
     "brian.mackenna@phc.ox.ac.uk"
   ],
   "date_reviewed": [
-    "2019-07-30"
+    "2021-11-16"
   ],
   "next_review": [
-    "2020-07-30"
+    "2022-11-16"
   ],
   "measure_complexity": [
     "low"
