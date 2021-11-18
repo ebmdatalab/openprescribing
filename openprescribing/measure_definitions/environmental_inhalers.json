@@ -34,8 +34,7 @@
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.dmd_objs_with_form_route",
-    "WHERE form_route = 'pressurizedinhalation.inhalation'",
-    "AND bnf_name NOT LIKE '%Respimat%'"
+    "WHERE form_route = 'pressurizedinhalation.inhalation'"
   ],
   "numerator_bnf_codes_filter": [
     "03",
