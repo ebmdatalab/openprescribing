@@ -39,11 +39,7 @@
   ],
   "numerator_bnf_codes_filter": [
     "03",
-    "~0301011R0%",
-    "~0301040X0AA",
-    "~0301011Z0AA",
-    "~0301020Q0AAACAC",
-    "~0301020Q0AAAEAE"
+    "~0301011R0%"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_query": [
