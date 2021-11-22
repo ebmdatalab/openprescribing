@@ -19,6 +19,9 @@
     "liquid preparations from this measure."
   ],
   "tags": [
+    "staging"
+  ],
+  "staging_tags": [
     "cardiovascular",
     "core",
     "efficacy",
