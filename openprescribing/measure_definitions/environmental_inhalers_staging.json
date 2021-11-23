@@ -11,21 +11,24 @@
   "why_it_matters": [
     "The NHS has <a href='https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf'>committed",
     "to reducing its carbon footprint by 51% by 2025</a> to meet the target in the Climate Change Act, including a shift to dry powdered",
-    "inhalers (DPI) to deliver a reduction of 4%.  DPIs and other newer types of inhalers like soft mist inhalers are less harmful to the enviroment than traditional metered",
-    "dose inhalers (MDIs) and the NHS long term plan supports the use of these inahlers where it is clinically appropriate.",
+    "inhalers (DPI) to deliver a reduction of 4%.  DPIs and other newer types of inhalers like soft mist inhalers are less harmful to the environment than traditional metered",
+    "dose inhalers (MDIs) and the NHS long term plan supports the use of these inhalers where it is clinically appropriate.",
     "<a href='https://www.nice.org.uk/guidance/ng80/resources/inhalers-for-asthma-patient-decision-aid-pdf-6727144573'>NICE has ",
-    "produced a inhaler decision aid</a> to faciltiate discussion about inhaler options. ",
+    "produced a inhaler decision aid</a> to facilitiate discussion about inhaler options. ",
     "<p>You can read more about this measure ",
     "<a href='https://ebmdatalab.net/new-measure-inhalers-and-the-environment/'>on our blog</a>, ",
     "including the rationale for excluding salbutamol."
   ],
   "tags": [
+    "staging"
+  ],
+  "staging_tags": [
     "core",
     "greenernhs",
     "iif",
     "nice",
     "respiratory"
-  ],
+  ],  
   "url": null,
   "is_percentage": true,
   "is_cost_based": false,
@@ -37,8 +40,8 @@
     "WHERE form_route = 'pressurizedinhalation.inhalation'"
   ],
   "numerator_bnf_codes_filter": [
-    "03",
-    "~0301011R0%"
+    "03 #Respiratory",
+    "~0301011R0% #Salbutamol"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_query": [
@@ -47,8 +50,8 @@
     "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "denominator_bnf_codes_filter": [
-    "03",
-    "~0301011R0"
+    "03 #Respiratory",
+    "~0301011R0 #Salbutamol"
   ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"
