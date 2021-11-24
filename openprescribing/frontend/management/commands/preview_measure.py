@@ -1,8 +1,9 @@
 import re
+import sys
 
 import requests
 from django.conf import settings
-from django.core.management import BaseCommand, CommandError
+from django.core.management import BaseCommand
 from requests.exceptions import InvalidJSONError, RequestException
 
 from .import_measures import BadRequest
@@ -15,9 +16,12 @@ class Command(BaseCommand):
         try:
             measure_id = import_preview_measure(github_url)
         except BadRequest as e:
-            raise CommandError(
+            # We want these errors to be visble to users who run via ebmbot, but ebmbot
+            # doesn't show stderr so we can't just raise CommandError here
+            self.stdout.write(
                 f"Importing measure preview failed for {github_url}\n\n{e.message}"
             )
+            sys.exit(1)
         measure_url = f"https://openprescribing.net/measure/{measure_id}/"
         self.stdout.write(
             f"Measure can be previewed at:\n{measure_url}\n\n"
