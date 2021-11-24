@@ -438,6 +438,10 @@ def all_measures(request):
     if tag_filter["tags"]:
         query["tags__overlap"] = tag_filter["tags"]
     measures = Measure.objects.filter(**query).order_by("name")
+    if not request.GET.get("show_previews"):
+        measures = measures.exclude(id__startswith=settings.MEASURE_PREVIEW_PREFIX)
+    else:
+        measures = measures.filter(id__startswith=settings.MEASURE_PREVIEW_PREFIX)
     context = {"tag_filter": tag_filter, "measures": measures}
     return render(request, "all_measures.html", context)
 

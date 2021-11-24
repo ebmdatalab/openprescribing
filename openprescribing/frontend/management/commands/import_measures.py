@@ -175,6 +175,11 @@ def load_measure_defs(measure_ids=None):
     glob_path = os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json")
     for path in sorted(glob.glob(glob_path)):
         measure_id = os.path.basename(path).split(".")[0]
+        if measure_id.startswith(settings.MEASURE_PREVIEW_PREFIX):
+            errors.append(
+                f"'{measure_id}' starts with the prefix reserved for previews"
+            )
+            continue
 
         with open(path) as f:
             try:
