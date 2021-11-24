@@ -444,3 +444,7 @@ MEASURE_DEFINITIONS_PATH = join(APPS_ROOT, "measure_definitions")
 # When building the matrixstore, should we check whether data is in BQ before
 # downloading it?
 CHECK_DATA_IN_BQ = True
+
+# Prefix we add to measure IDs to indicate that they are "previews" and should not be
+# shown by default
+MEASURE_PREVIEW_PREFIX = "preview_"
