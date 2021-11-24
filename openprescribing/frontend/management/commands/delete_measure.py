@@ -7,11 +7,13 @@ from gcutils.bigquery import Client
 
 class Command(BaseCommand):
     def handle(self, measure_id, **options):
-        if not measure_id.startswith(settings.MEASURE_PREVIEW_PREFIX):
-            raise CommandError(
-                f"Not deleting '{measure_id}' because it doesn't look like a preview "
-                f"measure (it doesn't start with '{settings.MEASURE_PREVIEW_PREFIX}')"
-            )
+        if not options["delete_live_measure"]:
+            if not measure_id.startswith(settings.MEASURE_PREVIEW_PREFIX):
+                raise CommandError(
+                    f"Not deleting '{measure_id}' because it doesn't look like a "
+                    f"preview measure (it doesn't start with "
+                    f"'{settings.MEASURE_PREVIEW_PREFIX}')"
+                )
         try:
             measure = Measure.objects.get(id=measure_id)
         except Measure.DoesNotExist:
@@ -24,6 +26,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("measure_id")
+        parser.add_argument("--delete-live-measure", action="store_true")
 
 
 def delete_from_bigquery(measure_id):

@@ -22,7 +22,7 @@ class Command(BaseCommand):
         self.stdout.write(
             f"Measure can be previewed at:\n{measure_url}\n\n"
             f"When you've finished remember to delete the preview with:\n"
-            f"@ebmbot op delete_measure {measure_id}"
+            f"@ebmbot op measures delete_preview {measure_id}"
         )
 
     def add_arguments(self, parser):
