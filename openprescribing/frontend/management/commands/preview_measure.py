@@ -19,7 +19,11 @@ class Command(BaseCommand):
                 f"Importing measure preview failed for {github_url}\n\n{e.message}"
             )
         measure_url = f"https://openprescribing.net/measure/{measure_id}/"
-        self.stdout.write(f"Measure can be previewed at:\n{measure_url}")
+        self.stdout.write(
+            f"Measure can be previewed at:\n{measure_url}\n\n"
+            f"When you've finished remember to delete the preview with:\n"
+            f"@ebmbot op delete_measure {measure_id}"
+        )
 
     def add_arguments(self, parser):
         parser.add_argument("github_url")
