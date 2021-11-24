@@ -141,6 +141,17 @@ class Command(BaseCommand):
         else:
             self.build_measures(measure_defs, start_date, end_date, verbose, options)
 
+        if options["print_confirmation"]:
+            if options["definitions_only"]:
+                target = "definitions (but not values)"
+            else:
+                target = "definitions and values"
+            measure_urls = "\n".join(
+                f"https://openprescribing.net/measure/{measure_id}/"
+                for measure_id in measure_ids
+            )
+            print(f"Imported measure {target} for:\n{measure_urls}")
+
         logger.warning("Total elapsed time: %s" % (datetime.now() - start))
 
     def add_arguments(self, parser):
@@ -148,6 +159,7 @@ class Command(BaseCommand):
         parser.add_argument("--definitions_only", action="store_true")
         parser.add_argument("--bigquery_only", action="store_true")
         parser.add_argument("--check", action="store_true")
+        parser.add_argument("--print-confirmation", action="store_true")
 
 
 def load_measure_defs(measure_ids=None):
