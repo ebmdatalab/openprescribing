@@ -1,5 +1,7 @@
+import sys
+
 from django.conf import settings
-from django.core.management import BaseCommand, CommandError
+from django.core.management import BaseCommand
 
 from frontend.models import Measure
 from gcutils.bigquery import Client
@@ -9,15 +11,19 @@ class Command(BaseCommand):
     def handle(self, measure_id, **options):
         if not options["delete_live_measure"]:
             if not measure_id.startswith(settings.MEASURE_PREVIEW_PREFIX):
-                raise CommandError(
+                # We want these errors to be visble to users who run via ebmbot, but
+                # ebmbot doesn't show stderr so we can't just raise CommandError here
+                self.stdout.write(
                     f"Not deleting '{measure_id}' because it doesn't look like a "
                     f"preview measure (it doesn't start with "
                     f"'{settings.MEASURE_PREVIEW_PREFIX}')"
                 )
+                sys.exit(1)
         try:
             measure = Measure.objects.get(id=measure_id)
         except Measure.DoesNotExist:
-            raise CommandError(f"No measure with ID '{measure_id}'")
+            self.stdout.write(f"No measure with ID '{measure_id}'")
+            sys.exit(1)
         delete_from_bigquery(measure_id)
         # The ON DELETE CASCADE configuration ensures that all MeasureValues are deleted
         # as well
