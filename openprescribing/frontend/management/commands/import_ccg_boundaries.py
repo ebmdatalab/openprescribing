@@ -44,15 +44,12 @@ Here's what I did:
    (but ensure the code field in `layer_mapping` below matches the
    name of the exported attribute column - in this case it was
    `Lower_Laye`; you can examine the column names with `ogrinfo`)
-* Don't forget to import CCG names after running this command (I ran
-  `python manage.py import_org_names --ccg
-  ~/openprescribing-data/data/ccg_details/2017_06/eccg.csv)
-
 """
 
 from django.contrib.gis.db.models.functions import Centroid
 from django.contrib.gis.utils import LayerMapping
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 from frontend.models import PCT
 
@@ -66,11 +63,7 @@ def set_centroids():
 
 
 class Command(BaseCommand):
-    args = ""
-    help = "Imports CCG boundaries from mapinfo. Note that you should "
-    help += "run this BEFORE importing CCG names, as this creates new "
-    help += "records in the database rather than updating existing ones."
-    help += "Read notes in the source code before proceeding"
+    help = "Imports CCG boundaries from mapinfo."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -80,5 +73,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         layer_mapping = {"code": "Lower_Laye", "boundary": "Unknown"}
         lm = LayerMapping(PCT, options["filename"], layer_mapping, transform=True)
-        lm.save(strict=True)
-        set_centroids()
+        with transaction.atomic():
+            for feature in lm.layer:
+                fields = lm.feature_kwargs(feature)
+                PCT.objects.filter(code=fields["code"]).update(
+                    boundary=fields["boundary"]
+                )
+            set_centroids()
