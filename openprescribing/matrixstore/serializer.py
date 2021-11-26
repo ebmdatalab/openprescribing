@@ -14,6 +14,9 @@ from scipy.sparse import csc_matrix
 warnings.filterwarnings(
     "ignore", message="'pyarrow.SerializationContext' is deprecated", module="."
 )
+warnings.filterwarnings(
+    "ignore", message="'pyarrow.serialize' is deprecated", module="."
+)
 
 
 # The magic intial bytes which tell us that a given binary chunk is LZ4
