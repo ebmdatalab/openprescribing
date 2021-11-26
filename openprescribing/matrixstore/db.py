@@ -6,8 +6,9 @@ It makes use of the assumption that data is static throughout the runtime of
 the application and therefore any data imports or updates will require an
 application restart before they take effect.
 """
+from functools import lru_cache
+
 from django.conf import settings
-from django.utils.lru_cache import lru_cache
 
 from frontend.models import Practice
 
