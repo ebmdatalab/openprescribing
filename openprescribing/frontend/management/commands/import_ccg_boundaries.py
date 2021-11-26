@@ -46,7 +46,11 @@ Here's what I did:
    `Lower_Laye`; you can examine the column names with `ogrinfo`)
 """
 
+import warnings
+
+from django import VERSION as DJANGO_VERSION
 from django.contrib.gis.db.models.functions import Centroid
+from django.contrib.gis.gdal import GDAL_VERSION
 from django.contrib.gis.utils import LayerMapping
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -69,6 +73,19 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # Without this check the command will run without error, but the imported shapes
+        # will have inverted axis order
+        if DJANGO_VERSION[:2] < (3, 1):
+            if GDAL_VERSION[0] > 2:
+                raise RuntimeError(
+                    "Django <3.1 is not compatible with GDAL 3, see:\n"
+                    "https://github.com/ebmdatalab/openprescribing/issues/3263"
+                )
+        else:
+            warnings.warn(
+                "GDAL_VERSION check above can be removed as we're running Django >= 3.1"
+            )
+
         layer_mapping = {"code": "ods_code", "boundary": "geometry"}
         lm = LayerMapping(PCT, options["filename"], layer_mapping, transform=True)
         with transaction.atomic():
