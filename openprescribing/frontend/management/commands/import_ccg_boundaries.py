@@ -50,9 +50,10 @@ Here's what I did:
 
 """
 
-from django.core.management.base import BaseCommand
 from django.contrib.gis.db.models.functions import Centroid
 from django.contrib.gis.utils import LayerMapping
+from django.core.management.base import BaseCommand
+
 from frontend.models import PCT
 
 
