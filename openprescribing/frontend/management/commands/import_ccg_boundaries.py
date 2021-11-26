@@ -50,16 +50,14 @@ from django.contrib.gis.db.models.functions import Centroid
 from django.contrib.gis.utils import LayerMapping
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.db.models import F
 
 from frontend.models import PCT
 
 
+# This has to be available as a standalone function as it's imported by a migration
 def set_centroids():
-    for pct in PCT.objects.filter(boundary__isnull=False).annotate(
-        centroid_annotation=Centroid("boundary")
-    ):
-        pct.centroid = pct.centroid_annotation
-        pct.save()
+    PCT.objects.filter(boundary__isnull=False).update(centroid=Centroid(F("boundary")))
 
 
 class Command(BaseCommand):
