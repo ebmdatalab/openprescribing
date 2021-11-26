@@ -18,4 +18,4 @@ class CommandsTestCase(TestCase):
         call_command("import_ccg_boundaries", *args, **opts)
 
         pct = PCT.objects.get(code="03Q")
-        self.assertAlmostEqual(pct.boundary.centroid.x, -1.0307530606980588)
+        self.assertAlmostEqual(pct.boundary.centroid.x, -1.0307437386533043)

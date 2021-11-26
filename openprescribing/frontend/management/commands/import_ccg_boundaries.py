@@ -69,7 +69,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        layer_mapping = {"code": "Lower_Laye", "boundary": "Unknown"}
+        layer_mapping = {"code": "ods_code", "boundary": "geometry"}
         lm = LayerMapping(PCT, options["filename"], layer_mapping, transform=True)
         with transaction.atomic():
             for feature in lm.layer:
