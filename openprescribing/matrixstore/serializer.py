@@ -17,6 +17,9 @@ warnings.filterwarnings(
 warnings.filterwarnings(
     "ignore", message="'pyarrow.serialize' is deprecated", module="."
 )
+warnings.filterwarnings(
+    "ignore", message="'pyarrow.deserialize' is deprecated", module="."
+)
 
 
 # The magic intial bytes which tell us that a given binary chunk is LZ4
