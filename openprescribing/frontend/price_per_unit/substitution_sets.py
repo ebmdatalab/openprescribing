@@ -79,12 +79,19 @@ memoize = lru_cache(maxsize=None)
 
 # The below file defines groups of generics of different formulations which we
 # believe can be substituted for each other (e.g tramadol tablets and
-# capsules). The canonical version is maintained as a Google Sheet. The process
-# for updating this, and a link to the sheet itself, can be found at:
+# capsules). The canonical version is maintained as a Google Sheet:
+# https://docs.google.com/spreadsheets/d/1usBWtho-Cm_coZkUfSwJ1RJSynkc17EoUN4SZl8czKs/
+#
+# Editor permissions are currently granted to a specific list of users so you may need
+# to ask around if you need write access. (Ideally it would be shared with the whole
+# organisation but we also need it to be public read-only and Google's permissions
+# system doesn't make this easy.)
+#
+# Further details on how this was created can be found here:
 # https://github.com/ebmdatalab/price-per-dose/issues/11
 #
 # The local copy can be updated using the command:
-#   curl -L https://tinyurl.com/w5ecxfg > frontend/price_per_unit/formulation_swaps.csv
+#   curl -L https://docs.google.com/spreadsheets/d/1usBWtho-Cm_coZkUfSwJ1RJSynkc17EoUN4SZl8czKs/gviz/tq?tqx=out:csv > frontend/price_per_unit/formulation_swaps.csv
 FORMULATION_SWAPS_FILE = os.path.join(
     os.path.dirname(__file__), "formulation_swaps.csv"
 )
