@@ -49,7 +49,7 @@ class Command(BaseCommand):
 
         zip_filename = base_filename + ".zip"
         if base_filename == "epcn":
-            url = "https://digital.nhs.uk/binaries/content/assets/website-assets/services/ods/data-downloads-other-nhs-organisations/epcn.zip"
+            url = "https://nhs-prod.global.ssl.fastly.net/binaries/content/assets/website-assets/services/ods/data-downloads-other-nhs-organisations/epcn-.zip"
             filename = "ePCN.xlsx"
         else:
             url = "https://files.digital.nhs.uk/assets/ods/current/" + zip_filename
