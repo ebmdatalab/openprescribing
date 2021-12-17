@@ -157,5 +157,5 @@ def update_national_boundary_file():
     boundary = PCT.objects.filter(boundary__isnull=False).aggregate(
         boundary=Union("boundary")
     )["boundary"]
-    with open(NATIONAL_BOUNDARY_FILE, "wb") as f:
+    with open(NATIONAL_BOUNDARY_FILE, "w") as f:
         f.write(boundary.geojson)
