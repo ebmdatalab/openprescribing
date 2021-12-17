@@ -14,14 +14,13 @@ import random
 import string
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
-from django.db.models import Func
 from django.contrib.gis.db.models import Collect, Union
 from django.contrib.gis.geos import GEOSGeometry
+from django.core.management.base import BaseCommand
 from django.db import connection, transaction
+from django.db.models import Func
 
-from frontend.models import Practice, PCT
-
+from frontend.models import PCT, Practice
 
 NATIONAL_BOUNDARY_FILE = os.path.join(
     settings.REPO_ROOT, "openprescribing/media/geojson/england-boundary.geojson"
