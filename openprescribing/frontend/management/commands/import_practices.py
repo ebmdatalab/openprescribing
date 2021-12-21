@@ -47,6 +47,13 @@ class Command(BaseCommand):
         count = 0
         for row in entries:
             row = [r.strip() for r in row]
+
+            # Skip Welsh practices, see:
+            # https://github.com/ebmdatalab/openprescribing/issues/3279
+            national_grouping = row[2]
+            if national_grouping == "W00":
+                continue
+
             practice, created = Practice.objects.get_or_create(code=row[0])
 
             practice.name = row[1]
