@@ -14,14 +14,13 @@ import random
 import string
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
-from django.db.models import Func
 from django.contrib.gis.db.models import Collect, Union
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSException, GEOSGeometry
+from django.core.management.base import BaseCommand
 from django.db import connection, transaction
+from django.db.models import Func
 
-from frontend.models import Practice, PCT
-
+from frontend.models import PCT, Practice
 
 NATIONAL_BOUNDARY_FILE = os.path.join(
     settings.REPO_ROOT, "openprescribing/media/geojson/england-boundary.geojson"
@@ -36,14 +35,18 @@ class Command(BaseCommand):
         infer_practice_boundaries()
 
 
-def infer_practice_boundaries():
-    practices = Practice.objects.filter(location__isnull=False, setting=4).exclude(
+def get_practices():
+    return Practice.objects.filter(location__isnull=False, setting=4).exclude(
         status_code__in=(
             Practice.STATUS_RETIRED,
             Practice.STATUS_DORMANT,
             Practice.STATUS_CLOSED,
         )
     )
+
+
+def infer_practice_boundaries():
+    practices = get_practices()
     partition = practices.aggregate(
         voronoi=Func(Collect("location"), function="ST_VoronoiPolygons")
     )["voronoi"]
@@ -77,30 +80,54 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
     cursor_execute(
         "CREATE TEMPORARY TABLE {regions} (original GEOMETRY, clipped GEOMETRY)"
     )
+
+    bad_practices = []
     for region in regions:
-        clipped = region.intersection(clip_boundary)
-        # This is a workaround for the error "Relate Operation called with a
-        # LWGEOMCOLLECTION type" which happens when clipped boundaries end up
-        # including things which aren't polygons (i.e. points or lines) and we
-        # then try to do ST_Contains queries on them. Generating a zero-width
-        # buffer causes all non-polygons to get dropped. See:
-        # https://lists.osgeo.org/pipermail/postgis-users/2008-August/020740.html
-        # (Why clipping would result in non-polygons in some cases is totally
-        # unclear, but somehow it does.)
-        clipped = clipped.buffer(0.0)
-        if clipped.empty:
-            raise RuntimeError(
-                """
-                Clipped region is empty. This means we have a practice located
-                entirely outside the national boundary (as determined by
-                aggregating all CCG boundaries) so probably there's some dodgy
-                data somewhere.
-                """
+        try:
+            clipped = region.intersection(clip_boundary)
+            # This is a workaround for the error "Relate Operation called with a
+            # LWGEOMCOLLECTION type" which happens when clipped boundaries end up
+            # including things which aren't polygons (i.e. points or lines) and we then
+            # try to do ST_Contains queries on them. Generating a zero-width buffer
+            # causes all non-polygons to get dropped. See:
+            # https://lists.osgeo.org/pipermail/postgis-users/2008-August/020740.html
+            # (Why clipping would result in non-polygons in some cases is totally
+            # unclear, but somehow it does.)
+            clipped = clipped.buffer(0.0)
+        except GEOSException as e:
+            clipped = None
+            # We sometimes get this error when we have "bad practices" as below; we want
+            # to swallow it so we can identify all the problematic cases rather than
+            # dying on the first one
+            if str(e) != (
+                "Error encountered checking Geometry returned from GEOS C function "
+                '"GEOSIntersection_r".'
+            ):
+                raise
+
+        if clipped is None or clipped.empty:
+            bad_practices.extend(get_practices().filter(location__within=region))
+        else:
+            cursor_execute(
+                "INSERT INTO {regions} (original, clipped) VALUES (%s, %s)",
+                [region.ewkb, clipped.ewkb],
             )
-        cursor_execute(
-            "INSERT INTO {regions} (original, clipped) VALUES (%s, %s)",
-            [region.ewkb, clipped.ewkb],
+
+    if bad_practices:
+        practice_desc = "\n".join(
+            (
+                f"{p.code}: {p.name} ({p.postcode}) http://www.openstreetmap.org/"
+                f"?zoom=12&mlat={p.location.y}&mlon={p.location.x}"
+            )
+            for p in bad_practices
         )
+        raise RuntimeError(
+            f"Some practices appear to be located entirely outside the national "
+            f"boundary (as determined by aggregating all CCG boundaries) so probably "
+            f"there's some dodgy data somewhere. Offending practices are:\n\n"
+            f"{practice_desc}"
+        )
+
     cursor_execute("CREATE INDEX {regions}_idx ON {regions} USING GIST (original)")
     cursor_execute("ANALYSE {regions}")
     # We match practices to regions using the original, unclipped boundary.
@@ -158,5 +185,5 @@ def update_national_boundary_file():
     boundary = PCT.objects.filter(boundary__isnull=False).aggregate(
         boundary=Union("boundary")
     )["boundary"]
-    with open(NATIONAL_BOUNDARY_FILE, "wb") as f:
+    with open(NATIONAL_BOUNDARY_FILE, "w") as f:
         f.write(boundary.geojson)
