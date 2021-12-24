@@ -186,10 +186,10 @@ class ImportMeasuresTests(TestCase):
         org_column = org_type + "_id"
         df = pd.DataFrame(index=org_codes)
 
-        df["quantity_total"] = denominators.groupby(org_column)["quantity"].sum()
-        df["cost_total"] = denominators.groupby(org_column)["actual_cost"].sum()
-        df["quantity_branded"] = numerators.groupby(org_column)["quantity"].sum()
-        df["cost_branded"] = numerators.groupby(org_column)["actual_cost"].sum()
+        df["quantity_total"] = sum_by_group(denominators, org_column, "quantity")
+        df["cost_total"] = sum_by_group(denominators, org_column, "actual_cost")
+        df["quantity_branded"] = sum_by_group(numerators, org_column, "quantity")
+        df["cost_branded"] = sum_by_group(numerators, org_column, "actual_cost")
         df = df.fillna(0)
         df["quantity_total"] = df["quantity_total"].astype("int")
         df["quantity_branded"] = df["quantity_branded"].astype("int")
@@ -238,10 +238,10 @@ class ImportMeasuresTests(TestCase):
         org_column = org_type + "_id"
         df = pd.DataFrame(index=org_codes)
 
-        df["items"] = numerators.groupby(org_column)["items"].sum()
-        df["thousand_patients"] = denominators.groupby(org_column)[
-            "thousand_patients"
-        ].sum()
+        df["items"] = sum_by_group(numerators, org_column, "items")
+        df["thousand_patients"] = sum_by_group(
+            denominators, org_column, "thousand_patients"
+        )
         df["ratio"] = df["items"] / df["thousand_patients"]
         df["items"] = df["items"].fillna(0)
         df["thousand_patients"] = df["thousand_patients"].fillna(0)
@@ -264,10 +264,10 @@ class ImportMeasuresTests(TestCase):
         org_column = org_type + "_id"
         df = pd.DataFrame(index=org_codes)
 
-        df["cost"] = numerators.groupby(org_column)["actual_cost"].sum()
-        df["thousand_patients"] = denominators.groupby(org_column)[
-            "thousand_patients"
-        ].sum()
+        df["cost"] = sum_by_group(numerators, org_column, "actual_cost")
+        df["thousand_patients"] = sum_by_group(
+            denominators, org_column, "thousand_patients"
+        )
         df["ratio"] = df["cost"] / df["thousand_patients"]
         df["cost"] = df["cost"].fillna(0)
         df["thousand_patients"] = df["thousand_patients"].fillna(0)
@@ -986,3 +986,11 @@ def build_factory():
     factory = DataFactory()
     factory.create_prescribing_for_bnf_codes(bnf_codes)
     return factory
+
+
+def sum_by_group(df, group_column, value_column):
+    # The rounding is to work around a change in floating point behaviour which appeared
+    # in Pandas 1.3 whereby sequences of values which used to sum as equal are now
+    # returned as slightly different. See:
+    # https://github.com/ebmdatalab/openprescribing/pull/3222
+    return df.groupby(group_column)[value_column].sum().round(decimals=10)
