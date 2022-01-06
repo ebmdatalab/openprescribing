@@ -8,14 +8,11 @@ Information about data sources used on OpenPrescribing can be found [here](https
 
 # Set up the application
 
-You can install the application dependencies either on bare metal, or
-virtualised inside docker, or virtualbox (via vagrant).
+You can install the application dependencies either on bare metal or
+virtualised inside docker.
 
 Which to use?
 
-* The vagrant route is probably the easiest. It creates a virtual
-  Debian server and then uses `ansible` to install all the dependencies
-  for you.
 * We currently deploy the site to production on bare metal, though we
   may well switch to using ansible in the medium term. Use this route
   if you don't want to mess around with virtualisation for some
@@ -26,24 +23,12 @@ Which to use?
   environment.  Use this route to reproduce the Github Actions test 
   environment exactly (i.e. you probably don't want to use this route!)
 
-## Using vagrant
-
-Requires [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-
-### Provision the vagrant box
-
-
-    cd openprescribing/ansible
-    vagrant up   # invokes `vagrant provision` the first time it's run
-
-### Start the server
-
-    vagrant ssh  # also activates the virtualenv for you
-    python manage.py runserver_plus 0.0.0.0:8000
-
-The application should then be accessible at
-``http://127.0.0.1:3333/`` (using the vagrant-forwarded port) from a
-web browser on the host computer.
+Note: we used to have a set of Ansible scripts for configuring a Vagrant
+box ready for local development but, while these were tested in CI, they
+weren't being actively used and it turned out to be non-trivial to
+get them to install Python 3.8; so we've removed them for now. See the
+below PR if you want to investigate restoring them:
+https://github.com/ebmdatalab/openprescribing/pull/3286
 
 ## Using bare metal
 
