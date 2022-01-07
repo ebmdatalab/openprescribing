@@ -284,7 +284,7 @@ tablib[html,ods,xls,xlsx,yaml]==2.0.0
     # via django-import-export
 titlecase==0.12.0
     # via -r requirements.in
-tomli==1.2.1
+tomli==2.0.0
     # via pep517
 unicodecsv==0.14.1
     # via djangorestframework-csv
