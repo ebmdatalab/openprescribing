@@ -1,5 +1,5 @@
-## This isn't just an example file; it's used in our ansible buildouts
-## and integration tests, so must be kept up to date.
+## This isn't just an example file; it's used in our integration tests, so must
+## be kept up to date.
 
 # Path to virtualenv
 VIRTUALENV_PATH=
