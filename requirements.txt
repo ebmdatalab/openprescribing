@@ -42,7 +42,7 @@ diff-match-patch==20200713
     # via django-import-export
 diskcache==5.0.3
     # via -r requirements.in
-django==2.2.24
+django==2.2.25
     # via
     #   -r requirements.in
     #   django-anymail
