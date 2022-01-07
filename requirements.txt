@@ -144,7 +144,7 @@ idna==3.2
     # via requests
 jdcal==1.4.1
     # via openpyxl
-lxml==4.6.3
+lxml==4.6.5
     # via
     #   -r requirements.in
     #   premailer
