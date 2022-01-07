@@ -26,7 +26,7 @@ charset-normalizer==2.0.4
     # via requests
 click==8.0.1
     # via pip-tools
-coverage==5.3
+coverage==6.2
     # via -r requirements.in
 cryptography==3.4.8
     # via paramiko
@@ -160,7 +160,6 @@ mock==3.0.5
 networkx==2.6.2
     # via -r requirements.in
 numpy==1.22.0
-
     # via
     #   -r requirements.in
     #   pandas
