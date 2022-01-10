@@ -8,7 +8,7 @@ backports.csv==1.0.5
     # via -r requirements.in
 bcrypt==3.1.7
     # via paramiko
-beautifulsoup4==4.9.3
+beautifulsoup4==4.10.0
     # via -r requirements.in
 cachetools==4.1.1
     # via
@@ -197,7 +197,7 @@ protobuf==3.19.1
     #   googleapis-common-protos
 psycopg2-binary==2.8.6
     # via -r requirements.in
-pyarrow==5.0.0
+pyarrow==6.0.1
     # via -r requirements.in
 pyasn1==0.4.8
     # via
@@ -207,7 +207,7 @@ pyasn1-modules==0.2.8
     # via google-auth
 pycodestyle==2.8.0
     # via flake8
-pycparser==2.20
+pycparser==2.21
     # via cffi
 pydata-google-auth==1.2.0
     # via pandas-gbq
