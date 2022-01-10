@@ -22,7 +22,7 @@ cffi==1.14.6
     #   cryptography
     #   google-crc32c
     #   pynacl
-charset-normalizer==2.0.4
+charset-normalizer==2.0.10
     # via requests
 click==8.0.1
     # via pip-tools
@@ -49,6 +49,7 @@ django==2.2.25
     #   django-cors-headers
     #   django-debug-toolbar
     #   django-debug-toolbar-template-timings
+    #   django-extensions
     #   django-import-export
     #   djangorestframework
 django-anymail[mailgun]==8.4
@@ -65,7 +66,7 @@ django-debug-toolbar-template-timings==0.9
     # via -r requirements.in
 django-dotenv==1.4.2
     # via -r requirements.in
-django-extensions==3.0.9
+django-extensions==3.1.5
     # via -r requirements.in
 django-import-export==2.4.0
     # via -r requirements.in
@@ -226,7 +227,7 @@ python-dateutil==2.8.2
     # via
     #   -r requirements.in
     #   pandas
-pytz==2020.1
+pytz==2021.3
     # via
     #   -r requirements.in
     #   django
