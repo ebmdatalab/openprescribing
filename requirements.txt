@@ -20,7 +20,6 @@ cffi==1.14.6
     # via
     #   bcrypt
     #   cryptography
-    #   google-crc32c
     #   pynacl
 charset-normalizer==2.0.10
     # via requests
@@ -121,7 +120,7 @@ google-cloud-core==1.7.2
     #   google-cloud-storage
 google-cloud-storage==1.44.0
     # via -r requirements.in
-google-crc32c==1.0.0
+google-crc32c==1.3.0
     # via google-resumable-media
 google-resumable-media==1.3.3
     # via
@@ -197,7 +196,7 @@ protobuf==3.19.1
     #   googleapis-common-protos
 psycopg2-binary==2.8.6
     # via -r requirements.in
-pyarrow==5.0.0
+pyarrow==6.0.1
     # via -r requirements.in
 pyasn1==0.4.8
     # via
@@ -297,7 +296,7 @@ urllib3==1.26.6
     #   selenium
 watchdog==2.1.5
     # via when-changed
-wheel==0.37.0
+wheel==0.37.1
     # via pip-tools
 when-changed==0.3.0
     # via -r requirements.in
