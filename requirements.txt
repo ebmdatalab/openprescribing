@@ -253,7 +253,7 @@ requests-futures==1.0.0
     # via -r requirements.in
 requests-oauthlib==1.3.0
     # via google-auth-oauthlib
-rsa==4.7.2
+rsa==4.8
     # via google-auth
 scipy==1.7.1
     # via -r requirements.in
