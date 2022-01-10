@@ -190,7 +190,7 @@ pip-tools==6.2.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
-protobuf==3.17.3
+protobuf==3.19.1
     # via
     #   google-api-core
     #   google-cloud-storage
@@ -272,7 +272,6 @@ six==1.16.0
     #   google-resumable-media
     #   grpcio
     #   mock
-    #   protobuf
     #   pynacl
     #   python-dateutil
 soupsieve==2.0.1
