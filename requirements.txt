@@ -140,7 +140,7 @@ httplib2==0.19.0
     # via
     #   google-api-python-client
     #   google-auth-httplib2
-idna==3.2
+idna==3.3
     # via requests
 jdcal==1.4.1
     # via openpyxl
