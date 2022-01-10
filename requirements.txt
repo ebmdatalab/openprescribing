@@ -22,7 +22,7 @@ cffi==1.14.6
     #   cryptography
     #   google-crc32c
     #   pynacl
-charset-normalizer==2.0.4
+charset-normalizer==2.0.10
     # via requests
 click==8.0.1
     # via pip-tools
