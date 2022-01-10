@@ -90,7 +90,7 @@ google-api-core[grpc]==1.31.2
     #   google-cloud-bigquery-storage
     #   google-cloud-core
     #   google-cloud-storage
-google-api-python-client==2.15.0
+google-api-python-client==2.34.0
     # via -r requirements.in
 google-auth==1.35.0
     # via
@@ -290,7 +290,7 @@ unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==3.0.1
     # via google-api-python-client
-urllib3==1.26.6
+urllib3==1.26.8
     # via
     #   requests
     #   selenium
