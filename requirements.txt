@@ -49,6 +49,7 @@ django==2.2.25
     #   django-cors-headers
     #   django-debug-toolbar
     #   django-debug-toolbar-template-timings
+    #   django-extensions
     #   django-import-export
     #   djangorestframework
 django-anymail[mailgun]==8.4
@@ -65,7 +66,7 @@ django-debug-toolbar-template-timings==0.9
     # via -r requirements.in
 django-dotenv==1.4.2
     # via -r requirements.in
-django-extensions==3.0.9
+django-extensions==3.1.5
     # via -r requirements.in
 django-import-export==2.4.0
     # via -r requirements.in
