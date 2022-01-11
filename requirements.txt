@@ -239,7 +239,7 @@ pyyaml==5.4
     # via tablib
 raven==6.10.0
     # via -r requirements.in
-requests[security]==2.26.0
+requests[security]==2.27.1
     # via
     #   -r requirements.in
     #   django-anymail
