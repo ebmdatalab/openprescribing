@@ -78,7 +78,12 @@ class Command(BaseCommand):
                 writer = csv.writer(f, delimiter=",")
                 for line in reader:
                     # Convert year-month dates to year-month-day
-                    line[0] = line[0] + "-01"
+                    if len(line[0]) == 7:
+                        line[0] = line[0] + "-01"
+                    elif len(line[0]) == 6:
+                        line[0] = line[0][:4] + "-" + line[0][4:6] + "-01"
+                    else:
+                        assert False, line[0]
                     writer.writerow(line)
                 print("{} | Wrote: {}".format(month, f.name))
 
