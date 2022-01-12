@@ -128,7 +128,7 @@ google-resumable-media==1.3.3
     #   google-cloud-storage
 googleapis-common-protos==1.54.0
     # via google-api-core
-graphviz==0.17
+graphviz==0.19.1
     # via -r requirements.in
 grpcio==1.43.0
     # via google-api-core
