@@ -67,7 +67,7 @@ django-dotenv==1.4.2
     # via -r requirements.in
 django-extensions==3.1.5
     # via -r requirements.in
-django-import-export==2.4.0
+django-import-export==2.7.1
     # via -r requirements.in
 djangorestframework==3.13.1
     # via
@@ -157,7 +157,7 @@ mccabe==0.6.1
     # via flake8
 mock==3.0.5
     # via -r requirements.in
-networkx==2.6.2
+networkx==2.6.3
     # via -r requirements.in
 numpy==1.22.0
     # via
@@ -280,7 +280,7 @@ sqlparse==0.4.2
     # via
     #   django
     #   django-debug-toolbar
-tablib[html,ods,xls,xlsx,yaml]==2.0.0
+tablib[html,ods,xls,xlsx,yaml]==3.1.0
     # via django-import-export
 titlecase==0.12.0
     # via -r requirements.in
