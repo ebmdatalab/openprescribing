@@ -27,7 +27,7 @@ lxml
 lz4
 networkx
 numpy
-openpyxl==3.0.9
+openpyxl
 pandas-gbq
 pandas
 premailer
