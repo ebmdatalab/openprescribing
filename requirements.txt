@@ -57,7 +57,7 @@ django-cors-headers==3.11.0
     # via -r requirements.in
 django-crispy-forms==1.13.0
     # via -r requirements.in
-django-debug-toolbar==3.2.2
+django-debug-toolbar==3.2.4
     # via
     #   -r requirements.in
     #   django-debug-toolbar-template-timings
