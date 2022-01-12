@@ -16,7 +16,7 @@ cachetools==4.1.1
     #   premailer
 certifi==2020.6.20
     # via requests
-cffi==1.14.6
+cffi==1.15.0
     # via
     #   bcrypt
     #   cryptography
