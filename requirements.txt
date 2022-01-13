@@ -183,7 +183,7 @@ paramiko==2.9.2
     # via fabric3
 pep517==0.11.0
     # via pip-tools
-pip-tools==6.2.0
+pip-tools==6.4.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
@@ -212,7 +212,7 @@ pyflakes==2.4.0
     # via flake8
 pynacl==1.5.0
     # via paramiko
-pyparsing==2.4.7
+pyparsing==3.0.6
     # via
     #   httplib2
     #   packaging
