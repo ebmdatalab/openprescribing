@@ -212,7 +212,7 @@ pyflakes==2.4.0
     # via flake8
 pynacl==1.5.0
     # via paramiko
-pyparsing==2.4.7
+pyparsing==3.0.6
     # via
     #   httplib2
     #   packaging
@@ -284,7 +284,7 @@ tomli==2.0.0
     # via pep517
 unicodecsv==0.14.1
     # via djangorestframework-csv
-uritemplate==3.0.1
+uritemplate==4.1.1
     # via google-api-python-client
 urllib3==1.26.8
     # via
