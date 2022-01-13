@@ -284,7 +284,7 @@ tomli==2.0.0
     # via pep517
 unicodecsv==0.14.1
     # via djangorestframework-csv
-uritemplate==3.0.1
+uritemplate==4.1.1
     # via google-api-python-client
 urllib3==1.26.8
     # via
