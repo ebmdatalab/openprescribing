@@ -23,7 +23,7 @@ cffi==1.15.0
     #   pynacl
 charset-normalizer==2.0.10
     # via requests
-click==8.0.1
+click==8.0.3
     # via pip-tools
 coverage==6.2
     # via -r requirements.in
