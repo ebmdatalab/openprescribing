@@ -75,7 +75,7 @@ djangorestframework==3.13.1
     #   djangorestframework-csv
 djangorestframework-csv==2.1.1
     # via -r requirements.in
-easyprocess==0.3
+easyprocess==1.1
     # via pyvirtualdisplay
 et-xmlfile==1.1.0
     # via openpyxl
