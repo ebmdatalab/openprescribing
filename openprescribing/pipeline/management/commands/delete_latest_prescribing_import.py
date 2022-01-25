@@ -46,8 +46,8 @@ class Command(BaseCommand):
 def verify_year_month(year, month):
     print("verify_year_month")
     log = ImportLog.objects.latest_in_category("prescribing")
-    assert log.year == year
-    assert log.month == int(month)
+    assert log.current_at.year == year
+    assert log.current_at.month == int(month)
 
 
 def delete_import_record(year, month):
@@ -79,7 +79,7 @@ def mark_task_logs_as_failed(year, month):
         status=TaskLog.SUCCESSFUL,
     )
 
-    for task_name in nx.descendants("convert_hscic_prescribing"):
+    for task_name in nx.descendants(graph, "convert_hscic_prescribing"):
         task_log = TaskLog.objects.get(
             task_name=task_name, year=year, month=month, status=TaskLog.SUCCESSFUL
         )
@@ -98,8 +98,12 @@ def delete_fetch_and_import_task_log(year, month):
 
 def delete_import_logs(year, month):
     print("delete_import_logs")
-    ImportLog.objects.filter(category="prescribing", year=year, month=month).delete()
-    ImportLog.objects.filter(category="dashboard_data", year=year, month=month).delete()
+    ImportLog.objects.get(
+        category="prescribing", current_at=f"{year}-{month}-01"
+    ).delete()
+    ImportLog.objects.get(
+        category="dashboard_data", current_at=f"{year}-{month}-01"
+    ).delete()
 
 
 def delete_prescribing_file_on_filesystem(year, month):
@@ -133,7 +137,7 @@ def remove_records_from_bq_table(year, month):
     sql = (
         f"DELETE FROM ebmdatalab.hscic.prescribing_v2 WHERE month = '{year}-{month}-01'"
     )
-    client.run_job("query", [sql])
+    client.query(sql)
 
 
 def delete_backup_from_storage(year, month):
@@ -144,17 +148,11 @@ def delete_backup_from_storage(year, month):
 def delete_matrixstore_bq_table(year, month):
     print("delete_matrixstore_bq_table")
     _delete_table_from_bq("prescribing_export", f"prescribing_{year}_{month}")
-    _delete_file_from_storage("prescribing_export", f"prescribing_{year}_{month}")
 
 
 def delete_matrixstore_storage_files(year, month):
     print("delete_matrixstore_storage_files")
-    client = StorageClient()
-    bucket = client.get_bucket()
-    for blob in bucket.list_blobs(
-        prefix=f"prescribing_exports/prescribing_{year}_{month}_*"
-    ):
-        blob.delete()
+    _delete_file_from_storage(f"prescribing_exports/prescribing_{year}_{month}_*")
 
 
 def delete_matrixstore_download(year, month):
@@ -170,8 +168,8 @@ def delete_matrixstore_download(year, month):
 def _delete_file_from_storage(path):
     client = StorageClient()
     bucket = client.get_bucket()
-    blob = bucket.blob(path)
-    blob.delete()
+    for blob in bucket.list_blobs(prefix=path):
+        blob.delete()
 
 
 def _delete_table_from_bq(dataset_name, table_name):
