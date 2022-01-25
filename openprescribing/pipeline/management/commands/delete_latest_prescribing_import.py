@@ -72,23 +72,23 @@ def mark_task_logs_as_failed(year, month):
         for dependency_name in task_def.get("dependencies", []):
             graph.add_edge(dependency_name, task_name)
 
-    convert_task_log = TaskLog.objects.get(
-        task_name="convert_hscic_prescribing",
+    fetch_task_log = TaskLog.objects.get(
+        task_name="fetch_prescribing",
         year=year,
         month=month,
         status=TaskLog.SUCCESSFUL,
     )
 
-    for task_name in nx.descendants(graph, "convert_hscic_prescribing"):
+    for task_name in nx.descendants(graph, "fetch_prescribing"):
         task_log = TaskLog.objects.get(
             task_name=task_name, year=year, month=month, status=TaskLog.SUCCESSFUL
         )
-        assert task_log.started_at > convert_task_log.started_at
+        assert task_log.started_at > fetch_task_log.started_at
         task_log.status = TaskLog.FAILED
         task_log.save()
 
-    convert_task_log.status = TaskLog.FAILED
-    convert_task_log.save()
+    fetch_task_log.status = TaskLog.FAILED
+    fetch_task_log.save()
 
 
 def delete_fetch_and_import_task_log(year, month):
@@ -142,7 +142,7 @@ def remove_records_from_bq_table(year, month):
 
 def delete_backup_from_storage(year, month):
     print("delete_backup_from_storage")
-    _delete_file_from_storage("backup/prescribing_v2/2021_10")
+    _delete_file_from_storage("backups/prescribing_v2/2021_10")
 
 
 def delete_matrixstore_bq_table(year, month):
@@ -152,7 +152,7 @@ def delete_matrixstore_bq_table(year, month):
 
 def delete_matrixstore_storage_files(year, month):
     print("delete_matrixstore_storage_files")
-    _delete_file_from_storage(f"prescribing_exports/prescribing_{year}_{month}_*")
+    _delete_file_from_storage(f"prescribing_exports/prescribing_{year}_{month}")
 
 
 def delete_matrixstore_download(year, month):
