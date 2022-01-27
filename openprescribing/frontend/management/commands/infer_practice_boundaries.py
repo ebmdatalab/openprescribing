@@ -15,7 +15,7 @@ import string
 
 from django.conf import settings
 from django.contrib.gis.db.models import Collect, Union
-from django.contrib.gis.geos import GEOSException, GEOSGeometry
+from django.contrib.gis.geos import GEOSException, GEOSGeometry, MultiPolygon, Polygon
 from django.core.management.base import BaseCommand
 from django.db import connection, transaction
 from django.db.models import Func
@@ -185,5 +185,13 @@ def update_national_boundary_file():
     boundary = PCT.objects.filter(boundary__isnull=False).aggregate(
         boundary=Union("boundary")
     )["boundary"]
+    # Add a tiny bit of buffer to the boundary otherwise, due to inaccuracies, practices
+    # very close to the edge can sometimes end up outside
+    boundary = boundary.buffer(0.003)
+    # Get rid of any holes in the resulting polygons: the boundary follows rivers quite
+    # a long way inland and, combined with the buffering above, this can leave holes
+    boundary = MultiPolygon([Polygon(element.exterior_ring) for element in boundary])
+    # Merge any overlapping polygons
+    boundary = boundary.unary_union
     with open(NATIONAL_BOUNDARY_FILE, "w") as f:
         f.write(boundary.geojson)
