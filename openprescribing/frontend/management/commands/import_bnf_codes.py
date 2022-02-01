@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from frontend.models import Section, Product, Presentation
+from frontend.models import Chemical, Section, Product, Presentation
 
 
 class Command(BaseCommand):
@@ -36,6 +36,18 @@ class Command(BaseCommand):
                 p_id = row["BNF Paragraph Code"]
                 if p_id not in sections:
                     sections[p_id] = {"id": p_id, "name": row["BNF Paragraph"]}
+
+                chemical_name = row["BNF Chemical Substance"].strip()
+                chemical_code = row["BNF Chemical Substance Code"].strip()
+                if not chemical_name.startswith("DUMMY "):
+                    try:
+                        p = Chemical.objects.get(bnf_code=chemical_code)
+                        p.chem_name = chemical_name
+                        p.save()
+                    except ObjectDoesNotExist:
+                        p = Chemical.objects.create(
+                            bnf_code=chemical_code, chem_name=chemical_name
+                        )
 
                 product_name = row["BNF Product"].strip()
                 product_code = row["BNF Product Code"].strip()
