@@ -141,7 +141,7 @@ gunicorn==20.0.4
     # via -r requirements.in
 html2text==2020.1.16
     # via -r requirements.in
-httplib2==0.20.2
+httplib2==0.20.4
     # via
     #   google-api-python-client
     #   google-auth-httplib2
