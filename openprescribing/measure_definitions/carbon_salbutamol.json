@@ -21,7 +21,7 @@
   "low_is_good": null,
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(co2_per_inh) AS numerator"
+    "SUM(co2) AS numerator"
   ],
   "numerator_from": "{richard}.vw__carbon_salbutamol",
   "numerator_where": [
@@ -29,6 +29,13 @@
   ],
   "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM {hscic}.presentation WHERE bnf_code IN ('0301011R0AAAPAP','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BMAAAP','0301011R0BWABAQ')",
   "denominator_type": "custom",
+  "denominator_columns": [
+    "SUM(quantity) AS denominator"
+  ],
+  "denominator_from": "{richard}.vw__carbon_salbutamol",
+ "denominator_where": [
+    "1 = 1"
+   ],
   "no_analyse_url": true,
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
