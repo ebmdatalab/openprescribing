@@ -28,10 +28,9 @@
     "1 = 1"
   ],
   "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM {hscic}.presentation WHERE bnf_code IN ('0301011R0AAAPAP','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BMAAAP','0301011R0BWABAQ')",
-
   "denominator_type": "custom",
   "denominator_columns": [
-    "SUM(net_cost) AS denominator"
+    "SUM(quantity) AS denominator"
   ],
   "denominator_from": "{measures}.vw__carbon_salbutamol",
   "denominator_where": [
