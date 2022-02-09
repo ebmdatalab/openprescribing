@@ -23,7 +23,7 @@
   "numerator_columns": [
     "SUM(co2) AS numerator"
   ],
-  "numerator_from": "{richard}.vw__carbon_salbutamol",
+  "numerator_from": "{measures}.vw__carbon_salbutamol",
   "numerator_where": [
     "1 = 1"
   ],
