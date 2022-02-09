@@ -32,11 +32,7 @@
   "denominator_columns": [
     "SUM(quantity) AS denominator"
   ],
-  "denominator_from": "{richard}.vw__carbon_salbutamol",
- "denominator_where": [
-    "1 = 1"
-   ],
-  "no_analyse_url": true,
+ "denominator_from": "{measure}.vw__carbon_salbutamol",  "no_analyse_url": true,
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
   ],
