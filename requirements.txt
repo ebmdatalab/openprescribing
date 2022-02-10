@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-backports-csv==1.0.5
+backports-csv==1.0.7
     # via -r requirements.in
 bcrypt==3.1.7
     # via paramiko
@@ -193,7 +193,7 @@ paramiko==2.9.2
     # via fabric3
 pep517==0.12.0
     # via pip-tools
-pip-tools==6.5.0
+pip-tools==6.5.1
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
@@ -293,7 +293,7 @@ tablib[html,ods,xls,xlsx,yaml]==3.1.0
     # via django-import-export
 titlecase==0.12.0
     # via -r requirements.in
-tomli==2.0.0
+tomli==2.0.1
     # via pep517
 unicodecsv==0.14.1
     # via djangorestframework-csv
