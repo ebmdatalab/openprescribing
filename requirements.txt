@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-backports.csv==1.0.5
+backports-csv==1.0.5
     # via -r requirements.in
 bcrypt==3.1.7
     # via paramiko
@@ -93,7 +93,7 @@ google-api-core[grpc]==1.31.2
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.36.0
+google-api-python-client==2.37.0
     # via -r requirements.in
 google-auth==1.35.0
     # via
