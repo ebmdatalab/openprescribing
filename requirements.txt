@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-backports.csv==1.0.5
+backports-csv==1.0.7
     # via -r requirements.in
 bcrypt==3.1.7
     # via paramiko
