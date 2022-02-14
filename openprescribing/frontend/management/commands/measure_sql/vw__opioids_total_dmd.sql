@@ -74,7 +74,7 @@ FROM
   INNER JOIN dmd.ing AS ing ON vpi.ing = ing.id #join to ING to get ING codes and name
   INNER JOIN dmd.vmp AS vmp ON vpi.vmp = vmp.id #join to get BNF codes for both VMPs and AMPs joined indirectly TO ING. 
   INNER JOIN simp_form AS form ON vmp.id = form.vmp #join to subquery for simplified administration route
-  INNER JOIN richard.opioid_class_old AS opioid ON opioid.id = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs THIS IS OLD CLASSIFICATION
+  INNER JOIN richard.opioid_class AS opioid ON opioid.id = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
   INNER JOIN hscic.normalised_prescribing AS rx ON CONCAT(
     SUBSTR(rx.bnf_code, 0, 9), 
     'AA', 
