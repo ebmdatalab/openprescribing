@@ -3,9 +3,8 @@
 --
 --     ./manage.py create_bq_measure_views
 
-#subquery to create a "simple" administration route. 
 WITH simp_form AS (
-  SELECT 
+  SELECT DISTINCT 
     vmp, #vmp code
     CASE WHEN descr LIKE '%injection%' THEN 'injection' #creates "injection" as route, regardless of whether injection or infusion. this also removes injection routes, e.g.
     WHEN descr LIKE '%infusion%' THEN 'injection' #s/c, i/v etc, AS often injections have many licensed routes, e.g "solutioninjection.subcutaneous" AND solutioninjection.intramuscular"which would multiply the row
@@ -15,9 +14,8 @@ WITH simp_form AS (
     END AS simple_form 
   FROM 
     dmd.ont AS ont #the coded route for dosage form, includes vmp code 
-    INNER JOIN dmd.ontformroute AS form ON form.cd = ont.form #text description of route 
+    INNER JOIN dmd.ontformroute AS form ON form.cd = ont.form #text description of route
     )
-
 
 #subquery to normalise strength to mg
 ,norm_vpi AS (
@@ -42,7 +40,7 @@ WITH simp_form AS (
     LEFT JOIN dmd.unitofmeasure AS unit_num ON vpi.strnt_nmrtr_uom = unit_num.cd #join to create text value for numerator unit
     LEFT JOIN dmd.unitofmeasure AS unit_den ON vpi.strnt_dnmtr_uom = unit_den.cd #join to create text value for denominator unit
 ) 
- 
+
 #main query to calculate the OME
 SELECT 
   rx.month, 
@@ -52,7 +50,7 @@ SELECT
   sum(rx.quantity) as quantity, 
   ing.id, #ingredient DM+D code. Combination products will have more than one ing code per VMP, e.g. co-codamol will have ing for paracetamoland codeine
   ing.nm,#ingredient name
-  vmp.bnf_code as bnf_code, #BNF code to link to prescribing data
+  rx.bnf_code as bnf_code, #BNF code to link to prescribing data
   rx.bnf_name as bnf_name, #BNF name from prescribing data
   vpi.strnt_nmrtr_val_mg, #strength numerator in mg
   SUM(
@@ -65,6 +63,7 @@ SELECT
       WHEN ing.id = 387173000 
       AND form.simple_form = 'transdermal' 
       AND vpi.strnt_nmrtr_val IN (35, 52.5, 70) THEN (vpi.strnt_nmrtr_val_mg * 96)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 96 hour dose for higher-dose buprenorphine patch
+      WHEN form.simple_form = 'injection' THEN (vpi.strnt_nmrtr_val_mg * vmp.udfs)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # injections need to be weighted by pack size
       ELSE strnt_nmrtr_val_mg / coalesce(vpi.strnt_dnmtr_val_ml, 1) #all other products have usual dose - coalesce as solid dose forms do not have a denominator
       END
     )
@@ -75,7 +74,7 @@ FROM
   INNER JOIN dmd.ing AS ing ON vpi.ing = ing.id #join to ING to get ING codes and name
   INNER JOIN dmd.vmp AS vmp ON vpi.vmp = vmp.id #join to get BNF codes for both VMPs and AMPs joined indirectly TO ING. 
   INNER JOIN simp_form AS form ON vmp.id = form.vmp #join to subquery for simplified administration route
-  INNER JOIN richard.opioid_class AS opioid ON opioid.id = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
+  INNER JOIN richard.opioid_class_old AS opioid ON opioid.id = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs THIS IS OLD CLASSIFICATION
   INNER JOIN hscic.normalised_prescribing AS rx ON CONCAT(
     SUBSTR(rx.bnf_code, 0, 9), 
     'AA', 
@@ -92,7 +91,7 @@ GROUP BY
   rx.pct, 
   id, 
   ing.nm, 
-  vmp.bnf_code, 
+  rx.bnf_code, 
   rx.bnf_name, 
   vpi.strnt_nmrtr_val, 
   strnt_nmrtr_val_mg, 
