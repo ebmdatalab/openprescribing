@@ -45,6 +45,8 @@ class Command(BaseCommand):
         for h2 in doc.find_all("h2", class_="trigger"):
             table = h2.find_next("table")
             date = self.date_from_heading(h2)
+            if date is None:
+                continue
             drugs_and_pack_sizes = self.import_from_table(table, date)
             self.delete_missing(drugs_and_pack_sizes, date)
 
@@ -76,7 +78,10 @@ class Command(BaseCommand):
         return bs4.BeautifulSoup(rsp.content, "html.parser")
 
     def date_from_heading(self, heading):
-        month_name, year = heading.text.strip().split()
+        text = heading.text.strip()
+        if re.match(r"\d{4}", text):
+            return
+        month_name, year = text.split()
         month_names = list(calendar.month_name)
         month = month_names.index(month_name)
         return datetime.date(int(year), month, 1)
