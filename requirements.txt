@@ -147,7 +147,7 @@ httplib2==0.20.4
     #   google-auth-httplib2
 idna==3.3
     # via requests
-lxml==4.7.1
+lxml==4.8.0
     # via
     #   -r requirements.in
     #   premailer
