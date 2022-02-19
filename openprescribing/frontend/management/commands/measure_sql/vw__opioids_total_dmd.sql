@@ -8,6 +8,7 @@ WITH simp_form AS (
     vmp, #vmp code
     CASE WHEN descr LIKE '%injection%' THEN 'injection' #creates "injection" as route, regardless of whether injection or infusion. this also removes injection routes, e.g.
     WHEN descr LIKE '%infusion%' THEN 'injection' #s/c, i/v etc, AS often injections have many licensed routes, e.g "solutioninjection.subcutaneous" AND solutioninjection.intramuscular"which would multiply the row
+    WHEN descr LIKE 'filmbuccal.buccal' THEN 'film' # buccal films have a different OME and so should be indentified here
     ELSE SUBSTR(
       form.descr, 
       STRPOS(form.descr, ".")+ 1) #takes the dosage form out of the string (e.g. tablet.oral) TO leave route.
@@ -54,17 +55,17 @@ SELECT
   rx.bnf_name as bnf_name, #BNF name from prescribing data
   vpi.strnt_nmrtr_val_mg, #strength numerator in mg
   SUM(
-    quantity * ome *(
-      CASE WHEN ing.id = 373492002 
-      AND form.simple_form = 'transdermal' THEN (vpi.strnt_nmrtr_val_mg * 72)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 72 hour dose for fentanyl transdermal patches, as doses are per hour on DM+D)
+    ( CASE WHEN rx.bnf_code LIKE '0407020A0%BJ' OR rx.bnf_code LIKE '0407020A0%BP' THEN (net_cost / 4.56 * ome * strnt_nmrtr_val_mg) / coalesce(vpi.strnt_dnmtr_val_ml, 1) # adjust for special container for PecFent 100mcg
+      WHEN ing.id = 373492002 
+      AND form.simple_form = 'transdermal' THEN (quantity * ome * vpi.strnt_nmrtr_val_mg * 72)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 72 hour dose for fentanyl transdermal patches, as doses are per hour on DM+D)
       WHEN ing.id = 387173000 
       AND form.simple_form = 'transdermal' 
-      AND vpi.strnt_nmrtr_val IN (5, 10, 15, 20) THEN (vpi.strnt_nmrtr_val_mg * 168)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 168 hour (7 day) dose for low-dose buprenorphine patch
+      AND vpi.strnt_nmrtr_val IN (5, 10, 15, 20) THEN (quantity * ome * vpi.strnt_nmrtr_val_mg * 168)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 168 hour (7 day) dose for low-dose buprenorphine patch
       WHEN ing.id = 387173000 
       AND form.simple_form = 'transdermal' 
-      AND vpi.strnt_nmrtr_val IN (35, 52.5, 70) THEN (vpi.strnt_nmrtr_val_mg * 96)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 96 hour dose for higher-dose buprenorphine patch
-      WHEN form.simple_form = 'injection' THEN (vpi.strnt_nmrtr_val_mg * vmp.udfs)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # injections need to be weighted by pack size
-      ELSE strnt_nmrtr_val_mg / coalesce(vpi.strnt_dnmtr_val_ml, 1) #all other products have usual dose - coalesce as solid dose forms do not have a denominator
+      AND vpi.strnt_nmrtr_val IN (35, 52.5, 70) THEN (quantity * ome * vpi.strnt_nmrtr_val_mg * 96)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 96 hour dose for higher-dose buprenorphine patch
+      WHEN form.simple_form = 'injection' THEN (quantity * ome * vpi.strnt_nmrtr_val_mg * vmp.udfs)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # injections need to be weighted by pack size
+      ELSE (quantity * ome * strnt_nmrtr_val_mg) / coalesce(vpi.strnt_dnmtr_val_ml, 1) #all other products have usual dose - coalesce as solid dose forms do not have a denominator
       END
     )
   ) AS ome_dose, 
@@ -74,7 +75,7 @@ FROM
   INNER JOIN dmd.ing AS ing ON vpi.ing = ing.id #join to ING to get ING codes and name
   INNER JOIN dmd.vmp AS vmp ON vpi.vmp = vmp.id #join to get BNF codes for both VMPs and AMPs joined indirectly TO ING. 
   INNER JOIN simp_form AS form ON vmp.id = form.vmp #join to subquery for simplified administration route
-  INNER JOIN richard.opioid_class AS opioid ON opioid.id = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
+  INNER JOIN measures.opioid_ing_form_ome AS opioid ON opioid.vpi = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
   INNER JOIN hscic.normalised_prescribing AS rx ON CONCAT(
     SUBSTR(rx.bnf_code, 0, 9), 
     'AA', 
