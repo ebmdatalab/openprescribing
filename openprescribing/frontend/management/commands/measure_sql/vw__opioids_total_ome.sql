@@ -6,7 +6,7 @@
 SELECT month, 
        practice, 
        pct, 
-       SUM(ome_dose)AS total_ome 
+       SUM(ome_dose) AS total_ome 
 FROM   measures.vw__opioid_measure_dmd 
 GROUP  BY month, 
           practice, 
