@@ -1,3 +1,4 @@
+from ast import parse
 import os.path
 import re
 import traceback
@@ -20,7 +21,26 @@ from pqdm.processes import pqdm
 
 
 class Command(BaseCommand):
-    pass
+    help = "This command builds the prescribing outlier reports"
+    
+    def add_arguments(self, parser):
+        parser.add_argument('--from_date')
+        parser.add_argument('--to_date')
+        parser.add_argument('--n_outliers')
+        parser.add_argument('--entities', default=["practice","ccg","pcn","stp"])
+        parser.add_argument("--force_rebuild", default=False)
+        parser.add_argument("--template_path", default="./outlier_templates")
+        parser.add_argument("--url_prefix")
+        parser.add_argument("--n_jobs")
+        parser.add_argument("--low_number_threshold")
+        parser.add_argument("--entity_limit")
+
+    def handle(self, *args, **kwargs):
+        runner = Runner(
+            **kwargs
+            )
+
+        runner.run()
 
 
 class MakeHtml:
