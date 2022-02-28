@@ -1,0 +1,50 @@
+:root {
+    --oxford-50: #f1f7ff;
+    --oxford-100: #cfe5ff;
+    --oxford-200: #9ccaff;
+    --oxford-300: #69afff;
+    --oxford-400: #3693ff;
+    --oxford-500: #0378ff;
+    --oxford-600: #0058be;
+    --oxford-700: #00397a;
+    --oxford-800: #002147;
+    --oxford-900: #001936;
+    --oxford: var(--oxford-800);
+}
+
+a {
+    color: var(--oxford-600);
+    font-weight: 600;
+}
+
+a:hover,
+a:focus {
+    color: var(--oxford-800);
+    text-decoration: none;
+}
+
+.bg-oxford {
+    background-color: var(--oxford) !important;
+}
+
+.bg-oxford-50 {
+    background-color: var(--oxford-50) !important;
+}
+
+.accordion-button {
+    color: var(--oxford-600);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--oxford-50);
+    color: var(--oxford-600);
+}
+
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
+    border-color: var(--bs-gray-300);
+}
