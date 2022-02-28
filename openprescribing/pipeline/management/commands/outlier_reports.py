@@ -1,27 +1,30 @@
-from base64 import b64encode
-from http import client
-from io import BytesIO
 import os.path
-from pydoc import cli
-from matplotlib import pyplot as plt
-import numpy as np
-from typing import Dict, List
-import pandas as pd
-from datetime import date
-import seaborn as sns
+import re
 import traceback
-from pqdm.processes import pqdm
+from base64 import b64encode
+from datetime import date
+from io import BytesIO
+from os import path
+from typing import Dict, List
+
 import jinja2
-from lxml import html
-from django.core.management import BaseCommand
 import markupsafe
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from django.core.management import BaseCommand
 from gcutils.bigquery import Client
+from lxml import html
+from pqdm.processes import pqdm
+
 
 class Command(BaseCommand):
     pass
 
+
 class MakeHtml:
-    definitions = {
+    DEFINITIONS = {
         "Chemical Items": "number of prescribed items containing this chemical",
         "Subparagraph Items": "count of all prescribed items "
         "from this subparagraph",
@@ -33,6 +36,8 @@ class MakeHtml:
     }
 
     REPORT_DATE_FORMAT = "%B %Y"
+    ALLCAPS = ["NHS", "PCN", "CCG", "BNF", "std", "STP", "(STP)", "NHS"]
+    LOW_NUMBER_CLASS = "low_number"
 
     @staticmethod
     def add_definitions(df):
@@ -49,8 +54,8 @@ class MakeHtml:
             data frame with column definitons added
         """
         return df.rename(
-            columns=lambda x: MakeHtml.make_abbr(x, MakeHtml.definitions[x])
-            if x in MakeHtml.definitions
+            columns=lambda x: MakeHtml.make_abbr(x, MakeHtml.DEFINITIONS[x])
+            if x in MakeHtml.DEFINITIONS
             else x
         )
 
@@ -104,22 +109,22 @@ class MakeHtml:
             td = html.Element("td")
             td.set("colspan", "9")
             td.set("class", "hiddenRow")
-            div = html.Element("div")
+            ul = html.Element("ul")
+            ul.set("class", "my-0 ps-4 py-2")
 
-            items = []
             for i, r in df.reset_index().iterrows():
                 url = analyse_url.replace(r["chemical"], r["bnf_code"])
                 name = r["bnf_name"]
                 count = r["numerator"]
+                list_item = html.Element("li")
                 anchor = html.Element("a")
                 anchor.set("href", url)
                 anchor.set("target", "_blank")
                 anchor.text = f"{name} : {count}"
-                if i > 0:
-                    div.append(html.Element("br"))
-                div.append(anchor)
-            items = "</br>".join(items)
-            td.append(div)
+                list_item.append(anchor)
+                ul.append(list_item)
+
+            td.append(ul)
             tr.append(td)
             return tr
 
@@ -137,10 +142,12 @@ class MakeHtml:
                 html button element
             """
             bt_open = html.Element("button")
+            bt_open.set(
+                "class", "btn btn-outline-primary btn-sm btn-xs ms-2 px-2"
+            )
+            bt_open.set("data-bs-target", f"#{id}_items")
+            bt_open.set("data-bs-toggle", "collapse")
             bt_open.set("type", "button")
-            bt_open.set("data-toggle", "collapse")
-            bt_open.set("data-target", f"#{id}_items")
-            bt_open.set("class", "btn btn-default btn-xs")
             bt_open.text = "☰"
             return bt_open
 
@@ -155,7 +162,9 @@ class MakeHtml:
 
             # hack:extract the id of the BNF chemical from the analyse URL
             analyse_url = tr.xpath("th/a")[0].get("href")
-            chemical_id = analyse_url.split("/")[-1].split("&")[2].split("=")[1]
+            chemical_id = (
+                analyse_url.split("/")[-1].split("&")[2].split("=")[1]
+            )
 
             # add an open button to the end of the first column
             tr.xpath("th")[0].append(make_open_button(id))
@@ -237,11 +246,10 @@ class MakeHtml:
         str
 
         """
-        return f'<abbr title="{title}">{text}</abbr>'
+        return f'<abbr data-bs-toggle="tooltip" data-bs-placement="top" title="{title}">{text}</abbr>'
 
-
-    # hack: ideally header should be fixed in df, not html
     @staticmethod
+    # hack: ideally header should be fixed in df, not html
     def merge_table_header(table):
         """
         Merge duplicate header rows of html table into one
@@ -298,16 +306,47 @@ class MakeHtml:
         df = MakeHtml.format_url(df)
         df = df.rename(columns=lambda x: MakeHtml.selective_title(x))
         df = MakeHtml.add_definitions(df)
+        columns = [
+            c for c in df.columns if c.lower() != MakeHtml.LOW_NUMBER_CLASS
+        ]
         table = df.to_html(
             escape=True,
-            classes=["table", "thead-light", "table-bordered", "table-sm"],
+            classes=["table", "table", "table-sm", "table-bordered"],
             table_id=id,
+            columns=columns,
         )
         table = markupsafe.Markup(table).unescape()
+        table = MakeHtml.add_row_classes(df, table)
         table = MakeHtml.add_item_rows(table, items_df)
         table = MakeHtml.merge_table_header(table)
 
         return table
+
+    @staticmethod
+    def add_row_classes(df, table):
+        """
+        Adds "low_number" class to all trs with corresponding flagged rows in df
+        Adds "row_{n}" class pertaining to row number to all trs
+
+        Parameters
+        ----------
+        df: DataFrame
+            df from which html table was created
+        table: str
+            html rendering of df as <table>
+
+        Returns
+        -------
+        str
+            modified html rendering of df as <table>
+        """
+        html_table = html.fragment_fromstring(table)
+        rows = html_table.xpath("tbody/tr")
+        for i, row in enumerate(rows):
+            if df.iloc[i][MakeHtml.selective_title(MakeHtml.LOW_NUMBER_CLASS)]:
+                row.classes.add(MakeHtml.LOW_NUMBER_CLASS)
+            row.classes.add(f"row_{i+1}")
+        return html.tostring(html_table).decode("utf-8")
 
     @staticmethod
     def selective_title(str):
@@ -329,9 +368,11 @@ class MakeHtml:
             Selectively title-cased string
 
         """
-        ALLCAPS = ["NHS", "PCN", "CCG", "BNF", "std", "STP", "(STP)", "NHS"]
         return " ".join(
-            [w.title() if w not in ALLCAPS else w for w in str.split(" ")]
+            [
+                w.title() if w not in MakeHtml.ALLCAPS else w
+                for w in str.split(" ")
+            ]
         )
 
     @staticmethod
@@ -385,216 +426,6 @@ class MakeHtml:
 
         with open(output_path, "w") as f:
             f.write(template.render(context))
-
-
-class TableOfContents:
-    """
-    Builds Markdown or html table of contents
-
-    Attributes
-    ----------
-    hierarchy : Dict[]
-        hierarchical dictionary of entity codes
-    urlprefix : str, optional
-        prefix to be appended to the URL of each item
-        added to the table of contents
-    heading : str, optional
-        override standard "Table of Contents" header
-    html_template : str, optional
-        path to jinja2 template file for html output
-    """
-
-    def __init__(
-        self,
-        url_prefix,
-        from_date: date,
-        to_date: date,
-        heading="Table of contents",
-        html_template="../data/toc_template.html",
-    ):
-        self.items = {}
-        self.hierarchy = {}
-        self.url_prefix = url_prefix
-        self.heading = heading
-        self.html_template = html_template
-        self.from_date = from_date
-        self.to_date = to_date
-
-    def add_item(self, code, name, file_path, entity=""):
-        """
-        Adds a file to the table of contents
-
-        Parameters
-        ----------
-        path : str
-            relative path to the item
-        entity : str, optional
-            entity type of the item
-        """
-        if entity not in self.items.keys():
-            self.items[entity] = {code: {"name": name, "file_path": file_path}}
-        else:
-            self.items[entity][code] = {"name": name, "file_path": file_path}
-
-    def _get_context(self, output_path):
-        ctx = {"header": self.heading}
-        ctx["from_date"] = self.from_date.strftime(MakeHtml.REPORT_DATE_FORMAT)
-        ctx["to_date"] = self.from_date.strftime(MakeHtml.REPORT_DATE_FORMAT)
-        ctx["stps"] = []
-        for stp_code, ccgs in self.hierarchy.items():
-            stp_item = self._get_item_context(stp_code, "stp", output_path)
-            stp_item["ccgs"] = []
-            for ccg_code, pcns in ccgs.items():
-                ccg_item = self._get_item_context(ccg_code, "ccg", output_path)
-                ccg_item["pcns"] = []
-                for pcn_code, practices in pcns.items():
-                    pcn_item = self._get_item_context(
-                        pcn_code, "pcn", output_path
-                    )
-                    pcn_item["practices"] = []
-                    for practice_code in practices:
-                        pcn_item["practices"].append(
-                            self._get_item_context(
-                                practice_code, "practice", output_path
-                            )
-                        )
-                    pcn_item["practices"].sort(key=lambda x: x["name"])
-                    ccg_item["pcns"].append(pcn_item)
-                ccg_item["pcns"].sort(key=lambda x: x["name"])
-                stp_item["ccgs"].append(ccg_item)
-            stp_item["ccgs"].sort(key=lambda x: x["name"])
-            ctx["stps"].append(stp_item)
-        ctx["stps"].sort(key=lambda x: x["name"])
-        return ctx
-
-    def _get_item_context(self, entity_code, entity_type, output_path):
-        entity_item = self.items[entity_type][entity_code]
-        return {
-            "code": entity_code,
-            "name": MakeHtml.selective_title(entity_item["name"]),
-            "href": self.url_prefix
-            + self._full_path(
-                output_path,
-                self._relative_path(output_path, entity_item["file_path"]),
-            ),
-        }
-
-    def write_html(self, output_path):
-        """
-        Write table of contents as html to index.html in output path
-
-        Parameters
-        ----------
-        output_path : str
-            directory to write markdown, items are assumed to be in same
-            or sub-directory for relative path derivation
-        """
-        assert self.items, "no items to write"
-        with open(self.html_template) as f:
-            template = jinja2.Template(f.read())
-
-        context = self._get_context(output_path)
-
-        with open(os.path.join(output_path, "index.html"), "w") as f:
-            f.write(template.render(context))
-
-    def write_markdown(self, output_path, link_to_html_toc=False):
-        """
-        Write table of contents as Markdown to README.md in output path
-
-        Parameters
-        ----------
-        output_path : str
-            directory to write markdown, items are assumed to be in same
-            or sub-directory for relative path derivation
-        """
-        assert self.items, "no items to write"
-        tocfile = output_path + "/README.md"
-        with open(tocfile, "w") as f:
-            if link_to_html_toc:
-                f.write(self._print_markdown_link_html())
-            else:
-                f.write(self._print_markdown(output_path))
-
-    def _print_markdown_link_html(self):
-        html_toc_url = f"{self.url_prefix}{'data/index.html'}"
-        return f"# [{self.heading}]({html_toc_url})"
-
-    def _print_markdown(self, output_path):
-        """
-        Renders table of contents as Markdown
-
-        Derives path of each item relative to the output path by finding
-        common parent directories and removing. If your item paths and
-        output paths do not have the same base then this may
-        produce unexpected behaviour.
-
-        Parameters
-        ----------
-        output_path : str
-            directory where markdown file will eventually be written
-            items are assumed to be in same,
-            or sub-directory for relative path derivation
-        Returns
-        -------
-        toc : str
-            table of contents in Markdown format
-        """
-        toc = f"# {self.heading}"
-        for entity in self.items.keys():
-            toc = toc + "\n" + f"* {entity}"
-            for _, v in self.items[entity].items():
-                file = v["file_path"]
-                relative_path = self._relative_path(output_path, file)
-                fullpath = self._full_path(relative_path)
-                toc = toc + (
-                    "\n" + f"  * [{relative_path}]"
-                    f"({self.url_prefix}{fullpath})"
-                )
-        return toc
-
-    @staticmethod
-    def _relative_path(output_path, file_path) -> str:
-        common_path = os.path.commonpath([output_path, file_path])
-        path_parts = TableOfContents._split_all(file_path)
-        for cp in TableOfContents._split_all(common_path):
-            path_parts.remove(cp)
-        return os.path.join(*path_parts)
-
-    @staticmethod
-    def _full_path(output_path, relative_path) -> str:
-        return os.path.join(os.path.basename(output_path), relative_path)
-
-    @staticmethod
-    def _split_all(path):
-        """
-        splits a path into a list of all its elements using the local separator
-
-        adapted from
-        https://www.oreilly.com/library/view/python-cookbook/0596001673/ch04s16.html
-
-        Parameters
-        ----------
-        path : str
-            path to split, OS agnostic
-        Returns
-        -------
-        allparts : list
-            list of all parts of the path as strings
-        """
-        allparts = []
-        while 1:
-            parts = os.path.split(path)
-            if parts[0] == path:  # sentinel for absolute paths
-                allparts.insert(0, parts[0])
-                break
-            elif parts[1] == path:  # sentinel for relative paths
-                allparts.insert(0, parts[1])
-                break
-            else:
-                path = parts[0]
-                allparts.insert(0, parts[1])
-        return allparts
 
 
 class DatasetBuild:
@@ -718,10 +549,8 @@ class DatasetBuild:
             AND p.pcn_id is not null
             AND c.stp_id is not null
         """
-        csv_path = "../data/bq_cache/entity_hierarchy.zip"
         bq_client = Client()
         res = bq_client.query_into_dataframe(sql)
-        res = res.set_index(["stp_code", "ccg_code", "pcn_code"])
 
         # only include practices for which there are results
         res = res[
@@ -790,17 +619,12 @@ class DatasetBuild:
         csv_path = f"../data/bq_cache/{entity}_results.zip"
         bq_client = Client()
         res = bq_client.query_into_dataframe(sql)
-        # res = bq.cached_read(
-        #     sql,
-        #     csv_path,
-        #     use_cache=(not self.force_rebuild),
-        # )
-        # # reload csv with correct datatypes
-        # # see https://github.com/ebmdatalab/datalab-pandas/issues/26
-        # res = pd.read_csv(
-        #     csv_path,
-        #     dtype={self.numerator_column: str, self.denominator_column: str},
-        # )
+        # reload csv with correct datatypes
+        # see https://github.com/ebmdatalab/datalab-pandas/issues/26
+        res = pd.read_csv(
+            csv_path,
+            dtype={self.numerator_column: str, self.denominator_column: str},
+        )
         res = res.set_index([entity, self.numerator_column])
         self.results[entity] = res
 
@@ -818,10 +642,9 @@ class DatasetBuild:
         WHERE
             build_id = {self.build_id};
         """
+
         bq_client = Client()
-        res = bq_client.query(sql)
-        
-        
+        res = bq_client.query_into_dataframe(sql)
         self.results_items[entity] = res
 
     def _get_entity_measure_arrays(self, entity: str) -> None:
@@ -838,13 +661,6 @@ class DatasetBuild:
             csv_path = f"../data/bq_cache/{entity}_measure_arrays.zip"
             bq_client = Client()
             res = bq_client.query_into_dataframe(sql)
-            # res = bq.cached_read(
-            #     sql,
-            #     csv_path,
-            #     use_cache=(not self.force_rebuild),
-            # )
-
-            # res = pd.read_csv(csv_path, dtype={"chemical": str, "array": str})
         except Exception:
             print(f"Error getting BQ data for {entity}")
             traceback.print_stack()
@@ -871,7 +687,7 @@ class DatasetBuild:
         pandas DataFrame
             code is the index and entity names are the column
         """
-        query = f"""
+        sql = f"""
         SELECT
         DISTINCT {'ons_' if entity_type=='stp' else ''}code as `code`,
         name
@@ -880,11 +696,9 @@ class DatasetBuild:
         WHERE
         name IS NOT NULL
         """
-
         bq_client = Client()
-        entity_names = bq_client.query_into_dataframe(query)
-        
-        return entity_names.set_index("code")
+        res = bq_client.query_into_dataframe(sql)
+        return res.set_index("code")
 
     def _get_bnf_names(self, bnf_level: str) -> pd.DataFrame:
         """Takes in input like "chemical" and passes the appropriate fields
@@ -923,7 +737,7 @@ class DatasetBuild:
         pandas DataFrame
             Containing bnf_code as the index and bnf name as the only column
         """
-        query = f"""
+        sql = f"""
         SELECT
         DISTINCT {bnf_code},
         {bnf_name} AS {bnf_name}_name
@@ -933,16 +747,8 @@ class DatasetBuild:
         {bnf_name} IS NOT NULL
         """
         bq_client = Client()
-        bnf_names = bq_client.query_into_dataframe(query)
-        # bnf_names = bq.cached_read(
-        #     query,
-        #     csv_path=f"../data/bq_cache/{bnf_name}_names.zip",
-        #     use_cache=(not self.force_rebuild),
-        # )
-        # bnf_names = pd.read_csv(
-        #     f"../data/bq_cache/{bnf_name}_names.zip", dtype={bnf_code: str}
-        # )
-        return bnf_names.set_index(bnf_code)
+        res = bq_client.query_into_dataframe(sql)
+        return res.set_index(bnf_code)
 
 
 class Report:
@@ -984,10 +790,12 @@ class Report:
         entity_type: str,
         entity_code: str,
         build: DatasetBuild,
+        low_number_threshold: int,
     ) -> None:
         self.entity_type = entity_type
         self.entity_code = entity_code
         self.build = build
+        self.low_number_threshold = low_number_threshold
 
     def _ranked_dataset(self, h_l: str) -> pd.DataFrame:
         assert h_l in ["h", "l"], "high/low indicator must be 'h' or 'l'"
@@ -1141,6 +949,14 @@ class Report:
         df = Plots.add_plots(df, "ratio")
         df = self._add_openprescribing_analyse_url(df)
         df = self._tidy_table(df)
+        df = self._flag_low_numbers(df)
+
+        return df
+
+    def _flag_low_numbers(self, df):
+        df[MakeHtml.LOW_NUMBER_CLASS] = (
+            df["Chemical Items"] < self.low_number_threshold
+        )
         return df
 
     def format(self) -> None:
@@ -1200,9 +1016,8 @@ class Plots:
         img = BytesIO()
         plt.savefig(img, transparent=True, dpi=150)
         b64_plot = b64encode(img.getvalue()).decode()
-        html_plot = (
-            f'<img class="zoom" src="data:image/png;base64,{b64_plot}"/>'
-        )
+        plot_id = re.sub("[^(a-z)(A-Z)(0-9)._-]", "", b64_plot[256:288])
+        html_plot = f'<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#plot_{plot_id}"><img width="250" class="h-auto" src="data:image/png;base64,{b64_plot}"/></button><div class="modal fade" id="plot_{plot_id}" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img class="w-100 h-auto" src="data:image/png;base64,{b64_plot}"/></div></div></div></div>'
 
         return html_plot
 
@@ -1326,6 +1141,8 @@ class Runner:
     url_prefix : str
         prefix for urls for links to report files within
         generated table of contents
+    low_number_threshold : int
+        threshold for selectable filtering of low numbered chemical counts
     """
 
     def __init__(
@@ -1338,8 +1155,9 @@ class Runner:
         entity_limit: int = None,
         output_dir="../data",
         template_path="../data/template.html",
-        url_prefix="https://raw.githack.com/ebmdatalab/outliers/master/",
+        url_prefix="",
         n_jobs=8,
+        low_number_threshold=5,
     ) -> None:
         self.build = DatasetBuild(
             from_date=from_date,
@@ -1355,6 +1173,7 @@ class Runner:
         )
         self.entity_limit = entity_limit
         self.n_jobs = n_jobs
+        self.low_number_threshold = low_number_threshold
 
     def run(self):
         # run main build process on bigquery and fetch results
@@ -1558,13 +1377,15 @@ class Runner:
             entity_type=entity,
             entity_code=code,
             build=self.build,
+            low_number_threshold=self.low_number_threshold,
         )
         report.format()
-        output_file = os.path.join(
+        output_file = path.join(
             self.output_dir,
             "html",
             f"static_{entity}_{code}.html",
         )
+
         MakeHtml.write_to_template(
             entity_name=report.entity_name,
             tables_high=(report.table_high, report.items_high),
@@ -1593,3 +1414,214 @@ class Runner:
             argument_type="kwargs",
         )
         return files
+
+
+class TableOfContents:
+    """
+    Builds Markdown or html table of contents
+
+    Attributes
+    ----------
+    hierarchy : Dict[]
+        hierarchical dictionary of entity codes
+    urlprefix : str, optional
+        prefix to be appended to the URL of each item
+        added to the table of contents
+    heading : str, optional
+        override standard "Table of Contents" header
+    html_template : str, optional
+        path to jinja2 template file for html output
+    """
+
+    def __init__(
+        self,
+        url_prefix,
+        from_date: date,
+        to_date: date,
+        heading="Table of contents",
+        html_template="../data/toc_template.html",
+    ):
+        self.items = {}
+        self.hierarchy = {}
+        self.url_prefix = url_prefix
+        self.heading = heading
+        self.html_template = html_template
+        self.from_date = from_date
+        self.to_date = to_date
+
+    def add_item(self, code, name, file_path, entity=""):
+        """
+        Adds a file to the table of contents
+
+        Parameters
+        ----------
+        path : str
+            relative path to the item
+        entity : str, optional
+            entity type of the item
+        """
+        if entity not in self.items.keys():
+            self.items[entity] = {code: {"name": name, "file_path": file_path}}
+        else:
+            self.items[entity][code] = {"name": name, "file_path": file_path}
+
+    def _get_context(self, output_path):
+        ctx = {"header": self.heading}
+        ctx["from_date"] = self.from_date.strftime(MakeHtml.REPORT_DATE_FORMAT)
+        ctx["to_date"] = self.from_date.strftime(MakeHtml.REPORT_DATE_FORMAT)
+        ctx["stps"] = []
+        for stp_code, ccgs in self.hierarchy.items():
+            stp_item = self._get_item_context(stp_code, "stp", output_path)
+            stp_item["ccgs"] = []
+            for ccg_code, pcns in ccgs.items():
+                ccg_item = self._get_item_context(ccg_code, "ccg", output_path)
+                ccg_item["pcns"] = []
+                for pcn_code, practices in pcns.items():
+                    pcn_item = self._get_item_context(
+                        pcn_code, "pcn", output_path
+                    )
+                    pcn_item["practices"] = []
+                    for practice_code in practices:
+                        pcn_item["practices"].append(
+                            self._get_item_context(
+                                practice_code, "practice", output_path
+                            )
+                        )
+                    pcn_item["practices"].sort(key=lambda x: x["name"])
+                    ccg_item["pcns"].append(pcn_item)
+                ccg_item["pcns"].sort(key=lambda x: x["name"])
+                stp_item["ccgs"].append(ccg_item)
+            stp_item["ccgs"].sort(key=lambda x: x["name"])
+            ctx["stps"].append(stp_item)
+        ctx["stps"].sort(key=lambda x: x["name"])
+        return ctx
+
+    def _get_item_context(self, entity_code, entity_type, output_path):
+        entity_item = self.items[entity_type][entity_code]
+        return {
+            "code": entity_code,
+            "name": MakeHtml.selective_title(entity_item["name"]),
+            "href": self.url_prefix
+            + self._full_path(
+                # output_path,
+                "/",
+                self._relative_path(output_path, entity_item["file_path"]),
+            ),
+        }
+
+    def write_html(self, output_path):
+        """
+        Write table of contents as html to index.html in output path
+
+        Parameters
+        ----------
+        output_path : str
+            directory to write markdown, items are assumed to be in same
+            or sub-directory for relative path derivation
+        """
+        assert self.items, "no items to write"
+        with open(self.html_template) as f:
+            template = jinja2.Template(f.read())
+
+        context = self._get_context(output_path)
+
+        with open(os.path.join(output_path, "index.html"), "w") as f:
+            f.write(template.render(context))
+
+    def write_markdown(self, output_path, link_to_html_toc=False):
+        """
+        Write table of contents as Markdown to README.md in output path
+
+        Parameters
+        ----------
+        output_path : str
+            directory to write markdown, items are assumed to be in same
+            or sub-directory for relative path derivation
+        """
+        assert self.items, "no items to write"
+        tocfile = output_path + "/README.md"
+        with open(tocfile, "w") as f:
+            if link_to_html_toc:
+                f.write(self._print_markdown_link_html())
+            else:
+                f.write(self._print_markdown(output_path))
+
+    def _print_markdown_link_html(self):
+        html_toc_url = f"{self.url_prefix}{'index.html'}"
+        return f"# [{self.heading}]({html_toc_url})"
+
+    def _print_markdown(self, output_path):
+        """
+        Renders table of contents as Markdown
+
+        Derives path of each item relative to the output path by finding
+        common parent directories and removing. If your item paths and
+        output paths do not have the same base then this may
+        produce unexpected behaviour.
+
+        Parameters
+        ----------
+        output_path : str
+            directory where markdown file will eventually be written
+            items are assumed to be in same,
+            or sub-directory for relative path derivation
+        Returns
+        -------
+        toc : str
+            table of contents in Markdown format
+        """
+        toc = f"# {self.heading}"
+        for entity in self.items.keys():
+            toc = toc + "\n" + f"* {entity}"
+            for _, v in self.items[entity].items():
+                file = v["file_path"]
+                relative_path = self._relative_path(output_path, file)
+                fullpath = self._full_path(relative_path)
+                toc = toc + (
+                    "\n" + f"  * [{relative_path}]"
+                    f"({self.url_prefix}{fullpath})"
+                )
+        return toc
+
+    @staticmethod
+    def _relative_path(output_path, file_path) -> str:
+        common_path = os.path.commonpath([output_path, file_path])
+        path_parts = TableOfContents._split_all(file_path)
+        for cp in TableOfContents._split_all(common_path):
+            path_parts.remove(cp)
+        return os.path.join(*path_parts)
+
+    @staticmethod
+    def _full_path(output_path, relative_path) -> str:
+        return os.path.join(os.path.basename(output_path), relative_path)
+
+    @staticmethod
+    def _split_all(path):
+        """
+        splits a path into a list of all its elements using the local separator
+
+        adapted from
+        https://www.oreilly.com/library/view/python-cookbook/0596001673/ch04s16.html
+
+        Parameters
+        ----------
+        path : str
+            path to split, OS agnostic
+        Returns
+        -------
+        allparts : list
+            list of all parts of the path as strings
+        """
+        allparts = []
+        while 1:
+            parts = os.path.split(path)
+            if parts[0] == path:  # sentinel for absolute paths
+                allparts.insert(0, parts[0])
+                break
+            elif parts[1] == path:  # sentinel for relative paths
+                allparts.insert(0, parts[1])
+                break
+            else:
+                path = parts[0]
+                allparts.insert(0, parts[1])
+        return allparts
