@@ -17,17 +17,19 @@ import seaborn as sns
 from django.core.management import BaseCommand
 from gcutils.bigquery import Client
 from lxml import html
-from pqdm.processes import pqdm
+from concurrent.futures import ThreadPoolExecutor
 
 
 class Command(BaseCommand):
     help = "This command builds the prescribing outlier reports"
-    
+
     def add_arguments(self, parser):
-        parser.add_argument('--from_date')
-        parser.add_argument('--to_date')
-        parser.add_argument('--n_outliers')
-        parser.add_argument('--entities', default=["practice","ccg","pcn","stp"])
+        parser.add_argument("--from_date")
+        parser.add_argument("--to_date")
+        parser.add_argument("--n_outliers")
+        parser.add_argument(
+            "--entities", default=["practice", "ccg", "pcn", "stp"]
+        )
         parser.add_argument("--force_rebuild", default=False)
         parser.add_argument("--template_path", default="./outlier_templates")
         parser.add_argument("--url_prefix")
@@ -36,9 +38,7 @@ class Command(BaseCommand):
         parser.add_argument("--entity_limit")
 
     def handle(self, *args, **kwargs):
-        runner = Runner(
-            **kwargs
-            )
+        runner = Runner(**kwargs)
 
         runner.run()
 
@@ -1343,8 +1343,7 @@ class Runner:
             return
         stps = list(self.build.entity_hierarchy.keys())
         self.build.results["stp"] = self.build.results["stp"].loc[
-            stps,
-            slice(None),
+            stps, slice(None),
         ]
 
         ccgs = [
@@ -1401,9 +1400,7 @@ class Runner:
         )
         report.format()
         output_file = path.join(
-            self.output_dir,
-            "html",
-            f"static_{entity}_{code}.html",
+            self.output_dir, "html", f"static_{entity}_{code}.html",
         )
 
         MakeHtml.write_to_template(
@@ -1427,13 +1424,18 @@ class Runner:
     def _run_entity_report(self, entity):
         codes = self.build.results[entity].index.get_level_values(0).unique()
         kwargs = [{"entity": entity, "code": c} for c in codes]
-        files = pqdm(
-            kwargs,
-            self._run_item_report,
-            n_jobs=self.n_jobs,
-            argument_type="kwargs",
-        )
-        return files
+        with ThreadPoolExecutor(max_workers=self.n_jobs) as pool:
+            futures = [
+                pool.submit(self._run_entity_report, **k) for k in kwargs
+            ]
+        results = []
+        exceptions = []
+        for i, future in enumerate(futures):
+            try:
+                results.append(future.result())
+            except Exception as e:
+                exceptions.append(e)
+        return results
 
 
 class TableOfContents:
