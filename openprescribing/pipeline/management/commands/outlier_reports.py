@@ -32,10 +32,11 @@ class Command(BaseCommand):
         )
         parser.add_argument("--force_rebuild", default=False)
         parser.add_argument("--template_path", default="./outlier_templates")
-        parser.add_argument("--url_prefix")
+        parser.add_argument("--url_prefix", default="")
         parser.add_argument("--n_jobs")
-        parser.add_argument("--low_number_threshold")
+        parser.add_argument("--low_number_threshold", default=5)
         parser.add_argument("--entity_limit")
+        parser.add_argument("--output_dir", default="../../static/outlier_reports")
 
     def handle(self, *args, **kwargs):
         runner = Runner(**kwargs)
