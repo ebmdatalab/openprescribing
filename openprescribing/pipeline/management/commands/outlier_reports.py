@@ -3,7 +3,8 @@ import os.path
 import re
 import traceback
 from base64 import b64encode
-from datetime import date
+from datetime import date, datetime
+from dateutil import relativedelta
 from io import BytesIO
 from os import path
 from typing import Dict, List
@@ -34,12 +35,17 @@ class Command(BaseCommand):
         parser.add_argument("--force_rebuild", default=False)
         parser.add_argument("--template_path", default=f"{settings.TEMPLATES[0].DIRS[0]}/outliers")
         parser.add_argument("--url_prefix", default="")
-        parser.add_argument("--n_jobs")
+        parser.add_argument("--n_jobs", default=3)
         parser.add_argument("--low_number_threshold", default=5)
         parser.add_argument("--entity_limit")
         parser.add_argument("--output_dir", default=settings.OUTLIERS_DIR)
 
     def handle(self, *args, **kwargs):
+        for date_param in ['from_date','to_date']:
+            if date_param in kwargs:
+                kwargs[date_param] = datetime.strptime(kwargs[date_param], "%Y-%m").strftime("%Y-%m-%d")
+        if 'to_date' in kwargs and not 'from_date' in kwargs:
+            kwargs['from_date'] = (datetime.strptime(kwargs['to_date'], "%Y-%m-%d") + relativedelta(months=6)).strftime("%Y-%m-%d")
         runner = Runner(**kwargs)
 
         runner.run()
