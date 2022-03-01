@@ -281,5 +281,12 @@
         "dependencies": [
             "publish_matrixstore"
         ]
+    },
+    "generate_outlier_reports": {
+        "type": "post_process",
+        "command": "outlier_reports --to_date {last_imported}",
+        "dependencies": [
+            "upload_to_bigquery"
+        ]
     }
 }
