@@ -18,6 +18,7 @@ from django.core.management import BaseCommand
 from gcutils.bigquery import Client
 from lxml import html
 from concurrent.futures import ThreadPoolExecutor
+from django.conf import settings
 
 
 class Command(BaseCommand):
@@ -31,12 +32,12 @@ class Command(BaseCommand):
             "--entities", default=["practice", "ccg", "pcn", "stp"]
         )
         parser.add_argument("--force_rebuild", default=False)
-        parser.add_argument("--template_path", default="./outlier_templates")
+        parser.add_argument("--template_path", default=f"{settings.TEMPLATES[0].DIRS[0]}/outliers")
         parser.add_argument("--url_prefix", default="")
         parser.add_argument("--n_jobs")
         parser.add_argument("--low_number_threshold", default=5)
         parser.add_argument("--entity_limit")
-        parser.add_argument("--output_dir", default="../../static/outlier_reports")
+        parser.add_argument("--output_dir", default=settings.OUTLIERS_DIR)
 
     def handle(self, *args, **kwargs):
         runner = Runner(**kwargs)
