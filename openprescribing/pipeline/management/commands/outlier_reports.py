@@ -1327,9 +1327,9 @@ class Runner:
 
         if self.entity_limit < practice_count():
             while True:
-                for _, ccgs in self.build.entity_hierarchy.items():
-                    for _, pcns in ccgs.values():
-                        for _, practices in pcns.items():
+                for ccgs in self.build.entity_hierarchy.values():
+                    for pcns in ccgs.values():
+                        for practices in pcns.values():
                             if len(practices) > 1:
                                 practices.pop()
                             if self.entity_limit == practice_count():
