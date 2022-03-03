@@ -1,4 +1,3 @@
-from ast import parse
 import os.path
 import re
 import traceback
@@ -1434,7 +1433,7 @@ class Runner:
         kwargs = [{"entity": entity, "code": c} for c in codes]
         with ThreadPoolExecutor(max_workers=self.n_jobs) as pool:
             futures = [
-                pool.submit(self._run_entity_report, **k) for k in kwargs
+                pool.submit(self._run_item_report, **k) for k in kwargs
             ]
         results = []
         exceptions = []
