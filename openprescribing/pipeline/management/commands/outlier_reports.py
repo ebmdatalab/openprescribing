@@ -44,7 +44,7 @@ class Command(BaseCommand):
             if date_param in kwargs:
                 kwargs[date_param] = datetime.strptime(kwargs[date_param], "%Y-%m").strftime("%Y-%m-%d")
         if 'to_date' in kwargs and not 'from_date' in kwargs:
-            kwargs['from_date'] = (datetime.strptime(kwargs['to_date'], "%Y-%m-%d") + relativedelta(months=6)).strftime("%Y-%m-%d")
+            kwargs['from_date'] = (datetime.strptime(kwargs['to_date'], "%Y-%m-%d") + relativedelta(months=-6)).strftime("%Y-%m-%d")
         runner = Runner(**kwargs)
 
         runner.run()
