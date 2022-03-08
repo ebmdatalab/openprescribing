@@ -32,7 +32,10 @@ class Command(BaseCommand):
             "--entities", default=["practice", "ccg", "pcn", "stp"]
         )
         parser.add_argument("--force_rebuild", default=False)
-        parser.add_argument("--template_path", default=f"{settings.TEMPLATES[0].DIRS[0]}/outliers")
+        parser.add_argument(
+            "--template_path",
+            default=f"{settings.TEMPLATES[0].DIRS[0]}/outliers",
+        )
         parser.add_argument("--url_prefix", default="")
         parser.add_argument("--n_jobs", default=3)
         parser.add_argument("--low_number_threshold", default=5)
@@ -40,11 +43,16 @@ class Command(BaseCommand):
         parser.add_argument("--output_dir", default=settings.OUTLIERS_DIR)
 
     def handle(self, *args, **kwargs):
-        for date_param in ['from_date', 'to_date']:
+        for date_param in ["from_date", "to_date"]:
             if date_param in kwargs:
-                kwargs[date_param] = datetime.strptime(kwargs[date_param], "%Y-%m").strftime("%Y-%m-%d")
-        if 'to_date' in kwargs and 'from_date' not in kwargs:
-            kwargs['from_date'] = (datetime.strptime(kwargs['to_date'], "%Y-%m-%d") + relativedelta(months=-6)).strftime("%Y-%m-%d")
+                kwargs[date_param] = datetime.strptime(
+                    kwargs[date_param], "%Y-%m"
+                ).strftime("%Y-%m-%d")
+        if "to_date" in kwargs and "from_date" not in kwargs:
+            kwargs["from_date"] = (
+                datetime.strptime(kwargs["to_date"], "%Y-%m-%d")
+                + relativedelta(months=-6)
+            ).strftime("%Y-%m-%d")
         runner = Runner(**kwargs)
 
         runner.run()
@@ -1342,7 +1350,8 @@ class Runner:
             return
         stps = list(self.build.entity_hierarchy.keys())
         self.build.results["stp"] = self.build.results["stp"].loc[
-            stps, slice(None),
+            stps,
+            slice(None),
         ]
 
         ccgs = [
@@ -1399,7 +1408,9 @@ class Runner:
         )
         report.format()
         output_file = path.join(
-            self.output_dir, "html", f"static_{entity}_{code}.html",
+            self.output_dir,
+            "html",
+            f"static_{entity}_{code}.html",
         )
 
         MakeHtml.write_to_template(
@@ -1424,9 +1435,7 @@ class Runner:
         codes = self.build.results[entity].index.get_level_values(0).unique()
         kwargs = [{"entity": entity, "code": c} for c in codes]
         with ThreadPoolExecutor(max_workers=self.n_jobs) as pool:
-            futures = [
-                pool.submit(self._run_item_report, **k) for k in kwargs
-            ]
+            futures = [pool.submit(self._run_item_report, **k) for k in kwargs]
         results = []
         exceptions = []
         for i, future in enumerate(futures):
