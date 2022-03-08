@@ -40,10 +40,10 @@ class Command(BaseCommand):
         parser.add_argument("--output_dir", default=settings.OUTLIERS_DIR)
 
     def handle(self, *args, **kwargs):
-        for date_param in ['from_date','to_date']:
+        for date_param in ['from_date', 'to_date']:
             if date_param in kwargs:
                 kwargs[date_param] = datetime.strptime(kwargs[date_param], "%Y-%m").strftime("%Y-%m-%d")
-        if 'to_date' in kwargs and not 'from_date' in kwargs:
+        if 'to_date' in kwargs and 'from_date' not in kwargs:
             kwargs['from_date'] = (datetime.strptime(kwargs['to_date'], "%Y-%m-%d") + relativedelta(months=-6)).strftime("%Y-%m-%d")
         runner = Runner(**kwargs)
 
@@ -643,15 +643,8 @@ class DatasetBuild:
                 );
         """
 
-        csv_path = f"../data/bq_cache/{entity}_results.zip"
         bq_client = Client()
         res = bq_client.query_into_dataframe(sql)
-        # reload csv with correct datatypes
-        # see https://github.com/ebmdatalab/datalab-pandas/issues/26
-        res = pd.read_csv(
-            csv_path,
-            dtype={self.numerator_column: str, self.denominator_column: str},
-        )
         res = res.set_index([entity, self.numerator_column])
         self.results[entity] = res
 
@@ -685,7 +678,6 @@ class DatasetBuild:
                 build_id = {self.build_id};
         """
         try:
-            csv_path = f"../data/bq_cache/{entity}_measure_arrays.zip"
             bq_client = Client()
             res = bq_client.query_into_dataframe(sql)
         except Exception:
