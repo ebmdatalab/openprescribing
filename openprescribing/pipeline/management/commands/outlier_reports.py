@@ -1213,9 +1213,9 @@ class Runner:
 
         # loop through entity types, generated a report for each entity item
         for e in self.build.entities:
-            for f in self._run_entity_report(e):
-                self.run_results[e].append(f)
-                self.toc.add_item(**f)
+            for report_result in self._run_entity_report(e):
+                self.run_results[e].append(report_result)
+                self.toc.add_item(**report_result)
 
         # write out toc
         self.toc.write_html(self.output_dir)
@@ -1433,12 +1433,11 @@ class Runner:
 
     def _run_entity_report(self, entity):
         codes = self.build.results[entity].index.get_level_values(0).unique()
-        kwargs = [{"entity": entity, "code": c} for c in codes]
         with ThreadPoolExecutor(max_workers=self.n_jobs) as pool:
-            futures = [pool.submit(self._run_item_report, **k) for k in kwargs]
+            futures = [pool.submit(self._run_item_report, entity=entity, code=code) for code in codes]
         results = []
         exceptions = []
-        for i, future in enumerate(futures):
+        for future in futures:
             try:
                 results.append(future.result())
             except Exception as e:
