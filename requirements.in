@@ -60,3 +60,11 @@ flake8
 graphviz
 pip-tools
 when-changed
+
+
+# outlier reports requirements
+matplotlib
+seaborn
+lxml
+numpy
+jinja2
