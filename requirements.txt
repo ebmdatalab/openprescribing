@@ -85,9 +85,7 @@ fabric3==1.14.post1
     # via -r requirements.in
 flake8==4.0.1
     # via -r requirements.in
-fonttools==4.29.1
-    # via matplotlib
-google-api-core[grpc]==1.31.2
+google-api-core[grpc]==1.31.5
     # via
     #   google-api-python-client
     #   google-cloud-bigquery
@@ -95,7 +93,7 @@ google-api-core[grpc]==1.31.2
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.38.0
+google-api-python-client==2.39.0
     # via -r requirements.in
 google-auth==1.35.0
     # via
@@ -172,9 +170,9 @@ mccabe==0.6.1
     # via flake8
 mock==3.0.5
     # via -r requirements.in
-networkx==2.7
+networkx==2.7.1
     # via -r requirements.in
-numpy==1.22.2
+numpy==1.22.3
     # via
     #   -r requirements.in
     #   db-dtypes
@@ -201,7 +199,7 @@ pandas==1.4.1
     #   -r requirements.in
     #   db-dtypes
     #   pandas-gbq
-pandas-gbq==0.17.1
+pandas-gbq==0.17.3
     # via -r requirements.in
 paramiko==2.9.2
     # via fabric3
