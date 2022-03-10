@@ -27,30 +27,28 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--from_date")
         parser.add_argument("--to_date")
-        parser.add_argument("--n_outliers")
+        parser.add_argument("--n_outliers", type=int)
         parser.add_argument("--entities", default=["practice", "ccg", "pcn", "stp"])
         parser.add_argument("--force_rebuild", default=False)
         parser.add_argument(
             "--template_path",
-            default=f"{settings.TEMPLATES[0].DIRS[0]}/outliers",
+            default=f"{settings.TEMPLATES[0]['DIRS'][0]}/outliers",
         )
         parser.add_argument("--url_prefix", default="")
-        parser.add_argument("--n_jobs", default=3)
-        parser.add_argument("--low_number_threshold", default=5)
-        parser.add_argument("--entity_limit")
+        parser.add_argument("--n_jobs", type=int, default=3)
+        parser.add_argument("--low_number_threshold", type=int, default=5)
+        parser.add_argument("--entity_limit", type=int)
         parser.add_argument("--output_dir", default=settings.OUTLIERS_DIR)
 
     def handle(self, *args, **kwargs):
         for date_param in ["from_date", "to_date"]:
-            if date_param in kwargs:
+            if kwargs[date_param]:
                 kwargs[date_param] = datetime.strptime(
                     kwargs[date_param], "%Y-%m"
-                ).strftime("%Y-%m-%d")
-        if "to_date" in kwargs and "from_date" not in kwargs:
-            kwargs["from_date"] = (
-                datetime.strptime(kwargs["to_date"], "%Y-%m-%d")
-                + relativedelta(months=-6)
-            ).strftime("%Y-%m-%d")
+                )
+        if kwargs["to_date"] and not kwargs["from_date"]:
+            kwargs["from_date"] = (kwargs["to_date"] + relativedelta.relativedelta(months=-6)
+            ).date()
         runner = Runner(**kwargs)
 
         runner.run()
@@ -1155,6 +1153,7 @@ class Runner:
         url_prefix="",
         n_jobs=8,
         low_number_threshold=5,
+        **kwargs
     ) -> None:
         self.build = DatasetBuild(
             from_date=from_date,
