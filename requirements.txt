@@ -205,7 +205,7 @@ pandas==1.4.1
     #   seaborn
 pandas-gbq==0.17.3
     # via -r requirements.in
-paramiko==2.9.2
+paramiko==2.10.1
     # via fabric3
 pep517==0.12.0
     # via pip-tools
@@ -306,6 +306,7 @@ six==1.16.0
     #   google-resumable-media
     #   grpcio
     #   mock
+    #   paramiko
     #   python-dateutil
 soupsieve==2.3.1
     # via beautifulsoup4
