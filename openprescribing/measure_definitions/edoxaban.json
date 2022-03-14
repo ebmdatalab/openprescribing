@@ -1,15 +1,27 @@
 {
-  "name": "Proportion of DOACs prescribed as edoxaban",
+  "name": "Proportion of Direct Acting Oral Anticoagulants (DOACs) prescribed as edoxaban",
   "title": [
-    "Percentage DOACs as edoxaban"
+    "Percentage DOACs items prescribed as edoxaban"
   ],
   "description": [
-    "Percentage DOACs as edoxaban"
+    "Percentage DOACs items prescribed as edoxaban"
   ],
   "numerator_short": "Edoxaban items",
   "denominator_short": "DOACs items",
   "why_it_matters": [
-    "tbc"
+    "Direct Acting Oral Anticoagulants (DOACs) are being increasingly prescribed for the prevention of stroke in non-valvular Atrial Fibrillation (AF).</p>",
+    "In January 2022 the NHS in England <a href='https://www.england.nhs.uk/wp-content/uploads/2022/01/B1279-national-procurement-for-DOACs-commissioning-recommendations-v1.pdf'>",
+    "announced a national procurement programme for DOACs, which states:</a></p>",
+    "<ul>",
+    "<li>For patients commencing treatment for AF: subject to the criteria specified in the relevant NICE technology appraisal guidance, clinicians should use ",
+    "edoxaban where this is clinically appropriate. If edoxaban is contraindicated or not clinically appropriate for the specific patient then, subject to the criteria ",
+    "specified in the relevant NICE technology appraisal guidance, clinicians should then consider rivaroxaban first, then apixaban or dabigatran.",
+    "<li>For patients already prescribed a DOAC for the treatment of AF: subject to the criteria specified in the relevant NICE technology appraisal guidance, ",
+    "commissioners may wish to consider developing local policy to review patients currently prescribed apixaban, rivaroxaban or dabigatran, where clinically appropriate.</li>",
+    "</ul>",
+    "</p>",
+    "The 2022-2023 PCN Investment and Impact Fund (IIF) <a href='https://www.england.nhs.uk/wp-content/uploads/2022/03/B1375_Letter-re-General-practice-contract-arrangements-in-2022-23_010322.pdf'>",
+    "now includes an indicator </a> for the proportion of appropriate patients prescribed DOACs who were prescribed edoxaban."
   ],
   "tags": [
     "cardiovascular",
@@ -29,4 +41,20 @@
     "0208020AA # Edoxaban",
     "0208020Z0 # Apixaban",
     "0208020X0 # Dabigatran etexilate"
+  ],  
+"authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    ""
+  ],
+  "date_reviewed": [
+    "2022-03-14"
+  ],
+  "next_review": [
+    "2023-03-14"
+  ],
+  "measure_complexity": [
+    "low"
+  ]
 }
