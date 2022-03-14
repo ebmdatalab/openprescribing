@@ -1,12 +1,12 @@
 {
-  "name": "Proportion of Direct Acting Oral Anticoagulants (DOACs) prescribed as edoxaban",
+  "name": "Proportion of Direct Acting Oral Anticoagulants (DOACs) not prescribed as edoxaban",
   "title": [
-    "Percentage DOACs items prescribed as edoxaban"
+    "Percentage DOACs items not prescribed as edoxaban"
   ],
   "description": [
-    "Percentage DOACs items prescribed as edoxaban"
+    "Percentage DOACs items notprescribed as edoxaban"
   ],
-  "numerator_short": "Edoxaban items",
+  "numerator_short": "DOAC items not prescribed as edoxaban",
   "denominator_short": "DOACs items",
   "why_it_matters": [
     "Direct Acting Oral Anticoagulants (DOACs) are being increasingly prescribed for the prevention of stroke in non-valvular Atrial Fibrillation (AF).</p>",
@@ -30,10 +30,12 @@
   "url": null,
   "is_percentage": true,
   "is_cost_based": false,
-  "low_is_good": false,
+  "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
-    "0208020AA # Edoxaban"
+    "0208020Y0 # Rivaroxaban",
+    "0208020Z0 # Apixaban",
+    "0208020X0 # Dabigatran etexilate"
   ],
  "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
