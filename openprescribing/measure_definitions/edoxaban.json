@@ -4,7 +4,7 @@
     "Percentage DOACs items not prescribed as edoxaban"
   ],
   "description": [
-    "Percentage DOACs items notprescribed as edoxaban"
+    "Percentage DOACs items not prescribed as edoxaban"
   ],
   "numerator_short": "DOAC items not prescribed as edoxaban",
   "denominator_short": "DOACs items",
