@@ -29,7 +29,7 @@
   ],
   "url": null,
   "is_percentage": true,
-  "is_cost_based": true,
+  "is_cost_based": false,
   "low_is_good": false,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
