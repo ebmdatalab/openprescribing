@@ -35,9 +35,15 @@
                         <h1 class="display-5 fw-bold lh-1">OpenPrescribing outlier detection</h1>
                     </div>
                     <div class="col-lg-8 col-md-9 col-12 pt-4 fs-5">
-                        <p>There is substantial variation in prescribing behaviours, across various different areas of medicine. Some variation can be explained by demographic changes, or local policies or guidelines, but much of the remaining variation
-                            is less easy to explain. At <a href="https://openprescribing.net/">OpenPrescribing</a> we are piloting a number of data-driven approaches to identify unusual prescribing and collect feedback on this prescribing to inform development
-                            of new tools to support prescribers and organisations to audit and review prescribing.</p>
+                        <p>At <a href="https://openprescribing.net/">OpenPrescribing</a> we are piloting a number of data-driven approaches to identify unusual prescribing and collect feedback on this prescribing to inform development of new tools to support
+                            prescribers and organisations to audit and review prescribing. These pilot results are provided for the interest of advanced users with <strong>no guarantees of their accuracy or relevance</strong>. There is substantial variation
+                            in prescribing behaviours, across various different areas of medicine. Some variation can be explained by demographic changes, or local policies or guidelines, but much of the remaining variation is less easy to explain.
+                        </p>
+                        <p>The DataLab is keen to hear your feedback on the results. You can do this by completing the following <a href="https://docs.google.com/forms/d/e/1FAIpQLSeH4ai_qyetAY4UAgZSWGnYQHkXNr9efFBmQvdrBi5uuXvgnQ/viewform">survey</a> or emailing
+                            us at
+                            <a href="mailto:ebmdatalab@phc.ox.ac.uk?subject=OpenPrescribing%20outliers%20feedback">ebmdatalab@phc.ox.ac.uk</a>. Please DO NOT INCLUDE IDENTIFIABLE PATIENT information in your feedback. All feedback is helpful, you can send
+                            short or detailed feedback.
+                        </p>
                         <p>This report has been developed to automatically identify prescribing patterns at a chemical level which are furthest away from “typical prescribing” and can be classified as an “outlier”. We calculate the number of prescriptions
                             for each chemical in the <a href="https://www.thedatalab.org/blog/161/prescribing-data-bnf-codes">BNF coding system</a> using the BNF subparagraph as a denominator, for prescriptions dispensed between {{ from_date }} and {{
                             to_date }}. We then calculate the mean and standard deviation for each numerator and denominator pair across all practices/CCGs/PCNs/STPs. From this we can calculate the “z-score”, which is a measure of how many standard deviations
@@ -46,11 +52,6 @@
                         </p>
                         <p>It is important to remember that this information was generated automatically and it is therefore likely that some of the behaviour is warranted. This report seeks only to collect information about where this variation may be warranted
                             and where it might not. Our full analytical method code is openly available on GitHub <a href="https://github.com/ebmdatalab/outliers/">here</a>.
-                        </p>
-                        <p>The DataLab is keen to hear your feedback on the results. You can do this by completing the following <a href="https://docs.google.com/forms/d/e/1FAIpQLSeH4ai_qyetAY4UAgZSWGnYQHkXNr9efFBmQvdrBi5uuXvgnQ/viewform">survey</a> or emailing
-                            us at
-                            <a href="mailto:ebmdatalab@phc.ox.ac.uk?subject=OpenPrescribing%20outliers%20feedback">ebmdatalab@phc.ox.ac.uk</a>. Please DO NOT INCLUDE IDENTIFIABLE PATIENT information in your feedback. All feedback is helpful, you can send
-                            short or detailed feedback.
                         </p>
                     </div>
                 </div>
