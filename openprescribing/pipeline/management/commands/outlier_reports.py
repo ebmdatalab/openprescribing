@@ -570,6 +570,7 @@ class DatasetBuild:
         """
         bq_client = Client()
         res = bq_client.query_into_dataframe(sql)
+        res = res.set_index(["stp_code", "ccg_code", "pcn_code"])
 
         # only include practices for which there are results
         res = res[
