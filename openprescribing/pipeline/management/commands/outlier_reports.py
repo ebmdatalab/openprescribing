@@ -1,6 +1,7 @@
 import os.path
 import re
 import traceback
+import warnings
 from base64 import b64encode
 from datetime import date, datetime
 from dateutil import relativedelta
@@ -1173,6 +1174,9 @@ class Runner:
         self.low_number_threshold = low_number_threshold
 
     def run(self):
+        #ignore numpy warnings
+        np.seterr(all='ignore')
+
         # run main build process on bigquery and fetch results
         self.build.run()
         self.build.fetch_results()
@@ -1182,10 +1186,14 @@ class Runner:
         self.run_results = {e: [] for e in self.build.entities}
 
         # loop through entity types, generated a report for each entity item
-        for e in self.build.entities:
-            for report_result in self._run_entity_report(e):
-                self.run_results[e].append(report_result)
-                self.toc.add_item(**report_result)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=RuntimeWarning)
+            warnings.filterwarnings("ignore", category=FutureWarning)
+            warnings.filterwarnings("ignore", category=UserWarning)
+            for e in self.build.entities:
+                for report_result in self._run_entity_report(e):
+                    self.run_results[e].append(report_result)
+                    self.toc.add_item(**report_result)
 
         # write out toc
         self.toc.write_html(self.output_dir)
