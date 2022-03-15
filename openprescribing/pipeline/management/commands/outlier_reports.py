@@ -45,10 +45,10 @@ class Command(BaseCommand):
             if kwargs[date_param]:
                 kwargs[date_param] = datetime.strptime(
                     kwargs[date_param], "%Y-%m"
-                )
+                ).date()
         if kwargs["to_date"] and not kwargs["from_date"]:
             kwargs["from_date"] = (kwargs["to_date"] + relativedelta.relativedelta(months=-6)
-            ).date()
+            )
         runner = Runner(**kwargs)
 
         runner.run()
