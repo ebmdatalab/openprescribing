@@ -48,7 +48,8 @@ class Command(BaseCommand):
                     kwargs[date_param], "%Y-%m"
                 ).date()
         if kwargs["to_date"] and not kwargs["from_date"]:
-            kwargs["from_date"] = (kwargs["to_date"] + relativedelta.relativedelta(months=-6)
+            kwargs["from_date"] = kwargs["to_date"] + relativedelta.relativedelta(
+                months=-6
             )
         runner = Runner(**kwargs)
 
@@ -674,9 +675,11 @@ class DatasetBuild:
             print(f"Error getting BQ data for {entity}")
             traceback.print_stack()
         try:
-            if type(res.iloc[0]['array']) != np.ndarray:
-                res['array'] = res['array'].apply(lambda x: np.fromstring(x[1:-1], sep=","))
-            assert len(res['array']) > 0
+            if type(res.iloc[0]["array"]) != np.ndarray:
+                res["array"] = res["array"].apply(
+                    lambda x: np.fromstring(x[1:-1], sep=",")
+                )
+            assert len(res["array"]) > 0
         except Exception:
             print(f"Error doing array conversion for {entity}")
             traceback.print_stack()
@@ -1157,7 +1160,7 @@ class Runner:
         url_prefix="",
         n_jobs=8,
         low_number_threshold=5,
-        **kwargs
+        **kwargs,
     ) -> None:
         self.build = DatasetBuild(
             from_date=from_date,
@@ -1176,8 +1179,8 @@ class Runner:
         self.low_number_threshold = low_number_threshold
 
     def run(self):
-        #ignore numpy warnings
-        np.seterr(all='ignore')
+        # ignore numpy warnings
+        np.seterr(all="ignore")
 
         # run main build process on bigquery and fetch results
         self.build.run()
