@@ -162,7 +162,7 @@ lz4==4.0.0
     # via -r requirements.in
 markuppy==1.14
     # via tablib
-markupsafe==2.1.0
+markupsafe==2.1.1
     # via jinja2
 matplotlib==3.5.1
     # via
