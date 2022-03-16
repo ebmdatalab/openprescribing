@@ -674,7 +674,9 @@ class DatasetBuild:
             print(f"Error getting BQ data for {entity}")
             traceback.print_stack()
         try:
-            res.array = res.array.apply(lambda x: np.fromstring(x[1:-1], sep=","))
+            if type(res.iloc[0]['array']) != np.ndarray:
+                res['array'] = res['array'].apply(lambda x: np.fromstring(x[1:-1], sep=","))
+            assert len(res['array']) > 0
         except Exception:
             print(f"Error doing array conversion for {entity}")
             traceback.print_stack()
