@@ -11,6 +11,7 @@ from typing import Dict, List
 
 import jinja2
 import markupsafe
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -18,7 +19,7 @@ import seaborn as sns
 from django.core.management import BaseCommand
 from gcutils.bigquery import Client
 from lxml import html
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from django.conf import settings
 
 
@@ -33,7 +34,7 @@ class Command(BaseCommand):
         parser.add_argument("--force_rebuild", default=False)
         parser.add_argument(
             "--template_path",
-            default=f"{settings.TEMPLATES[0]['DIRS'][0]}/outliers",
+            default=f"{settings.TEMPLATES[0]['DIRS'][0]}/outliers/",
         )
         parser.add_argument("--url_prefix", default="")
         parser.add_argument("--n_jobs", type=int, default=3)
@@ -1006,7 +1007,7 @@ class Plots:
         return df
 
     @staticmethod
-    def _html_plt(plt):
+    def _html_plt(fig):
         """Converts a matplotlib plot into an html image.
 
         Parameters
@@ -1018,7 +1019,8 @@ class Plots:
         html_plot : html image
         """
         img = BytesIO()
-        plt.savefig(img, transparent=True, dpi=150)
+        fig.canvas.draw_idle()
+        fig.savefig(img, transparent=True, dpi=150)
         b64_plot = b64encode(img.getvalue()).decode()
         plot_id = re.sub("[^(a-z)(A-Z)(0-9)._-]", "", b64_plot[256:288])
         html_plot = f'<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#plot_{plot_id}"><img width="250" class="h-auto" src="data:image/png;base64,{b64_plot}"/></button><div class="modal fade" id="plot_{plot_id}" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img class="w-100 h-auto" src="data:image/png;base64,{b64_plot}"/></div></div></div></div>'
@@ -1057,6 +1059,7 @@ class Plots:
         lower_limit = max(0, min(np.quantile(distribution, 0.001), org_value * 0.9))
         upper_limit = max(np.quantile(distribution, 0.999), org_value * 1.1)
         ax.set_xlim(lower_limit, upper_limit)
+        fig.canvas.draw_idle()
         ax = Plots._remove_clutter(ax)
         plt.close()
         return fig
@@ -1155,8 +1158,8 @@ class Runner:
         entities: List[str],
         force_rebuild: bool = False,
         entity_limit: int = None,
-        output_dir="../data",
-        template_path="../data/template.html",
+        output_dir="",
+        template_path="",
         url_prefix="",
         n_jobs=8,
         low_number_threshold=5,
@@ -1170,9 +1173,12 @@ class Runner:
             force_rebuild=force_rebuild,
         )
         self.output_dir = output_dir
-        self.template_path = template_path
+        self.template_path = template_path + "template.html"
         self.toc = TableOfContents(
-            url_prefix=url_prefix, from_date=from_date, to_date=to_date
+            url_prefix=url_prefix,
+            from_date=from_date,
+            to_date=to_date,
+            html_template=template_path + "toc_template.html",
         )
         self.entity_limit = entity_limit
         self.n_jobs = n_jobs
@@ -1181,6 +1187,8 @@ class Runner:
     def run(self):
         # ignore numpy warnings
         np.seterr(all="ignore")
+
+        matplotlib.use("Agg")
 
         # run main build process on bigquery and fetch results
         self.build.run()
@@ -1399,7 +1407,7 @@ class Runner:
 
     def _run_entity_report(self, entity):
         codes = self.build.results[entity].index.get_level_values(0).unique()
-        with ThreadPoolExecutor(max_workers=self.n_jobs) as pool:
+        with ProcessPoolExecutor(max_workers=self.n_jobs) as pool:
             futures = [
                 pool.submit(self._run_item_report, entity=entity, code=code)
                 for code in codes
