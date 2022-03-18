@@ -334,11 +334,13 @@ class MakeHtml:
         df = df.rename(columns=lambda x: MakeHtml.selective_title(x))
         df = MakeHtml.add_definitions(df)
         columns = [c for c in df.columns if c.lower() != MakeHtml.LOW_NUMBER_CLASS]
+        int_format = {c: lambda x: str(int(x)) for c in df.columns if "Items" in c}
         table = df.to_html(
             escape=True,
             classes=["table", "table", "table-sm", "table-bordered"],
             table_id=id,
             columns=columns,
+            formatters = int_format
         )
         table = markupsafe.Markup(table).unescape()
         table = MakeHtml.add_row_classes(df, table)
@@ -1115,6 +1117,7 @@ class Plots:
         ax.set_yticks([])
         # ax.set_xticks([])
         ax.xaxis.set_label_text("")
+        ax.yaxis.set_label_text("")
         plt.tight_layout()
         return ax
 
