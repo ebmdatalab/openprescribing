@@ -340,7 +340,7 @@ class MakeHtml:
             classes=["table", "table", "table-sm", "table-bordered"],
             table_id=id,
             columns=columns,
-            formatters = int_format
+            formatters=int_format,
         )
         table = markupsafe.Markup(table).unescape()
         table = MakeHtml.add_row_classes(df, table)
