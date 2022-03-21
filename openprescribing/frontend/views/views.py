@@ -1502,6 +1502,8 @@ def _home_page_context_for_entity(request, entity):
     if entity_type == "practice":
         measure_options["parentOrgId"] = entity.ccg_id
 
+    entity_outlier_report_url = f"{settings.OUTLIERS_PATH}/html/static_{entity_type}_{entity.code}.html"
+
     context.update(
         {
             "measure": extreme_measure,
@@ -1520,6 +1522,7 @@ def _home_page_context_for_entity(request, entity):
             "spending_for_one_entity_url": "spending_for_one_{}".format(
                 entity_type.lower()
             ),
+            "entity_outlier_report_url": entity_outlier_report_url
         }
     )
 

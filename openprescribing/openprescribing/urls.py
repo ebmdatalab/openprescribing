@@ -7,6 +7,8 @@ from django.views.generic import RedirectView, TemplateView
 from django.contrib import admin
 from django.http.response import HttpResponseRedirect
 from frontend.views import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 admin.autodiscover()
 
@@ -366,4 +368,6 @@ urlpatterns = [
     path(
         r"<ccg_code>/", views.measures_for_one_ccg, name="measures_for_one_ccg_tracking"
     ),
+    # Labs, currently only outlier reports
+    static(settings.OUTLIERS_PATH, document_root=settings.OUTLIERS_DIR),
 ]
