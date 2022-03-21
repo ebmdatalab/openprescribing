@@ -1,6 +1,8 @@
 import functools
 
 from django.conf.urls import include
+from django.conf.urls.static import static
+from django.conf import settings
 from django.urls import path
 from django.urls import reverse
 from django.views.generic import RedirectView, TemplateView
@@ -366,4 +368,6 @@ urlpatterns = [
     path(
         r"<ccg_code>/", views.measures_for_one_ccg, name="measures_for_one_ccg_tracking"
     ),
+    # Labs, currently only outlier reports
+    static(r"labs/outliers",document_root=settings.OUTLIERS_DIR)
 ]
