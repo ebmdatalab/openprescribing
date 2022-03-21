@@ -1,13 +1,13 @@
 {
-  "name": "High Quantity prescribing of morphine sulphate oral solution",
+  "name": "High quantity prescribing of morphine sulphate oral solution",
   "title": [
-    "High Quantity prescribing of morphine sulphate oral solution"
+    "High quantity prescribing of morphine sulphate oral solution"
   ],
   "description": [
     "Total proportion of morphine sulphate oral solution with a quantity of >300ml"
   ],
-  "numerator_short": "Morphine sulphate oral solution prescriptions with quantity of >300ml",
-  "denominator_short": "Morphine sulphate oral solution prescriptions",
+  "numerator_short": "Morphine sulphate oral solution quantity with quantity of >300ml",
+  "denominator_short": "Morphine sulphate oral solution quantity",
   "why_it_matters": [
     "Tbc"
   ],
@@ -21,7 +21,7 @@
   "low_is_good": true,
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(items) AS numerator"
+    "SUM(quantity) AS numerator"
   ],
   "numerator_from": "{hscic}.raw_prescribing_normalised",
   "numerator_where": [
@@ -32,7 +32,7 @@
   "numerator_is_list_of_bnf_codes": false,
   "denominator_type": "custom",
   "denominator_columns": [
-    "SUM(items) AS denominator"
+    "SUM(quantity) AS denominator"
   ],
   "denominator_from": "{hscic}.raw_prescribing_normalised",
   "denominator_where": [
