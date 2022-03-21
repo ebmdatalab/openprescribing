@@ -1,13 +1,12 @@
 import functools
 
+from django.conf import settings
 from django.conf.urls import include
 from django.conf.urls.static import static
-from django.conf import settings
-from django.urls import path
-from django.urls import reverse
-from django.views.generic import RedirectView, TemplateView
 from django.contrib import admin
 from django.http.response import HttpResponseRedirect
+from django.urls import path, reverse
+from django.views.generic import RedirectView, TemplateView
 from frontend.views import views
 
 admin.autodiscover()
@@ -53,7 +52,11 @@ urlpatterns = [
     # Static pages.
     path(r"", TemplateView.as_view(template_name="index.html"), name="home"),
     path(r"api/", TemplateView.as_view(template_name="api.html"), name="api"),
-    path(r"about/", TemplateView.as_view(template_name="about.html"), name="about"),
+    path(
+        r"about/",
+        TemplateView.as_view(template_name="about.html"),
+        name="about",
+    ),
     path(r"faq/", TemplateView.as_view(template_name="faq.html"), name="faq"),
     path(
         r"long_term_trends/",
@@ -66,10 +69,14 @@ urlpatterns = [
         name="price_per_unit_faq",
     ),
     path(
-        r"privacy/", TemplateView.as_view(template_name="privacy.html"), name="privacy"
+        r"privacy/",
+        TemplateView.as_view(template_name="privacy.html"),
+        name="privacy",
     ),
     path(
-        r"contact/", TemplateView.as_view(template_name="contact.html"), name="contact"
+        r"contact/",
+        TemplateView.as_view(template_name="contact.html"),
+        name="contact",
     ),
     path(r"feedback/", views.feedback_view, name="feedback"),
     path(
@@ -356,18 +363,22 @@ urlpatterns = [
     path(r"anymail/", include("anymail.urls")),
     # Redirects
     path(
-        r"pca/", RedirectView.as_view(permanent=True, pattern_name="long_term_trends")
+        r"pca/",
+        RedirectView.as_view(permanent=True, pattern_name="long_term_trends"),
     ),
     path(r"caution/", RedirectView.as_view(pattern_name="faq", permanent=True)),
     # Wrong URL got published
     path(
-        r"measures/", RedirectView.as_view(pattern_name="all_measures", permanent=True)
+        r"measures/",
+        RedirectView.as_view(pattern_name="all_measures", permanent=True),
     ),
     # Temporary, for tracking letter mailouts. Should change to
     # redirect post March 2018
     path(
-        r"<ccg_code>/", views.measures_for_one_ccg, name="measures_for_one_ccg_tracking"
+        r"<ccg_code>/",
+        views.measures_for_one_ccg,
+        name="measures_for_one_ccg_tracking",
     ),
     # Labs, currently only outlier reports
-    static(r"labs/outliers",document_root=settings.OUTLIERS_DIR)
+    static(r"labs/outliers", document_root=settings.OUTLIERS_DIR),
 ]
