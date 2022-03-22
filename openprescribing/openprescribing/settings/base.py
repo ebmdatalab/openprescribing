@@ -455,6 +455,3 @@ GDAL_LIBRARY_PATH = utils.get_env_setting("GDAL_LIBRARY_PATH", default="")
 
 # outlier prescribing reports static file output
 OUTLIERS_DIR = join(APPS_ROOT, "static", "outlier_reports")
-
-# outlier reports url
-OUTLIERS_PATH = r"labs/outliers"

@@ -1503,7 +1503,7 @@ def _home_page_context_for_entity(request, entity):
         measure_options["parentOrgId"] = entity.ccg_id
 
     entity_outlier_report_url = (
-        f"{settings.OUTLIERS_PATH}/html/static_{entity_type}_{entity.code}.html"
+        f"outlier_reports/html/static_{entity_type}_{entity.code}.html"
     )
 
     context.update(

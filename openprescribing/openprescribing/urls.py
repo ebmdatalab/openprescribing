@@ -368,6 +368,4 @@ urlpatterns = [
     path(
         r"<ccg_code>/", views.measures_for_one_ccg, name="measures_for_one_ccg_tracking"
     ),
-    # Labs, currently only outlier reports
-    static(settings.OUTLIERS_PATH, document_root=settings.OUTLIERS_DIR),
 ]
