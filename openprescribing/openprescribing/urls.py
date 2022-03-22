@@ -7,7 +7,6 @@ from django.views.generic import RedirectView, TemplateView
 from django.contrib import admin
 from django.http.response import HttpResponseRedirect
 from frontend.views import views
-from django.conf.urls.static import static
 from django.conf import settings
 
 admin.autodiscover()
