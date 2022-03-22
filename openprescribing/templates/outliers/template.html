@@ -36,20 +36,28 @@
                         <h1 class="display-5 fw-bold lh-1">Static outliers for {{ entity_name }}</h1>
                     </div>
                     <div class="col-lg-8 col-md-9 col-12 pt-4 fs-5">
-                        <p>There is substantial variation in prescribing behaviours, across various different areas of medicine. Some variation can be explained by demographic changes, or local policies or guidelines, but much of the remaining variation
-                            is less easy to explain. At <a href="https://openprescribing.net/">OpenPrescribing</a> we are piloting a number of data-driven approaches to identify unusual prescribing and collect feedback on this prescribing to inform development
-                            of new tools to support prescribers and organisations to audit and review prescribing.</p>
-                        <p>This report has been developed to automatically identify prescribing patterns at a chemical level which are furthest away from “typical prescribing” and can be classified as an “outlier”. We calculate the number of prescriptions
-                            for each chemical in the <a href="https://www.thedatalab.org/blog/161/prescribing-data-bnf-codes">BNF coding system</a> using the BNF subparagraph as a denominator, for prescriptions dispensed between {{ from_date }} and {{
-                            to_date }}. We then calculate the mean and standard deviation for each numerator and denominator pair across all practices/CCGs/PCNs/STPs. From this we can calculate the “z-score”, which is a measure of how many standard deviations
-                            a given practice/CCG/PCN/STP is from the population mean. We then rank your “z-scores” to find the top 5 results where prescribing is an outlier for prescribing higher than its peers and those where it is an outlier for prescribing
-                            lower than its peers.
-                        </p>
-                        <p>It is important to remember that this information was generated automatically and it is therefore likely that some of the behaviour is warranted. This report seeks only to collect information about where this variation may be warranted
-                            and where it might not. Our full analytical method code is openly available on GitHub <a href="https://github.com/ebmdatalab/outliers/">here</a>.
+                        <p>At <a href="https://openprescribing.net/">OpenPrescribing</a> we are piloting a number of data-driven approaches to identify unusual prescribing and collect feedback on this prescribing to inform development of new tools to support
+                            prescribers and organisations to audit and review prescribing. These pilot results are provided for the interest of advanced users, although we don't know how relevant they are in practice. There is substantial variation in
+                            prescribing behaviours, across various different areas of medicine. Some variation can be explained by demographic changes, or local policies or guidelines, but much of the remaining variation is less easy to explain.
                         </p>
                         <p>The DataLab is keen to hear your feedback on the results. You can do this by completing the following <a href="https://docs.google.com/forms/d/e/1FAIpQLSeH4ai_qyetAY4UAgZSWGnYQHkXNr9efFBmQvdrBi5uuXvgnQ/viewform?usp=pp_url&entry.2016356131={{ entity_type }}+{{ entity_code }}">survey</a>                            or emailing us at <a href="mailto:ebmdatalab@phc.ox.ac.uk?subject=OpenPrescribing%20outliers%20feedback">ebmdatalab@phc.ox.ac.uk</a>. Please DO NOT INCLUDE IDENTIFIABLE PATIENT information in your feedback. All feedback is
                             helpful, you can send short or detailed feedback.
+                        </p>
+                        <div class="collapse" id="explainerTextCollapse">
+                            <p>This report has been developed to automatically identify prescribing patterns at a chemical level which are furthest away from “typical prescribing” and can be classified as an “outlier”. We calculate the number of prescriptions
+                                for each chemical in the <a href="https://www.thedatalab.org/blog/161/prescribing-data-bnf-codes">BNF coding system</a> using the BNF subparagraph as a denominator, for prescriptions dispensed between {{ from_date }} and
+                                {{ to_date }}. We then calculate the mean and standard deviation for each numerator and denominator pair across all practices/CCGs/PCNs/STPs. From this we can calculate the “z-score”, which is a measure of how many standard
+                                deviations a given practice/CCG/PCN/STP is from the population mean. We then rank your “z-scores” to find the top 5 results where prescribing is an outlier for prescribing higher than its peers and those where it is an
+                                outlier for prescribing lower than its peers.
+                            </p>
+                            <p>It is important to remember that this information was generated automatically and it is therefore likely that some of the behaviour is warranted. This report seeks only to collect information about where this variation may
+                                be warranted and where it might not. Our full analytical method code is openly available on GitHub <a href="https://github.com/ebmdatalab/outliers/">here</a>.
+                            </p>
+                        </div>
+                        <p>
+                            <button id="explainerTextBtn" class="btn btn-link p-0" type="button" data-bs-toggle="collapse" data-bs-target="#explainerTextCollapse" aria-expanded="false" aria-controls="explainerTextCollapse">
+                  Show more &plus;
+                </button>
                         </p>
                     </div>
                 </div>
@@ -60,8 +68,9 @@
     <section aria-labelledby="higherHeading">
         <div class="container">
             <h2 class="pb-3" id="higherHeading">Prescribing where {{ entity_name }} is higher than most</h2>
+            <button id="higherHeading-lowShowHide" class="btn btn-outline-danger-outline mb-3" type="button">Hide low numbers</button>
         </div>
-        <div class="container px-lg-4 mb-4">
+        <div class="container mb-4">
             <div class="table-responsive">
                 {{ table_high }}
             </div>
@@ -71,8 +80,9 @@
     <section aria-labelledby="lowerHeading">
         <div class="container">
             <h2 class="pb-3" id="lowerHeading">Prescribing where {{ entity_name }} is lower than most</h2>
+            <button id="lowerHeading-lowShowHide" class="btn btn-outline-danger-outline mb-3" type="button">Hide low numbers</button>
         </div>
-        <div class="container px-lg-4 mb-4">
+        <div class="container mb-4">
             <div class="table-responsive">
                 {{ table_low }}
             </div>
@@ -86,6 +96,42 @@
         );
         var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+
+    <script>
+        ["higherHeading-lowShowHide", "lowerHeading-lowShowHide"].forEach(function(
+            btn
+        ) {
+            var toggleButton = document.getElementById(btn);
+            var section = toggleButton.closest("section");
+            toggleButton.addEventListener("click", function(e) {
+                var lowRows = section.querySelectorAll("tr.low_number");
+                lowRows.forEach(function(row) {
+                    return row.classList.toggle("d-none");
+                });
+
+                if (toggleButton.textContent === "Hide low numbers") {
+                    toggleButton.textContent = "Show low numbers";
+                    toggleButton.classList.remove("btn-outline-danger");
+                    toggleButton.classList.add("btn-outline-success");
+                } else {
+                    toggleButton.textContent = "Hide low numbers";
+                    toggleButton.classList.remove("btn-outline-success");
+                    toggleButton.classList.add("btn-outline-danger");
+                }
+            });
+        });
+    </script>
+
+    <script>
+        var explainerTextCollapse = document.getElementById("explainerTextCollapse");
+        var explainerTextBtn = document.getElementById("explainerTextBtn");
+        explainerTextCollapse.addEventListener("hidden.bs.collapse", function() {
+            explainerTextBtn.textContent = "Show more +";
+        });
+        explainerTextCollapse.addEventListener("shown.bs.collapse", function() {
+            explainerTextBtn.textContent = "Show less -";
         });
     </script>
 </body>

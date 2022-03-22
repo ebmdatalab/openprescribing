@@ -1,6 +1,7 @@
 import os.path
 import re
 import traceback
+import warnings
 from base64 import b64encode
 from datetime import date, datetime
 from dateutil import relativedelta
@@ -10,6 +11,7 @@ from typing import Dict, List
 
 import jinja2
 import markupsafe
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -17,7 +19,7 @@ import seaborn as sns
 from django.core.management import BaseCommand
 from gcutils.bigquery import Client
 from lxml import html
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from django.conf import settings
 
 
@@ -27,30 +29,29 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--from_date")
         parser.add_argument("--to_date")
-        parser.add_argument("--n_outliers")
+        parser.add_argument("--n_outliers", type=int)
         parser.add_argument("--entities", default=["practice", "ccg", "pcn", "stp"])
         parser.add_argument("--force_rebuild", default=False)
         parser.add_argument(
             "--template_path",
-            default=f"{settings.TEMPLATES[0].DIRS[0]}/outliers",
+            default=f"{settings.TEMPLATES[0]['DIRS'][0]}/outliers/",
         )
         parser.add_argument("--url_prefix", default="")
-        parser.add_argument("--n_jobs", default=3)
-        parser.add_argument("--low_number_threshold", default=5)
-        parser.add_argument("--entity_limit")
+        parser.add_argument("--n_jobs", type=int, default=3)
+        parser.add_argument("--low_number_threshold", type=int, default=5)
+        parser.add_argument("--entity_limit", type=int)
         parser.add_argument("--output_dir", default=settings.OUTLIERS_DIR)
 
     def handle(self, *args, **kwargs):
         for date_param in ["from_date", "to_date"]:
-            if date_param in kwargs:
+            if kwargs[date_param]:
                 kwargs[date_param] = datetime.strptime(
                     kwargs[date_param], "%Y-%m"
-                ).strftime("%Y-%m-%d")
-        if "to_date" in kwargs and "from_date" not in kwargs:
-            kwargs["from_date"] = (
-                datetime.strptime(kwargs["to_date"], "%Y-%m-%d")
-                + relativedelta(months=-6)
-            ).strftime("%Y-%m-%d")
+                ).date()
+        if kwargs["to_date"] and not kwargs["from_date"]:
+            kwargs["from_date"] = kwargs["to_date"] + relativedelta.relativedelta(
+                months=-6
+            )
         runner = Runner(**kwargs)
 
         runner.run()
@@ -333,11 +334,13 @@ class MakeHtml:
         df = df.rename(columns=lambda x: MakeHtml.selective_title(x))
         df = MakeHtml.add_definitions(df)
         columns = [c for c in df.columns if c.lower() != MakeHtml.LOW_NUMBER_CLASS]
+        int_format = {c: lambda x: str(int(x)) for c in df.columns if "Items" in c}
         table = df.to_html(
             escape=True,
             classes=["table", "table", "table-sm", "table-bordered"],
             table_id=id,
             columns=columns,
+            formatters=int_format,
         )
         table = markupsafe.Markup(table).unescape()
         table = MakeHtml.add_row_classes(df, table)
@@ -572,6 +575,7 @@ class DatasetBuild:
         """
         bq_client = Client()
         res = bq_client.query_into_dataframe(sql)
+        res = res.set_index(["stp_code", "ccg_code", "pcn_code"])
 
         # only include practices for which there are results
         res = res[
@@ -674,7 +678,11 @@ class DatasetBuild:
             print(f"Error getting BQ data for {entity}")
             traceback.print_stack()
         try:
-            res.array = res.array.apply(lambda x: np.fromstring(x[1:-1], sep=","))
+            if type(res.iloc[0]["array"]) != np.ndarray:
+                res["array"] = res["array"].apply(
+                    lambda x: np.fromstring(x[1:-1], sep=",")
+                )
+            assert len(res["array"]) > 0
         except Exception:
             print(f"Error doing array conversion for {entity}")
             traceback.print_stack()
@@ -1001,7 +1009,7 @@ class Plots:
         return df
 
     @staticmethod
-    def _html_plt(plt):
+    def _html_plt(fig):
         """Converts a matplotlib plot into an html image.
 
         Parameters
@@ -1013,7 +1021,8 @@ class Plots:
         html_plot : html image
         """
         img = BytesIO()
-        plt.savefig(img, transparent=True, dpi=150)
+        fig.canvas.draw_idle()
+        fig.savefig(img, transparent=True, dpi=150)
         b64_plot = b64encode(img.getvalue()).decode()
         plot_id = re.sub("[^(a-z)(A-Z)(0-9)._-]", "", b64_plot[256:288])
         html_plot = f'<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#plot_{plot_id}"><img width="250" class="h-auto" src="data:image/png;base64,{b64_plot}"/></button><div class="modal fade" id="plot_{plot_id}" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img class="w-100 h-auto" src="data:image/png;base64,{b64_plot}"/></div></div></div></div>'
@@ -1052,6 +1061,7 @@ class Plots:
         lower_limit = max(0, min(np.quantile(distribution, 0.001), org_value * 0.9))
         upper_limit = max(np.quantile(distribution, 0.999), org_value * 1.1)
         ax.set_xlim(lower_limit, upper_limit)
+        fig.canvas.draw_idle()
         ax = Plots._remove_clutter(ax)
         plt.close()
         return fig
@@ -1107,6 +1117,7 @@ class Plots:
         ax.set_yticks([])
         # ax.set_xticks([])
         ax.xaxis.set_label_text("")
+        ax.yaxis.set_label_text("")
         plt.tight_layout()
         return ax
 
@@ -1150,11 +1161,12 @@ class Runner:
         entities: List[str],
         force_rebuild: bool = False,
         entity_limit: int = None,
-        output_dir="../data",
-        template_path="../data/template.html",
+        output_dir="",
+        template_path="",
         url_prefix="",
         n_jobs=8,
         low_number_threshold=5,
+        **kwargs,
     ) -> None:
         self.build = DatasetBuild(
             from_date=from_date,
@@ -1164,15 +1176,23 @@ class Runner:
             force_rebuild=force_rebuild,
         )
         self.output_dir = output_dir
-        self.template_path = template_path
+        self.template_path = template_path + "template.html"
         self.toc = TableOfContents(
-            url_prefix=url_prefix, from_date=from_date, to_date=to_date
+            url_prefix=url_prefix,
+            from_date=from_date,
+            to_date=to_date,
+            html_template=template_path + "toc_template.html",
         )
         self.entity_limit = entity_limit
         self.n_jobs = n_jobs
         self.low_number_threshold = low_number_threshold
 
     def run(self):
+        # ignore numpy warnings
+        np.seterr(all="ignore")
+
+        matplotlib.use("Agg")
+
         # run main build process on bigquery and fetch results
         self.build.run()
         self.build.fetch_results()
@@ -1182,10 +1202,14 @@ class Runner:
         self.run_results = {e: [] for e in self.build.entities}
 
         # loop through entity types, generated a report for each entity item
-        for e in self.build.entities:
-            for report_result in self._run_entity_report(e):
-                self.run_results[e].append(report_result)
-                self.toc.add_item(**report_result)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=RuntimeWarning)
+            warnings.filterwarnings("ignore", category=FutureWarning)
+            warnings.filterwarnings("ignore", category=UserWarning)
+            for e in self.build.entities:
+                for report_result in self._run_entity_report(e):
+                    self.run_results[e].append(report_result)
+                    self.toc.add_item(**report_result)
 
         # write out toc
         self.toc.write_html(self.output_dir)
@@ -1386,7 +1410,7 @@ class Runner:
 
     def _run_entity_report(self, entity):
         codes = self.build.results[entity].index.get_level_values(0).unique()
-        with ThreadPoolExecutor(max_workers=self.n_jobs) as pool:
+        with ProcessPoolExecutor(max_workers=self.n_jobs) as pool:
             futures = [
                 pool.submit(self._run_item_report, entity=entity, code=code)
                 for code in codes
