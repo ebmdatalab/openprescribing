@@ -1453,7 +1453,7 @@ class TableOfContents:
     def _get_context(self, output_path):
         ctx = {"header": self.heading}
         ctx["from_date"] = self.from_date.strftime(MakeHtml.REPORT_DATE_FORMAT)
-        ctx["to_date"] = self.from_date.strftime(MakeHtml.REPORT_DATE_FORMAT)
+        ctx["to_date"] = self.to_date.strftime(MakeHtml.REPORT_DATE_FORMAT)
         ctx["stps"] = []
         for stp_code, ccgs in self.hierarchy.items():
             stp_item = self._get_item_context(stp_code, "stp", output_path)
