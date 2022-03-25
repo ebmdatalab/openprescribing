@@ -2,6 +2,7 @@ import os.path
 import re
 import traceback
 import warnings
+import shutil
 from base64 import b64encode
 from datetime import date, datetime
 from dateutil import relativedelta
@@ -40,7 +41,7 @@ class Command(BaseCommand):
         parser.add_argument("--n_jobs", type=int, default=3)
         parser.add_argument("--low_number_threshold", type=int, default=5)
         parser.add_argument("--entity_limit", type=int)
-        parser.add_argument("--output_dir", default=settings.OUTLIERS_DIR)
+        parser.add_argument("--output_dir", default=path.join(settings.PIPELINE_DATA_BASEDIR, "outlier_reports"))
 
     def handle(self, *args, **kwargs):
         for date_param in ["from_date", "to_date"]:
@@ -53,8 +54,16 @@ class Command(BaseCommand):
                 months=-6
             )
         runner = Runner(**kwargs)
-
         runner.run()
+        self.deploy_css(**kwargs)
+
+    def deploy_css(self, *args, **kwargs):
+        """ensure latest css files in outliers static dir"""
+        for css_file in ['outliers.css', 'oxford.css']:
+            shutil.copy2(
+                os.path.join(settings.STATICFILES_DIRS[0], 'css', css_file),
+                kwargs['output_dir']
+            )
 
 
 class MakeHtml:
