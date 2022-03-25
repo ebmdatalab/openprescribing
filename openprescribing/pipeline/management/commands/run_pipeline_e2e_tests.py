@@ -42,12 +42,8 @@ def run_end_to_end():
 
     call_command("migrate")
 
-    # No MeasureGlobals or MeasureValues are generated for the ghost branded
-    # generics measure, because both numerator and denominator are computed
-    # from a view (vw__ghost_generic_measure) which has no data.  Rather than
-    # populate this view, it is simpler to pretend it doesn't exist.
-    num_measures = (
-        len(glob.glob(os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json"))) - 1
+    num_measures = len(
+        glob.glob(os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json"))
     )
 
     shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
