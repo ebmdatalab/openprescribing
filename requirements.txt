@@ -37,7 +37,7 @@ cssutils==2.4.0
     # via premailer
 cycler==0.11.0
     # via matplotlib
-db-dtypes==0.3.1
+db-dtypes==0.4.0
     # via pandas-gbq
 defusedxml==0.6.0
     # via odfpy
