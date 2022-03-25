@@ -59,10 +59,10 @@ class Command(BaseCommand):
 
     def deploy_css(self, *args, **kwargs):
         """ensure latest css files in outliers static dir"""
-        for css_file in ['outliers.css', 'oxford.css']:
+        for css_file in ["outliers.css", "oxford.css"]:
             shutil.copy2(
-                os.path.join(settings.STATICFILES_DIRS[0], 'css', css_file),
-                kwargs['output_dir']
+                os.path.join(settings.STATICFILES_DIRS[0], "css", css_file),
+                kwargs["output_dir"]
             )
 
 
