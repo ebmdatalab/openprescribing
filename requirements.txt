@@ -37,7 +37,7 @@ cssutils==2.4.0
     # via premailer
 cycler==0.11.0
     # via matplotlib
-db-dtypes==0.3.1
+db-dtypes==0.4.0
     # via pandas-gbq
 defusedxml==0.6.0
     # via odfpy
@@ -85,7 +85,7 @@ fabric3==1.14.post1
     # via -r requirements.in
 flake8==4.0.1
     # via -r requirements.in
-fonttools==4.31.1
+fonttools==4.31.2
     # via matplotlib
 google-api-core[grpc]==1.31.5
     # via
@@ -95,7 +95,7 @@ google-api-core[grpc]==1.31.5
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.41.0
+google-api-python-client==2.42.0
     # via -r requirements.in
 google-auth==1.35.0
     # via
@@ -137,7 +137,7 @@ googleapis-common-protos==1.56.0
     # via google-api-core
 graphviz==0.19.1
     # via -r requirements.in
-grpcio==1.44.0
+grpcio==1.45.0
     # via google-api-core
 gunicorn==20.0.4
     # via -r requirements.in
@@ -149,7 +149,7 @@ httplib2==0.20.4
     #   google-auth-httplib2
 idna==3.3
     # via requests
-jinja2==3.0.3
+jinja2==3.1.0
     # via -r requirements.in
 kiwisolver==1.4.0
     # via matplotlib
