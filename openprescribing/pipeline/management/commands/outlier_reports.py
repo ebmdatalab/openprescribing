@@ -346,7 +346,7 @@ class MakeHtml:
         df = df.rename(columns=lambda x: MakeHtml.selective_title(x))
         df = MakeHtml.add_definitions(df)
         columns = [c for c in df.columns if c.lower() != MakeHtml.LOW_NUMBER_CLASS]
-        int_format = {c: lambda x: str(int(x)) for c in df.columns if "Items" in c}
+        int_format = {c: lambda x: f"{int(x):,}" for c in df.columns if "Items" in c}
         table = df.to_html(
             escape=True,
             classes=["table", "table", "table-sm", "table-bordered"],
