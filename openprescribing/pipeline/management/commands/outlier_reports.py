@@ -1073,6 +1073,7 @@ class Plots:
         lower_limit = max(0, min(np.quantile(distribution, 0.001), org_value * 0.9))
         upper_limit = max(np.quantile(distribution, 0.999), org_value * 1.1)
         ax.set_xlim(lower_limit, upper_limit)
+        ax.ticklabel_format(axis='x',style='plain')
         fig.canvas.draw_idle()
         ax = Plots._remove_clutter(ax)
         plt.close()
