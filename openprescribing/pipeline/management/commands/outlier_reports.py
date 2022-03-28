@@ -31,7 +31,9 @@ class Command(BaseCommand):
         parser.add_argument("--from_date")
         parser.add_argument("--to_date")
         parser.add_argument("--n_outliers", type=int)
-        parser.add_argument("--entities", default=["practice", "ccg", "pcn", "stp"])
+        parser.add_argument(
+            "--entities", default=["practice", "ccg", "pcn", "stp"]
+        )
         parser.add_argument("--force_rebuild", default=False)
         parser.add_argument(
             "--template_path",
@@ -43,7 +45,9 @@ class Command(BaseCommand):
         parser.add_argument("--entity_limit", type=int)
         parser.add_argument(
             "--output_dir",
-            default=path.join(settings.PIPELINE_DATA_BASEDIR, "outlier_reports"),
+            default=path.join(
+                settings.PIPELINE_DATA_BASEDIR, "outlier_reports"
+            ),
         )
 
     def handle(self, *args, **kwargs):
@@ -53,9 +57,9 @@ class Command(BaseCommand):
                     kwargs[date_param], "%Y-%m"
                 ).date()
         if kwargs["to_date"] and not kwargs["from_date"]:
-            kwargs["from_date"] = kwargs["to_date"] + relativedelta.relativedelta(
-                months=-6
-            )
+            kwargs["from_date"] = kwargs[
+                "to_date"
+            ] + relativedelta.relativedelta(months=-6)
         runner = Runner(**kwargs)
         runner.run()
         self.deploy_css(**kwargs)
@@ -72,7 +76,8 @@ class Command(BaseCommand):
 class MakeHtml:
     DEFINITIONS = {
         "Chemical Items": "number of prescribed items containing this chemical",
-        "Subparagraph Items": "count of all prescribed items " "from this subparagraph",
+        "Subparagraph Items": "count of all prescribed items "
+        "from this subparagraph",
         "Ratio": "Ratio of chemical items to subparagraph items",
         "Mean": "Population mean number of chemical items prescribed",
         "std": "Standard Deviation",
@@ -187,7 +192,9 @@ class MakeHtml:
                 html button element
             """
             bt_open = html.Element("button")
-            bt_open.set("class", "btn btn-outline-primary btn-sm btn-xs ms-2 px-2")
+            bt_open.set(
+                "class", "btn btn-outline-primary btn-sm btn-xs ms-2 px-2"
+            )
             bt_open.set("data-bs-target", f"#{id}_items")
             bt_open.set("data-bs-toggle", "collapse")
             bt_open.set("type", "button")
@@ -205,7 +212,9 @@ class MakeHtml:
 
             # hack:extract the id of the BNF chemical from the analyse URL
             analyse_url = tr.xpath("th/a")[0].get("href")
-            chemical_id = analyse_url.split("/")[-1].split("&")[2].split("=")[1]
+            chemical_id = (
+                analyse_url.split("/")[-1].split("&")[2].split("=")[1]
+            )
 
             # add an open button to the end of the first column
             tr.xpath("th")[0].append(make_open_button(id))
@@ -242,7 +251,9 @@ class MakeHtml:
 
         ix_col = df.index.name
         df = df.reset_index()
-        df[ix_col] = df.apply(lambda x: f'<a href="{x["URL"]}">{x[ix_col]}</a>', axis=1)
+        df[ix_col] = df.apply(
+            lambda x: f'<a href="{x["URL"]}">{x[ix_col]}</a>', axis=1
+        )
         df = df.drop("URL", axis=1)
 
         df = df.set_index(ix_col)
@@ -345,8 +356,12 @@ class MakeHtml:
         df = MakeHtml.format_url(df)
         df = df.rename(columns=lambda x: MakeHtml.selective_title(x))
         df = MakeHtml.add_definitions(df)
-        columns = [c for c in df.columns if c.lower() != MakeHtml.LOW_NUMBER_CLASS]
-        int_format = {c: lambda x: f"{int(x):,}" for c in df.columns if "Items" in c}
+        columns = [
+            c for c in df.columns if c.lower() != MakeHtml.LOW_NUMBER_CLASS
+        ]
+        int_format = {
+            c: lambda x: f"{int(x):,}" for c in df.columns if "Items" in c
+        }
         table = df.to_html(
             escape=True,
             classes=["table", "table", "table-sm", "table-bordered"],
@@ -408,7 +423,10 @@ class MakeHtml:
 
         """
         return " ".join(
-            [w.title() if w not in MakeHtml.ALLCAPS else w for w in str.split(" ")]
+            [
+                w.title() if w not in MakeHtml.ALLCAPS else w
+                for w in str.split(" ")
+            ]
         )
 
     @staticmethod
@@ -605,7 +623,9 @@ class DatasetBuild:
                 .unique()
             ):
                 pcns = {}
-                for pcn_code in res.loc[stp_code, ccg_code, slice(None)].index.unique():
+                for pcn_code in res.loc[
+                    stp_code, ccg_code, slice(None)
+                ].index.unique():
                     pcns[pcn_code] = (
                         res.loc[stp_code, ccg_code, slice(None)]
                         .query(f"pcn_code=='{pcn_code}'")
@@ -620,7 +640,9 @@ class DatasetBuild:
         bnf code:name mapping tables for numerator and denominator
         """
         self.names = {e: self._entity_names_query(e) for e in self.entities}
-        self.names[self.numerator_column] = self._get_bnf_names(self.numerator_column)
+        self.names[self.numerator_column] = self._get_bnf_names(
+            self.numerator_column
+        )
         self.names[self.denominator_column] = self._get_bnf_names(
             self.denominator_column
         )
@@ -869,7 +891,9 @@ class Report:
         else:
             return denominator_code
 
-    def _add_openprescribing_analyse_url(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _add_openprescribing_analyse_url(
+        self, df: pd.DataFrame
+    ) -> pd.DataFrame:
         """
         Generate URL to OpenPrescribing analyse page for
         numerator and denominator highlighting entity
@@ -928,8 +952,12 @@ class Report:
         """
         df = df.round(decimals=2)
         for x in [self.build.numerator_column, self.build.denominator_column]:
-            df = df.merge(self.build.names[x], how="left", left_on=x, right_index=True)
-        df = df.drop(columns=[self.build.denominator_column, "rank_high", "rank_low"])
+            df = df.merge(
+                self.build.names[x], how="left", left_on=x, right_index=True
+            )
+        df = df.drop(
+            columns=[self.build.denominator_column, "rank_high", "rank_low"]
+        )
         df = df.rename(
             columns={
                 f"{self.build.numerator_column}_name": self._COL_NAMES[
@@ -975,7 +1003,9 @@ class Report:
         return df
 
     def _flag_low_numbers(self, df):
-        df[MakeHtml.LOW_NUMBER_CLASS] = df["Chemical Items"] < self.low_number_threshold
+        df[MakeHtml.LOW_NUMBER_CLASS] = (
+            df["Chemical Items"] < self.low_number_threshold
+        )
         return df
 
     def format(self) -> None:
@@ -1064,21 +1094,22 @@ class Plots:
         distribution = distribution[~np.isnan(distribution)]
         sns.kdeplot(
             distribution,
-            bw_method='scott',
+            bw_method="scott",
             ax=ax,
             linewidth=0.9,
             legend=False,
         )
         ax.axvline(org_value, color="r", linewidth=1)
-        lower_limit = max(0, min(np.quantile(distribution, 0.001), org_value * 0.9))
+        lower_limit = max(
+            0, min(np.quantile(distribution, 0.001), org_value * 0.9)
+        )
         upper_limit = max(np.quantile(distribution, 0.999), org_value * 1.1)
         ax.set_xlim(lower_limit, upper_limit)
-        ax.ticklabel_format(axis='x',style='plain')
+        ax.ticklabel_format(axis="x", style="plain")
         fig.canvas.draw_idle()
         ax = Plots._remove_clutter(ax)
         plt.close()
         return fig
-  
 
     @staticmethod
     def _remove_clutter(ax):
@@ -1204,13 +1235,18 @@ class Runner:
             return len(self.build.entity_hierarchy.keys())
 
         def ccg_count():
-            return sum([len(v.keys()) for v in self.build.entity_hierarchy.values()])
+            return sum(
+                [len(v.keys()) for v in self.build.entity_hierarchy.values()]
+            )
 
         def pcn_count():
             return sum(
                 [
                     len(x.keys())
-                    for y in [v.values() for v in self.build.entity_hierarchy.values()]
+                    for y in [
+                        v.values()
+                        for v in self.build.entity_hierarchy.values()
+                    ]
                     for x in y
                 ]
             )
@@ -1222,7 +1258,8 @@ class Runner:
                     for q in [
                         x.values()
                         for y in [
-                            v.values() for v in self.build.entity_hierarchy.values()
+                            v.values()
+                            for v in self.build.entity_hierarchy.values()
                         ]
                         for x in y
                     ]
@@ -1234,7 +1271,9 @@ class Runner:
             for stp, ccgs in self.build.entity_hierarchy.items():
                 for ccg, pcns in ccgs.items():
                     for pcn, practices in pcns.items():
-                        self.build.entity_hierarchy[stp][ccg][pcn] = practices[0:1]
+                        self.build.entity_hierarchy[stp][ccg][pcn] = practices[
+                            0:1
+                        ]
 
         def one_pcn_per_ccg():
             for stp, ccgs in self.build.entity_hierarchy.items():
@@ -1325,18 +1364,24 @@ class Runner:
             for y in [v.keys() for v in self.build.entity_hierarchy.values()]
             for x in y
         ]
-        self.build.results["ccg"] = self.build.results["ccg"].loc[ccgs, slice(None)]
+        self.build.results["ccg"] = self.build.results["ccg"].loc[
+            ccgs, slice(None)
+        ]
 
         pcns = [
             p
             for q in [
                 x.keys()
-                for y in [v.values() for v in self.build.entity_hierarchy.values()]
+                for y in [
+                    v.values() for v in self.build.entity_hierarchy.values()
+                ]
                 for x in y
             ]
             for p in q
         ]
-        self.build.results["pcn"] = self.build.results["pcn"].loc[pcns, slice(None)]
+        self.build.results["pcn"] = self.build.results["pcn"].loc[
+            pcns, slice(None)
+        ]
 
         practices = [
             a
@@ -1344,7 +1389,10 @@ class Runner:
                 p
                 for q in [
                     x.values()
-                    for y in [v.values() for v in self.build.entity_hierarchy.values()]
+                    for y in [
+                        v.values()
+                        for v in self.build.entity_hierarchy.values()
+                    ]
                     for x in y
                 ]
                 for p in q
@@ -1466,7 +1514,9 @@ class TableOfContents:
                 ccg_item = self._get_item_context(ccg_code, "ccg", output_path)
                 ccg_item["pcns"] = []
                 for pcn_code, practices in pcns.items():
-                    pcn_item = self._get_item_context(pcn_code, "pcn", output_path)
+                    pcn_item = self._get_item_context(
+                        pcn_code, "pcn", output_path
+                    )
                     pcn_item["practices"] = []
                     for practice_code in practices:
                         pcn_item["practices"].append(
@@ -1565,7 +1615,8 @@ class TableOfContents:
                 relative_path = self._relative_path(output_path, file)
                 fullpath = self._full_path(relative_path)
                 toc = toc + (
-                    "\n" + f"  * [{relative_path}]" f"({self.url_prefix}{fullpath})"
+                    "\n" + f"  * [{relative_path}]"
+                    f"({self.url_prefix}{fullpath})"
                 )
         return toc
 
