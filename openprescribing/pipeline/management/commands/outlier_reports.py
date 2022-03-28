@@ -1064,7 +1064,7 @@ class Plots:
         distribution = distribution[~np.isnan(distribution)]
         sns.kdeplot(
             distribution,
-            bw=Plots._bw_scott(distribution),
+            bw_method='scott',
             ax=ax,
             linewidth=0.9,
             legend=False,
@@ -1077,37 +1077,7 @@ class Plots:
         ax = Plots._remove_clutter(ax)
         plt.close()
         return fig
-
-    @staticmethod
-    def _bw_scott(x):
-        """
-        Scott's Rule of Thumb for bandwidth estimation
-
-        Adapted from
-        https://www.statsmodels.org/stable/_modules/statsmodels/nonparametric/bandwidths.html
-        previouly cause an issue where the IQR was 0 for many
-        pandas.DataFrame.plot.kde does an okay job using scipy method,
-        but haven't worked out how to do that
-
-        Parameters
-        ----------
-        x : array_like
-            Array for which to get the bandwidth
-        Returns
-        -------
-        bw : float
-            The estimate of the bandwidth
-        """
-
-        def _select_sigma(X):
-            # normalize = 1.349
-            # IQR = (sap(X, 75) - sap(X, 25))/normalize
-            # return np.minimum(np.std(X, axis=0, ddof=1), IQR)
-            return np.std(X, axis=0, ddof=1)
-
-        A = _select_sigma(x)
-        n = len(x)
-        return 1.059 * A * n ** (-0.2)
+  
 
     @staticmethod
     def _remove_clutter(ax):
@@ -1121,13 +1091,10 @@ class Plots:
         -------
         ax : matplotlib axis
         """
-        # ax.legend()
-        # ax.legend_.remove()
         for _, v in ax.spines.items():
             v.set_visible(False)
         ax.tick_params(labelsize=5)
         ax.set_yticks([])
-        # ax.set_xticks([])
         ax.xaxis.set_label_text("")
         ax.yaxis.set_label_text("")
         plt.tight_layout()
