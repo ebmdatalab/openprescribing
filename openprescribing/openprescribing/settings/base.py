@@ -352,7 +352,7 @@ ENABLE_CACHING = utils.get_env_setting_bool("ENABLE_CACHING", default=False)
 # without bound, but I don't think we need to be too fussy about exactly what
 # it is as we're not short on disk space.  For reference, a month's worth of
 # cached PPU data is about 850MB.
-cache_size_limit = 16 * 1024 ** 3
+cache_size_limit = 16 * 1024**3
 
 CACHES = {
     "default": {
