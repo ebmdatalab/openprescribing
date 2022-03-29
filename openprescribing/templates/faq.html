@@ -56,10 +56,10 @@
 
 <h3 id="siteupdate">When do you update the site?</h3>
 <p>We use the <a href="https://www.nhsbsa.nhs.uk/prescription-data/prescribing-data/english-prescribing-data-epd">English prescribing dataset</a> from the NHS Business Services Authority (BSA). The BSA have a release calendar for this dataset, although the data is sometimes released early. We aim to update OpenPrescribing by the Wednesday following the release date, but do try to update earlier if the BSA publish sooner. The data is two months behind, so for example January's prescribing data is published in March. </p>
-<p> You can find out when OpenPrescribing has been updated by following us on <a href="https://twitter.com/OpenPrescribing">Twitter</a> or signing up to one of our <a href="https://ebmdatalab.net/openprescribing-e-mail-alerts-2/">e-mail alerts</a>.</p>
+<p> You can find out when OpenPrescribing has been updated by following us on <a href="https://twitter.com/OpenPrescribing">Twitter</a> or signing up to one of our <a href="https://www.bennett.ox.ac.uk/blog/2017/02/openprescribing-e-mail-alerts/">e-mail alerts</a>.</p>
 
 <h3 id="extractdownload">How do I download an extract of the data?</h3>
-<p>We have written a <a href="https://ebmdatalab.net/downloading-data-from-openprescribing/">blog post</a> on how to download data from the Trends and Analyse sections of the site. It is now also possible to download data extracts from our dashboard pages.</p>
+<p>We have written a <a href="https://www.bennett.ox.ac.uk/blog/2017/06/downloading-data-from-openprescribing/">blog post</a> on how to download data from the Trends and Analyse sections of the site. It is now also possible to download data extracts from our dashboard pages.</p>
 
 <h3 id="cite">How do I cite OpenPrescribing?</h3>
 <p>You are welcome to use data or graphs from this site in your academic output with attribution. Please cite <em>OpenPrescribing.net, Bennett Institute for Applied Data Science, University of Oxford, {% current_time "%Y" %}</em> as the source for academic attribution.</p>
@@ -67,7 +67,7 @@
 <p>If you use data or images from this site online or in a report, please link back to us. Your readers will then be able to see live updates to the data you are interested in, and explore other queries for themselves.</p>
 
 <h3 id="timeperiod">What time period does the dataset cover?</h3>
-<p>We have data from the past 5 years on OpenPrescribing.net, and from 1998 in the <a href="https://openprescribing.net/long_term_trends/"Long Term Trends section</a>.</p>
+<p>We have data from the past 5 years on OpenPrescribing.net, and from 1998 in the <a href="https://openprescribing.net/long_term_trends/">Long Term Trends section</a>.</p>
 
 <h2>Prescribing Dataset</h2>
 
@@ -147,7 +147,7 @@
 <p>Chemicals can occasionally be re-classified from one BNF code to another. An example of this is Linaclotide, which changed from 0102000AH to <a href="/chemical/0106070B0">0106070B0</a> in 2013.</p>
 <p>We have aimed to normalise the data so that past prescribing is always listed under the current BNF code. This means if you look at Linaclotide’s trends page, you will see the prescribing pre-2013 even though the code changed.</p>
 <p>We have done this by mapping the old codes to the new codes, by using a map the NHS Business Services Authority provided us in a personal communication (after correcting for obvious typos etc.). You can read how we did this on <a href="https://github.com/ebmdatalab/openprescribing/pull/380/commits/7f968027263c62318403584e4ad5e0b96869bb7e">github</a>.</p>
-<p>You can read more about BNF codes and how they are structured <a href=https://ebmdatalab.net/prescribing-data-bnf-codes/>here</a>.</p>
+<p>You can read more about BNF codes and how they are structured <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">here</a>.</p>
 
 <h3 id="ccgchange">"How do you determine CCG membership when GP practices have moved CCGs or CCGs have merged?</h3>
 <p>We use the current CCG membership of a practice in our analyses. If a GP Practice moved CCG, the data from before the move will be included in the data for their current CCG. Their former CCG will not include that practice's data. This means that when you look at our prescribing measures, you will be looking at the past prescribing of the current GP practices in that CCG.</p>
@@ -184,7 +184,7 @@
 </div>
 
 <h3 id="measurechose">How are the measures chosen?</h3>
-<p>Our original measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://ebmdatalab.net/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://ebmdatalab.net/richard-croker/">Richard Croker</a> from Devon CCG.  The Datalab team now create measures based on ideas for research, national guidelines, and from our users.  Please do <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">get in touch</a> if you have an idea for a possible new measure.</p>
+<p>Our original measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://www.bennett.ox.ac.uk/about-us/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://www.bennett.ox.ac.uk/about-us/richard-croker/">Richard Croker</a> from Devon CCG.  The Datalab team now create measures based on ideas for research, national guidelines, and from our users.  Please do <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">get in touch</a> if you have an idea for a possible new measure.</p>
 
 <h3 id="measurechose">How do you work out savings on individual presentations?</h3>
 
@@ -200,7 +200,7 @@
 
 <p>In addition, the published Drug Tariff prices are not necessarily the ones used by BSA for reimbursement (see <a href="https://github.com/ebmdatalab/openprescribing/issues/1318">our technical notes here</a> for an explanation of this). Therefore, to estimate the size of the problem for individual practices or CCGs, we first have to estimate the Drug Tariff price for a generic, which we do by taking the median price paid for that generic item across the entire country. This gives us a price that <em>should</em> be paid for all prescriptions of that generic. We then compare this with the price that was used for reimbursement. This difference gives a reasonable estimate of the total possible savings if a generic were prescribed correctly. We only include savings of more than £5. Note that we use Net Ingredient Cost for our calculations; the true reimbursement cost will typically be 7% less due to bulk discounts.</p>
 
-<p>You can read more about the background of this issue <a href="https://ebmdatalab.net/ghost-branded-generics-why-does-the-cost-of-generic-atorvastatin-vary%EF%BB%BF/">on our blog</a>.</p>
+<p>You can read more about the background of this issue <a href="https://www.bennett.ox.ac.uk/blog/2018/12/ghost-branded-generics-why-does-the-cost-of-generic-atorvastatin-vary/">on our blog</a>.</p>
 
 <h3 id="ghostgenericshow">How can I decrease our use of ghost-branded generics?</h3>
 <p>The spreadsheet download on ghost-branded generics page for each CCG or practice is sorted by total possible savings.  The practices and items appearing near the top of this list are likely to be prescribing the highest level of ghost-branded generics.  ePACT2 now carries data at an <em>AMPP</em> level for ghost-generics (termed "premium price generics"), meaning you can identify individual scripts which are at fault; PrescQIPP has also added ghost-generic reports and searches.</p>
@@ -215,7 +215,7 @@
   prescribed by that surgery was dispensed in the community after the closure
   date. The historical data for closed practices will continue to be shown on
   OpenPrescribing, and any practice with a current status of 
-  <a href="https://www.thedatalab.org/blog/2017/08/157/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">Dormant</a> 
+  <a href="https://www.bennett.ox.ac.uk/blog/2017/08/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">Dormant</a> 
   or Closed will be labelled as such. They will continue to be shown under the 
   CCG they were last recorded under.
 </p>
