@@ -45,13 +45,15 @@
                         </p>
                         <div class="collapse" id="explainerTextCollapse">
                             <p>This report has been developed to automatically identify prescribing patterns at a chemical level which are furthest away from “typical prescribing” and can be classified as an “outlier”. We calculate the number of prescriptions
-                                for each chemical in the <a href="https://www.thedatalab.org/blog/161/prescribing-data-bnf-codes">BNF coding system</a> using the BNF subparagraph as a denominator, for prescriptions dispensed between {{ from_date }} and
-                                {{ to_date }}. We then calculate the mean and standard deviation for each numerator and denominator pair across all practices/CCGs/PCNs/STPs. From this we can calculate the “z-score”, which is a measure of how many standard
-                                deviations a given practice/CCG/PCN/STP is from the population mean. We then rank your “z-scores” to find the top 5 results where prescribing is an outlier for prescribing higher than its peers and those where it is an
-                                outlier for prescribing lower than its peers.
+                                for each chemical in the <a href="https://www.thedatalab.org/blog/161/prescribing-data-bnf-codes">BNF coding system</a>, the count of all prescriptions within that chemical's BNF subparagraph, for prescriptions dispensed
+                                between {{ from_date }} and {{ to_date }}. We then calculate the ratio of these counts along with the mean and standard deviation of those ratios across all {{ fmt_entity_type }}s. From this we can calculate the “z-score”,
+                                which is a measure of how many standard deviations a given {{ fmt_entity_type }} is from the population mean. We then rank your “z-scores” to find the top {{ n_outliers }} results where prescribing is an outlier for prescribing
+                                higher than its peers and those where it is an outlier for prescribing lower than its peers.
+                            </p>
+                            <p>For each outlier chemical, a kernel density estimation plot of all {{ fmt_entity_type }}'s chemical:subparagraph ratios is provided, with this {{ fmt_entity_type }}'s ratio overlaid in red.
                             </p>
                             <p>It is important to remember that this information was generated automatically and it is therefore likely that some of the behaviour is warranted. This report seeks only to collect information about where this variation may
-                                be warranted and where it might not. Our full analytical method code is openly available on GitHub <a href="https://github.com/ebmdatalab/outliers/">here</a>.
+                                be warranted and where it might not, to inform research on this topic. Our full analytical method code is openly available on GitHub <a href="https://github.com/ebmdatalab/outliers/">here</a>.
                             </p>
                         </div>
                         <p>

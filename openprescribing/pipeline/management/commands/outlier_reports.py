@@ -422,6 +422,7 @@ class MakeHtml:
         to_date: date,
         entity_type: str,
         entity_code: str,
+        n_outliers: int,
     ):
         """
         Populate jinja template with outlier report data
@@ -458,6 +459,8 @@ class MakeHtml:
             "to_date": to_date.strftime(MakeHtml.REPORT_DATE_FORMAT),
             "entity_type": entity_type,
             "entity_code": entity_code,
+            "fmt_entity_type": MakeHtml.selective_title(entity_type.upper()),
+            "n_outliers": n_outliers,
         }
 
         with open(output_path, "w") as f:
@@ -1379,6 +1382,7 @@ class Runner:
             to_date=self.build.to_date,
             entity_type=entity,
             entity_code=code,
+            n_outliers=report.build.n_outliers,
         )
         return {
             "code": code,
