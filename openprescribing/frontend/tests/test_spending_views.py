@@ -154,7 +154,7 @@ class TestSpendingViews(TestCase):
         self.assertContains(response, "Get email updates")
 
     def test_all_england_alert_signup_form(self):
-        url = "/national/england/concessions/".format(self.practice.code)
+        url = "/national/england/concessions/"
         response = self.client.get(url)
         self.assertContains(response, "Get email updates")
 

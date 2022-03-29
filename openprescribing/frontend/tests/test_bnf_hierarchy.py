@@ -27,7 +27,7 @@ class TestPrunePaths(TestCase):
         random.seed(123)
         all_paths = ["".join(tpl) for tpl in product(*["AB" for _ in range(6)])]
 
-        for size in range(1, 2 ** 6):
+        for size in range(1, 2**6):
             paths = random.sample(all_paths, size)
             _prune_paths(paths, all_paths)
 
