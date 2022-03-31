@@ -14,8 +14,8 @@ WITH simp_form AS (
       STRPOS(form.descr, ".")+ 1) #takes the dosage form out of the string (e.g. tablet.oral) TO leave route.
     END AS simple_form 
   FROM 
-    dmd.ont AS ont #the coded route for dosage form, includes vmp code 
-    INNER JOIN dmd.ontformroute AS form ON form.cd = ont.form #text description of route
+    {project}.{dmd}.ont AS ont #the coded route for dosage form, includes vmp code 
+    INNER JOIN {project}.{dmd}.ontformroute AS form ON form.cd = ont.form #text description of route
     )
 
 #subquery to normalise strength to mg
@@ -37,9 +37,9 @@ WITH simp_form AS (
     ELSE NULL # will give a null value if a non-stanard dosage unit - this can then be checked if neccesary
     END AS strnt_dnmtr_val_ml #denominator now in ml
     FROM 
-    dmd.vpi AS vpi 
-    LEFT JOIN dmd.unitofmeasure AS unit_num ON vpi.strnt_nmrtr_uom = unit_num.cd #join to create text value for numerator unit
-    LEFT JOIN dmd.unitofmeasure AS unit_den ON vpi.strnt_dnmtr_uom = unit_den.cd #join to create text value for denominator unit
+    {project}.{dmd}.vpi AS vpi 
+    LEFT JOIN {project}.{dmd}.unitofmeasure AS unit_num ON vpi.strnt_nmrtr_uom = unit_num.cd #join to create text value for numerator unit
+    LEFT JOIN {project}.{dmd}.unitofmeasure AS unit_den ON vpi.strnt_dnmtr_uom = unit_den.cd #join to create text value for denominator unit
 ) 
 
 #main query to calculate the OME
@@ -72,11 +72,11 @@ SELECT
   opioid.ome AS ome 
 FROM 
   norm_vpi AS vpi #VPI has both ING and VMP codes in the table
-  INNER JOIN dmd.ing AS ing ON vpi.ing = ing.id #join to ING to get ING codes and name
-  INNER JOIN dmd.vmp AS vmp ON vpi.vmp = vmp.id #join to get BNF codes for both VMPs and AMPs joined indirectly TO ING. 
+  INNER JOIN {project}.{dmd}.ing AS ing ON vpi.ing = ing.id #join to ING to get ING codes and name
+  INNER JOIN {project}.{dmd}.vmp AS vmp ON vpi.vmp = vmp.id #join to get BNF codes for both VMPs and AMPs joined indirectly TO ING. 
   INNER JOIN simp_form AS form ON vmp.id = form.vmp #join to subquery for simplified administration route
-  INNER JOIN measures.opioid_ing_form_ome AS opioid ON opioid.vpi = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
-  INNER JOIN hscic.normalised_prescribing AS rx ON CONCAT(
+  INNER JOIN {project}.{measures}.opioid_ing_form_ome AS opioid ON opioid.vpi = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
+  INNER JOIN {project}.{hscic}.normalised_prescribing AS rx ON CONCAT(
     SUBSTR(rx.bnf_code, 0, 9), 
     'AA', 
     SUBSTR(rx.bnf_code,-2, 2)
