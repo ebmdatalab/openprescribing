@@ -209,7 +209,7 @@ paramiko==2.10.3
     # via fabric3
 pep517==0.12.0
     # via pip-tools
-pillow==9.0.1
+pillow==9.1.0
     # via matplotlib
 pip-tools==6.5.1
     # via -r requirements.in
