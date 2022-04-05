@@ -228,8 +228,15 @@ class TestAdvancedSearchView(TestCase):
         self.assertContains(rsp, "Found 1 Actual Medicinal Product")
         self.assertContains(rsp, "Analyse prescribing")
 
-    def _get(self, search, include=None):
+    def test_csv(self):
+        search = ["nm", "contains", "acebutolol"]
+        rsp = self._get(search, ["unavailable"], format="csv")
+        self.assertContains(rsp, "10347111000001100,Acebutolol 100mg capsules")
+
+    def _get(self, search, include=None, format=None):
         params = {"search": json.dumps(search), "include": include or []}
+        if format:
+            params["format"] = "csv"
 
         bnf_codes = [
             "0204000C0AAAAAA",  # Acebut HCl_Cap 100mg

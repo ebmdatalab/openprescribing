@@ -51,6 +51,7 @@
 {% else %}
 <h2>Found {{ objs|length }} {{ obj_type_human_plural }}</h2>
 <p>
+  <a href="{{ request.get_full_path }}&format=csv" class="btn btn-primary">Download CSV</a>
   {% if analyse_url %}
     <a href="{{ analyse_url }}" class="btn btn-primary">Analyse prescribing for these drugs</a>
   {% else %}
