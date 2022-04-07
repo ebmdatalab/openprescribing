@@ -48,11 +48,11 @@
     "SUM(total_quantity) AS denominator"
   "denominator_from": "{hscic}.raw_prescribing_normalised",
   "denominator_where": [
-    "0501015P0%AB # Pivmecillinam HCl_Tab 200mg (brands and generic)",
-    "0501080W0%AE # Trimethoprim_Tab 200mg (brands and generic)",
-    "0501130R0%AA # Nitrofurantoin_Cap 50mg (brands and generic)",
-    "0501130R0%AD # Nitrofurantoin_Tab 50mg (brands and generic)",
-    "0501130R0%AG # Nitrofurantoin_Cap 100mg M/R (brands and generic)"
+    "bnf_code LIKE '0501015P0%AB' OR # Pivmecillinam HCl_Tab 200mg (brands and generic) \n",
+    "bnf_code LIKE '0501080W0%AE' OR # Trimethoprim_Tab 200mg (brands and generic) \n",
+    "bnf_code LIKE '0501130R0%AA' OR # Nitrofurantoin_Cap 50mg (brands and generic) \n",
+    "bnf_code LIKE '0501130R0%AD' OR # Nitrofurantoin_Tab 50mg (brands and generic) \n",
+    "bnf_code LIKE '0501130R0%AG' # Nitrofurantoin_Cap 100mg M/R (brands and generic)"
   ],
   "no_analyse_url": true
 }
