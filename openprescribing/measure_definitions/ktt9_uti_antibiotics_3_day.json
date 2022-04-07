@@ -43,7 +43,7 @@
     "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item=12) OR --Nitrofurantoin_Tab 50mg (brands and generic) \n",
     "(bnf_code LIKE '0501130R0%AG%' AND quantity_per_item=6) --Nitrofurantoin_Cap 100mg M/R (brands and generic)"
   ],
-  "denominator_type": "bnf_items",
+  "denominator_type": "SUM(total_quantity)",
   "denominator_bnf_codes_filter": [
     "0501015P0%AB # Pivmecillinam HCl_Tab 200mg (brands and generic)",
     "0501080W0%AE # Trimethoprim_Tab 200mg (brands and generic)",
