@@ -1,12 +1,12 @@
 {
-  "name": "Antibiotic stewardship: courses for amoxicillin 500mg not as 15 capsules",
+  "name": "Antibiotic stewardship: courses for amoxicillin 500mg greater than 15 capsules",
   "title": [
-    "AMEND Antibiotic stewardship: courses for amoxicillin 500mg not as 15 capsules "
+    "AMEND Antibiotic stewardship: courses for amoxicillin 500mg greater than 15 capsules "
   ],
   "description": [
-    "AMEND Prescription items for not 15 capsules of amoxicillin 500mg"
+    "AMEND Prescription items for greater than 15 capsules of amoxicillin 500mg"
   ],
-  "numerator_short": "items for not 15 caps",
+  "numerator_short": "items for greater than 15 caps",
   "denominator_short": "amoxicillin caps 500mg",
   "why_it_matters": [
     "tbc"
@@ -27,7 +27,7 @@
   ],
   "numerator_from": "{hscic}.raw_prescribing_normalised",
   "numerator_where": [
-    "bnf_code LIKE '0501013B0%AB' AND quantity_per_item <> 15 --Amoxicillin 500mg capsules (brands and generic)"
+    "bnf_code LIKE '0501013B0%AB' AND quantity_per_item > 15 --Amoxicillin 500mg capsules (brands and generic)"
   ],
   "denominator_type": "custom",
   "denominator_columns": [
