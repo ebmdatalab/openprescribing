@@ -2,6 +2,7 @@ import os.path
 import re
 import traceback
 import warnings
+import shutil
 from base64 import b64encode
 from datetime import date, datetime
 from dateutil import relativedelta
@@ -40,7 +41,10 @@ class Command(BaseCommand):
         parser.add_argument("--n_jobs", type=int, default=3)
         parser.add_argument("--low_number_threshold", type=int, default=5)
         parser.add_argument("--entity_limit", type=int)
-        parser.add_argument("--output_dir", default=settings.OUTLIERS_DIR)
+        parser.add_argument(
+            "--output_dir",
+            default=path.join(settings.PIPELINE_DATA_BASEDIR, "outlier_reports"),
+        )
 
     def handle(self, *args, **kwargs):
         for date_param in ["from_date", "to_date"]:
@@ -53,8 +57,16 @@ class Command(BaseCommand):
                 months=-6
             )
         runner = Runner(**kwargs)
-
         runner.run()
+        self.deploy_css(**kwargs)
+
+    def deploy_css(self, *args, **kwargs):
+        """ensure latest css files in outliers static dir"""
+        for css_file in ["outliers.css", "oxford.css"]:
+            shutil.copy2(
+                os.path.join(settings.STATICFILES_DIRS[0], "css", css_file),
+                os.path.join(kwargs["output_dir"], "html", "static", "css", css_file),
+            )
 
 
 class MakeHtml:
@@ -334,7 +346,7 @@ class MakeHtml:
         df = df.rename(columns=lambda x: MakeHtml.selective_title(x))
         df = MakeHtml.add_definitions(df)
         columns = [c for c in df.columns if c.lower() != MakeHtml.LOW_NUMBER_CLASS]
-        int_format = {c: lambda x: str(int(x)) for c in df.columns if "Items" in c}
+        int_format = {c: lambda x: f"{int(x):,}" for c in df.columns if "Items" in c}
         table = df.to_html(
             escape=True,
             classes=["table", "table", "table-sm", "table-bordered"],
@@ -410,6 +422,7 @@ class MakeHtml:
         to_date: date,
         entity_type: str,
         entity_code: str,
+        n_outliers: int,
     ):
         """
         Populate jinja template with outlier report data
@@ -446,6 +459,8 @@ class MakeHtml:
             "to_date": to_date.strftime(MakeHtml.REPORT_DATE_FORMAT),
             "entity_type": entity_type,
             "entity_code": entity_code,
+            "fmt_entity_type": MakeHtml.selective_title(entity_type.upper()),
+            "n_outliers": n_outliers,
         }
 
         with open(output_path, "w") as f:
@@ -1052,7 +1067,7 @@ class Plots:
         distribution = distribution[~np.isnan(distribution)]
         sns.kdeplot(
             distribution,
-            bw=Plots._bw_scott(distribution),
+            bw_method="scott",
             ax=ax,
             linewidth=0.9,
             legend=False,
@@ -1061,41 +1076,11 @@ class Plots:
         lower_limit = max(0, min(np.quantile(distribution, 0.001), org_value * 0.9))
         upper_limit = max(np.quantile(distribution, 0.999), org_value * 1.1)
         ax.set_xlim(lower_limit, upper_limit)
+        ax.ticklabel_format(axis="x", style="plain")
         fig.canvas.draw_idle()
         ax = Plots._remove_clutter(ax)
         plt.close()
         return fig
-
-    @staticmethod
-    def _bw_scott(x):
-        """
-        Scott's Rule of Thumb for bandwidth estimation
-
-        Adapted from
-        https://www.statsmodels.org/stable/_modules/statsmodels/nonparametric/bandwidths.html
-        previouly cause an issue where the IQR was 0 for many
-        pandas.DataFrame.plot.kde does an okay job using scipy method,
-        but haven't worked out how to do that
-
-        Parameters
-        ----------
-        x : array_like
-            Array for which to get the bandwidth
-        Returns
-        -------
-        bw : float
-            The estimate of the bandwidth
-        """
-
-        def _select_sigma(X):
-            # normalize = 1.349
-            # IQR = (sap(X, 75) - sap(X, 25))/normalize
-            # return np.minimum(np.std(X, axis=0, ddof=1), IQR)
-            return np.std(X, axis=0, ddof=1)
-
-        A = _select_sigma(x)
-        n = len(x)
-        return 1.059 * A * n ** (-0.2)
 
     @staticmethod
     def _remove_clutter(ax):
@@ -1109,13 +1094,10 @@ class Plots:
         -------
         ax : matplotlib axis
         """
-        # ax.legend()
-        # ax.legend_.remove()
         for _, v in ax.spines.items():
             v.set_visible(False)
         ax.tick_params(labelsize=5)
         ax.set_yticks([])
-        # ax.set_xticks([])
         ax.xaxis.set_label_text("")
         ax.yaxis.set_label_text("")
         plt.tight_layout()
@@ -1400,6 +1382,7 @@ class Runner:
             to_date=self.build.to_date,
             entity_type=entity,
             entity_code=code,
+            n_outliers=report.build.n_outliers,
         )
         return {
             "code": code,

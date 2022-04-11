@@ -33,7 +33,7 @@
             <div class="container pt-5 pb-4">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-5 fw-bold lh-1">Static outliers for {{ entity_name }}</h1>
+                        <h1 class="display-5 fw-bold lh-1">Prototype Prescribing Outlier Dashboard for {{ entity_name }}</h1>
                     </div>
                     <div class="col-lg-8 col-md-9 col-12 pt-4 fs-5">
                         <p>At <a href="https://openprescribing.net/">OpenPrescribing</a> we are piloting a number of data-driven approaches to identify unusual prescribing and collect feedback on this prescribing to inform development of new tools to support
@@ -45,19 +45,29 @@
                         </p>
                         <div class="collapse" id="explainerTextCollapse">
                             <p>This report has been developed to automatically identify prescribing patterns at a chemical level which are furthest away from “typical prescribing” and can be classified as an “outlier”. We calculate the number of prescriptions
-                                for each chemical in the <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">BNF coding system</a> using the BNF subparagraph as a denominator, for prescriptions dispensed between {{ from_date }} and
-                                {{ to_date }}. We then calculate the mean and standard deviation for each numerator and denominator pair across all practices/CCGs/PCNs/STPs. From this we can calculate the “z-score”, which is a measure of how many standard
-                                deviations a given practice/CCG/PCN/STP is from the population mean. We then rank your “z-scores” to find the top 5 results where prescribing is an outlier for prescribing higher than its peers and those where it is an
-                                outlier for prescribing lower than its peers.
+                                for each chemical in the <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">BNF coding system</a>, the count of all prescriptions within that chemical's BNF subparagraph, for prescriptions dispensed
+                                between {{ from_date }} and {{ to_date }}. We then calculate the ratio of these counts along with the mean and standard deviation of those ratios across all {{ fmt_entity_type }}s. From this we can calculate the “z-score”,
+                                which is a measure of how many standard deviations a given {{ fmt_entity_type }} is from the population mean. We then rank your “z-scores” to find the top {{ n_outliers }} results where prescribing is an outlier for prescribing
+                                higher than its peers and those where it is an outlier for prescribing lower than its peers.
+                            </p>
+                            <p>For each outlier chemical, a kernel density estimation plot of all {{ fmt_entity_type }}'s chemical:subparagraph ratios is provided, with this {{ fmt_entity_type }}'s ratio overlaid in red.
                             </p>
                             <p>It is important to remember that this information was generated automatically and it is therefore likely that some of the behaviour is warranted. This report seeks only to collect information about where this variation may
-                                be warranted and where it might not. Our full analytical method code is openly available on GitHub <a href="https://github.com/ebmdatalab/outliers/">here</a>.
+                                be warranted and where it might not, to inform research on this topic. Our full analytical method code is openly available on GitHub <a href="https://github.com/ebmdatalab/outliers/">here</a>.
                             </p>
                         </div>
                         <p>
                             <button id="explainerTextBtn" class="btn btn-link p-0" type="button" data-bs-toggle="collapse" data-bs-target="#explainerTextCollapse" aria-expanded="false" aria-controls="explainerTextCollapse">
                   Show more &plus;
                 </button>
+                        </p>
+                    </div>
+                    <div class="col-lg-4 col-md-3 col-12 pt-4 fs-5">
+                        <p class="alert alert-info" style="margin-top: 0">
+                            This is a new, experimental feature. We'd love to
+                            <a href="mailto:bennett@phc.ox.ac.uk?subject=OpenPrescribing%20outliers%20feedback" class="feedback-show" style="text-decoration: underline">
+                            hear your feedback
+                          </a>.
                         </p>
                     </div>
                 </div>
@@ -68,7 +78,7 @@
     <section aria-labelledby="higherHeading">
         <div class="container">
             <h2 class="pb-3" id="higherHeading">Prescribing where {{ entity_name }} is higher than most</h2>
-            <button id="higherHeading-lowShowHide" class="btn btn-outline-danger-outline mb-3" type="button">Hide low numbers</button>
+            <button id="higherHeading-lowShowHide" class="btn btn-outline-danger mb-3" type="button">Hide low numbers</button>
         </div>
         <div class="container mb-4">
             <div class="table-responsive">
@@ -80,7 +90,7 @@
     <section aria-labelledby="lowerHeading">
         <div class="container">
             <h2 class="pb-3" id="lowerHeading">Prescribing where {{ entity_name }} is lower than most</h2>
-            <button id="lowerHeading-lowShowHide" class="btn btn-outline-danger-outline mb-3" type="button">Hide low numbers</button>
+            <button id="lowerHeading-lowShowHide" class="btn btn-outline-danger mb-3" type="button">Hide low numbers</button>
         </div>
         <div class="container mb-4">
             <div class="table-responsive">

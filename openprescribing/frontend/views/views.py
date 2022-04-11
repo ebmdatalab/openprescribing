@@ -476,7 +476,7 @@ def _format_measure_sql(**kwargs):
         " FROM {from_}\n"
         " WHERE {where}\n"
         " GROUP BY month, practice_id",
-        **kwargs
+        **kwargs,
     )
     # Remove "1 = 1" WHERE conditions to avoid confusion and visual clutter
     sql = re.sub(r"WHERE\s+1\s*=\s*1\s+GROUP BY", "GROUP BY", sql)
@@ -1502,6 +1502,10 @@ def _home_page_context_for_entity(request, entity):
     if entity_type == "practice":
         measure_options["parentOrgId"] = entity.ccg_id
 
+    entity_outlier_report_url = (
+        f"labs/outlier_reports/html/static_{entity_type}_{entity.code}.html"
+    )
+
     context.update(
         {
             "measure": extreme_measure,
@@ -1520,6 +1524,7 @@ def _home_page_context_for_entity(request, entity):
             "spending_for_one_entity_url": "spending_for_one_{}".format(
                 entity_type.lower()
             ),
+            "entity_outlier_report_url": entity_outlier_report_url,
         }
     )
 

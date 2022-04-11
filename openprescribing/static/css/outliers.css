@@ -1,0 +1,14 @@
+.zoom {
+    transition: .2s;
+    background: white;
+}
+
+.zoom:hover {
+    transform: scale(1.5);
+}
+
+.alert-info {
+    color: #222;
+    border-color: #31b0d5;
+    background-color: #d9edf7;
+}
