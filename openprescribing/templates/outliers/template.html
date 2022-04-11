@@ -45,7 +45,7 @@
                         </p>
                         <div class="collapse" id="explainerTextCollapse">
                             <p>This report has been developed to automatically identify prescribing patterns at a chemical level which are furthest away from “typical prescribing” and can be classified as an “outlier”. We calculate the number of prescriptions
-                                for each chemical in the <a href="https://www.thedatalab.org/blog/161/prescribing-data-bnf-codes">BNF coding system</a>, the count of all prescriptions within that chemical's BNF subparagraph, for prescriptions dispensed
+                                for each chemical in the <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">BNF coding system</a>, the count of all prescriptions within that chemical's BNF subparagraph, for prescriptions dispensed
                                 between {{ from_date }} and {{ to_date }}. We then calculate the ratio of these counts along with the mean and standard deviation of those ratios across all {{ fmt_entity_type }}s. From this we can calculate the “z-score”,
                                 which is a measure of how many standard deviations a given {{ fmt_entity_type }} is from the population mean. We then rank your “z-scores” to find the top {{ n_outliers }} results where prescribing is an outlier for prescribing
                                 higher than its peers and those where it is an outlier for prescribing lower than its peers.
@@ -65,7 +65,7 @@
                     <div class="col-lg-4 col-md-3 col-12 pt-4 fs-5">
                         <p class="alert alert-info" style="margin-top: 0">
                             This is a new, experimental feature. We'd love to
-                            <a href="mailto:ebmdatalab@phc.ox.ac.uk?subject=OpenPrescribing%20outliers%20feedback" class="feedback-show" style="text-decoration: underline">
+                            <a href="mailto:bennett@phc.ox.ac.uk?subject=OpenPrescribing%20outliers%20feedback" class="feedback-show" style="text-decoration: underline">
                             hear your feedback
                           </a>.
                         </p>
