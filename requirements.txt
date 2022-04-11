@@ -23,7 +23,7 @@ cffi==1.15.0
     #   pynacl
 charset-normalizer==2.0.12
     # via requests
-click==8.0.4
+click==8.1.2
     # via pip-tools
 coverage==6.3.2
     # via -r requirements.in
@@ -37,7 +37,7 @@ cssutils==2.4.0
     # via premailer
 cycler==0.11.0
     # via matplotlib
-db-dtypes==0.4.0
+db-dtypes==1.0.0
     # via pandas-gbq
 defusedxml==0.6.0
     # via odfpy
@@ -95,7 +95,7 @@ google-api-core[grpc]==1.31.5
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.42.0
+google-api-python-client==2.43.0
     # via -r requirements.in
 google-auth==1.35.0
     # via
@@ -149,9 +149,9 @@ httplib2==0.20.4
     #   google-auth-httplib2
 idna==3.3
     # via requests
-jinja2==3.1.0
+jinja2==3.1.1
     # via -r requirements.in
-kiwisolver==1.4.0
+kiwisolver==1.4.2
     # via matplotlib
 lxml==4.8.0
     # via
@@ -197,7 +197,7 @@ packaging==21.3
     #   db-dtypes
     #   google-api-core
     #   matplotlib
-pandas==1.4.1
+pandas==1.4.2
     # via
     #   -r requirements.in
     #   db-dtypes
@@ -209,20 +209,20 @@ paramiko==2.10.3
     # via fabric3
 pep517==0.12.0
     # via pip-tools
-pillow==9.0.1
+pillow==9.1.0
     # via matplotlib
 pip-tools==6.5.1
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
-protobuf==3.19.4
+protobuf==3.20.0
     # via
     #   google-api-core
     #   google-cloud-storage
     #   googleapis-common-protos
 psycopg2-binary==2.8.6
     # via -r requirements.in
-pyarrow==6.0.1
+pyarrow==7.0.0
     # via
     #   -r requirements.in
     #   db-dtypes
@@ -250,7 +250,7 @@ pyparsing==3.0.7
     #   packaging
 pyquery==1.4.1
     # via -r requirements.in
-pysqlite3-binary==0.4.7
+pysqlite3-binary==0.4.7.post3
     # via -r requirements.in
 python-dateutil==2.8.2
     # via
@@ -328,7 +328,7 @@ urllib3==1.26.9
     # via
     #   requests
     #   selenium
-watchdog==2.1.6
+watchdog==2.1.7
     # via when-changed
 wheel==0.37.1
     # via pip-tools

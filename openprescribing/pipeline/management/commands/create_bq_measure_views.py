@@ -51,11 +51,12 @@ class Command(BaseCommand):
         for table_name in [
             "dmd_objs_with_form_route",
             "dmd_objs_hospital_only",
-            "opioid_total_ome",
             "practice_data_all_low_priority",
             "pregabalin_total_mg",
             "vw__median_price_per_unit",
             "vw__herbal_list",
+            "vw__opioids_total_dmd",
+            "vw__opioids_total_ome",
             # This references pregabalin_total_mg, so must come afterwards
             "gaba_total_ddd",
         ]:

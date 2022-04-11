@@ -1,13 +1,14 @@
 # coding=utf8
 
 import colorsys
+import csv
 import json
 from copy import copy
 from urllib.parse import urlencode
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import fields, ForeignKey
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -321,6 +322,18 @@ def advanced_search_view(request, obj_type):
             rules = results["rules"]
             too_many_results = results["too_many_results"]
             analyse_url = results["analyse_url"]
+            if request.GET.get("format") == "csv":
+                response = HttpResponse(content_type="text/csv")
+                response[
+                    "Content-Disposition"
+                ] = 'attachment; filename="openprescribing-dmd-search.csv"'
+                writer = csv.writer(response)
+                writer.writerow([f"{obj_type}_id", "name", "bnf_code", "invalid"])
+                writer.writerows(
+                    [obj.id, obj.title(), obj.bnf_code, 1 if obj.invalid else 0]
+                    for obj in objs
+                )
+                return response
     else:
         form = AdvancedSearchForm()
 
