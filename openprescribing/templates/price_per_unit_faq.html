@@ -107,7 +107,7 @@
 <p>PrescQIPP have produced a <a href="https://www.prescqipp.info/our-resources/bulletins/bulletin-141-branded-generic-drugs/">useful bulletin</a> discussing the issues of prescribing branded generics. This bulletin is also a good resource for understanding how the reimbursement price of generic drugs is determined.</p>
 
 <h3 id="product">How did you identify generic and branded products in the prescribing data?</h3>
-<p>We used the BNF codes of drugs in the prescribing data to identify whether they were a branded or generic product. Branded drugs are identified as anything other than “AA” in characters 10 and 11 of their BNF code. You can read more about BNF codes <a href="https://ebmdatalab.net/prescribing-data-bnf-codes/">here</a>.</p>
+<p>We used the BNF codes of drugs in the prescribing data to identify whether they were a branded or generic product. Branded drugs are identified as anything other than “AA” in characters 10 and 11 of their BNF code. You can read more about BNF codes <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">here</a>.</p>
 
 <h3 id="calculate">How do you calculate the cost-savings?</h3>
 <p>Each month we we calculated the mean <a href="#PPU">price-per-unit</a> for every set of <a href="#GEPresentation">generic-equivalent presentations</a> for every GP Practice in England.</p>
@@ -125,7 +125,7 @@ We accept no liability for any errors in the data or its publication here: use t
 <p>Sometimes only particular brands hold the license for certain conditions. An example of this is pregabalin, which until recently could only be prescribed generically for epilepsy (its licence for this indication having expired in 2014), but prescribed as the branded product (Lyrica) for pain, under a second licence from the same manufacturer, which expired in July 2017.</p>
 
 <h3 id="Bioequivalence">Bioequivalence</h3>
-<p>Some theoretical switches may not be advisable due to the non-bioequivalence of different brands. <a href="https://ebmdatalab.net/prescribing-data-using-the-dictionary-of-medicines-and-devices/">dm+d</a> has a flag for non-bioequivalence, and we have indicated where this is flagged at the top of each generic-equivalent presentation's chart under 'Prescribability Status' (found by hovering the mouse over the presentation name)</p>
+<p>Some theoretical switches may not be advisable due to the non-bioequivalence of different brands. <a href="https://www.bennett.ox.ac.uk/blog/2017/07/prescribing-data-using-the-dictionary-of-medicines-and-devices/">dm+d</a> has a flag for non-bioequivalence, and we have indicated where this is flagged at the top of each generic-equivalent presentation's chart under 'Prescribability Status' (found by hovering the mouse over the presentation name)</p>
 
 <h3 id="DT">Drug Tariff Prices</h3>
 <p>This analysis is carried out against GP Practice prescribing data, which typically has a 3 month lag to its release. If the Department of Health has updated the Drug Tariff to reflect the cheaper list prices, then a switch may no longer be necessary to achieve savings.</p>
@@ -133,7 +133,7 @@ We accept no liability for any errors in the data or its publication here: use t
 
 <h2>Definitions</h2>
 <h3 id="BNF">BNF</h3>
-<p>See our blog post on the <a href="https://ebmdatalab.net/prescribing-data-bnf-codes/">BNF</a>.</p>
+<p>See our blog post on the <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">BNF</a>.</p>
 
 <h3 id="Chemical">Chemical</h3>
 <p>A chemical is the name of the active ingredient in a medicine e.g. “tramadol hydrochloride”. Prescription items in BNF Chapters 19-23 have no chemical name. These chapters include items like dressings and appliances.</p>
@@ -167,7 +167,7 @@ We accept no liability for any errors in the data or its publication here: use t
 <h3 id="GEPresentation">Generic-equivalent presentation</h3>
 <p>A generic-equivalent presentation is one step higher in the hierarchy than <a href="#Presentation">presentation</a>. It is the chemical, the dose, and the formulation, but not the specific brand.</p>
 <p>For example, the generic-equivalent presentation of tramadol hydrochloride SR 100mg capsules includes everything prescribed as the generic tramadol hydrochloride SR 100mg capsules and everything prescribed as the brand Zamadol SR 100mg capsules (the branded form of tramadol hydrochloride SR 100mg capsules).</p>
-<p>We determine generic equivalent presentations using BNF codes. The BNF code for a branded drug can be used to tell you what the generic presentation is (read our <a href="https://ebmdatalab.net/prescribing-data-bnf-codes/">blog</a> to find out how). This means you can find all branded drugs for each generic drug, and can then group them into generic-equivalent presentations.</p>
+<p>We determine generic equivalent presentations using BNF codes. The BNF code for a branded drug can be used to tell you what the generic presentation is (read our <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">blog</a> to find out how). This means you can find all branded drugs for each generic drug, and can then group them into generic-equivalent presentations.</p>
 <p>We have combined all formulations (e.g. tablets and capsules) at the generic-equivalent presentation level where we are aware that these are clinically interchangeable. We have also excluded some potential substitutions where it was determined that switches were not comparable.</p>
 
 <h3 id="PPU">Price per Unit</h3>
