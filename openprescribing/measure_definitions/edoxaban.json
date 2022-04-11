@@ -19,11 +19,11 @@
     "commissioners may wish to consider developing local policy to review patients currently prescribed apixaban, rivaroxaban or dabigatran, where clinically appropriate.</li>",
     "</ul>",
     "</p>",
-    "The 2022-2023 PCN Investment and Impact Fund (IIF) <a href='https://www.england.nhs.uk/wp-content/uploads/2022/03/B1375_Letter-re-General-practice-contract-arrangements-in-2022-23_010322.pdf'>",
+    "The 2022-2023 PCN Investment and Impact Fund (IIF) <a href='https://www.england.nhs.uk/wp-content/uploads/2022/03/B1357-Network-Contract-Directed-Enhanced-Service-contract-specification-2022-23-primary-care-network-requireme.pdf'>",
     "now includes the following indicator: </a>",
     "<ul>",
-    "<li>CVD-15: Number of patients that were prescribed edoxaban, as a percentage of patients on the QOF Atrial Fibrillation register and with a CHA<sub>2</sub>DS<sub>2</sub>-VASc score of ",
-    "1 or more for men or 2 or more for women and who were prescribed a direct-acting oral anticoagulant (DOAC).",
+    "<li>CVD-15: Number of patients who are currently prescribed edoxaban, as a percentage of patients on the QOF Atrial Fibrillation register and with a CHA<sub>2</sub>DS<sub>2</sub>-VASc score of ",
+    "2 or more (1 or more for patients that are not female) and who are currently prescribed a direct-acting oral anticoagulant (DOAC).",
     "</ul>",
     "</p>",
     "<b>Please note:</b> as prescribing data does not contain patient information or indication, this measure uses prescription items of DOACs prescribed for all indications in ",
@@ -58,7 +58,7 @@
     ""
   ],
   "date_reviewed": [
-    "2022-03-14"
+    "2022-04-11"
   ],
   "next_review": [
     "2023-03-14"
