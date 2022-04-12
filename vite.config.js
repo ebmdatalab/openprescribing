@@ -44,6 +44,42 @@ const config = {
           src: "./node_modules/clipboard/dist/clipboard.min.js",
           dest: "./openprescribing/static/js",
         },
+        {
+          src: "./node_modules/bootstrap/dist/css/bootstrap.css",
+          dest: "./openprescribing/static/vendor/bootstrap/css",
+        },
+        {
+          src: "./node_modules/bootstrap/dist/fonts/*",
+          dest: "./openprescribing/static/vendor/bootstrap/fonts",
+        },
+        {
+          src: "./node_modules/bootstrap-select/dist/css/bootstrap-select.min.css",
+          dest: "./openprescribing/static/vendor/bootstrap-select/",
+        },
+        {
+          src: "./node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css",
+          dest: "./openprescribing/static/vendor/bootstrap-select/",
+        },
+        {
+          src: "./node_modules/jQuery-QueryBuilder/dist/css/query-builder.default.min.css",
+          dest: "./openprescribing/static/vendor/query-builder/",
+        },
+        {
+          src: "./node_modules/jQuery-QueryBuilder/dist/js/query-builder.standalone.js",
+          dest: "./openprescribing/static/vendor/query-builder/",
+        },
+        {
+          src: "./node_modules/datatables.net-bs/css/dataTables.bootstrap.css",
+          dest: "./openprescribing/static/vendor/datatables/",
+        },
+        {
+          src: "./node_modules/datatables.net/js/jquery.dataTables.min.js",
+          dest: "./openprescribing/static/vendor/datatables/",
+        },
+        {
+          src: "./node_modules/datatables.net-bs/js/dataTables.bootstrap.js",
+          dest: "./openprescribing/static/vendor/datatables/",
+        },
       ],
       hook: "writeBundle",
     })
