@@ -7,7 +7,7 @@
 {% block active_class %}trends{% endblock %}
 
 {% block extra_css %}
-<link href="{% static 'css/select2.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendor/select2/select2.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -93,4 +93,6 @@
 </script>
 
 {% conditional_js 'tariff-charts' %}
+
+<script src="{% static 'vendor/select2/select2.full.min.js' %}"></script>
 {% endblock %}

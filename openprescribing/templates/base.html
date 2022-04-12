@@ -62,8 +62,6 @@
     <!--[if IE]><link rel="shortcut icon" href="{% static 'img/favicon.ico' %}"><![endif]-->
 
     <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 
     {% vite_hmr_client %}
     {% vite_asset 'openprescribing/media/js/src/css.js' %}
@@ -185,6 +183,9 @@
 
     <button id="feedback-button" class="feedback-show">Feedback</button>
 
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/bigtext/bigtext.js' %}"></script>
     {% vite_asset 'openprescribing/media/js/src/global.js' %}
 
     {% block extra_js %}{% endblock extra_js %}

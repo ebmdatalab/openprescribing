@@ -5,9 +5,9 @@ import copy from "rollup-plugin-copy";
  * @type {import('vite').UserConfig}
  */
 const config = {
-  base: "/static/",
+  base: "/static/bundler/",
   build: {
-    manifest: false,
+    manifest: true,
     rollupOptions: {
       input: {
         "analyse-form": "openprescribing/media/js/src/analyse-form.js",
@@ -22,13 +22,8 @@ const config = {
         measures: "openprescribing/media/js/src/measures.js",
         index: "openprescribing/media/js/src/css.js",
       },
-      output: {
-        entryFileNames: `js/[name].js`,
-        chunkFileNames: `js/[name].js`,
-        assetFileNames: `[ext]/[name].[ext]`,
-      },
     },
-    outDir: "openprescribing/static",
+    outDir: "openprescribing/static/bundler",
     assetsDir: "",
     emptyOutDir: false,
   },
@@ -41,12 +36,12 @@ const config = {
           dest: "./openprescribing/static/js",
         },
         {
-          src: "./node_modules/clipboard/dist/clipboard.min.js",
-          dest: "./openprescribing/static/js",
+          src: "./node_modules/bootstrap/dist/css/bootstrap.min*",
+          dest: "./openprescribing/static/vendor/bootstrap/css",
         },
         {
-          src: "./node_modules/bootstrap/dist/css/bootstrap.css",
-          dest: "./openprescribing/static/vendor/bootstrap/css",
+          src: "./node_modules/bootstrap/dist/js/bootstrap.min.js",
+          dest: "./openprescribing/static/vendor/bootstrap/js",
         },
         {
           src: "./node_modules/bootstrap/dist/fonts/*",
@@ -79,6 +74,30 @@ const config = {
         {
           src: "./node_modules/datatables.net-bs/js/dataTables.bootstrap.js",
           dest: "./openprescribing/static/vendor/datatables/",
+        },
+        {
+          src: "./node_modules/jquery/dist/jquery.min*",
+          dest: "./openprescribing/static/vendor/jquery/",
+        },
+        {
+          src: "./node_modules/select2/dist/css/select2.min.css",
+          dest: "./openprescribing/static/vendor/select2/",
+        },
+        {
+          src: "./node_modules/select2/dist/js/select2.full.min.js",
+          dest: "./openprescribing/static/vendor/select2/",
+        },
+        {
+          src: "./node_modules/bigtext/dist/bigtext.js",
+          dest: "./openprescribing/static/vendor/bigtext/",
+        },
+        {
+          src: "./node_modules/nouislider/distribute/jquery.nouislider.min.css",
+          dest: "./openprescribing/static/vendor/nouislider/",
+        },
+        {
+          src: "./node_modules/nouislider/distribute/jquery.nouislider.pips.min.css",
+          dest: "./openprescribing/static/vendor/nouislider/",
         },
       ],
       hook: "writeBundle",

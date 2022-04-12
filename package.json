@@ -17,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@sentry/browser": "^4.5.1",
+    "bigtext": "^1.0.1",
     "bootstrap": "^3.3.4",
     "bootstrap-datepicker": "^1.9.0",
     "bootstrap-select": "^1.13.1",
@@ -34,6 +35,7 @@
     "jQuery-QueryBuilder": "^2.5.2",
     "mapbox.js": "^3.3.1",
     "moment": "^2.10.3",
+    "nouislider": "^7.0.10",
     "select2": "^4.0.2",
     "underscore": "^1.13.2"
   },
