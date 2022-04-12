@@ -2,7 +2,7 @@ test :
 	cp ../environment-test ../environment
 	coverage run manage.py test -v 2
 	coverage report
-	cd media/js; npm run test
+	npm run test:coverage
 
 run_smoketests :
 	python smoketests/smoke.py

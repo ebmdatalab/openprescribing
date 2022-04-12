@@ -95,20 +95,12 @@ def npm_install():
 
 
 def npm_install_deps(force=False):
-    if force or "openprescribing/media/js/package.json" in env.changed_files:
-        run("cd openprescribing/media/js && npm install")
+    if force or "package.json" in env.changed_files:
+        run("npm ci")
 
 
-def npm_build_js():
-    run("cd openprescribing/media/js && npm run build")
-
-
-def npm_build_css(force=False):
-    changed_css_files = [
-        x for x in env.changed_files if x.startswith("openprescribing/media/css")
-    ]
-    if force or changed_css_files:
-        run("cd openprescribing/media/js && npm run build-css")
+def npm_build():
+    run("npm run build")
 
 
 def log_deploy():
@@ -288,8 +280,7 @@ def deploy(environment, force_build=False, branch="main"):
         pip_install()
         npm_install()
         npm_install_deps(force_build)
-        npm_build_js()
-        npm_build_css(force_build)
+        npm_build()
         deploy_static()
         run_migrations()
         # build_changed_measures()
