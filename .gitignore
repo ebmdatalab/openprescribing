@@ -48,3 +48,7 @@ tmp
 logs
 deploy-log.json
 /diskcache
+
+# Node and npm
+/node_modules
+/coverage
