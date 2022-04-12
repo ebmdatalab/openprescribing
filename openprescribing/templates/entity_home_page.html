@@ -1,249 +1,223 @@
-{% extends "base.html" %}
-{% load humanize %}
-{% load static %}
-{% load template_extras %}
-
-{% block title %}Prescribing measures for {{ entity.name }}{% endblock %}
-{% block active_class %}dashboards{% endblock %}
-{% block container_class %}landing-page{% endblock %}
-
-{% block extra_css %}
-<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
-{% endblock extra_css %}
-
-{% block content %}
-
-{% include '_entity_heading.html' %}
+{% extends "base.html" %} {% load humanize %} {% load static %} {% load template_extras %} {% block title %}Prescribing measures for {{ entity.name }}{% endblock %} {% block active_class %}dashboards{% endblock %} {% block container_class %}landing-page{%
+endblock %} {% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' /> {% endblock extra_css %} {% block content %} {% include '_entity_heading.html' %}
 
 <hr/>
 <div class="row" id="measures">
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3><a href="{% url measures_for_one_entity_url entity.code %}" class="unstyled-link">Standard measures</a></h3>
-      <div class="row">
-        <div class="col-md-12">
-          <p class="measure-explanation">Our {{ measures_count }} standard measures compare performance across England. This is the measure where {{ entity.cased_name }} has the greatest potential for improvement.  <a href="{% url measures_for_one_entity_url entity.code %}">View all {{ measures_count }} measures...</a></p>
-        </div>
-        <div class="col-md-12">
-          <div id="top-measure-container" class="row">
-            <div class="loading-wrapper loading">
-              <img class="loading" src="{% static 'img/logo.svg' %}" onerror="this.src='{% static "img/ajax-loader.gif" %}';this.onerror=null;" title="Loading icon">
+    <div class="col-md-6">
+        <div class="landing-panel">
+            <h3><a href="{% url measures_for_one_entity_url entity.code %}" class="unstyled-link">Standard measures</a></h3>
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="measure-explanation">Our {{ measures_count }} standard measures compare performance across England. This is the measure where {{ entity.cased_name }} has the greatest potential for improvement. <a href="{% url measures_for_one_entity_url entity.code %}">View all {{ measures_count }} measures...</a></p>
+                </div>
+                <div class="col-md-12">
+                    <div id="top-measure-container" class="row">
+                        <div class="loading-wrapper loading">
+                            <img class="loading" src="{% static 'img/logo.svg' %}" onerror="this.src='{% static " img/ajax-loader.gif " %}';this.onerror=null;" title="Loading icon">
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-  <hr class="visible-sm">
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3><a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority" class="unstyled-link">NHS low priority measures</a></h3>
-      <div class="row">
-        <div class="col-md-12">
-          <p class="measure-explanation">These are measures about low-value items which NHS England says should not routinely prescribed in primary care. This is the ranking of {{ entity.cased_name }} for all low-value items combined.  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View the 25 measures...</a></p>
-        </div>
-        <div class="col-md-12">
-          <div id="lpzomnibus-container" class="row">
-            <div class="loading-wrapper loading">
-              <img class="loading" src="{% static 'img/logo.svg' %}" onerror="this.src='{% static "img/ajax-loader.gif" %}';this.onerror=null;" title="Loading icon">
+    <hr class="visible-sm">
+    <div class="col-md-6">
+        <div class="landing-panel">
+            <h3><a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority" class="unstyled-link">NHS low priority measures</a></h3>
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="measure-explanation">These are measures about low-value items which NHS England says should not routinely prescribed in primary care. This is the ranking of {{ entity.cased_name }} for all low-value items combined. <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View the 25 measures...</a></p>
+                </div>
+                <div class="col-md-12">
+                    <div id="lpzomnibus-container" class="row">
+                        <div class="loading-wrapper loading">
+                            <img class="loading" src="{% static 'img/logo.svg' %}" onerror="this.src='{% static " img/ajax-loader.gif " %}';this.onerror=null;" title="Loading icon">
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
-<div class="row" >
-  <div class="col-md-12">
-    You can browse all of our measures by topic:
-    <small class="js-hide-long-list" data-max-items="7">
+<div class="row">
+    <div class="col-md-12">
+        You can browse all of our measures by topic:
+        <small class="js-hide-long-list" data-max-items="7">
       {% for tag, tag_details in measure_tags %}
         <a href="{% url measures_for_one_entity_url entity.code %}?tags={{ tag }}">
           {{ tag_details.name }} ({{ tag_details.count }}){% if not forloop.last %},{% endif %}
         </a>
       {% endfor %}
     </small>
-  </div>
+    </div>
 </div>
 
 <hr>
 
-<div class="row" >
-  <div class="col-md-6">
-    <div class="landing-panel">
+<div class="row">
+    <div class="col-md-6">
+        <div class="landing-panel">
 
-      {% if entity_price_per_unit_url %}
+            {% if entity_price_per_unit_url %}
 
-        <h3><a href="{% url entity_price_per_unit_url entity.code %}" class="unstyled-link">Savings on individual presentations</a></h3>
-        <p>Every month, we identify the biggest cost saving opportunities for {{ entity.cased_name }}. We also indicate cheaper options, based on what others have prescribed.</p>
-        {% if possible_savings %}
-        <div class="col-md-4 ppu-on-landing-page bigtext">
-          <span>&pound;{{ possible_savings|floatformat:"0"|intcomma }}</span>
-        </div>
-        <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this {{ entity_type_human }} could have saved
-          this month through prescription switches. <a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a>
-        </div>
-        {% else %}
-        <div class="bigtext">
-          <span>
+            <h3><a href="{% url entity_price_per_unit_url entity.code %}" class="unstyled-link">Savings on individual presentations</a></h3>
+            <p>Every month, we identify the biggest cost saving opportunities for {{ entity.cased_name }}. We also indicate cheaper options, based on what others have prescribed.</p>
+            {% if possible_savings %}
+            <div class="col-md-4 ppu-on-landing-page bigtext">
+                <span>&pound;{{ possible_savings|floatformat:"0"|intcomma }}</span>
+            </div>
+            <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this {{ entity_type_human }} could have saved this month through prescription switches. <a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a>
+            </div>
+            {% else %}
+            <div class="bigtext">
+                <span>
             ☺ No savings this month!
           </span>
+            </div>
+            <p><a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a></p>
+            {% endif %} {% else %}
+
+            <p>
+                This {{ entity_type_human }} page is a new feature. We have more data for individual <a href="{% url 'all_ccgs' %}">CCGs</a> and
+                <a href="{% url 'all_practices' %}">practices</a>, and for the <a href="{% url 'all_england' %}">whole of England</a> (such as our price-per-unit tool, ghost-branded generics, more email alerts, etc).
+            </p>
+
+            {% endif %}
+
         </div>
-        <p><a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a></p>
-        {% endif %}
-
-      {% else %}
-
-        <p>
-          This {{ entity_type_human }} page is a new feature. We have more data
-          for individual <a href="{% url 'all_ccgs' %}">CCGs</a> and
-          <a href="{% url 'all_practices' %}">practices</a>, and for
-          the <a href="{% url 'all_england' %}">whole of England</a>
-          (such as our price-per-unit tool, ghost-branded generics, more email
-          alerts, etc).
-        </p>
-
-      {% endif %}
-
     </div>
-  </div>
 
-  <hr class="visible-sm">
+    <hr class="visible-sm">
 
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3>
-        <a href="{% url spending_for_one_entity_url entity.code %}" class="unstyled-link">
+    <div class="col-md-6">
+        <div class="landing-panel">
+            <h3>
+                <a href="{% url spending_for_one_entity_url entity.code %}" class="unstyled-link">
           Price concessions cost
         </a>
-      </h3>
-      {% if ncso_spending %}
-        <p>
-          We estimate that in <strong>{{ ncso_spending.month|date:"F Y" }}</strong>
-          price concessions for out-of-stock medicines will cost {{ entity.cased_name }}
-          an additional<br>
-          <span style="font-size: 48px">
+            </h3>
+            {% if ncso_spending %}
+            <p>
+                We estimate that in <strong>{{ ncso_spending.month|date:"F Y" }}</strong> price concessions for out-of-stock medicines will cost {{ entity.cased_name }} an additional<br>
+                <span style="font-size: 48px">
             &pound;{{ ncso_spending.additional_cost|floatformat:"0"|intcomma }}
           </span>
-        </p>
-        <p>
-          See the full breakdown of this estimate, view costs for other months,
-          and sign up for alerts on the
-          <a href="{% url spending_for_one_entity_url entity.code %}">
+            </p>
+            <p>
+                See the full breakdown of this estimate, view costs for other months, and sign up for alerts on the
+                <a href="{% url spending_for_one_entity_url entity.code %}">
             price concessions dashboard.
           </a>
-        </p>
-      {% else %}
-        <p>
-          We don't have current data for the impact of price concessions on
-          {{ entity.cased_name }}. For historical data see the
-          <a href="{% url spending_for_one_entity_url entity.code %}">
+            </p>
+            {% else %}
+            <p>
+                We don't have current data for the impact of price concessions on {{ entity.cased_name }}. For historical data see the
+                <a href="{% url spending_for_one_entity_url entity.code %}">
             price concessions dashboard.
           </a>
-        </p>
-      {% endif %}
+            </p>
+            {% endif %}
+        </div>
     </div>
-  </div>
 </div>
 
 <hr>
 
-<div class="row" >
-  {% if entity_ghost_generics_url %}
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3>Ghost-branded generics</h3>
-      <strong>New</strong>: many practices are mistakenly prescribing generics as if they are brands.
-      See a list of generics that may be affected
-      <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
-      <span id="ghost-total-text" class="invisible">
+<div class="row">
+    {% if entity_ghost_generics_url %}
+    <div class="col-md-6">
+        <div class="landing-panel">
+            <h3>Ghost-branded generics</h3>
+            <strong>New</strong>: many practices are mistakenly prescribing generics as if they are brands. See a list of generics that may be affected
+            <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
+            <span id="ghost-total-text" class="invisible">
         {{ entity.cased_name }} <span id="ghost-total"></span>.
-      </span>
+            </span>
+        </div>
     </div>
-  </div>
-  {% endif %}
-  {% if form %}
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3>Sign up for alerts or updates</h3>
-      {% include '_alert_signup_form.html' %}
+    {% endif %} {% if form %}
+    <div class="col-md-6">
+        <div class="landing-panel">
+            <h3>Sign up for alerts or updates</h3>
+            {% include '_alert_signup_form.html' %}
+        </div>
     </div>
-  </div>
-  {% endif %}
+    {% endif %}
 </div>
 
 <hr>
 
-<div class="row" >
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3>Looking for more data?</h3>
-      <p>
-        Try our <a href="{% url 'analyse' %}">Analyse form</a> which allows you
-        run custom analyses on prescribing data for this {{ entity_type_human }}.
-      </p>
+<div class="row">
+    <div class="col-md-6">
+        <div class="landing-panel">
+            <h3>Looking for more data?</h3>
+            <p>
+                Try our <a href="{% url 'analyse' %}">Analyse form</a> which allows you run custom analyses on prescribing data for this {{ entity_type_human }}.
+            </p>
+        </div>
     </div>
-  </div>
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3>OpenPrescribing Labs</h3>
-      <p>
-        Our Labs page is where we develop <strong>experimental</strong> new approaches to analysing data. All data and charts on the Labs should be treated <strong>cautiously</strong>.
-        Our experimental Lab tools automatically identify areas that may be of interest to advanced users of OpenPrescribing, however not all charts presented may be relevant to clinical practice.
-        <br/>
-        To view our first Labs prototype prescribing outlier dashboard click <a href="/{{ entity_outlier_report_url }}">here</a>
-      </p>
+    <div class="col-md-6">
+        <div class="landing-panel">
+            {% if entity_type!="regional_team" %}
+            <h3>OpenPrescribing Labs</h3>
+            <p>
+                Our Labs page is where we develop <strong>experimental</strong> new approaches to analysing data. All data and charts on the Labs should be treated <strong>cautiously</strong>. Our experimental Lab tools automatically identify areas that
+                may be of interest to advanced users of OpenPrescribing, however not all charts presented may be relevant to clinical practice.
+                <br/> To view our first Labs prototype prescribing outlier dashboard click <a href="/{{ entity_outlier_report_url }}">here</a>
+            </p>
+            {% endif %}
+        </div>
     </div>
-  </div>
 </div>
 
 {% verbatim %}
 <script id="summary-panel" type="text/x-handlebars-template">
-  {{ costSavings }}
+    {{ costSavings }}
 </script>
 <script id="measure-panel" type="text/x-handlebars-template">
     <div class="panel panel-info">
-      <div class="panel-heading">
-        <span class="measure-panel-title">
+        <div class="panel-heading">
+            <span class="measure-panel-title">
           <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
         </span>
-      </div>
-      <div class="panel-body" class="row">
-        <p class="measure-description">{{{ description }}}</p>
-        <div id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
-          <div class="status"></div>
         </div>
-      </div>
-      <div class="explanation">{{{ chartExplanation }}}</div>
+        <div class="panel-body" class="row">
+            <p class="measure-description">{{{ description }}}</p>
+            <div id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
+                <div class="status"></div>
+            </div>
+        </div>
+        <div class="explanation">{{{ chartExplanation }}}</div>
     </div>
 </script>
-{% endverbatim %}
-
-{% endblock %}
-
-{% block extra_js %}
+{% endverbatim %} {% endblock %} {% block extra_js %}
 <script>
-  var maxZoom = 6;
-  {% if entity_type == 'practice' or entity_type == 'ccg' %}
-  {# Ghost-branded generics are not yet implemented for STPs and regions #}
-  $.getJSON(
-    "/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:"Y-m-d"}}&entity_type={{ entity_type }}&group_by=all&format=json", function(data) {
-    function numberWithCommas(x) {
-        return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var maxZoom = 6; { %
+        if entity_type == 'practice'
+        or entity_type == 'ccg' %
+    } {#
+        Ghost - branded generics are not yet implemented
+        for STPs and regions#
     }
-    var savings = data[0]['possible_savings'];
-    var formatted_savings = numberWithCommas(savings);
-    if (savings >= 20) {
-       msg = "may be paying at least <strong>£" + formatted_savings + "</strong> more than necessary this month";
-    } else  {
-       msg = "is not significantly affected by the problem this month";
+    $.getJSON(
+        "/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:"
+        Y - m - d "}}&entity_type={{ entity_type }}&group_by=all&format=json",
+        function(data) {
+            function numberWithCommas(x) {
+                return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            var savings = data[0]['possible_savings'];
+            var formatted_savings = numberWithCommas(savings);
+            if (savings >= 20) {
+                msg = "may be paying at least <strong>£" + formatted_savings + "</strong> more than necessary this month";
+            } else {
+                msg = "is not significantly affected by the problem this month";
+            }
+            $('#ghost-total').html(msg);
+            $('#ghost-total-text').css('visibility', 'visible');
+        }); { % endif %
     }
-    $('#ghost-total').html(msg);
-    $('#ghost-total-text').css('visibility', 'visible');
-  });
-  {% endif %}
 </script>
-{{ measure_options|json_script:"measure-options" }}
-{% conditional_js 'measures' %}
-{% endblock %}
+{{ measure_options|json_script:"measure-options" }} {% conditional_js 'measures' %} {% endblock %}
