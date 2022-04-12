@@ -187,6 +187,7 @@
   </div>
   <div class="col-md-6">
     <div class="landing-panel">
+      {% if entity_outlier_report_url %}
       <h3>OpenPrescribing Labs</h3>
       <p>
         Our Labs page is where we develop <strong>experimental</strong> new approaches to analysing data. All data and charts on the Labs should be treated <strong>cautiously</strong>.
@@ -194,6 +195,7 @@
         <br/>
         To view our first Labs prototype prescribing outlier dashboard click <a href="/{{ entity_outlier_report_url }}">here</a>
       </p>
+      {% endif %}
     </div>
   </div>
 </div>
