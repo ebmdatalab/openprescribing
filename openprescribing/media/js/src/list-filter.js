@@ -1,41 +1,39 @@
-var $ = require('jquery');
+import "bootstrap";
+import domready from "domready";
+import $ from "jquery";
+import Fuse from "fuse.js";
 
-require('bootstrap');
-var Fuse = require('../vendor/fuse');
-var domready = require('domready');
-
-var listFilter = {
-
-  setUp: function() {
-    var fuse;
-    var $inputSearch = $(inputSearch);
-    var $resultsList = $(resultsList);
-    var minSearchLength = $inputSearch.data('min-search-length');
-    $inputSearch.val('');
+const listFilter = {
+  setUp() {
+    let fuse;
+    const $inputSearch = $(inputSearch);
+    const $resultsList = $(resultsList);
+    const minSearchLength = $inputSearch.data("min-search-length");
+    $inputSearch.val("");
 
     function search() {
-      var searchTerm = $inputSearch.val();
-      var r;
+      const searchTerm = $inputSearch.val();
+      let r;
       if (minSearchLength && searchTerm.length < minSearchLength) {
         r = [];
-      } else if (searchTerm === '') {
+      } else if (searchTerm === "") {
         r = allItems;
       } else {
         r = fuse.search(searchTerm);
       }
       $resultsList.empty();
-      var allHtml = '';
-      $.each(r, function() {
-        var html = '<li class="result-item">';
-        html += '<a href="' + this.url + '">';
-        html += this.name + '</a> (' + this.code + ')</li>';
+      let allHtml = "";
+      $.each(r, function () {
+        let html = '<li class="result-item">';
+        html += `<a href="${this.url}">`;
+        html += `${this.name}</a> (${this.code})</li>`;
         allHtml += html;
       });
       $resultsList.html(allHtml);
     }
 
     function createFuse() {
-      var options = {
+      const options = {
         caseSensitive: false,
         includeScore: false,
         shouldSort: false,
@@ -43,21 +41,21 @@ var listFilter = {
         location: 0,
         distance: 1000,
         maxPatternLength: 32,
-        keys: ['name', 'code'],
+        keys: ["name", "code"],
       };
       fuse = new Fuse(allItems, options);
     }
 
-    var delay = (function() {
-      var timer = 0;
-      return function(callback, ms) {
+    const delay = (() => {
+      let timer = 0;
+      return (callback, ms) => {
         clearTimeout(timer);
         timer = setTimeout(callback, ms);
       };
     })();
 
-    $inputSearch.on('keyup', function() {
-      delay(function() {
+    $inputSearch.on("keyup", () => {
+      delay(() => {
         search();
       }, 300);
     });
@@ -65,7 +63,7 @@ var listFilter = {
   },
 };
 
-module.exports = listFilter;
-domready(function() {
+export default listFilter;
+domready(() => {
   listFilter.setUp();
 });

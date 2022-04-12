@@ -1,69 +1,69 @@
-require('bootstrap-datepicker');
-require('bootstrap-select');
-require('moment');
+import "bootstrap-datepicker";
+import "bootstrap-select";
+import "moment";
 
+const rules = JSON.parse(document.getElementById("search-rules").innerHTML);
+const objType = JSON.parse(document.getElementById("obj-type").innerHTML);
 
-var rules = JSON.parse(document.getElementById('search-rules').innerHTML);
-var objType = JSON.parse(document.getElementById('obj-type').innerHTML);
-
-$.when($.ajax('/dmd/search-filters/' + objType + '/')).done(
-  function(data) {
-    $('#dmd-search-builder').queryBuilder({
-      'filters': data['filters'],
-      'operators': [
-        'equal',
-        'contains',
-        'begins_with',
-        'not_begins_with',
-        {
-          'type': 'less than',
-          'nb_inputs': 1,
-          'apply_to': ['number', 'double'],
-        },
-        {
-          'type': 'greater than',
-          'nb_inputs': 1,
-          'apply_to': ['number', 'double'],
-        },
-        {
-          'type': 'before',
-          'nb_inputs': 1,
-          'apply_to': ['date'],
-        },
-        {
-          'type': 'after',
-          'nb_inputs': 1,
-          'apply_to': ['date'],
-        },
-      ],
-      'rules': rules,
-      'plugins': ['bt-tooltip-errors'],  // Display validation errors in tooltips
-    });
-  }
-);
+$.when($.ajax(`/dmd/search-filters/${objType}/`)).done((data) => {
+  $("#dmd-search-builder").queryBuilder({
+    filters: data["filters"],
+    operators: [
+      "equal",
+      "contains",
+      "begins_with",
+      "not_begins_with",
+      {
+        type: "less than",
+        nb_inputs: 1,
+        apply_to: ["number", "double"],
+      },
+      {
+        type: "greater than",
+        nb_inputs: 1,
+        apply_to: ["number", "double"],
+      },
+      {
+        type: "before",
+        nb_inputs: 1,
+        apply_to: ["date"],
+      },
+      {
+        type: "after",
+        nb_inputs: 1,
+        apply_to: ["date"],
+      },
+    ],
+    rules: rules,
+    plugins: ["bt-tooltip-errors"], // Display validation errors in tooltips
+  });
+});
 
 // Fixes for Bootstrap Datepicker and Selectize widgets (cribbed from
 // https://querybuilder.js.org/assets/demo-widgets.js)
-$('#dmd-search-builder').on('afterUpdateRuleValue.queryBuilder', function(e, rule) {
-  if (rule.filter.plugin === 'datepicker') {
-    rule.$el.find('.rule-value-container input').datepicker('update');
-  } else if (rule.filter.plugin == 'selectpicker') {
-    rule.$el.find('.rule-value-container').css('min-width', '400px');
+$("#dmd-search-builder").on(
+  "afterUpdateRuleValue.queryBuilder",
+  (e, { filter, $el }) => {
+    if (filter.plugin === "datepicker") {
+      $el.find(".rule-value-container input").datepicker("update");
+    } else if (filter.plugin == "selectpicker") {
+      $el.find(".rule-value-container").css("min-width", "400px");
+    }
   }
-});
+);
 
 // When the Search button is pressed, serialize the rules into the `search`
 // field on the form, and submit the form.
-$('#dmd-search').on('click', function() {
-  var rules = $('#dmd-search-builder').queryBuilder('getRules');
+$("#dmd-search").on("click", () => {
+  const rules = $("#dmd-search-builder").queryBuilder("getRules");
   console.log(rules);
 
   if (!$.isEmptyObject(rules)) {
-    var parsedRules = parseRules(rules);
-    var parsedRulesJSON = JSON.stringify(parsedRules);
+    const parsedRules = parseRules(rules);
+    const parsedRulesJSON = JSON.stringify(parsedRules);
     console.log(parsedRules);
     $('input[name="search"]').val(parsedRulesJSON);
-    $('form').submit();
+    $("form").submit();
   }
 });
 
@@ -83,13 +83,13 @@ $('#dmd-search').on('click', function() {
 // => ["and",[["nm","contains","paracetamol"],["sug_f","equal",1]]]
 //
 function parseRules(rules) {
-  if ('rules' in rules) {
-    if (rules['rules'].length == 1) {
-      return parseRules(rules['rules'][0])
+  if ("rules" in rules) {
+    if (rules["rules"].length == 1) {
+      return parseRules(rules["rules"][0]);
     } else {
-      return [rules['condition'].toLowerCase(), rules['rules'].map(parseRules)]
+      return [rules["condition"].toLowerCase(), rules["rules"].map(parseRules)];
     }
   } else {
-    return [rules['field'], rules['operator'], rules['value']]
+    return [rules["field"], rules["operator"], rules["value"]];
   }
 }
