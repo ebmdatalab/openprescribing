@@ -4,12 +4,22 @@
     "Average carbon footprint per salbutamol inhaler"
   ],
   "description": [
-    "Mean average carbon impact (kg CO2e) per salbutamol inhaler prescribed"
+    "Mean average carbon impact (kg CO<sub>2</sub>e) per salbutamol inhaler prescribed"
   ],
-  "numerator_short": "Mean average carbon impact (kg CO2e)",
+  "numerator_short": "Mean average carbon impact (kg CO<sub>2</sub>e)",
   "denominator_short": "Salbutamol inhalers",
   "why_it_matters": [
-    "tbc"
+    "The NHS has <a href='https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf'> ",
+    "committed to reducing its carbon footprint by 51% by 2025</a> to meet the target in the Climate Change Act, including a shift to lower carbon inhalers",
+    "to deliver a reduction of 4%.</p>",
+    "<p>The 2022-2023 PCN Investment and Impact Fund (IIF) <a href='https://www.england.nhs.uk/wp-content/uploads/2022/03/B1357-investment-and-impact-fund-2022-23-updated-guidance-march-2022.pdf>' ",
+    "now includes an indicator</a> on mean carbon emissions per salbutamol inhaler prescribed (kg CO<sub>2</sub>e).</p>",
+    "<p><a href='https://www.england.nhs.uk/wp-content/uploads/2022/03/B1357-investment-and-impact-fund-2022-23-updated-guidance-march-2022.pdf>",
+    "Whole lifecycle carbon emissions can vary substantially between different inhaler devices</a>. Traditional metered dose inhalers (MDIs) rely on ",
+    "hydrofluroalkanes (HFA) to act as a propellant to deliver doses. <a href='https://bmjopen.bmj.com/content/bmjopen/9/10/e028763.full.pdf'>",
+    "HFAs are potent greenhouse gases with a potency thousands of times that of carbon dioxide</a>. Dry powder inhalers (DPIs) do not contain HFA so they ",
+    "consequently make up the lowest carbon options available for salbutamol, however DPIs may not be suitable for all patients. Even amongst MDIs there is ",
+    "significant variation in CO<sub>2</sub> equivalent emissions with some having significantly lower HFA content." 
   ],
   "tags": [
     "core",
@@ -18,7 +28,7 @@
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
-  "low_is_good": null,
+  "low_is_good": true,
   "numerator_type": "custom",
   "numerator_columns": [
     "SUM(co2) AS numerator"
