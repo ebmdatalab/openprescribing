@@ -1,6 +1,5 @@
 import Sentry from "@sentry/browser";
 import domready from "domready";
-import $ from "jquery";
 
 if (window.SENTRY_PUBLIC_DSN && SENTRY_PUBLIC_DSN !== "") {
   Sentry.init({ dsn: SENTRY_PUBLIC_DSN, release: SOURCE_COMMIT_ID });

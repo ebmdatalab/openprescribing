@@ -2,7 +2,6 @@ import "bootstrap";
 import Cookies from "cookies-js";
 import downloadjs from "downloadjs";
 import Highcharts from "Highcharts";
-import $ from "jquery";
 import _ from "underscore";
 import barChart from "./analyse-bar-chart";
 import hashHelper from "./analyse-hash";

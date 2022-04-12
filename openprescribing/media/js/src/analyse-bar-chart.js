@@ -1,4 +1,3 @@
-import $ from "jquery";
 import _ from "underscore";
 import formatters from "./chart_formatters";
 import utils from "./chart_utils";

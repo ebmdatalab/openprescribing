@@ -1,5 +1,4 @@
 import domready from "domready";
-import $ from "jquery";
 import _ from "underscore";
 import analyseChart from "./analyse-chart";
 import hashHelper from "./analyse-hash";

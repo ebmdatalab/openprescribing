@@ -17,6 +17,7 @@ django-import-export
 django==2.2.28
 djangorestframework
 djangorestframework-csv
+django-vite
 google-api-python-client
 google-cloud-bigquery
 google-cloud-storage

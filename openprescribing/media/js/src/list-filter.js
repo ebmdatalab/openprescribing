@@ -1,6 +1,5 @@
 import "bootstrap";
 import domready from "domready";
-import $ from "jquery";
 import Fuse from "fuse.js";
 
 const listFilter = {

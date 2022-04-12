@@ -1,7 +1,6 @@
 import 'bootstrap';
 import chroma from 'chroma-js';
 import domready from 'domready';
-import $ from 'jquery';
 import _ from 'underscore';
 
 domready(() => {

@@ -1,7 +1,6 @@
 import "bootstrap";
 import domready from "domready";
 import Highcharts from "Highcharts";
-import $ from "jquery";
 import "select2";
 import _ from "underscore";
 import chartOptions from "./highcharts-options";

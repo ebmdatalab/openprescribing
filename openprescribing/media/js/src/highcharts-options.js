@@ -1,5 +1,4 @@
 import Highcharts from "Highcharts";
-import $ from "jquery";
 
 const backgroundGradient = {
   linearGradient: [0, 0, 500, 500],

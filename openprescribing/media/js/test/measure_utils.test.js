@@ -1,6 +1,9 @@
+import jquery from "jquery";
 import _ from "underscore";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import mu from "../src/measure_utils";
+
+vi.stubGlobal("$", jquery);
 
 describe("Measures", () => {
   describe("#getCentilesAndYAxisExtent", () => {

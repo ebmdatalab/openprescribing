@@ -1,5 +1,4 @@
 import chroma from "chroma-js";
-import $ from "jquery";
 import "mapbox.js";
 import _ from "underscore";
 import formatters from "./chart_formatters";

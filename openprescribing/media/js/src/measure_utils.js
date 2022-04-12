@@ -1,6 +1,5 @@
 import downloadjs from "downloadjs";
 import humanize from "humanize";
-import $ from "jquery";
 import _ from "underscore";
 import csvUtils from "./csv-utils";
 

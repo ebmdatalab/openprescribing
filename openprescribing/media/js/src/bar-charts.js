@@ -1,6 +1,5 @@
 import domready from "domready";
 import Highcharts from "Highcharts";
-import $ from "jquery";
 import _ from "underscore";
 import chartOptions from "./highcharts-options";
 

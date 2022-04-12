@@ -121,6 +121,13 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesSto
 SECRET_KEY = utils.get_env_setting("SECRET_KEY")
 # END SECRET CONFIGURATION
 
+# VITE CONFIG
+DJANGO_VITE_ASSETS_PATH = "/static/bundler/"
+DJANGO_VITE_STATIC_URL_PREFIX = "bundler"
+DJANGO_VITE_DEV_MODE = utils.get_env_setting("DJANGO_VITE_DEV_MODE", default=False)
+DJANGO_VITE_MANIFEST_PATH = normpath(join(APPS_ROOT, "static", "bundler", "manifest.json"))
+# END VITE CONFIG
+
 # SITE CONFIGURATION
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -191,6 +198,7 @@ ROOT_URLCONF = "%s.urls" % SITE_NAME
 # APP CONFIGURATION
 DJANGO_APPS = (
     # Default Django apps:
+    "django_vite",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

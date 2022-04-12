@@ -1,5 +1,8 @@
-import { describe, expect, it } from "vitest";
+import jquery from "jquery";
+import { describe, expect, it, vi } from "vitest";
 import barChart from "../src/analyse-bar-chart";
+
+vi.stubGlobal("$", jquery);
 
 describe("BarChart", () => {
   describe("#_indexDataByMonthAndRatio", () => {

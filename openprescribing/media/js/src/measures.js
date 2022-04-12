@@ -1,7 +1,6 @@
 import domready from "domready";
 import Handlebars from "handlebars";
 import Highcharts from "Highcharts";
-import $ from "jquery";
 import L from "mapbox.js";
 import _ from "underscore";
 import utils from "./chart_utils";

@@ -1,6 +1,5 @@
 import downloadjs from "downloadjs";
 import Highcharts from "Highcharts";
-import $ from "jquery";
 import csvUtils from "./csv-utils";
 import chartOptions from "./highcharts-options";
 
