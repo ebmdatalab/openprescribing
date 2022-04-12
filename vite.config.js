@@ -10,7 +10,7 @@ const config = {
     manifest: false,
     rollupOptions: {
       input: {
-        // "analyse-form": "openprescribing/media/js/src/analyse-form.js",
+        "analyse-form": "openprescribing/media/js/src/analyse-form.js",
         "bar-charts": "openprescribing/media/js/src/bar-charts.js",
         "config": "openprescribing/media/js/src/config.js", // TODO: this doesn't work
         "dmd-advanced-search": "openprescribing/media/js/src/dmd-advanced-search.js",
@@ -19,7 +19,7 @@ const config = {
         "tariff-charts": "openprescribing/media/js/src/tariff-charts.js",
         bubble: "openprescribing/media/js/src/bubble.js",
         global: "openprescribing/media/js/src/global.js",
-        // measures: "openprescribing/media/js/src/measures.js",
+        measures: "openprescribing/media/js/src/measures.js",
         index: "openprescribing/media/js/src/css.js",
       },
       output: {
