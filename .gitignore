@@ -50,5 +50,7 @@ deploy-log.json
 /diskcache
 
 # Node and npm
-/node_modules
 /coverage
+/node_modules
+/openprescribing/static/bundler
+/openprescribing/static/vendor
