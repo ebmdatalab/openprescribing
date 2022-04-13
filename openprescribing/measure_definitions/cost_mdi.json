@@ -21,7 +21,6 @@
   "is_percentage": true,
   "is_cost_based": true,
   "low_is_good": true,
-  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(numerator) AS numerator"
   ],
@@ -29,13 +28,6 @@
   "numerator_where": [
     "1 = 1"
   ],
-    "numerator_bnf_codes_query": [
-    "SELECT DISTINCT presentation.bnf_code",
-    "FROM {hscic}.presentation",
-    "JOIN ebmdatalab.measures.vw__cost_per_mdi",
-    "ON presentation.bnf_code = vw__cost_per_mdi.bnf_code"
-  ],
-  "denominator_type": "custom",
   "denominator_columns": [
     "SUM(denominator) AS denominator"
   ],
@@ -58,4 +50,3 @@
   "measure_complexity": [
     "medium"
   ]
-}
