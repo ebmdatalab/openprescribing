@@ -32,7 +32,7 @@
     "numerator_bnf_codes_query": [
     "SELECT DISTINCT presentation.bnf_code",
     "FROM {hscic}.presentation",
-    "JOIN ebmdatalab.measures..vw__cost_per_mdi",
+    "JOIN ebmdatalab.measures.vw__cost_per_mdi",
     "ON presentation.bnf_code = vw__cost_per_mdi.bnf_code"
   ],
   "denominator_type": "custom",
