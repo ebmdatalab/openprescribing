@@ -21,21 +21,25 @@
   "is_percentage": true,
   "is_cost_based": true,
   "low_is_good": true,
-  "numerator_type": "bnf_cost",
-  "numerator_bnf_codes_query": [
-    "SELECT DISTINCT(bnf_code)",
-    "FROM {measures}.dmd_objs_with_form_route",
-    "WHERE form_route = 'pressurizedinhalation.inhalation'"
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(numerator) AS numerator"
+  ],
+  "numerator_from": "{measures}.vw__cost_per_mdi",
+  "numerator_where": [
+    "1 = 1"
   ],
   "numerator_bnf_codes_filter": [
     "03 #Respiratory",
     "~0301011R0% #Salbutamol"
   ],
-  "denominator_type": "bnf_quantity",
-  "denominator_bnf_codes_query": [
-    "SELECT DISTINCT(bnf_code)",
-    "FROM {measures}.dmd_objs_with_form_route",
-    "WHERE form_route = 'pressurizedinhalation.inhalation'"
+  "denominator_type": "custom",
+  "denominator_columns": [
+    "SUM(denominator) AS denominator"
+  ],
+  "denominator_from": "{measures}.vw__cost_per_mdi",
+  "denominator_where": [
+    "1 = 1"
   ],
   "denominator_bnf_codes_filter": [
     "03 #Respiratory",
