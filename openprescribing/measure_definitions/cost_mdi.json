@@ -1,0 +1,59 @@
+{
+  "name": "Cost of MDIs per inhaler",
+  "title": [
+    "Cost of MDIs per inhaler"
+  ],
+  "description": [
+    ""
+  ],
+  "numerator_short": "",
+  "denominator_short": "",
+  "why_it_matters": [
+    "TBC"
+  ],
+  "tags": [
+    "core",
+    "greenernhs",
+    "nice",
+    "respiratory"
+  ],  
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "bnf_cost",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.dmd_objs_with_form_route",
+    "WHERE form_route = 'pressurizedinhalation.inhalation'"
+  ],
+  "numerator_bnf_codes_filter": [
+    "03 #Respiratory",
+    "~0301011R0% #Salbutamol"
+  ],
+  "denominator_type": "bnf_quantity",
+  "denominator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.dmd_objs_with_form_route",
+    "WHERE form_route = 'pressurizedinhalation.inhalation'"
+  ],
+  "denominator_bnf_codes_filter": [
+    "03 #Respiratory",
+    "~0301011R0 #Salbutamol"
+  ],
+  "authored_by": [
+    ""
+  ],
+  "checked_by": [
+    ""
+  ],
+  "date_reviewed": [
+    ""
+  ],
+  "next_review": [
+    ""
+  ],
+  "measure_complexity": [
+    "medium"
+  ]
+}
