@@ -172,9 +172,25 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
     <footer class="footer">
       <div class="container">
         <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 sponsors">
-              <a href="http://www.ox.ac.uk"><img src="{% static 'img/oxford_logo.png' %}" alt="University of Oxford logo"/></a>
-            </div>
+          <div class="col-xs-12">
+            <ul class="list-unstyled footer-logos">
+              <li>
+                <a href="https://www.bennet.ox.ac.uk/" title="Bennett Institute for Applied Data Science">
+                  <img class="footer-logos__bennett" src="{% static 'img/footer-bennett.svg' %}" alt="Bennett Institute for Applied Data Science logo">
+                </a>
+              </li>
+              <li>
+                <a href="https://www.phc.ox.ac.uk/" title="Nuffield Department of Primary Care Health Sciences">
+                  <img class="footer-logos__nuffield" src="{% static 'img/footer-nuffield.png' %}" alt="Nuffield Department of Primary Care Health Sciences logo">
+                </a>
+              </li>
+              <li>
+                <a href="https://www.ox.ac.uk/" title="University of Oxford">
+                  <img class="footer-logos__oxford" src="{% static 'img/footer-oxford.svg' %}" alt="University of Oxford logo">
+                </a>
+              </li>
+            </ul>
+          </div>
             <div class="col-md-9 col-sm-9 col-xs-12 attribution text-muted">
               <div>Designed and built by the <a href="https://www.bennett.ox.ac.uk/">Bennett Institute for Applied Data Science</a>, <a href="http://www.phc.ox.ac.uk/">Department of Primary Care Health Sciences</a>, University of Oxford. Please see the <a href="https://openprescribing.net/about/"> about page</a> for details of our funding.
               Contact us: <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">{{ SUPPORT_TO_EMAIL }}</a>.</div>
