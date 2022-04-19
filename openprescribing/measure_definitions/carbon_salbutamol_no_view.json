@@ -31,11 +31,12 @@
   "low_is_good": true,
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(CASE WHEN bnf_code = '0301011R0AAAPAP' THEN quantity * 25.24 --Salbutamol 100micrograms/dose inhaler CFC free \n",
+    "SUM(",
+    "CASE WHEN bnf_code = '0301011R0AAAPAP' THEN quantity * 25.24 --Salbutamol 100micrograms/dose inhaler CFC free \n",
     "WHEN bnf_code = '0301011R0AABUBU' THEN quantity * 11.79 --Salbutamol CFC free breath actuated inhaler 100 micrograms \n",
-    "WHEN bnf_code = '0301011R0AAAQAQ' THEN quantity * 0.58 --Salbutamol 200micrograms/dose dry powder inhaler (derived from Ventolin Accuhaler) \n",
-    "WHEN bnf_code = '0301011R0BEAHAQ' THEN quantity * 0.58	--Ventolin 200micrograms/dose Accuhaler \n",
-    "WHEN bnf_code = '0301011R0BEAIAP' THEN quantity * 28.26 --Ventolin 100micrograms/dose Evohaler \n",
+    "WHEN bnf_code = '0301011R0AAAQAQ' THEN quantity * 0.58 --Salbutamol 200micrograms/dose dry powder inhaler derived from Ventolin Accuhaler \n",
+    "WHEN bnf_code = '0301011R0BEAHAQ' THEN quantity * 0.58 --Ventolin 200micrograms/dose Accuhaler \n",
+    "WHEN bnf_code = '0301011R0BEAIAP' THEN quantity * 28.26 --Ventolin 100micrograms/dose Evohaler \n", 
     "WHEN bnf_code = '0301011R0BIAFAP' THEN quantity * 11.95 --Salamol 100micrograms/dose inhaler CFC free (Teva) \n",
     "WHEN bnf_code = '0301011R0BIAHAP' THEN quantity * 11.95 --Salamol 100micrograms/dose inhaler CFC free (Arrow) \n",
     "WHEN bnf_code = '0301011R0BIAGBU' THEN quantity * 12.08 --Salamol 100micrograms/dose Easi-Breathe inhaler \n",
@@ -45,7 +46,7 @@
     "WHEN bnf_code = '0301011R0BWABAQ' THEN quantity * 0.62 --Easyhaler Salbutamol sulfate 200micrograms/dose dry pdr inh \n",
     "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder \n",
     "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder refill \n",
-    "else 0 end) as denominator"
+    "ELSE 0 end) AS denominator"
   ],
   "numerator_from": "{measures}.normalised_prescribing",
   "numerator_where": [
