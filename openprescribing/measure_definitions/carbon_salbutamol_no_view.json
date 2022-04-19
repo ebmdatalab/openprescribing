@@ -57,6 +57,22 @@
     "SUM(quantity) AS denominator"
   ],
   "denominator_from": "{hscic}.normalised_prescribing",
+  "denominator_bnf_codes_filter": [
+    "0301011R0AAAPAP # Salbutamol 100micrograms/dose inhaler CFC free",
+    "0301011R0AABUBU # Salbutamol CFC free breath actuated inhaler 100 micrograms",
+    "0301011R0AAAQAQ # Salbutamol 200micrograms/dose dry powder inhaler (derived from Ventolin Accuhaler)",
+    "0301011R0BEAHAQ # Ventolin 200micrograms/dose Accuhaler",
+    "0301011R0BEAIAP # Ventolin 100micrograms/dose Evohaler",
+    "0301011R0BIAFAP # Salamol 100micrograms/dose inhaler CFC free (Teva)",
+    "0301011R0BIAHAP # Salamol 100micrograms/dose inhaler CFC free (Arrow)",
+    "0301011R0BIAGBU # Salamol 100micrograms/dose Easi-Breathe inhaler",
+    "0301011R0BMAAAP # Airomir 100micrograms/dose inhaler",
+    "0301011R0BMABBU # Airomir Autohaler",
+    "0301011R0BWAABZ # Easyhaler Salbutamol sulfate 100micrograms/dose dry pdr inh",
+    "0301011R0BWABAQ # Easyhaler Salbutamol sulfate 200micrograms/dose dry pdr inh",
+    "0301011R0BXAACB # Salbulin Novolizer 100micrograms/dose inhalation powder",
+    "0301011R0BXAACB # Salbulin Novolizer 100micrograms/dose inhalation powder refill"
+  ],
   "denominator_where": [
     "1 = 1"
   ],
