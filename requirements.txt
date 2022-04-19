@@ -4,6 +4,14 @@
 #
 #    pip-compile
 #
+async-generator==1.10
+    # via
+    #   trio
+    #   trio-websocket
+attrs==21.4.0
+    # via
+    #   outcome
+    #   trio
 backports-csv==1.0.7
     # via -r requirements.in
 bcrypt==3.1.7
@@ -15,7 +23,9 @@ cachetools==4.2.4
     #   google-auth
     #   premailer
 certifi==2021.10.8
-    # via requests
+    # via
+    #   requests
+    #   urllib3
 cffi==1.15.0
     # via
     #   bcrypt
@@ -28,7 +38,10 @@ click==8.1.2
 coverage==6.3.2
     # via -r requirements.in
 cryptography==36.0.2
-    # via paramiko
+    # via
+    #   paramiko
+    #   pyopenssl
+    #   urllib3
 cssselect==1.1.0
     # via
     #   premailer
@@ -141,6 +154,8 @@ grpcio==1.45.0
     # via google-api-core
 gunicorn==20.0.4
     # via -r requirements.in
+h11==0.13.0
+    # via wsproto
 html2text==2020.1.16
     # via -r requirements.in
 httplib2==0.20.4
@@ -148,7 +163,10 @@ httplib2==0.20.4
     #   google-api-python-client
     #   google-auth-httplib2
 idna==3.3
-    # via requests
+    # via
+    #   requests
+    #   trio
+    #   urllib3
 jinja2==3.1.1
     # via -r requirements.in
 kiwisolver==1.4.2
@@ -192,6 +210,8 @@ openpyxl==3.0.9
     # via
     #   -r requirements.in
     #   tablib
+outcome==1.1.0
+    # via trio
 packaging==21.3
     # via
     #   db-dtypes
@@ -243,6 +263,8 @@ pyflakes==2.4.0
     # via flake8
 pynacl==1.5.0
     # via paramiko
+pyopenssl==22.0.0
+    # via urllib3
 pyparsing==3.0.8
     # via
     #   httplib2
@@ -250,6 +272,8 @@ pyparsing==3.0.8
     #   packaging
 pyquery==1.4.1
     # via -r requirements.in
+pysocks==1.7.1
+    # via urllib3
 pysqlite3-binary==0.4.7.post3
     # via -r requirements.in
 python-dateutil==2.8.2
@@ -291,7 +315,7 @@ scipy==1.7.3
     #   seaborn
 seaborn==0.11.2
     # via -r requirements.in
-selenium==3.141.0
+selenium==4.1.3
     # via -r requirements.in
 six==1.16.0
     # via
@@ -308,6 +332,10 @@ six==1.16.0
     #   mock
     #   paramiko
     #   python-dateutil
+sniffio==1.2.0
+    # via trio
+sortedcontainers==2.4.0
+    # via trio
 soupsieve==2.3.2.post1
     # via beautifulsoup4
 sqlparse==0.4.2
@@ -320,11 +348,17 @@ titlecase==0.12.0
     # via -r requirements.in
 tomli==2.0.1
     # via pep517
+trio==0.20.0
+    # via
+    #   selenium
+    #   trio-websocket
+trio-websocket==0.9.2
+    # via selenium
 unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==4.1.1
     # via google-api-python-client
-urllib3==1.26.9
+urllib3[secure,socks]==1.26.9
     # via
     #   requests
     #   selenium
@@ -334,6 +368,8 @@ wheel==0.37.1
     # via pip-tools
 when-changed==0.3.0
     # via -r requirements.in
+wsproto==1.1.0
+    # via trio-websocket
 xlrd==1.2.0
     # via
     #   -r requirements.in
