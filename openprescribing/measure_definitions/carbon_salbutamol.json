@@ -12,14 +12,14 @@
     "The NHS has <a href='https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf'> ",
     "committed to reducing its carbon footprint by 51% by 2025</a> to meet the target in the Climate Change Act, including a shift to lower carbon inhalers",
     "to deliver a reduction of 4%.</p>",
-    "<p>The 2022-2023 PCN Investment and Impact Fund (IIF) <a href='https://www.england.nhs.uk/wp-content/uploads/2022/03/B1357-investment-and-impact-fund-2022-23-updated-guidance-march-2022.pdf'>' ",
-    "now includes an indicator</a> on mean carbon emissions per salbutamol inhaler prescribed (kg CO<sub>2</sub>e).</p>",
-    "<p><a href='https://www.england.nhs.uk/wp-content/uploads/2022/03/B1357-investment-and-impact-fund-2022-23-updated-guidance-march-2022.pdf'>",
-    "Whole lifecycle carbon emissions can vary substantially between different inhaler devices</a>. Traditional metered dose inhalers (MDIs) rely on ",
-    "hydrofluroalkanes (HFA) to act as a propellant to deliver doses. <a href='https://bmjopen.bmj.com/content/bmjopen/9/10/e028763.full.pdf'>",
-    "HFAs are potent greenhouse gases with a potency thousands of times that of carbon dioxide</a>. Dry powder inhalers (DPIs) do not contain HFA so they ",
-    "consequently make up the lowest carbon options available for salbutamol, however DPIs may not be suitable for all patients. Even amongst MDIs there is ",
-    "significant variation in CO<sub>2</sub> equivalent emissions with some having significantly lower HFA content." 
+    "<p>Salbutamol metered dose inhalers (MDIs) are the single biggest source of carbon emissions from NHS medicines prescribing.",
+    "The 2022-2023 PCN Investment and Impact Fund (IIF) therefore ",
+    "<a href='https://www.england.nhs.uk/publication/network-contract-directed-enhanced-service-investment-and-impact-fund-2022-23-updated-guidance/'>",
+    "includes an indicator</a> focusing on mean carbon emissions per salbutamol inhaler prescribed (kg CO<sub>2</sub>e).",
+    "The aim is to encourage a change in prescribing of salbutamol to salbutamol devices associated with lower carbon emissions, resulting in a significant reduction in NHS carbon emissions.</p>",
+    "<p>Data on carbon emissions per salbutamol inhaler can be viewed in the ",
+    "<a href='https://docs.google.com/spreadsheets/d/1eyk2iqNM_4sobDzevZWWcRR00O2tmJO5HwdFZLjhfa4'>",
+    "table here</a>.</p>"
   ],
   "tags": [
     "core",
