@@ -48,7 +48,7 @@
     "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder refill \n",
     "ELSE 0 end) AS denominator"
   ],
-  "numerator_from": "{measures}.normalised_prescribing",
+  "numerator_from": "{hscic}.normalised_prescribing",
   "numerator_where": [
     "1 = 1"
   ],
