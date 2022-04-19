@@ -6,7 +6,7 @@
   "description": [
     "Mean average carbon impact (kg CO<sub>2</sub>e) per salbutamol inhaler prescribed"
   ],
-  "numerator_short": "Mean average carbon impact (kg CO<sub>2</sub>e)",
+  "numerator_short": "Carbon impact (kg CO<sub>2</sub>e)",
   "denominator_short": "Salbutamol inhalers",
   "why_it_matters": [
     "The NHS has <a href='https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf'> ",
@@ -16,7 +16,7 @@
     "The 2022-2023 PCN Investment and Impact Fund (IIF) therefore ",
     "<a href='https://www.england.nhs.uk/publication/network-contract-directed-enhanced-service-investment-and-impact-fund-2022-23-updated-guidance/'>",
     "includes an indicator</a> focusing on mean carbon emissions per salbutamol inhaler prescribed (kg CO<sub>2</sub>e).",
-    "The aim is to encourage a change in prescribing of salbutamol to salbutamol devices associated with lower carbon emissions, resulting in a significant reduction in NHS carbon emissions.</p>",
+    "The aim is to encourage a change in prescribing of salbutamol to devices associated with lower carbon emissions, resulting in a significant reduction in NHS carbon emissions.</p>",
     "<p>Data on carbon emissions per salbutamol inhaler can be viewed in the ",
     "<a href='https://docs.google.com/spreadsheets/d/1eyk2iqNM_4sobDzevZWWcRR00O2tmJO5HwdFZLjhfa4'>",
     "table here</a>.</p>"
