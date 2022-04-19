@@ -1503,7 +1503,9 @@ def _home_page_context_for_entity(request, entity):
         measure_options["parentOrgId"] = entity.ccg_id
 
     entity_outlier_report_url = (
-        f"labs/outlier_reports/html/static_{entity_type}_{entity.code}.html"
+        None
+        if entity_type == "regional_team"
+        else f"labs/outlier_reports/html/static_{entity_type}_{entity.code}.html"
     )
 
     context.update(

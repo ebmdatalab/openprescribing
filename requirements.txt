@@ -95,7 +95,7 @@ google-api-core[grpc]==1.31.5
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.43.0
+google-api-python-client==2.44.0
     # via -r requirements.in
 google-auth==1.35.0
     # via
@@ -308,7 +308,7 @@ six==1.16.0
     #   mock
     #   paramiko
     #   python-dateutil
-soupsieve==2.3.2
+soupsieve==2.3.2.post1
     # via beautifulsoup4
 sqlparse==0.4.2
     # via
