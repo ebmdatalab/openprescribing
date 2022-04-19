@@ -44,7 +44,7 @@
     "WHEN bnf_code = '0301011R0BWAABZ' THEN quantity * 0.62 --Easyhaler Salbutamol sulfate 100micrograms/dose dry pdr inh \n",
     "WHEN bnf_code = '0301011R0BWABAQ' THEN quantity * 0.62 --Easyhaler Salbutamol sulfate 200micrograms/dose dry pdr inh \n",
     "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder \n",
-    "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder refill \",
+    "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder refill \n",
     "else 0 end) as denominator"
   ],
   "numerator_from": "{measures}.normalised_prescribing",
