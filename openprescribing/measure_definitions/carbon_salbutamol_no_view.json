@@ -46,7 +46,7 @@
     "WHEN bnf_code = '0301011R0BWABAQ' THEN quantity * 0.62 --Easyhaler Salbutamol sulfate 200micrograms/dose dry pdr inh \n",
     "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder \n",
     "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder refill \n",
-    "ELSE 0 end) AS denominator"
+    "ELSE 0 end) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing",
   "numerator_where": [
@@ -55,7 +55,7 @@
   "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM {hscic}.presentation WHERE bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXAACB')",
   "denominator_type": "custom",
   "denominator_columns": [
-    "SUM(quantity) AS numerator"
+    "SUM(quantity) AS denominator"
   ],
   "denominator_from": "{hscic}.normalised_prescribing",
   "denominator_where": [
