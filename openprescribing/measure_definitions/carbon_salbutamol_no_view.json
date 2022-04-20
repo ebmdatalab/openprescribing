@@ -49,9 +49,6 @@
     "ELSE 0 end) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing",
-  "numerator_where": [
-    "1 = 1"
-  ],
   "denominator_type": "custom",
   "denominator_columns": [
     "SUM(quantity) AS denominator"
