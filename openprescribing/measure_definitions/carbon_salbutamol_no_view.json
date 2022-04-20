@@ -49,6 +49,9 @@
     "ELSE 0 end) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing",
+  "numerator_where": [
+    "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXAACB')"
+  ],
   "denominator_type": "custom",
   "denominator_columns": [
     "SUM(quantity) AS denominator"
