@@ -16,13 +16,14 @@
     "The 2022-2023 PCN Investment and Impact Fund (IIF) therefore ",
     "<a href='https://www.england.nhs.uk/publication/network-contract-directed-enhanced-service-investment-and-impact-fund-2022-23-updated-guidance/'>",
     "includes an indicator</a> focusing on mean carbon emissions per salbutamol inhaler prescribed (kg CO<sub>2</sub>e).",
-    "The aim is to encourage a change in prescribing of salbutamol devices to those associated with lower carbon emissions, resulting in a significant reduction in NHS carbon emissions.</p>",
+    "The aim is to encourage prescribing of salbutamol products associated with lower carbon emissions, resulting in a significant reduction in NHS carbon emissions.</p>",
     "<p>Data on carbon emissions per salbutamol inhaler can be viewed in the ",
     "<a href='https://docs.google.com/spreadsheets/d/1eyk2iqNM_4sobDzevZWWcRR00O2tmJO5HwdFZLjhfa4'>",
     "table here</a>.</p>"
   ],
   "tags": [
     "core",
+    "greenernhs", 
     "respiratory"
   ],
   "url": null,
@@ -45,12 +46,12 @@
     "WHEN bnf_code = '0301011R0BWAABZ' THEN quantity * 0.62 --Easyhaler Salbutamol sulfate 100micrograms/dose dry pdr inh \n",
     "WHEN bnf_code = '0301011R0BWABAQ' THEN quantity * 0.62 --Easyhaler Salbutamol sulfate 200micrograms/dose dry pdr inh \n",
     "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder \n",
-    "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder refill \n",
+    "WHEN bnf_code = '0301011R0BXABCC' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder refill \n",
     "ELSE 0 end) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing",
   "numerator_where": [
-    "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXAACB')"
+    "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC')"
   ],
   "denominator_type": "custom",
   "denominator_columns": [
@@ -58,7 +59,7 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing",
   "denominator_where": [
-    "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXAACB')"
+    "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC')"
   ],
   "authored_by": [
     "richard.croker@phc.ox.ac.uk"
