@@ -4,7 +4,7 @@
     "Average carbon footprint per salbutamol inhaler"
   ],
   "description": [
-    "Mean average carbon impact (kg CO<sub>2</sub>e) per salbutamol inhaler prescribed"
+    "Mean carbon impact (kg CO<sub>2</sub>e) per salbutamol inhaler prescribed"
   ],
   "numerator_short": "Carbon impact (kg CO<sub>2</sub>e)",
   "denominator_short": "Salbutamol inhalers",
