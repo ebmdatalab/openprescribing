@@ -44,5 +44,6 @@
     "JOIN ebmdatalab.measures.vw__opioid_measure_dmd",
     "ON presentation.bnf_code = vw__opioid_measure_dmd.bnf_code"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "no_analyse_url": true
 }
