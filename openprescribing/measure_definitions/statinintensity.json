@@ -49,7 +49,7 @@
    "ON ont.form = route.cd" 
   ],
   "numerator_where": [
-    "SUBSTR(vmp.bnf_code,0,9) IN ('0212000AA','0212000AC','0212000B0','0212000C0','0212000M0','0212000X0','0212000Y0') ",
+    "SUBSTR(p.bnf_code,0,9) IN ('0212000AA','0212000AC','0212000B0','0212000C0','0212000M0','0212000X0','0212000Y0') ",
     "AND route.descr IN ('capsule.oral','tablet.oral','tabletchewable.oral','tabletmodified-release.oral')",
     "AND ing.id IN (725658002,108597004,412392009,96306007,406435003,387584000)"
   ],
