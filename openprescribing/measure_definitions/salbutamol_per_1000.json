@@ -24,7 +24,7 @@
     "AND bnf_code LIKE '0301011R0%' --Salbutamol"
   ],
   "denominator_type": "list_size",
-  "authored_by": "richard.croker@phc.ox.ac.uk@phc.ox.ac.uk",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
   "date_reviewed": "",
   "next_review": "",
