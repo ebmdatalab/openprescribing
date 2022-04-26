@@ -30,10 +30,10 @@
   "low_is_good": true,
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(p.items * (CASE WHEN ing.id = 725658002 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) <20 THEN 1 --atorvastatin 20mg and above \n",
-    "WHEN ing.id = 406435003 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) <10 THEN 1 --rosuvastatin 10mg and above \n",
-    "WHEN ing.id = 387584000 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) <80 THEN 1 --simvastatin 80mg and above \n",
-    "ELSE 0 END)) AS numerator"
+    "SUM(p.items * (CASE WHEN ing.id = 725658002 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) >=20 THEN 0 --atorvastatin 20mg and above \n",
+    "WHEN ing.id = 406435003 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1))>=10 THEN 0 --rosuvastatin 10mg and above \n",
+    "WHEN ing.id = 387584000 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) >=80 THEN 0 --simvastatin 80mg and above \n",
+    "ELSE 1 END)) AS numerator"
   ],
  "numerator_from": [
    "{hscic}.normalised_prescribing p",
