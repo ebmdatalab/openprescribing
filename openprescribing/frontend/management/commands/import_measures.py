@@ -272,10 +272,12 @@ def arrays_to_strings(measure_def):
         "description",
         "why_it_matters",
         "numerator_columns",
+        "numerator_from",
         "numerator_where",
+        "numerator_bnf_codes_query",
         "denominator_columns",
         "denominator_where",
-        "numerator_bnf_codes_query",
+        "denominator_from",
         "denominator_bnf_codes_query",
     ]
 
