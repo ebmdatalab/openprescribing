@@ -30,10 +30,7 @@
   "low_is_good": true,
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(p.items * (CASE WHEN ing.id = 725658002 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) >=20 THEN 0 --atorvastatin 20mg and above \n",
-    "WHEN ing.id = 406435003 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1))>=10 THEN 0 --rosuvastatin 10mg and above \n",
-    "WHEN ing.id = 387584000 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) >=80 THEN 0 --simvastatin 80mg and above \n",
-    "ELSE 1 END)) AS numerator"
+    "SUM(p.items) AS numerator"
   ],
  "numerator_from": [
    "{hscic}.normalised_prescribing p",
@@ -51,31 +48,32 @@
   "numerator_where": [
     "SUBSTR(p.bnf_code,0,9) IN ('0212000AA','0212000AC','0212000B0','0212000C0','0212000M0','0212000X0','0212000Y0') ",
     "AND route.descr IN ('capsule.oral','tablet.oral','tabletchewable.oral','tabletmodified-release.oral')",
+    "AND ing.id IN (725658002,108597004,412392009,96306007,406435003,387584000)",
+    "AND ((ing.id = 725658002 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) <20) OR ",
+    "(ing.id = 406435003 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1))<10) OR ",
+    "(ing.id = 387584000 AND strnt_nmrtr_val/(coalesce(strnt_dnmtr_val,1)) <80)"
+  ],
+ "denominator_type": "custom",
+  "denominator_columns": [
+    "SUM(p.items) AS denomerator"
+  ],
+ "denominator_from": [
+   "{hscic}.normalised_prescribing p",
+   "INNER JOIN {dmd}.vmp vmp ",
+   "ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(vmp.bnf_code,0,9),SUBSTR(vmp.bnf_code,-2)) --joins both brand and generics to vmp table \n",
+   "INNER JOIN {dmd}.vpi AS vpi -- joins vmp to vpi table to get ingredient strengths \n",
+   "ON vmp.id = vpi.vmp ",
+   "INNER JOIN {dmd}.ing AS ing ",
+   "ON vpi.ing = ing.id ",
+   "INNER JOIN {dmd}.ont AS ont ",
+   "ON vmp.id = ont.vmp ",
+   "INNER JOIN {dmd}.ontformroute AS route ",
+   "ON ont.form = route.cd" 
+  ],
+  "denominator_where": [
+    "SUBSTR(p.bnf_code,0,9) IN ('0212000AA','0212000AC','0212000B0','0212000C0','0212000M0','0212000X0','0212000Y0') ",
+    "AND route.descr IN ('capsule.oral','tablet.oral','tabletchewable.oral','tabletmodified-release.oral')",
     "AND ing.id IN (725658002,108597004,412392009,96306007,406435003,387584000)"
-  ],
-  "denominator_type": "bnf_items",
-  "denominator_bnf_codes_query": [
-    "SELECT bnf_code FROM {hscic}.presentation WHERE",
-    "name LIKE '%tablet%' OR",
-    "name LIKE '% tab %' OR",
-    "name LIKE '% tab' OR",
-    "name LIKE '% tabs %' OR",
-    "name LIKE '% tabs' OR",
-    "name LIKE '%capsule%' OR",
-    "name LIKE '% caps %' OR",
-    "name LIKE '% caps' OR",
-    "name LIKE '%caplet%' OR",
-    "name LIKE '%Chewtab%' OR",
-    "name LIKE '%chewable tablet%'"
-  ],
-  "denominator_bnf_codes_filter": [
-    "0212000AA # Rosuvastatin Calcium",
-    "0212000AC # Simvastatin & Ezetimibe",
-    "0212000B0 # Atorvastatin",
-    "0212000C0 # Cerivastatin",
-    "0212000M0 # Fluvastatin Sodium",
-    "0212000X0 # Pravastatin Sodium",
-    "0212000Y0 # Simvastatin"
   ],
   "authored_by": [
     ""
