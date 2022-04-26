@@ -38,7 +38,7 @@
  "numerator_from": [
    "{hscic}.normalised_prescribing p",
    "INNER {dmd}.vmp vmp ",
-   "ON {dmd}.vmp AS vmp ",
+   "ON vmp.bnf_code = p.bnf_code ",
    "INNER JOIN {dmd}.vpi AS vpi -- joins vmp to vpi table to get ingredient strengths \n",
    "ON vmp.id = vpi.vmp ",
    "INNER JOIN {dmd}.ing AS ing ",
