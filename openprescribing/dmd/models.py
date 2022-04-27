@@ -618,7 +618,9 @@ class PriceInfo(models.Model):
     )
     price = models.IntegerField(null=True, help_text="Price (pence)")
     pricedt = models.DateField(null=True, help_text="Date of price validity")
-    price_prev = models.IntegerField(null=True, help_text="Price prior to change date (pence)")
+    price_prev = models.IntegerField(
+        null=True, help_text="Price prior to change date (pence)"
+    )
     price_basis = models.ForeignKey(
         db_column="price_basiscd",
         to="PriceBasis",
