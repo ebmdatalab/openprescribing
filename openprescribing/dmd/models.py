@@ -492,9 +492,9 @@ class Dtinfo(models.Model):
         on_delete=models.CASCADE,
         help_text="Drug Tariff payment category",
     )
-    price = models.IntegerField(null=True, help_text="Drug Tariff price")
+    price = models.IntegerField(null=True, help_text="Drug Tariff price (pence)")
     dt = models.DateField(null=True, help_text="Date from which applicable")
-    prevprice = models.IntegerField(null=True, help_text="Previous price")
+    prevprice = models.IntegerField(null=True, help_text="Previous price (pence)")
 
 
 class AMPP(models.Model):
@@ -616,9 +616,9 @@ class PriceInfo(models.Model):
     ampp = models.OneToOneField(
         db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
     )
-    price = models.IntegerField(null=True, help_text="Price")
+    price = models.IntegerField(null=True, help_text="Price (pence)")
     pricedt = models.DateField(null=True, help_text="Date of price validity")
-    price_prev = models.IntegerField(null=True, help_text="Price prior to change date")
+    price_prev = models.IntegerField(null=True, help_text="Price prior to change date (pence)")
     price_basis = models.ForeignKey(
         db_column="price_basiscd",
         to="PriceBasis",
