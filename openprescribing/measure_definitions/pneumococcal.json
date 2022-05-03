@@ -1,0 +1,22 @@
+{
+  "name": "Pnemunococcal vaccine prescribing",
+  "title": "",
+  "description": "Cost of pnemunococcal vaccine prescribing per 1000 patients",
+  "numerator_short": "Pnuemococcal vaccine cost (£)",
+  "denominator_short": "1000 patients",
+  "why_it_matters": [
+    "tbc"
+  ],
+  "tags": [
+    "cost"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "bnf_cost",
+  "numerator_bnf_codes_filter": [
+    "1404000L0 # Peneumococcal"
+  ],
+  "denominator_type": "list_size"
+}
