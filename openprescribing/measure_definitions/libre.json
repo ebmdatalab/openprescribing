@@ -27,7 +27,6 @@
   "numerator_columns": "SUM(p.quantity) AS numerator",
   "numerator_from": [
     "{hscic}.normalised_prescribing p",
-    "FROM hscic.normalised_prescribing p ",
     "INNER JOIN ",
     "(SELECT DISTINCT COALESCE (amp.bnf_code, vmp.bnf_code) bnf_code ",
     "FROM {dmd}.vmp vmp ",
