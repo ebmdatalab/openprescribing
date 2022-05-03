@@ -23,7 +23,9 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": null,
-  "numerator_type": "bnf_quantity",
+  "numerator_type": "custom",
+  "numerator_columns": "SUM(p.quantity) AS numerator",
+  "numerator_from": "{hscic}.normalised_prescribing p",
   "num_is_list_of_bnf_codes": true,
   "num_bnf_codes_query": [
   "WITH vmp_codes AS (SELECT DISTINCT bnf_code FROM dmd.vmp AS vmp ",
