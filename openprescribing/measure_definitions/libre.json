@@ -34,5 +34,6 @@
     "WHERE vmp.id = 34865511000001109) bnf ",
     "ON p.bnf_code = bnf.bnf_code"
    ],
+   "numerator_where": "1 = 1",
   "denominator_type": "list_size"
 }
