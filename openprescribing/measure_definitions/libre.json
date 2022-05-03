@@ -25,20 +25,15 @@
   "low_is_good": null,
   "numerator_type": "custom",
   "numerator_columns": "SUM(p.quantity) AS numerator",
-  "numerator_from": "{hscic}.normalised_prescribing p",
-  "numerator_is_list_of_bnf_codes": true,
-  "numerator_bnf_codes_query": [
-  "WITH vmp_codes AS (SELECT DISTINCT bnf_code FROM {dmd}.vmp AS vmp ",
-  "WHERE vmp.id = 34865511000001109), ",
-  "amp_codes AS (SELECT DISTINCT amp.bnf_code FROM {dmd}.amp AS amp ",
-  "INNER JOIN ",
-  "dmd.vmp as vmp ",
-  "ON ",
-  "vmp.id = amp.vmp ",
-  "WHERE vmp.id = 34865511000001109) ",
-  "SELECT DISTINCT bnf_code FROM vmp_codes ",
-  "UNION DISTINCT ",
-  "SELECT DISTINCT bnf_code FROM amp_codes "
-  ],
+  "numerator_from": [
+    "{hscic}.normalised_prescribing p",
+    "FROM hscic.normalised_prescribing p ",
+    "INNER JOIN ",
+    "(SELECT DISTINCT COALESCE (amp.bnf_code, vmp.bnf_code) bnf_code ",
+    "FROM {dmd}.vmp vmp ",
+    "INNER JOIN {dmd}.amp amp ON vmp.id = amp.vmp ",
+    "WHERE vmp.id = 34865511000001109) bnf ",
+    "ON p.bnf_code = bnf.bnf_code"
+   ],
   "denominator_type": "list_size"
 }
