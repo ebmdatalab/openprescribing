@@ -6,7 +6,7 @@
 #
 backports-csv==1.0.7
     # via -r requirements.in
-bcrypt==3.1.7
+bcrypt==3.2.2
     # via paramiko
 beautifulsoup4==4.11.1
     # via -r requirements.in
@@ -295,7 +295,6 @@ selenium==3.141.0
     # via -r requirements.in
 six==1.16.0
     # via
-    #   bcrypt
     #   djangorestframework-csv
     #   fabric3
     #   google-api-core
