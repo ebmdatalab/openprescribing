@@ -1,7 +1,7 @@
 {
   "name": "Prescribing of continuous glucose monitoring sensors",
   "title": "",
-  "description": "Prescribing of continuous glucose monitoring devices per 1000 patients",
+  "description": "Prescribing of continuous glucose monitoring sensors per 1000 patients",
   "numerator_short": "Continuous glucose monitoring sensor quantity",
   "denominator_short": "1000 patients",
   "why_it_matters": [
