@@ -1,11 +1,7 @@
 {
-  "name": "Environmental Impact of Inhalers",
-  "title": [
-    "MDIs prescribed as a proportion of all inhalers, excluding salbutamol"
-  ],
-  "description": [
-    "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol"
-  ],
+  "name": "Environmental Impact of Inhalers - prescribing of non-salbutamol Metered Dose Inhalers (MDIs)",
+  "title": "",
+  "description": "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol",
   "numerator_short": "MDI (Total Items)",
   "denominator_short": "Total Inhalers",
   "why_it_matters": [
@@ -51,22 +47,10 @@
     "03 #Respiratory",
     "~0301011R0 #Salbutamol"
   ],
-  "authored_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2022-05-22"
-  ],
-  "next_review": [
-    "2023-05-22"
-  ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Enviromental%20Inhalers/Environmental%20Inhalers.ipynb"
-  ],
-  "measure_complexity": [
-    "medium"
-  ]
+  "authored_by": "brian.mackenna@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2022-05-22",
+  "next_review": "2023-05-22",
+  "measure_notebook_url":"https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Enviromental%20Inhalers/Environmental%20Inhalers.ipynb",
+  "measure_complexity": "medium"
 }
