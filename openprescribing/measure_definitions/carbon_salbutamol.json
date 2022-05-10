@@ -1,11 +1,7 @@
 {
-  "name": "Average carbon footprint per salbutamol inhaler",
-  "title": [
-    "Average carbon footprint per salbutamol inhaler"
-  ],
-  "description": [
-    "Mean carbon impact (kg CO<sub>2</sub>e) per salbutamol inhaler prescribed"
-  ],
+  "name": "Environmental impact of inhalers - average carbon footprint per salbutamol inhaler",
+  "title": "",
+  "description": "Mean carbon impact (kg CO<sub>2</sub>e) per salbutamol inhaler prescribed",
   "numerator_short": "Carbon impact (kg CO<sub>2</sub>e)",
   "denominator_short": "Salbutamol inhalers",
   "why_it_matters": [
@@ -65,19 +61,9 @@
   "denominator_where": [
      "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC','0301011R0AAAAAA','0301011R0AABZBZ','0301011R0AACBCB','0301011R0AACCCC')"
   ],
-  "authored_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "christopher.wood@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2022-05-22"
-  ],
-  "next_review": [
-    "2022-11-22"
-  ],
-  "measure_complexity": [
-    "high"
-  ]
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2022-05-22",
+  "next_review": "2022-11-22",
+  "measure_complexity": "high"
 }
