@@ -1,27 +1,25 @@
 {
-  "name": "Environmental Impact of Inhalers",
-  "title": [
-    "MDIs prescribed as a proportion of all inhalers, excluding salbutamol"
-  ],
-  "description": [
-    "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol"
-  ],
+  "name": "Environmental impact of inhalers - prescribing of non-salbutamol Metered Dose Inhalers (MDIs)",
+  "title": "",
+  "description": "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol",
   "numerator_short": "MDI (Total Items)",
   "denominator_short": "Total Inhalers",
   "why_it_matters": [
-    "The NHS has <a href='https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf'>committed",
-    "to reducing its carbon footprint by 51% by 2025</a> to meet the target in the Climate Change Act, including a shift to dry powdered",
-    "inhalers (DPI) to deliver a reduction of 4%.  DPIs and other newer types of inhalers like soft mist inhalers are less harmful to the environment than traditional metered",
-    "dose inhalers (MDIs) and the NHS long term plan supports the use of these inhalers where it is clinically appropriate.",
-    "<a href='https://www.nice.org.uk/guidance/ng80/resources/inhalers-for-asthma-patient-decision-aid-pdf-6727144573'>NICE has ",
-    "produced a inhaler decision aid</a> to facilitiate discussion about inhaler options. ",
-    "<p>You can read more about this measure ",
-    "<a href='https://ebmdatalab.net/new-measure-inhalers-and-the-environment/'>on our blog</a>, ",
-    "including the rationale for excluding salbutamol."
+    "The NHS has <a href='https://www.england.nhs.uk/greenernhs/a-net-zero-nhs/'> committed to reducing its carbon footprint by 80% by 2028 to 2032</a>, ",
+    "including a shift to lower carbon inhalers. Dry powder inhalers (DPIs) and other newer types of inhalers like soft ",
+    "mist inhalers are less harmful to the environment than traditional metered dose inhalers (MDIs). </p>",
+    "<p>The 2022-2023 PCN Investment and Impact Fund (IIF) <a href='https://www.england.nhs.uk/publication/network-contract-directed-enhanced-service-investment-and-impact-fund-2022-23-updated-guidance/'>",
+    "includes an indicator</a> focusing on the percentage of non-salbutamol MDI prescriptions issued. NHSE England’s aim is that, in line with best ",
+    "practice in other European countries, by 2023/24 only 25% of non-salbutamol inhalers prescribed will be MDIs.</p>",
+    "<p><a href='https://www.nice.org.uk/guidance/ng80/resources/inhalers-for-asthma-patient-decision-aid-pdf-6727144573'>NICE has ",
+    "produced a inhaler decision aid</a> to facilitiate discussion about inhaler options.</p>",
+    "<b><p>Please note: </b>as prescribing data does not contain patient information, this measure uses prescription items for all ages. ",
+    "This indicator is also calculated using items issued rather than prescriptions issued. The data shown will therefore not exactly match the IIF indicator.</p>"
   ],
   "tags": [
     "core",
     "greenernhs",
+    "iif",
     "nice",
     "respiratory"
   ],  
@@ -37,7 +35,7 @@
   ],
   "numerator_bnf_codes_filter": [
     "03 #Respiratory",
-    "~0301011R0% #Salbutamol"
+    "~0301011R0 #Salbutamol"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_query": [
@@ -49,22 +47,10 @@
     "03 #Respiratory",
     "~0301011R0 #Salbutamol"
   ],
-  "authored_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2021-11-18"
-  ],
-  "next_review": [
-    "2022-06-18"
-  ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Enviromental%20Inhalers/Environmental%20Inhalers.ipynb"
-  ],
-  "measure_complexity": [
-    "medium"
-  ]
+  "authored_by": "brian.mackenna@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2022-05-22",
+  "next_review": "2023-05-22",
+  "measure_notebook_url":"https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Enviromental%20Inhalers/Environmental%20Inhalers.ipynb",
+  "measure_complexity": "medium"
 }
