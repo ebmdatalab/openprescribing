@@ -49,7 +49,7 @@
   "OR vpi.ing = 96306007) --Pravastatin sodium (all strengths) (ing code) \n"
   ],
  "denominator_type": "custom",
-  "denominator_columns": [
+ "denominator_columns": [
     "SUM(p.items) AS denominator"
   ],
  "denominator_from": [
