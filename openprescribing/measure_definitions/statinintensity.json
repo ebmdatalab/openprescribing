@@ -46,7 +46,7 @@
   "OR (vpi.ing = 387584000 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) <80) --Simvastatin (strengths lower than 80mg) (ing code) \n",
   "OR vpi.ing = 108597004 --Cerivastatin sodium (all strengths) (ing code) \n", 
   "OR vpi.ing = 412392009 --Fluvastatin sodium (all strengths) (ing code) \n", 
-  "OR vpi.ing = 96306007) --Pravastatin sodium (all strengths) (ing code) \n"
+  "OR vpi.ing = 96306007) --Pravastatin sodium (all strengths) (ing code)"
   ],
  "denominator_type": "custom",
  "denominator_columns": [
@@ -66,7 +66,7 @@
   "OR vpi.ing = 387584000 --Simvastatin (all strengths) (ing code) \n",
   "OR vpi.ing = 108597004 --Cerivastatin sodium (all strengths) (ing code) \n", 
   "OR vpi.ing = 412392009 --Fluvastatin sodium (all strengths) (ing code) \n", 
-  "OR vpi.ing = 96306007) --Pravastatin sodium (all strengths) (ing code) \n"
+  "OR vpi.ing = 96306007) --Pravastatin sodium (all strengths) (ing code)"
   ],
   "authored_by": [
     ""
