@@ -158,7 +158,7 @@ lxml==4.8.0
     #   -r requirements.in
     #   premailer
     #   pyquery
-lz4==4.0.0
+lz4==4.0.1
     # via -r requirements.in
 markuppy==1.14
     # via tablib
