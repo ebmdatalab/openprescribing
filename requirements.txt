@@ -188,7 +188,7 @@ oauthlib==3.2.0
     # via requests-oauthlib
 odfpy==1.4.1
     # via tablib
-openpyxl==3.0.9
+openpyxl==3.0.10
     # via
     #   -r requirements.in
     #   tablib
