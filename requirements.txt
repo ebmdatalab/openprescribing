@@ -222,7 +222,7 @@ protobuf==3.20.1
     #   googleapis-common-protos
 psycopg2-binary==2.8.6
     # via -r requirements.in
-pyarrow==7.0.0
+pyarrow==8.0.0
     # via
     #   -r requirements.in
     #   db-dtypes
