@@ -5,7 +5,7 @@
   "numerator_short": "Continuous glucose monitoring sensor quantity",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "<p>Continuous glucose monitoring devices (CGM) can significantly reduce the need for people with diabetes to conduct finger-prick testing.</p>",
+    "Continuous glucose monitoring devices (CGM) can significantly reduce the need for people with diabetes to conduct finger-prick testing.</p>",
     "<p>NICE guidance for <a href='https://www.nice.org.uk/guidance/ng17'>Type 1 diabetes in adults</a>, <a href='https://www.nice.org.uk/guidance/ng28'>",
     "Type 2 diabetes in adults</a> and <a href='https://www.nice.org.uk/guidance/ng18'>Type 1 and Type 2 diabetes in children and young people</a> were all ",
     "updated in March 2022. The updates include recommendations that all patients with type 1 diabetes should be offered a choice of real-time continuous ",
@@ -24,11 +24,11 @@
   "numerator_columns": "SUM(p.quantity) AS numerator",
   "numerator_from": [
     "{hscic}.normalised_prescribing p",
-    "INNER JOIN ",
-    "(SELECT DISTINCT COALESCE (amp.bnf_code, vmp.bnf_code) bnf_code ",
-    "FROM {dmd}.vmp vmp ",
-    "INNER JOIN {dmd}.amp amp ON vmp.id = amp.vmp ",
-    "WHERE vmp.id = 34865511000001109) bnf ",
+    "INNER JOIN -- joins prescribing data to subquery below, filtering list to BNF codes created in subquery",
+    "(SELECT DISTINCT COALESCE (amp.bnf_code, vmp.bnf_code) bnf_code -- this creates a subquery to create a list of BNF codes from the VMP codes in WHERE \n ",
+    "FROM {dmd}.vmp vmp -- COALESCE function includes BNF codes from both the AMP and VMP tables (branded and generic), and DISTINCT means they're not duplicated \n",
+    "INNER JOIN {dmd}.amp amp ON vmp.id = amp.vmp -- joins AMP and VMP tables together on VMP code, allowing for BNF codes for branded and generic \n",
+    "WHERE vmp.id = 34865511000001109) bnf -- VMP for Glucose interstitial fluid detection sensor \n",
     "ON p.bnf_code = bnf.bnf_code"
    ],
   "numerator_where": "1 = 1",
