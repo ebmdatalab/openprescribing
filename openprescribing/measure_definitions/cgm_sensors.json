@@ -23,9 +23,9 @@
   "numerator_type": "custom",
   "numerator_columns": "SUM(p.quantity) AS numerator",
   "numerator_from": [
-    "{hscic}.normalised_prescribing p",
-    "INNER JOIN",
-    "(SELECT DISTINCT COALESCE (amp.bnf_code, vmp.bnf_code) bnf_code ",
+    "{hscic}.normalised_prescribing p -- test1 \n",
+    "INNER JOIN -- test2 \n",
+    "(SELECT DISTINCT COALESCE (amp.bnf_code, vmp.bnf_code) bnf_code -- test3 \n",
     "FROM {dmd}.vmp vmp -- COALESCE function includes BNF codes from both the AMP and VMP tables (branded and generic), and DISTINCT means they're not duplicated \n",
     "INNER JOIN {dmd}.amp amp ON vmp.id = amp.vmp -- joins AMP and VMP tables together on VMP code, allowing for BNF codes for branded and generic \n",
     "WHERE vmp.id = 34865511000001109) bnf -- VMP for Glucose interstitial fluid detection sensor \n",
