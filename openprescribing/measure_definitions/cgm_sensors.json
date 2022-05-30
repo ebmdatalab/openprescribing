@@ -24,7 +24,7 @@
   "numerator_columns": "SUM(p.quantity) AS numerator",
   "numerator_from": [
     "{hscic}.normalised_prescribing p",
-    "INNER JOIN -- joins prescribing data to subquery below, filtering list to BNF codes created in subquery",
+    "INNER JOIN -- joins prescribing data to subquery below, filtering list to BNF codes created in subquery \n",
     "(SELECT DISTINCT COALESCE (amp.bnf_code, vmp.bnf_code) bnf_code -- this creates a subquery to create a list of BNF codes from the VMP codes in WHERE \n ",
     "FROM {dmd}.vmp vmp -- COALESCE function includes BNF codes from both the AMP and VMP tables (branded and generic), and DISTINCT means they're not duplicated \n",
     "INNER JOIN {dmd}.amp amp ON vmp.id = amp.vmp -- joins AMP and VMP tables together on VMP code, allowing for BNF codes for branded and generic \n",
