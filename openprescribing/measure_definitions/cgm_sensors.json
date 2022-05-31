@@ -25,10 +25,9 @@
   "numerator_from": [
     "{hscic}.normalised_prescribing p -- joins prescribing data to subquery below, filtering list to BNF codes created in subquery \n",
     "INNER JOIN -- joins the prescribing data table to the subquery thereby filtering the prescribing data to only these codes \n",
-    "(SELECT DISTINCT COALESCE (amp.bnf_code, vmp.bnf_code) bnf_code -- this creates a subquery to create a list of BNF codes from the VMP codes described below \n",
-    "FROM {dmd}.vmp vmp -- COALESCE function includes BNF codes from both the AMP and VMP tables (branded and generic), and DISTINCT means they're not duplicated \n",
-    "INNER JOIN {dmd}.amp amp ON vmp.id = amp.vmp -- joins AMP and VMP tables together on VMP code, allowing for BNF codes for branded and generic \n",
-    "WHERE vmp.id = 34865511000001109) bnf -- VMP for Glucose interstitial fluid detection sensor \n",
+    "(SELECT bnf_code FROM dmd.vmp WHERE id = 34865511000001109 -- selects bnf_codes from vmp table matching VMP id \n",
+    "UNION DISTINCT -- joins vmp and amp tables together \n",
+    "SELECT bnf_code FROM dmd.amp WHERE vmp = 34865511000001109 AND bnf_code IS NOT NULL) bnf -- selects bnf_codes from amp table matching VMP id where they exist \n",
     "ON p.bnf_code = bnf.bnf_code"
    ],
   "numerator_where": "1 = 1",
