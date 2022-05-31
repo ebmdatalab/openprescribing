@@ -32,11 +32,11 @@
   ],
   "numerator_from": "{hscic}.raw_prescribing_normalised",
   "numerator_where": [
-    "(bnf_code LIKE '0501015P0%AB' AND quantity_per_item=10) OR --Pivmecillinam 200mg tablets (brands and generic) 400mg stat then 200mg tds for 3 days\n",
-    "(bnf_code LIKE '0501080W0%AE' AND quantity_per_item=6) OR --Trimethoprim 200mg tablets (brands and generic) 200mg bd for 3 days\n",
-    "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item=12) OR --Nitrofurantoin 50mg capsules (brands and generic) 50mg qds for 3 days \n",
-    "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item=12) OR --Nitrofurantoin 50mg tablets (brands and generic) 50mg qds for 3 days\n",
-    "(bnf_code LIKE '0501130R0%AG%' AND quantity_per_item=6) --Nitrofurantoin 100mg modified-release capsules (brands and generic) 100mg bd for 3 days"
+    "(bnf_code LIKE '0501015P0%AB' AND quantity_per_item<>10) OR --Pivmecillinam 200mg tablets (brands and generic) 400mg stat then 200mg tds for 3 days\n",
+    "(bnf_code LIKE '0501080W0%AE' AND quantity_per_item<>6) OR --Trimethoprim 200mg tablets (brands and generic) 200mg bd for 3 days\n",
+    "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item<>12) OR --Nitrofurantoin 50mg capsules (brands and generic) 50mg qds for 3 days \n",
+    "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item<>12) OR --Nitrofurantoin 50mg tablets (brands and generic) 50mg qds for 3 days\n",
+    "(bnf_code LIKE '0501130R0%AG%' AND quantity_per_item<>6) --Nitrofurantoin 100mg modified-release capsules (brands and generic) 100mg bd for 3 days"
   ],
   "denominator_type": "custom",
   "denominator_columns": [
