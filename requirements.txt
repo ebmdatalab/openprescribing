@@ -113,13 +113,14 @@ google-auth-oauthlib==0.5.1
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-cloud-bigquery==1.28.0
+google-cloud-bigquery==3.1.0
     # via
     #   -r requirements.in
     #   pandas-gbq
-google-cloud-bigquery-storage==1.1.0
+google-cloud-bigquery-storage==2.13.2
     # via
     #   -r requirements.in
+    #   google-cloud-bigquery
     #   pandas-gbq
 google-cloud-core==1.7.2
     # via
@@ -138,7 +139,9 @@ googleapis-common-protos==1.56.2
 graphviz==0.20
     # via -r requirements.in
 grpcio==1.46.3
-    # via google-api-core
+    # via
+    #   google-api-core
+    #   google-cloud-bigquery
 gunicorn==20.0.4
     # via -r requirements.in
 html2text==2020.1.16
@@ -196,6 +199,7 @@ packaging==21.3
     # via
     #   db-dtypes
     #   google-api-core
+    #   google-cloud-bigquery
     #   matplotlib
 pandas==1.4.2
     # via
@@ -215,17 +219,25 @@ pip-tools==6.6.2
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
+proto-plus==1.20.5
+    # via
+    #   google-cloud-bigquery
+    #   google-cloud-bigquery-storage
 protobuf==3.20.1
     # via
     #   google-api-core
+    #   google-cloud-bigquery
+    #   google-cloud-bigquery-storage
     #   google-cloud-storage
     #   googleapis-common-protos
+    #   proto-plus
 psycopg2-binary==2.8.6
     # via -r requirements.in
 pyarrow==8.0.0
     # via
     #   -r requirements.in
     #   db-dtypes
+    #   google-cloud-bigquery
     #   pandas-gbq
 pyasn1==0.4.8
     # via
@@ -255,6 +267,7 @@ pysqlite3-binary==0.4.7.post5
 python-dateutil==2.8.2
     # via
     #   -r requirements.in
+    #   google-cloud-bigquery
     #   matplotlib
     #   pandas
 pytz==2022.1
@@ -275,6 +288,7 @@ requests[security]==2.27.1
     #   -r requirements.in
     #   django-anymail
     #   google-api-core
+    #   google-cloud-bigquery
     #   google-cloud-storage
     #   premailer
     #   requests-futures
@@ -300,7 +314,6 @@ six==1.16.0
     #   google-api-core
     #   google-auth
     #   google-auth-httplib2
-    #   google-cloud-bigquery
     #   google-cloud-core
     #   google-resumable-media
     #   grpcio
