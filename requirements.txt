@@ -203,7 +203,7 @@ pandas==1.4.2
     #   db-dtypes
     #   pandas-gbq
     #   seaborn
-pandas-gbq==0.17.5
+pandas-gbq==0.17.6
     # via -r requirements.in
 paramiko==2.11.0
     # via fabric3
