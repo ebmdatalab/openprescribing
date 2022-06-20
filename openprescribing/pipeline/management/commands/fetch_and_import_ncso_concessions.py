@@ -51,7 +51,7 @@ class Command(BaseCommand):
             self.delete_missing(drugs_and_pack_sizes, date)
 
     def download_archive(self):
-        url = "http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/"
+        url = "https://psnc.org.uk/funding-and-reimbursement/reimbursement/price-concessions/archive/"
         rsp = requests.get(url)
         return bs4.BeautifulSoup(rsp.content, "html.parser")
 
@@ -73,7 +73,7 @@ class Command(BaseCommand):
         self.delete_missing(drugs_and_pack_sizes, date)
 
     def download_current(self):
-        url = "http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/"
+        url = "https://psnc.org.uk/funding-and-reimbursement/reimbursement/price-concessions/"
         rsp = requests.get(url)
         return bs4.BeautifulSoup(rsp.content, "html.parser")
 
