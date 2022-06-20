@@ -17,6 +17,10 @@ from openprescribing.slack import notify_slack
 
 logger = logging.getLogger(__file__)
 
+DEFAULT_HEADERS = {
+    "User-Agent": "OpenPrescribing-Bot (+https://openprescribing.net)",
+}
+
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
@@ -52,7 +56,7 @@ class Command(BaseCommand):
 
     def download_archive(self):
         url = "https://psnc.org.uk/funding-and-reimbursement/reimbursement/price-concessions/archive/"
-        rsp = requests.get(url)
+        rsp = requests.get(url, headers=DEFAULT_HEADERS)
         return bs4.BeautifulSoup(rsp.content, "html.parser")
 
     def import_from_current(self):
@@ -74,7 +78,7 @@ class Command(BaseCommand):
 
     def download_current(self):
         url = "https://psnc.org.uk/funding-and-reimbursement/reimbursement/price-concessions/"
-        rsp = requests.get(url)
+        rsp = requests.get(url, headers=DEFAULT_HEADERS)
         return bs4.BeautifulSoup(rsp.content, "html.parser")
 
     def date_from_heading(self, heading):
