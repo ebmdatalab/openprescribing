@@ -10,6 +10,8 @@ bcrypt==3.2.2
     # via paramiko
 beautifulsoup4==4.11.1
     # via -r requirements.in
+build==0.8.0
+    # via pip-tools
 cachetools==4.2.4
     # via
     #   google-auth
@@ -194,6 +196,7 @@ openpyxl==3.0.10
     #   tablib
 packaging==21.3
     # via
+    #   build
     #   db-dtypes
     #   google-api-core
     #   matplotlib
@@ -208,10 +211,10 @@ pandas-gbq==0.17.6
 paramiko==2.11.0
     # via fabric3
 pep517==0.12.0
-    # via pip-tools
+    # via build
 pillow==9.1.1
     # via matplotlib
-pip-tools==6.6.2
+pip-tools==6.7.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
@@ -318,7 +321,9 @@ tablib[html,ods,xls,xlsx,yaml]==3.1.0
 titlecase==0.12.0
     # via -r requirements.in
 tomli==2.0.1
-    # via pep517
+    # via
+    #   build
+    #   pep517
 unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==4.1.1
