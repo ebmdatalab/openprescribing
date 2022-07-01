@@ -214,7 +214,7 @@ pep517==0.12.0
     # via build
 pillow==9.1.1
     # via matplotlib
-pip-tools==6.7.0
+pip-tools==6.8.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
