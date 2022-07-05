@@ -48,3 +48,6 @@ tmp
 logs
 deploy-log.json
 /diskcache
+
+node_modules/
+openprescribing/static/assets
