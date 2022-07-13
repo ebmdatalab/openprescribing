@@ -123,7 +123,7 @@ google-cloud-bigquery-storage==1.1.0
     # via
     #   -r requirements.in
     #   pandas-gbq
-google-cloud-core==1.7.2
+google-cloud-core==1.7.3
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
