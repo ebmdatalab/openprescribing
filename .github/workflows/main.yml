@@ -36,7 +36,7 @@ jobs:
 
     strategy:
       matrix:
-        browser: [ "IE:11.0:Windows:7" , "Firefox:latest:OS X:Catalina" ]
+        browser: [ "Edge:latest:Windows:10", "Firefox:latest:OS X:Catalina" ]
     steps:
       - name: 'BrowserStack Env Setup'
         uses: 'browserstack/github-actions/setup-env@master'
