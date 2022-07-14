@@ -35,7 +35,7 @@ cssselect==1.1.0
     # via
     #   premailer
     #   pyquery
-cssutils==2.4.2
+cssutils==2.5.0
     # via premailer
 cycler==0.11.0
     # via matplotlib
