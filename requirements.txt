@@ -210,7 +210,7 @@ pandas-gbq==0.17.7
     # via -r requirements.in
 paramiko==2.11.0
     # via fabric3
-pep517==0.12.0
+pep517==0.13.0
     # via build
 pillow==9.2.0
     # via matplotlib
