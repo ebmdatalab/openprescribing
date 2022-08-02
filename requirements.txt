@@ -253,7 +253,7 @@ pyparsing==3.0.9
     #   packaging
 pyquery==1.4.1
     # via -r requirements.in
-pysqlite3-binary==0.4.7.post6
+pysqlite3-binary==0.4.7.post7
     # via -r requirements.in
 python-dateutil==2.8.2
     # via
