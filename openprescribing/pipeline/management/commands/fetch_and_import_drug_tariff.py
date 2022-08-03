@@ -101,6 +101,7 @@ def import_month(rows, date):
         "medicine",
         "packsize",
         "?",
+        "vmpsnomedcode",
         "vmppsnomedcode",
         "drugtariffcategory",
         "basicprice",
