@@ -42,6 +42,7 @@
     "0407020AD%AP     # Oxycodone HCl_Tab 120mg M/R (brands and generic)",
     "0407020AD%AQ     # Oxycodone HCl_Tab 60mg M/R (brands and generic)",
     "0407020AF%AD     # Oxycodone HCl/NaloxoneHCl_Tab 40/20mgM/R (brands and generic)",
+    "0407020AG%AE     # Tapentadol HCl_Tab 150mg M/R (brands and generic)",
     "0407020AG%AF     # Tapentadol HCl_Tab 200mg M/R (brands and generic)",
     "0407020AG%AG     # Tapentadol HCl_Tab 250mg M/R (brands and generic)",
     "0407020B0%AF     # Buprenorphine_Patch 52.5mcg/hr (96hr) (brands and generic)",
@@ -53,13 +54,15 @@
     "0407020Q0%DD     # Morph Sulf_Gran Sach 100mg M/R S/F (brands and generic)",
     "0407020Q0%DE     # Morph Sulf_Gran Sach 200mg M/R S/F (brands and generic)",
     "0407020Q0%DU     # Morph Sulf_Cap 90mg M/R (brands and generic)",
-    "~0407020Q0BIACDU # MXL Cap 60mg",
+    "~0407020Q0BIACDU # MXL Cap 90mg",
     "0407020Q0%DV     # Morph Sulf_Cap 120mg M/R (brands and generic)",
     "0407020Q0%DW     # Morph Sulf_Cap 150mg M/R (brands and generic)",
     "0407020Q0%EB     # Morph Sulf_Cap 100mg M/R (brands and generic)",
     "0407020Q0%EH     # Morph Sulf_Cap 60mg M/R (brands and generic)",
     "~0407020Q0BIABEH # MXL Cap 60mg",
-    "0407020Q0%EI     # Morph Sulf_Cap 200mg M/R (brands and generic)"
+    "0407020Q0%EI     # Morph Sulf_Cap 200mg M/R (brands and generic)",
+    "040702050%AA     # Hydromorphone 16mg modified-release capsules (brands and generic)",
+    "040702050%AB     # Hydromorphone 24mg modified-release capsules (brands and generic)"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
@@ -115,6 +118,11 @@
     "0407020Q0%EG # Morph Sulf_Cap 30mg M/R (brands and generic)",
     "0407020Q0%EH # Morph Sulf_Cap 60mg M/R (brands and generic)",
     "0407020Q0%EI # Morph Sulf_Cap 200mg M/R (brands and generic)",
-    "0407020Q0%FL # Morph Sulf_Gran Sach 15mg M/R (brands and generic)"
+    "0407020Q0%FL # Morph Sulf_Gran Sach 15mg M/R (brands and generic)",
+    "040702050%AF # Hydromorphone 2mg modified-release capsules (brands and generic)",
+    "040702050%AG # Hydromorphone 4mg modified-release capsules (brands and generic)",
+    "040702050%AC # Hydromorphone 8mg modified-release capsules (brands and generic)",
+    "040702050%AA # Hydromorphone 16mg modified-release capsules (brands and generic)",
+    "040702050%AB # Hydromorphone 24mg modified-release capsules (brands and generic)"
   ]
 }
