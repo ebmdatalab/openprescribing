@@ -19,7 +19,7 @@ its old classification, so the Pseudo codes now used by the NHS no
 longer necessarily correspond with official BNF codes at all.
 
 The situation is expected to improve with the introduction of ePACT2
-and the moving of prescribing data to use SNOMED codes as per dm+d.
+and the moving of prescribing data to use SNOMED CT codes as per dm+d.
 
 For the being, this method aims to normalise all codes in our dataset
 so that prescribing is always indexed by the most recent version of
