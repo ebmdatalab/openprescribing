@@ -166,7 +166,7 @@ markuppy==1.14
     # via tablib
 markupsafe==2.1.1
     # via jinja2
-matplotlib==3.5.2
+matplotlib==3.5.3
     # via
     #   -r requirements.in
     #   seaborn
