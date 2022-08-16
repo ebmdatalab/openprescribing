@@ -260,7 +260,7 @@ python-dateutil==2.8.2
     #   -r requirements.in
     #   matplotlib
     #   pandas
-pytz==2022.1
+pytz==2022.2.1
     # via
     #   -r requirements.in
     #   django
