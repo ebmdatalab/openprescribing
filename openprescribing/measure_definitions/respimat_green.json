@@ -1,0 +1,37 @@
+{
+  "name": "Respimat products as refill",
+  "title": [
+    "Respimat products as refill"
+  ],
+  "description": [
+    "Total items of refill respimat products,",
+    "as a proportion of total items of all respimat products"
+  ],
+  "numerator_short": "refill respimat items",
+  "denominator_short": "all respimat",
+  "why_it_matters": [
+    ""
+  ],
+  "tags": [
+    "core"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_filter": [
+    "0301040X0%AB    # Spiolto Respimat 2.5microg/dose / 2.5microg/dose soln refill (brands and generic)",
+    "0301020Q0%AE    # Spiriva Respimat 2.5microg/dose inhalation soln refill cart (brands and generic)",
+    "0206020C0%AD    # Striverdi Respimat 2.5microg/dose inhalation soln refill (brands and generic)"
+  ],
+  "denominator_type": "bnf_items",
+  "denominator_bnf_codes_filter": [
+    "0301040X0%AB    # Spiolto Respimat 2.5microg/dose / 2.5microg/dose soln refill (brands and generic)",
+    "0301020Q0%AE    # Spiriva Respimat 2.5microg/dose inhalation soln refill cart (brands and generic)",
+    "0206020C0%AD    # Striverdi Respimat 2.5microg/dose inhalation soln refill (brands and generic)"
+    "0301040X0%AA 	 # Spiolto Respimat 2.5micrograms/dose / 2.5micrograms/dose inhalation solution cartridge with device (brands and generic)",
+    "0301020Q0%AC	   # Spiriva Respimat 2.5micrograms/dose inhalation solution cartridge with device (brands and generic)",
+    "0301011Z0%AA    # Striverdi Respimat 2.5micrograms/dose inhalation solution cartridge with device (brands and generic)"
+  ]
+}
