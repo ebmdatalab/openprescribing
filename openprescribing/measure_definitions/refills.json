@@ -1,0 +1,25 @@
+{
+  "name": "Inhalers not prescribed as refills",
+  "title": [
+    "Proportion of inhalers which have refills available not prescribed as refills"
+  ],
+  "description": [
+    "Proportion of inhalers which have refills available not prescribed as refillss"
+  ],
+  "numerator_short": "Non-Refill inhalers",
+  "denominator_short": "All inhalers",
+  "why_it_matters": [
+    "tbc"
+  ],
+  "tags": [
+    "core"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_quality",
+  "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM ebmdatalab.measures.vw__refill_device WHERE device_type = 'device'",
+  "denominator_type": "bnf_quality",
+  "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM ebmdatalab.measures.vw__refill_device'"
+}
