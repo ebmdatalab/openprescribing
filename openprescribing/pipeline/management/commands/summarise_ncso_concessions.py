@@ -39,7 +39,7 @@ class Command(BaseCommand):
 
         if num_unmatched_concessions > 0:
             lines.append("")
-            lines.append("To reconcile, tell ebmbot:")
+            lines.append("To reconcile, tell bennett_bot:")
             lines.append("`op ncso reconcile concession [ID] against vmpp [VMPP ID]`")
 
         for c in unmatched_concessions:
