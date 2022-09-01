@@ -4,6 +4,8 @@ require('bootstrap');
 var Fuse = require('../vendor/fuse');
 var domready = require('domready');
 
+var maxPatternLength = 32;
+
 var listFilter = {
 
   setUp: function() {
@@ -21,6 +23,11 @@ var listFilter = {
       } else if (searchTerm === '') {
         r = allItems;
       } else {
+        // If the pattern is too long we're better off truncating it and
+        // returning something than just throwing an error
+        if (searchTerm.length > maxPatternLength) {
+          searchTerm = searchTerm.substring(0, maxPatternLength);
+        }
         r = fuse.search(searchTerm);
       }
       $resultsList.empty();
@@ -42,7 +49,7 @@ var listFilter = {
         threshold: 0.2,
         location: 0,
         distance: 1000,
-        maxPatternLength: 32,
+        maxPatternLength: maxPatternLength,
         keys: ['name', 'code'],
       };
       fuse = new Fuse(allItems, options);
