@@ -199,7 +199,7 @@ packaging==21.3
     #   db-dtypes
     #   google-api-core
     #   matplotlib
-pandas==1.4.3
+pandas==1.4.4
     # via
     #   -r requirements.in
     #   db-dtypes
