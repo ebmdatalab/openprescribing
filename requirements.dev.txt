@@ -14,7 +14,7 @@ mccabe==0.6.1
     # via flake8
 mypy-extensions==0.4.3
     # via black
-pathspec==0.10.0
+pathspec==0.10.1
     # via black
 platformdirs==2.5.2
     # via black
