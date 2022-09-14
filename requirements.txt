@@ -217,7 +217,7 @@ pip-tools==6.8.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
-protobuf==3.20.1
+protobuf==4.21.6
     # via
     #   google-api-core
     #   google-cloud-storage
