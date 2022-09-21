@@ -11,10 +11,6 @@
         "type": "manual_fetch_skip_for_now",
         "source_id": "patient_list_weightings"
     },
-    "fetch_stps": {
-        "type": "manual_fetch_skip_for_now",
-        "source_id": "stp_mapping"
-    },
     "fetch_prescribing": {
         "type": "auto_fetch",
         "source_id": "prescribing",
@@ -87,20 +83,11 @@
     "import_ccg_details": {
         "type": "import",
         "source_id": "ccg_details",
-        "command": "import_org_names --ccg eccg.csv",
+        "command": "import_ccgs --ccg eccg.csv",
         "dependencies": [
             "fetch_ccg_details",
             "import_ccg_boundaries",
             "import_regional_team_details"
-        ]
-    },
-    "import_stps": {
-        "type": "import",
-        "source_id": "stp_mapping",
-        "command": "import_stps --filename *.xslx",
-        "dependencies": [
-            "fetch_stps",
-            "import_ccg_details"
         ]
     },
     "import_adqs": {

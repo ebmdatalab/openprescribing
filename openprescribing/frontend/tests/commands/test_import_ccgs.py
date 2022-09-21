@@ -6,7 +6,7 @@ from frontend.models import PCT, RegionalTeam
 
 def setUpModule():
     RegionalTeam.objects.create(code="Y54")
-    PCT.objects.create(code="06F", name="NHS Bedfordshire")
+    PCT.objects.create(code="00C", name="NHS OLD NAME CCG")
 
 
 def tearDownModule():
@@ -14,18 +14,22 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
-    def test_import_org_names(self):
-
-        args = []
-        opts = {"ccg": "frontend/tests/fixtures/commands/eccg.csv"}
-        call_command("import_org_names", *args, **opts)
+    def test_import_ccgs(self):
+        call_command("import_ccgs", ccg="frontend/tests/fixtures/commands/eccg.csv")
 
         ccgs = PCT.objects.filter(org_type="CCG")
         self.assertEqual(ccgs.count(), 3)
         ccg = PCT.objects.get(code="00C")
-        self.assertEqual(ccg.name, "NHS DARLINGTON CCG")
+        # Check that the CCG's name has not changed
+        self.assertEqual(ccg.name, "NHS OLD NAME CCG")
         address = "DR PIPER HOUSE, KING STREET, DARLINGTON, COUNTY DURHAM"
         self.assertEqual(ccg.address, address)
         self.assertEqual(ccg.postcode, "DL3 6JL")
         self.assertEqual(ccg.open_date, datetime.date(2013, 4, 1))
         self.assertEqual(ccg.close_date, None)
+        self.assertEqual(ccg.regional_team.code, "Y54")
+        self.assertEqual(ccg.stp.code, "Q74")
+
+        # Check that a newly-created CCG's name is set
+        new_ccg = PCT.objects.get(code="00D")
+        self.assertEqual(new_ccg.name, "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG")
