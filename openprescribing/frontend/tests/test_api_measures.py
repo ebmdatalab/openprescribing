@@ -116,7 +116,7 @@ class TestAPIMeasureViews(ApiTestBase):
 
     def test_api_measure_numerators_by_stp(self):
         url = "/api/1.0/measure_numerators_by_org/"
-        url += "?measure=cerazette&org=E00000001&format=json&org_type=stp"
+        url += "?measure=cerazette&org=E01&format=json&org_type=stp"
         data = self._get_json(url)
         self.assertEqual(
             data,

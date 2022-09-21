@@ -100,18 +100,18 @@ class TestAPIOrgViews(TestCase):
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
         self.assertEqual(len(content), 1)
-        self.assertEqual(content[0]["code"], "E54000020")
+        self.assertEqual(content[0]["code"], "E55")
         self.assertEqual(content[0]["name"], "Northamptonshire")
 
     def test_stp_exact_match(self):
-        url = "{}/org_code?q=E54000006&format=json&org_type=stp&exact=true".format(
+        url = "{}/org_code?q=E54&format=json&org_type=stp&exact=true".format(
             self.api_prefix
         )
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
         self.assertEqual(len(content), 1)
-        self.assertEqual(content[0]["code"], "E54000006")
+        self.assertEqual(content[0]["code"], "E54")
         self.assertEqual(content[0]["name"], "Humber, Coast and Vale")
 
     def test_regional_team_inexact_match(self):

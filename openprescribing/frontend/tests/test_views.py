@@ -185,7 +185,7 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(len(ccgs), 1)
 
     def test_call_stp_homepage(self):
-        response = self.client.get("/stp/E00000001/")
+        response = self.client.get("/stp/E01/")
         doc = pq(response.content)
         ccgs = doc(".ccg-list li")
         self.assertEqual(len(ccgs), 1)
@@ -237,7 +237,7 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, "closed_entity_home_page.html")
 
     def test_call_view_stp_homepage_no_prescribing(self):
-        response = self.client.get("/stp/E54000020/")
+        response = self.client.get("/stp/E55/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "closed_entity_home_page.html")
 

@@ -102,10 +102,7 @@ class RegionalTeam(models.Model):
 
 
 class STP(models.Model):
-    ons_code = models.CharField(max_length=9, primary_key=True)
-    code = models.CharField(
-        max_length=3, null=True, unique=True
-    )  # TODO make this the PK
+    code = models.CharField(max_length=3, primary_key=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     regional_team = models.ForeignKey(RegionalTeam, null=True, on_delete=models.PROTECT)
 
@@ -119,10 +116,6 @@ class STP(models.Model):
     @property
     def name_and_status(self):
         return self.cased_name
-
-    @property
-    def code(self):
-        return self.ons_code
 
     def get_absolute_url(self):
         return reverse("stp_home_page", kwargs={"stp_code": self.code})
