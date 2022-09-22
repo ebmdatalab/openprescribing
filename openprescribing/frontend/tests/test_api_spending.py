@@ -538,7 +538,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "date": "2013-08-01",
                 "items": "1",
                 "quantity": "28.0",
-                "row_id": "E54000006",
+                "row_id": "E54",
                 "row_name": "Humber, Coast and Vale",
             },
         )
@@ -549,13 +549,13 @@ class TestSpendingByOrg(ApiTestBase):
                 "date": "2013-08-01",
                 "items": "1",
                 "quantity": "23.0",
-                "row_id": "E54000020",
+                "row_id": "E55",
                 "row_name": "Northamptonshire",
             },
         )
 
     def test_spending_by_one_stp_on_chapter(self):
-        rows = self._get_rows({"org_type": "stp", "org": "E54000020", "code": "02"})
+        rows = self._get_rows({"org_type": "stp", "org": "E55", "code": "02"})
         self.assertEqual(len(rows), 5)
         self.assertEqual(
             rows[-1],
@@ -564,7 +564,7 @@ class TestSpendingByOrg(ApiTestBase):
                 "date": "2014-11-01",
                 "items": "96",
                 "quantity": "5143.0",
-                "row_id": "E54000020",
+                "row_id": "E55",
                 "row_name": "Northamptonshire",
             },
         )

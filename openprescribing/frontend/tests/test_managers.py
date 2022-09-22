@@ -27,11 +27,11 @@ class MeasureValueManagerTests(TestCase):
         self.assertEqual(len(mvs), 2)
 
     def test_by_stp_with_org(self):
-        mvs = MeasureValue.objects.by_org("stp", "stp", ["E00000001"])
+        mvs = MeasureValue.objects.by_org("stp", "stp", ["E01"])
         self.assertEqual(len(mvs), 1)
 
     def test_by_stp_with_orgs(self):
-        mvs = MeasureValue.objects.by_org("stp", "stp", ["E00000001", "E00000002"])
+        mvs = MeasureValue.objects.by_org("stp", "stp", ["E01", "E02"])
         self.assertEqual(len(mvs), 2)
 
     def test_by_ccg_with_no_org(self):

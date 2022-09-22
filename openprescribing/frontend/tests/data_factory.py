@@ -75,7 +75,7 @@ class DataFactory(object):
     def create_stp(self):
         index = self.next_id()
         return STP.objects.create(
-            name="STP {}".format(index), ons_code="E000{:02}".format(index)
+            name="STP {}".format(index), code="E{:02}".format(index)
         )
 
     def create_regional_team(self):

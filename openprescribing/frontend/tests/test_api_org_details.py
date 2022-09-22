@@ -179,12 +179,12 @@ class TestAPIOrgDetailsViews(ApiTestBase):
 
     def test_api_view_org_details_one_stp(self):
         url = self.api_prefix
-        url += "/org_details?format=csv&org_type=stp&org=E54000020"
+        url += "/org_details?format=csv&org_type=stp&org=E55"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)
-        self.assertEqual(rows[0]["row_id"], "E54000020")
+        self.assertEqual(rows[0]["row_id"], "E55")
         self.assertEqual(rows[0]["row_name"], "Northamptonshire")
         self.assertEqual(rows[0]["date"], "2015-01-01")
         self.assertEqual(rows[0]["astro_pu_cost"], "363.3")

@@ -327,7 +327,7 @@ class ImportMeasuresTests(TestCase):
             numerators,
             denominators,
             "stp",
-            STP.objects.values_list("ons_code", flat=True),
+            STP.objects.values_list("code", flat=True),
         )
         self.validate_measure_global(mg, stps, "stp")
         mvs = MeasureValue.objects.filter_by_org_type("stp").filter(month=month)
@@ -673,7 +673,7 @@ def create_organisations(random):
 
         for stp_ix in range(5):
             stp = STP.objects.create(
-                ons_code="E000000{}{}".format(regtm_ix, stp_ix),
+                code="E{}{}".format(regtm_ix, stp_ix),
                 name="STP {}/{}".format(regtm_ix, stp_ix),
             )
 

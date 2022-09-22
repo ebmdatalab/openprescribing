@@ -1,4 +1,4 @@
 SELECT
-    ons_code AS id,
+    code AS id,
     name
 FROM {hscic}.stps

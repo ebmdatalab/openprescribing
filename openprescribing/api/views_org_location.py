@@ -60,8 +60,8 @@ def _get_pcns(org_codes, centroids):
 def _get_stps(org_codes, centroids):
     results = STP.objects.all()
     if org_codes:
-        results = results.filter(ons_code__in=org_codes)
-    return results.values("name", "ons_code", geometry=Union("pct__boundary"))
+        results = results.filter(code__in=org_codes)
+    return results.values("name", "code", geometry=Union("pct__boundary"))
 
 
 def _get_regional_teams(org_codes, centroids):

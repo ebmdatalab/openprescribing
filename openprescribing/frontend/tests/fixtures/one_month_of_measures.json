@@ -15,14 +15,14 @@
   },
   {
     "model": "frontend.stp",
-    "pk": "E00000001",
+    "pk": "E01",
     "fields": {
       "name": "STP A"
     }
   },
   {
     "model": "frontend.stp",
-    "pk": "E00000002",
+    "pk": "E02",
     "fields": {
       "name": "STP B"
     }
@@ -35,7 +35,7 @@
       "name": "NHS BASSETLAW CCG",
       "org_type": "CCG",
       "regional_team": "Y01",
-      "stp": "E00000001",
+      "stp": "E01",
       "boundary": null,
       "open_date": null,
       "close_date": null,
@@ -51,7 +51,7 @@
       "name": "NHS LINCOLNSHIRE EAST CCG",
       "org_type": "CCG",
       "regional_team": "Y01",
-      "stp": "E00000001",
+      "stp": "E01",
       "boundary": null,
       "open_date": "2013-04-01",
       "close_date": "2015-01-01",
@@ -67,7 +67,7 @@
       "name": "NHS LINCOLNSHIRE WEST CCG",
       "org_type": "CCG",
       "regional_team": "Y02",
-      "stp": "E00000002",
+      "stp": "E02",
       "boundary": null,
       "open_date": null,
       "close_date": null,
@@ -687,7 +687,7 @@
     "model": "frontend.measurevalue",
     "fields": {
       "measure": "cerazette",
-      "stp": "E00000001",
+      "stp": "E01",
       "month": "2015-09-01",
       "numerator": 2000,
       "denominator": 17000,
@@ -710,7 +710,7 @@
     "model": "frontend.measurevalue",
     "fields": {
       "measure": "cerazette",
-      "stp": "E00000002",
+      "stp": "E02",
       "month": "2015-09-01",
       "numerator": 2000,
       "denominator": 17000,

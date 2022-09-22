@@ -246,9 +246,9 @@ class MeasuresTests(SeleniumTestCase):
         )
 
     def test_stp_home_page(self):
-        self._get("/stp/E00000000/")
+        self._get("/stp/E00/")
 
-        stp = STP.objects.get(ons_code="E00000000")
+        stp = STP.objects.get(code="E00")
         mvs = MeasureValue.objects.filter_by_org_type("stp").filter(stp=stp)
         extreme_measure = _get_extreme_measure(mvs)
 
@@ -257,7 +257,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             ".measure-panel-title",
             extreme_measure.name,
-            "/measure/{}/stp/E00000000/".format(extreme_measure.id),
+            "/measure/{}/stp/E00/".format(extreme_measure.id),
         )
 
         panel_element = self._find_measure_panel("lpzomnibus-container")
@@ -265,7 +265,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             ".measure-panel-title",
             "LP omnibus measure",
-            "/measure/lpzomnibus/stp/E00000000/",
+            "/measure/lpzomnibus/stp/E00/",
         )
 
     def test_regional_team_home_page(self):
@@ -678,26 +678,26 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_num_elements(panel_element, ".inner li", 4)
 
     def test_measures_for_one_stp(self):
-        self._get("/stp/E00000000/measures/")
+        self._get("/stp/E00/measures/")
 
         panel_element = self._find_measure_panel("measure_core_0")
         self._verify_link(
             panel_element,
             ".measure-panel-title",
             "Core measure 0",
-            "/measure/core_0/stp/E00000000/",
+            "/measure/core_0/stp/E00/",
         )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
             "Break the overall score down into individual presentations",
-            "/measure/core_0/stp/E00000000/",
+            "/measure/core_0/stp/E00/",
         )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
             "Split the measure into charts for individual CCGs",
-            "/stp/E00000000/core_0/",
+            "/stp/E00/core_0/",
         )
         self._verify_link(
             panel_element,
@@ -724,25 +724,25 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             ".measure-panel-title",
             "LP omnibus measure",
-            "/measure/lpzomnibus/stp/E00000000/",
+            "/measure/lpzomnibus/stp/E00/",
         )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
             "Break it down into its constituent measures.",
-            "/stp/E00000000/measures/?tags=lowpriority",
+            "/stp/E00/measures/?tags=lowpriority",
         )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
             "Break the overall score down into individual presentations",
-            "/measure/lpzomnibus/stp/E00000000/",
+            "/measure/lpzomnibus/stp/E00/",
         )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
             "Split the measure into charts for individual CCGs",
-            "/stp/E00000000/lpzomnibus/",
+            "/stp/E00/lpzomnibus/",
         )
         self._verify_link(
             panel_element,
@@ -950,24 +950,24 @@ class MeasuresTests(SeleniumTestCase):
     def test_measure_for_all_stps(self):
         self._get("/measure/core_0/stp/")
 
-        panel_element = self._find_measure_panel("stp_E00000000")
+        panel_element = self._find_measure_panel("stp_E00")
         self._verify_link(
             panel_element,
             ".measure-panel-title",
-            "E00000000: STP 0/0",
-            "/stp/E00000000/measures/",
+            "E00: STP 0/0",
+            "/stp/E00/measures/",
         )
         self._verify_link(
             panel_element,
             ".explanation li:nth-child(1)",
             "Split the measure into charts for individual CCGs",
-            "/stp/E00000000/core_0/",
+            "/stp/E00/core_0/",
         )
         self._verify_link(
             panel_element,
             ".explanation li:nth-child(2)",
             "Break the overall score down into individual presentations",
-            "/measure/core_0/stp/E00000000/",
+            "/measure/core_0/stp/E00/",
         )
         self._verify_link(
             panel_element,
@@ -1143,20 +1143,20 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_measure_for_one_stp(self):
-        self._get("/measure/lp_2/stp/E00000000/")
+        self._get("/measure/lp_2/stp/E00/")
 
         panel_element = self._find_measure_panel("measure_lp_2")
         self._verify_link(
             panel_element,
             ".measure-panel-title",
             "LP measure 2",
-            "/measure/lp_2/stp/E00000000/",
+            "/measure/lp_2/stp/E00/",
         )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
             "Split the measure into charts for individual CCGs",
-            "/stp/E00000000/lp_2/",
+            "/stp/E00/lp_2/",
         )
         self._verify_link(
             panel_element,
@@ -1251,7 +1251,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_num_elements(panel_element, ".explanation li", 1)
 
     def test_measure_for_ccgs_in_stp(self):
-        self._get("/stp/E00000000/lp_2/")
+        self._get("/stp/E00/lp_2/")
 
         panel_element = self._find_measure_panel("ccg_AAA")
         self._verify_link(
@@ -1555,26 +1555,26 @@ class MeasuresTests(SeleniumTestCase):
         )
 
         # measure_for_one_stp
-        self._get("/measure/core_0/stp/{}/".format(s1.ons_code))
+        self._get("/measure/core_0/stp/{}/".format(s1.code))
         perf_element = self.find_by_xpath(
             "//*[@id='measure_core_0']//strong[text()='Performance:']/.."
         )
         self.assertIn(s1_exp_text, perf_element.text)
 
-        self._get("/measure/core_0/stp/{}/".format(s2.ons_code))
+        self._get("/measure/core_0/stp/{}/".format(s2.code))
         perf_element = self.find_by_xpath(
             "//*[@id='measure_core_0']//strong[text()='Performance:']/.."
         )
         self.assertIn(s2_exp_text, perf_element.text)
 
-        self._get("/measure/core_0/stp/{}/".format(s3.ons_code))
+        self._get("/measure/core_0/stp/{}/".format(s3.code))
         perf_element = self.find_by_xpath(
             "//*[@id='measure_core_0']//strong[text()='Performance:']/.."
         )
         self.assertIn(s3_exp_text, perf_element.text)
 
         # measures_for_one_stp
-        self._get("/stp/{}/measures/".format(s1.ons_code))
+        self._get("/stp/{}/measures/".format(s1.code))
         perf_element = self.find_by_xpath(
             "//*[@id='measure_core_0']//strong[text()='Performance:']/.."
         )
@@ -1582,12 +1582,12 @@ class MeasuresTests(SeleniumTestCase):
 
         # measure_for_all_stps
         self._get("/measure/core_0/stp/")
-        panel_element = self._find_measure_panel("stp_{}".format(s1.ons_code))
+        panel_element = self._find_measure_panel("stp_{}".format(s1.code))
         perf_element = panel_element.find_element_by_class_name("explanation")
         self.assertIn(s1_exp_text, perf_element.text)
 
         # stp_home_page
-        self._get("/stp/{}/".format(s1.ons_code))
+        self._get("/stp/{}/".format(s1.code))
         panel_element = self._find_measure_panel("top-measure-container")
         perf_element = panel_element.find_element_by_class_name("explanation")
         self.assertIn(s1_exp_text, perf_element.text)
@@ -1793,7 +1793,7 @@ class MeasuresTests(SeleniumTestCase):
         else:
             assert False, "Could not find STP with cost saving!"
 
-        self._get("/stp/{}/core_0/".format(r.ons_code))
+        self._get("/stp/{}/core_0/".format(r.code))
         # Use `contains()` to ensure that loading has finished by the time we access the element
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
@@ -1930,7 +1930,7 @@ class MeasuresTests(SeleniumTestCase):
         else:
             assert False, "Could not find STP with cost saving!"
 
-        self._get("/stp/{}/measures/".format(r.ons_code))
+        self._get("/stp/{}/measures/".format(r.code))
         # Use `contains()` to ensure that loading has finished by the time we access the element
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
