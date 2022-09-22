@@ -178,6 +178,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "frontend.middleware.stp_redirect_middleware",
 )
 # END MIDDLEWARE CONFIGURATION
 

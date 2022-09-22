@@ -1,0 +1,61 @@
+from django.core.management import BaseCommand
+from django.db import transaction
+from frontend.models import STP
+
+mapping = [
+    ("QE1", "E54000048"),  # LANCASHIRE AND SOUTH CUMBRIA
+    ("QF7", "E54000009"),  # SOUTH YORKSHIRE
+    ("QGH", "E54000019"),  # HEREFORDSHIRE AND WORCESTERSHIRE
+    ("QH8", "E54000026"),  # MID AND SOUTH ESSEX
+    ("QHG", "E54000024"),  # BEDFORDSHIRE, LUTON AND MILTON KEYNES
+    ("QHL", "E54000017"),  # BIRMINGHAM AND SOLIHULL
+    ("QHM", "E54000050"),  # NORTH EAST AND NORTH CUMBRIA
+    ("QJ2", "E54000012"),  # DERBY AND DERBYSHIRE
+    ("QJG", "E54000023"),  # SUFFOLK AND NORTH EAST ESSEX
+    ("QJK", "E54000037"),  # DEVON
+    ("QJM", "E54000013"),  # LINCOLNSHIRE
+    ("QK1", "E54000015"),  # LEICESTER, LEICESTERSHIRE AND RUTLAND
+    ("QKK", "E54000030"),  # SOUTH EAST LONDON
+    ("QKS", "E54000032"),  # KENT AND MEDWAY
+    ("QM7", "E54000025"),  # HERTFORDSHIRE AND WEST ESSEX
+    ("QMF", "E54000029"),  # NORTH EAST LONDON
+    ("QMJ", "E54000028"),  # NORTH CENTRAL LONDON
+    ("QMM", "E54000022"),  # NORFOLK AND WAVENEY
+    ("QNC", "E54000010"),  # STAFFORDSHIRE AND STOKE-ON-TRENT
+    ("QNQ", "E54000034"),  # FRIMLEY
+    ("QNX", "E54000053"),  # SUSSEX
+    ("QOC", "E54000011"),  # SHROPSHIRE, TELFORD AND WREKIN
+    ("QOP", "E54000007"),  # GREATER MANCHESTER
+    ("QOQ", "E54000051"),  # HUMBER AND NORTH YORKSHIRE
+    ("QOX", "E54000040"),  # BATH AND NORTH EAST SOMERSET, SWINDON AND WILTSHIRE
+    ("QPM", "E54000020"),  # NORTHAMPTONSHIRE
+    ("QR1", "E54000043"),  # GLOUCESTERSHIRE
+    ("QRL", "E54000042"),  # HAMPSHIRE AND ISLE OF WIGHT
+    ("QRV", "E54000027"),  # NORTH WEST LONDON
+    ("QSL", "E54000038"),  # SOMERSET
+    ("QT1", "E54000014"),  # NOTTINGHAM AND NOTTINGHAMSHIRE
+    ("QT6", "E54000036"),  # CORNWALL AND THE ISLES OF SCILLY
+    ("QU9", "E54000044"),  # BUCKINGHAMSHIRE, OXFORDSHIRE AND BERKSHIRE WEST
+    ("QUA", "E54000016"),  # BLACK COUNTRY
+    ("QUE", "E54000021"),  # CAMBRIDGESHIRE AND PETERBOROUGH
+    ("QUY", "E54000039"),  # BRISTOL, NORTH SOMERSET AND SOUTH GLOUCESTERSHIRE
+    ("QVV", "E54000041"),  # DORSET
+    ("QWE", "E54000031"),  # SOUTH WEST LONDON
+    ("QWO", "E54000054"),  # WEST YORKSHIRE
+    ("QWU", "E54000018"),  # COVENTRY AND WARWICKSHIRE
+    ("QXU", "E54000052"),  # SURREY HEARTLANDS
+    ("QYG", "E54000008"),  # CHESHIRE AND MERSEYSIDE
+]
+
+
+class Command(BaseCommand):
+    help = """
+    This is a one-off command to import the old STP ONS codes, to allow us to redirect
+    from old URLs.  The mapping was derived by eyeballing the old STP names and new ICB
+    names.
+    """
+
+    @transaction.atomic
+    def handle(self, **kwargs):
+        for ods_code, ons_code in mapping:
+            STP.objects.filter(code=ods_code).update(ons_code=ons_code)
