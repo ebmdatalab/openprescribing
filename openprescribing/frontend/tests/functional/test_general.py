@@ -29,8 +29,8 @@ class GeneralFrontendTest(SeleniumTestCase):
 
     def test_menu_dropdown(self):
         for url in [
-            "/ccg/03Q/",
-            "/ccg/03Q/measures/",
+            "/sicbl/03Q/",
+            "/sicbl/03Q/measures/",
             "/practice/P87629/",
             "/measure/cerazette/",
             "/chemical/0202010D0/",
@@ -53,7 +53,7 @@ class GeneralFrontendTest(SeleniumTestCase):
 
     def test_message_and_action(self):
         for url in [
-            "/ccg/03Q/",
+            "/sicbl/03Q/",
             "/practice/P87629/",
             "/measure/cerazette/",
             "/chemical/0202010D0/",
@@ -96,7 +96,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         self.find_by_xpath('//ul[@id="select2-orgIds-results"]//li')
 
     def test_ccg_measures_sorting(self):
-        url = self.live_server_url + "/ccg/02Q/measures/"
+        url = self.live_server_url + "/sicbl/02Q/measures/"
         self.browser.get(url)
         # The default should be sorting by percentile, then id
         self.assertEqual(
@@ -118,7 +118,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         )
 
     def test_ccg_measures_tags(self):
-        url = self.live_server_url + "/ccg/02Q/measures/?tags=foobar"
+        url = self.live_server_url + "/sicbl/02Q/measures/?tags=foobar"
         self.browser.get(url)
         # nothing is tagged foobar, so should return the text expected
         # when no measures are shown
@@ -128,7 +128,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         self.assertTrue(self.find_by_xpath("//p[contains(text(), 'Unrecognised tag')]"))
 
     def test_ccg_measures_explore_link(self):
-        url = self.live_server_url + "/ccg/02Q/measures/"
+        url = self.live_server_url + "/sicbl/02Q/measures/"
         self.browser.get(url)
         measure = self.find_by_xpath("//div[@id='measure_keppra']")
         self.assertIn(
@@ -138,7 +138,7 @@ class GeneralFrontendTest(SeleniumTestCase):
             ),
         )
         self.assertIn(
-            "/ccg/02Q/keppra",
+            "/sicbl/02Q/keppra",
             measure.find_element_by_partial_link_text(
                 "Split the measure"
             ).get_attribute("href"),

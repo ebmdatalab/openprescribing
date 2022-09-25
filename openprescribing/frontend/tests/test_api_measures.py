@@ -207,7 +207,7 @@ class TestAPIMeasureViews(ApiTestBase):
         )
 
     def test_api_measure_by_ccg(self):
-        url = "/api/1.0/measure_by_ccg/"
+        url = "/api/1.0/measure_by_sicbl/"
         url += "?org=02Q&measure=cerazette&format=json"
         data = self._get_json(url)
         self.assertEqual(len(data["measures"][0]["data"]), 1)
@@ -224,26 +224,26 @@ class TestAPIMeasureViews(ApiTestBase):
         self.assertEqual(d["org_name"], "NHS BASSETLAW CCG")
 
     def test_api_two_ccgs_one_measure(self):
-        url = "/api/1.0/measure_by_ccg/"
+        url = "/api/1.0/measure_by_sicbl/"
         url += "?org=02Q,02Q&measure=cerazette&format=json"
         data = self._get_json(url)
         self.assertEqual(len(data["measures"][0]["data"]), 1)
 
     def test_api_two_measures_one_ccg(self):
-        url = "/api/1.0/measure_by_ccg/"
+        url = "/api/1.0/measure_by_sicbl/"
         url += "?org=02Q&measure=cerazette,cerazette2&format=json"
         data = self._get_json(url)
         self.assertEqual(len(data["measures"][0]["data"]), 1)
 
     def test_api_two_measures_two_ccgs(self):
         # This is invalid and should return an error
-        url = "/api/1.0/measure_by_ccg/"
+        url = "/api/1.0/measure_by_sicbl/"
         url += "?org=02Q,XYZ&measure=cerazette,cerazette2&format=json"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 400)
 
     def test_api_measure_by_ccg_excludes_closed(self):
-        url = "/api/1.0/measure_by_ccg/"
+        url = "/api/1.0/measure_by_sicbl/"
         url += "?org=02Q&measure=cerazette&format=json"
         pct = PCT.objects.get(pk="02Q")
         pct.close_date = datetime.date(2001, 1, 1)
@@ -252,7 +252,7 @@ class TestAPIMeasureViews(ApiTestBase):
         self.assertFalse(data["measures"])
 
     def test_api_all_measures_by_ccg(self):
-        url = "/api/1.0/measure_by_ccg/"
+        url = "/api/1.0/measure_by_sicbl/"
         url += "?org=02Q&format=json"
         data = self._get_json(url)
         self.assertEqual(len(data["measures"][0]["data"]), 1)
@@ -264,7 +264,7 @@ class TestAPIMeasureViews(ApiTestBase):
         self.assertEqual("%.4f" % d["calc_value"], "0.5734")
 
     def test_api_all_measures_by_ccg_csv(self):
-        url = "/measure_by_ccg/?org=02Q&format=csv"
+        url = "/measure_by_sicbl/?org=02Q&format=csv"
         rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["measure"], "cerazette")
@@ -367,7 +367,7 @@ class TestAPIMeasureViews(ApiTestBase):
         self.assertEqual(response.status_code, 400)
 
     def test_api_measure_by_all_ccgs_aggregated(self):
-        url = "/api/1.0/measure_by_ccg/"
+        url = "/api/1.0/measure_by_sicbl/"
         url += "?measure=cerazette&aggregate=true&format=json"
         data = self._get_json(url)
         self.assertEqual(len(data["measures"][0]["data"]), 1)

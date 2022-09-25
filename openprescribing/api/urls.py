@@ -13,7 +13,7 @@ urlpatterns = [
     path(r"bubble/", views_spending.bubble, name="bubble"),
     path(r"tariff/", views_spending.tariff, name="tariff_api"),
     path(
-        r"spending_by_ccg/",
+        r"spending_by_sicbl/",
         views_spending.spending_by_org,
         name="spending_by_ccg",
         kwargs={"org_type": "ccg"},
@@ -26,13 +26,13 @@ urlpatterns = [
     ),
     path(r"spending_by_org/", views_spending.spending_by_org, name="spending_by_org"),
     path(r"measure/", views_measures.measure_global, name="measure"),
-    path(r"measure_by_stp/", views_measures.measure_by_stp, name="measure_by_stp"),
+    path(r"measure_by_icb/", views_measures.measure_by_stp, name="measure_by_stp"),
     path(
         r"measure_by_regional_team/",
         views_measures.measure_by_regional_team,
         name="measure_by_regional_team",
     ),
-    path(r"measure_by_ccg/", views_measures.measure_by_ccg, name="measure_by_ccg"),
+    path(r"measure_by_sicbl/", views_measures.measure_by_ccg, name="measure_by_ccg"),
     path(r"measure_by_pcn/", views_measures.measure_by_pcn, name="measure_by_pcn"),
     path(
         r"measure_numerators_by_org/",

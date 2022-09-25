@@ -1549,12 +1549,12 @@ def _url_template(view_name):
     the browser.
 
     >>> _url_template("measure_for_one_ccg")
-    '/measure/{measure}/ccg/{entity_code}/'
+    '/measure/{measure}/sicbl/{entity_code}/'
     """
 
     resolver = get_resolver()
 
-    # For the example above, `pattern` is "measure/%(measure)s/ccg/%(entity_code)s/"
+    # For the example above, `pattern` is "measure/%(measure)s/sicbl/%(entity_code)s/"
     pattern = resolver.reverse_dict[view_name][0][0][0]
     return "/" + pattern.replace("%(", "{").replace(")s", "}")
 

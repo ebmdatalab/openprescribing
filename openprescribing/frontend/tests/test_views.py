@@ -37,7 +37,7 @@ class TestAlertViews(TestCase):
         if entity_id == "all_england":
             url = "/national/england/"
         elif len(entity_id) == 3:
-            url = "/ccg/%s/" % entity_id
+            url = "/sicbl/%s/" % entity_id
             form_data["pct_id"] = entity_id
         else:
             url = "/practice/%s/" % entity_id
@@ -75,7 +75,7 @@ class TestAlertViews(TestCase):
     def test_ccg_email_sent(self):
         email = "a@a.com"
         response = self._post_org_signup("03V", email=email)
-        self.assertRedirects(response, "/ccg/03V/measures/")
+        self.assertRedirects(response, "/sicbl/03V/measures/")
         self.assertContains(response, "alerts about prescribing in NHS Corby.")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(email, mail.outbox[0].to)
@@ -185,13 +185,13 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(len(ccgs), 1)
 
     def test_call_stp_homepage(self):
-        response = self.client.get("/stp/E01/")
+        response = self.client.get("/icb/E01/")
         doc = pq(response.content)
         ccgs = doc(".ccg-list li")
         self.assertEqual(len(ccgs), 1)
 
     def test_call_view_ccg_homepage(self):
-        response = self.client.get("/ccg/02Q/")
+        response = self.client.get("/sicbl/02Q/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "entity_home_page.html")
         self.assertEqual(response.context["measure"].id, "cerazette")
@@ -237,12 +237,12 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, "closed_entity_home_page.html")
 
     def test_call_view_stp_homepage_no_prescribing(self):
-        response = self.client.get("/stp/E55/")
+        response = self.client.get("/icb/E55/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "closed_entity_home_page.html")
 
     def test_call_view_ccg_homepage_no_prescribing(self):
-        response = self.client.get("/ccg/03X/")
+        response = self.client.get("/sicbl/03X/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "closed_entity_home_page.html")
 
@@ -375,7 +375,7 @@ class TestFrontendViews(TestCase):
         )
 
     def test_call_view_ccg_all(self):
-        response = self.client.get("/ccg/")
+        response = self.client.get("/sicbl/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "all_ccgs.html")
         doc = pq(response.content)
@@ -385,12 +385,12 @@ class TestFrontendViews(TestCase):
         self.assertEqual(len(ccgs), 2)
 
     def test_ccg_homepage_redirects_with_tags_query(self):
-        response = self.client.get("/ccg/03V/?tags=lowpriority")
+        response = self.client.get("/sicbl/03V/?tags=lowpriority")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["Location"], "/ccg/03V/measures/?tags=lowpriority")
+        self.assertEqual(response["Location"], "/sicbl/03V/measures/?tags=lowpriority")
 
     def test_call_single_measure_for_ccg(self):
-        response = self.client.get("/measure/cerazette/ccg/03V/")
+        response = self.client.get("/measure/cerazette/sicbl/03V/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "measure_for_one_entity.html")
 
@@ -427,7 +427,7 @@ class TestFrontendViews(TestCase):
         self.assertTemplateUsed(response, "measure_for_one_entity.html")
 
     def test_call_view_measure_ccg(self):
-        response = self.client.get("/ccg/03V/measures/")
+        response = self.client.get("/sicbl/03V/measures/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "measures_for_one_entity.html")
         doc = pq(response.content)
@@ -455,7 +455,7 @@ class TestFrontendViews(TestCase):
         self.assertEqual(title.text(), "1/ST Andrews Medical Practice")
 
     def test_call_view_measure_practices_in_ccg(self):
-        response = self.client.get("/ccg/03V/cerazette/")
+        response = self.client.get("/sicbl/03V/cerazette/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "measure_for_children_in_entity.html")
         doc = pq(response.content)
@@ -578,17 +578,17 @@ class TestPPUViews(TestCase):
         self.assertEqual(response.context["entity"].code, "P87629")
 
     def test_ccg_price_per_unit(self):
-        response = self.client.get("/ccg/03V/price_per_unit/")
+        response = self.client.get("/sicbl/03V/price_per_unit/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["entity"].code, "03V")
         self.assertEqual(response.context["date"].strftime("%Y-%m-%d"), "2014-11-01")
 
     def test_ccg_price_per_unit_returns_400_on_invalid_date(self):
-        response = self.client.get("/ccg/03V/price_per_unit/", {"date": "not-a-date"})
+        response = self.client.get("/sicbl/03V/price_per_unit/", {"date": "not-a-date"})
         self.assertEqual(response.status_code, 400)
 
     def test_price_per_unit_histogram_with_ccg(self):
-        response = self.client.get("/ccg/03V/0202010F0AAAAAA/price_per_unit/")
+        response = self.client.get("/sicbl/03V/0202010F0AAAAAA/price_per_unit/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["highlight_name"], "NHS Corby")
         self.assertEqual(response.context["date"].strftime("%Y-%m-%d"), "2014-11-01")

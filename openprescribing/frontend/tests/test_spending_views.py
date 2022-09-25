@@ -97,8 +97,8 @@ class TestSpendingViews(TestCase):
         urls = [
             "/practice/{}/concessions/".format(self.practice.code),
             "/pcn/{}/concessions/".format(self.pcn.code),
-            "/ccg/{}/concessions/".format(self.ccg.code),
-            "/stp/{}/concessions/".format(self.stp.code),
+            "/sicbl/{}/concessions/".format(self.ccg.code),
+            "/icb/{}/concessions/".format(self.stp.code),
             "/regional-team/{}/concessions/".format(self.regional_team.code),
             "/national/england/concessions/",
         ]
