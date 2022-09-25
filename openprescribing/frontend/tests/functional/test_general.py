@@ -133,9 +133,9 @@ class GeneralFrontendTest(SeleniumTestCase):
         measure = self.find_by_xpath("//div[@id='measure_keppra']")
         self.assertIn(
             "/measure/keppra",
-            measure.find_element_by_partial_link_text("Compare all CCGs").get_attribute(
-                "href"
-            ),
+            measure.find_element_by_partial_link_text(
+                "Compare all SICBLs"
+            ).get_attribute("href"),
         )
         self.assertIn(
             "/sicbl/02Q/keppra",

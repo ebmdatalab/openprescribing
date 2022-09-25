@@ -84,7 +84,7 @@ class OrgBookmarkTypeFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ("practice", "Practice"),
-            ("ccg", "CCG"),
+            ("ccg", "SICBL"),
             ("all_england", "All England"),
         )
 

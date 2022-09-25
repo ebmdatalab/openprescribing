@@ -81,7 +81,7 @@ class MakeHtml:
     }
 
     REPORT_DATE_FORMAT = "%B %Y"
-    ALLCAPS = ["NHS", "PCN", "CCG", "BNF", "std", "STP", "(STP)", "NHS"]
+    ALLCAPS = ["NHS", "PCN", "CCG", "SICBL", "BNF", "std", "STP", "(STP)", "NHS"]
     LOW_NUMBER_CLASS = "low_number"
 
     @staticmethod

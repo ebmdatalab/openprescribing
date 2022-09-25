@@ -33,34 +33,34 @@ from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 class IntroTextTest(unittest.TestCase):
     def test_nothing(self):
         stats = _makeContext(possible_top_savings_total=9000.1)
-        msg = bookmark_utils.getIntroText(stats, "CCG")
-        self.assertIn("We've no new information about this CCG", msg)
+        msg = bookmark_utils.getIntroText(stats, "SICBL")
+        self.assertIn("We've no new information about this SICBL", msg)
 
     def test_worst(self):
         stats = _makeContext(worst=[None])
-        msg = bookmark_utils.getIntroText(stats, "CCG")
-        self.assertNotIn("We've no new information about this CCG", msg)
+        msg = bookmark_utils.getIntroText(stats, "SICBL")
+        self.assertNotIn("We've no new information about this SICBL", msg)
         self.assertIn(
             "We've found one prescribing measure where this "
-            "CCG could be <span class='worse'>doing better",
+            "SICBL could be <span class='worse'>doing better",
             msg,
         )
 
     def test_worst_plural(self):
         stats = _makeContext(worst=[None, None])
-        msg = bookmark_utils.getIntroText(stats, "CCG")
+        msg = bookmark_utils.getIntroText(stats, "SICBL")
         self.assertIn(
             "We've found two prescribing measures where this "
-            "CCG could be <span class='worse'>doing better",
+            "SICBL could be <span class='worse'>doing better",
             msg,
         )
 
     def test_decline_plural(self):
         stats = _makeContext(declines=[None, None])
-        msg = bookmark_utils.getIntroText(stats, "CCG")
+        msg = bookmark_utils.getIntroText(stats, "SICBL")
         self.assertIn(
             "We've found two prescribing measures where this "
-            "CCG is <span class='worse'>getting worse",
+            "SICBL is <span class='worse'>getting worse",
             msg,
         )
 
@@ -669,11 +669,11 @@ class TruncateSubjectTestCase(unittest.TestCase):
                 "input": (
                     "Items for Abacavir + Levocabastine + Levacetylmethadol "
                     "Hydrochloride + 5-Hydroxytryptophan vs Frovatriptan + "
-                    "Alverine Citrate + Boceprevir by All CCGs"
+                    "Alverine Citrate + Boceprevir by All SICBLs"
                 ),
                 "expected": (
-                    "Your monthly update about Items for Abacavir + Levocabastine + L..."
-                    "by All CCGs"
+                    "Your monthly update about Items for Abacavir + Levocabastine +..."
+                    "by All SICBLs"
                 ),
             },
             {
@@ -691,7 +691,7 @@ class TruncateSubjectTestCase(unittest.TestCase):
                     "Items for Zopiclone + Zolpidem Tartrate + Lorazepam + "
                     "Chlordiazepoxide Hydrochloride + Diazepam + Clonazepam + "
                     "Temazepam vs patients on list by HEATHCOT MEDICAL PRACTICE "
-                    "and other practices in CCG"
+                    "and other practices in SICBL"
                 ),
                 "expected": (
                     "Your monthly update about Items for Zopiclone + Zolpidem "

@@ -103,7 +103,7 @@ var queryForm = {
     if (this.globalOptions.org !== 'all') {
       $(this.el.orgIds).parent().fadeIn();
       if (this.globalOptions.org === 'practice') {
-        $(this.el.orgHelp).text('Hint: add a CCG to see all its practices');
+        $(this.el.orgHelp).text('Hint: add a SICBL to see all its practices');
         $(this.el.orgHelp).fadeIn();
       } else if (this.globalOptions.org === 'CCG') {
         $(this.el.orgHelp).text('Hint: leave blank to see national totals');

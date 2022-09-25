@@ -123,7 +123,7 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
         )
         raise RuntimeError(
             f"Some practices appear to be located entirely outside the national "
-            f"boundary (as determined by aggregating all CCG boundaries) so probably "
+            f"boundary (as determined by aggregating all SICBL boundaries) so probably "
             f"there's some dodgy data somewhere. Offending practices are:\n\n"
             f"{practice_desc}"
         )
@@ -178,8 +178,8 @@ def update_national_boundary_file():
     if ccgs_without_boundary.exists():
         raise RuntimeError(
             """
-            Some active CCGs missing boundary data, meaning we can't reliably
-            synthesize a national boundary by aggregating CCGs
+            Some active SICBLs missing boundary data, meaning we can't reliably
+            synthesize a national boundary by aggregating SICBLs
             """
         )
     boundary = PCT.objects.filter(boundary__isnull=False).aggregate(
