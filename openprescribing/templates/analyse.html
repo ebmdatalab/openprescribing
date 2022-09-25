@@ -16,7 +16,7 @@
 
 <h1>Search GP prescribing data</h1>
 
-<p>Search 700 million rows of prescribing data, and get prescribing information by practice, PCN, SICBL, STP or regional team. You can search for any numerator over any denominator.</p>
+<p>Search 700 million rows of prescribing data, and get prescribing information by practice, PCN, SICBL, ICB or regional team. You can search for any numerator over any denominator.</p>
 
 <p>Unsure how to create your own searches? <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=2.12">Try an example</a>, <a target="_blank" href="http://openprescribing.net/docs/analyse">read more</a> about how to use this tool, check our <a target="_blank" href="{% url 'faq' %}">FAQs</a> and read our <a href='https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/'> what is a BNF code blog</a>.</p>
 
@@ -84,7 +84,7 @@
                 <option value="practice">a practice or practices</option>
                 <option value="CCG">a CCG or SICBLs</option>
                 {% if pcns_enabled %}<option value="pcn">a PCN or PCNs</option>{% endif %}
-                <option value="stp">an STP or STPs</option>
+                <option value="stp">an ICB or ICBs</option>
                 <option value="regional_team">an NHS England Region</option>
             </select>
         </div>

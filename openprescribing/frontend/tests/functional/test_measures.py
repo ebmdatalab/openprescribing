@@ -702,7 +702,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all STPs in England on this measure",
+            "Compare all ICBs in England on this measure",
             "/measure/core_0/icb/",
         )
         self._verify_link(
@@ -747,7 +747,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(4)",
-            "Compare all STPs in England on this measure",
+            "Compare all ICBs in England on this measure",
             "/measure/lpzomnibus/icb/",
         )
         self._verify_link(
@@ -1161,7 +1161,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Compare all STPs in England on this measure",
+            "Compare all ICBs in England on this measure",
             "/measure/lp_2/icb/",
         )
         self._verify_link(
@@ -1544,13 +1544,13 @@ class MeasuresTests(SeleniumTestCase):
         s2 = [s for s in ss if s.cost_saving_10 > 0 and s.cost_saving_50 < 0][0]
         s3 = [s for s in ss if s.cost_saving_10 > 0 and s.cost_saving_50 > 0][0]
 
-        s1_exp_text = "By prescribing better than the median, this STP has saved the NHS £{} over the past 6 months.".format(
+        s1_exp_text = "By prescribing better than the median, this ICB has saved the NHS £{} over the past 6 months.".format(
             _humanize(s1.cost_saving_50)
         )
-        s2_exp_text = "By prescribing better than the median, this STP has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        s2_exp_text = "By prescribing better than the median, this ICB has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(s2.cost_saving_50), _humanize(s2.cost_saving_10)
         )
-        s3_exp_text = "If it had prescribed in line with the median, this STP would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        s3_exp_text = "If it had prescribed in line with the median, this ICB would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(s3.cost_saving_50), _humanize(s3.cost_saving_10)
         )
 
@@ -1695,7 +1695,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = "Over the past 6 months, if all STPs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all ICBs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1791,14 +1791,14 @@ class MeasuresTests(SeleniumTestCase):
             if cost_saving > 0:
                 break
         else:
-            assert False, "Could not find STP with cost saving!"
+            assert False, "Could not find ICB with cost saving!"
 
         self._get("/icb/{}/core_0/".format(r.code))
         # Use `contains()` to ensure that loading has finished by the time we access the element
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = "Over the past 6 months, if all SICBLs had prescribed at the median ratio or better, then this STP would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all SICBLs had prescribed at the median ratio or better, then this ICB would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1928,14 +1928,14 @@ class MeasuresTests(SeleniumTestCase):
             if cost_saving > 0:
                 break
         else:
-            assert False, "Could not find STP with cost saving!"
+            assert False, "Could not find ICB with cost saving!"
 
         self._get("/icb/{}/measures/".format(r.code))
         # Use `contains()` to ensure that loading has finished by the time we access the element
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = "Over the past 6 months, if this STP had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if this ICB had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)

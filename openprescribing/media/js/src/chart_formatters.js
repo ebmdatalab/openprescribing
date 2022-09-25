@@ -15,8 +15,8 @@ var ORG_TYPES = {
     'title': 'PCN'
   },
   'stp': {
-    'name': 'STP',
-    'title': 'STP'
+    'name': 'ICB',
+    'title': 'ICB'
   },
   'regional_team': {
     'name': 'regional team',

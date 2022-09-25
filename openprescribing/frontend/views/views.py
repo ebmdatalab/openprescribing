@@ -1731,6 +1731,6 @@ def _entity_type_human(entity_type):
         "practice": "practice",
         "pcn": "PCN",
         "ccg": "SICBL",
-        "stp": "STP",
+        "stp": "ICB",
         "regional_team": "Regional Team",
     }[entity_type]
