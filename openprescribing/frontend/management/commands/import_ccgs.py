@@ -20,9 +20,13 @@ class Command(BaseCommand):
 
             ccg, created = PCT.objects.get_or_create(code=row[0])
             if created:
+                # For existing CCGs, we don't want to take the name in eccg.csv, since
+                # it's a meaningless combination of the ICB name and the CCG code.
                 ccg.name = row[1]
             ccg.regional_team_id = row[2]
-            ccg.stp = STP.objects.get_or_create(code=row[3], name=f"ICB {row[3]}")[0]
+            ccg.stp, _ = STP.objects.get_or_create(
+                code=row[3], defaults={"name": f"ICB {row[3]}"}
+            )
             ccg.address = ", ".join([r for r in row[4:9] if r])
             ccg.postcode = row[9]
             od = row[10]
