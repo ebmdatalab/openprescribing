@@ -27,13 +27,13 @@
 <p><a href="#prescquantity">What does quantity mean?</a></p>
 <p><a href="#actualcost">What is actual cost?</a></p>
 <p><a href="#bnfchange">How do you deal with BNF code changes?</a></p>
-<p><a href="#ccgchange">How do you determine SICBL membership when GP practices have moved SICBLs or SICBLs have merged?</a></p>
+<p><a href="#ccgchange">How do you determine ICB membership when GP practices have moved ICBs or ICBs have merged?</a></p>
 
 <h2>Analyse</h2>
 <p><a href="#analysetutorial">How do I use the analyse page?</a></p>
 <p><a href="#denominator">What denominator should I use?</a></p>
 
-<h2>SICBL &amp; GP Dashboards</h2>
+<h2>Dashboards</h2>
 <p><a href="#measureinterpret">How do I interpret the measures?</a></p>
 <p><a href="#measurechose">How are the measures chosen?</a></p>
 <p><a href="#ghostgenerics">How do you calculate savings for ghost-branded generics?</a></p>
@@ -149,10 +149,10 @@
 <p>We have done this by mapping the old codes to the new codes, by using a map the NHS Business Services Authority provided us in a personal communication (after correcting for obvious typos etc.). You can read how we did this on <a href="https://github.com/ebmdatalab/openprescribing/pull/380/commits/7f968027263c62318403584e4ad5e0b96869bb7e">github</a>.</p>
 <p>You can read more about BNF codes and how they are structured <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">here</a>.</p>
 
-<h3 id="ccgchange">"How do you determine SICBL membership when GP practices have moved SICBLs or SICBLs have merged?</h3>
-<p>We use the current SICBL membership of a practice in our analyses. If a GP Practice moved SICBL, the data from before the move will be included in the data for their current SICBL. Their former SICBL will not include that practice's data. This means that when you look at our prescribing measures, you will be looking at the past prescribing of the current GP practices in that SICBL.</p>
-<p>When SICBLs merge, we create a new dashboard for the newly formed SICBL and remove the old SICBL dashboards. We use the prescribing data for the current practices in the new SICBL in our measures. Any data for practices in the old SICBLs that closed prior to the merger will be included in the new SICBL's data</p>
-<p>Data from our analyse and trends pages also use current practice membership of a SICBL when aggregating the data by SICBL</p>
+<h3 id="ccgchange">"How do you determine ICB membership when GP practices have moved ICB or ICB have merged?</h3>
+<p>We use the current Integrated Care Board (ICB) membership of a practice in our analyses. If a GP Practice moved ICB, the data from before the move will be included in the data for their current ICB. Their former ICB will not include that practice's data. This means that when you look at our prescribing measures, you will be looking at the past prescribing of the current GP practices in that ICB.</p>
+<p>When ICBs merge, we create a new dashboard for the newly formed ICB and remove the old ICB dashboards. We use the prescribing data for the current practices in the new ICB in our measures. Any data for practices in the old ICBs that closed prior to the merger will be included in the new ICB's data</p>
+<p>Data from our analyse and trends pages also use current practice membership of a ICB when aggregating the data by ICB</p>
 
 <h2>Analyse</h2>
 <h3 id="analysetutorial">How do I use the analyse page?</h3>
@@ -171,12 +171,12 @@
 
 <p>Play around and <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">let us know</a> if you find anything interesting, or develop any interesting methods.</p>
 
-<h2>SICBL &amp; GP Dashboards</h2>
+<h2>Dashboards</h2>
 
 <h3 id="measureinterpret">How should I interpret the measures?</h3>
 <p>We recommend reading NHS Digitals's <a href="https://digital.nhs.uk/practice-level-prescribing-summary">introduction to prescribing data</a>, including their <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) and <a href="http://content.digital.nhs.uk/media/10686/Download-glossary-of-terms-for-GP-prescribing---presentation-level/pdf/PLP_Presentation_Level_Glossary_April_2015.pdf">glossary of terms</a> (PDF).</p>
 
-<p>Just because a practice or SICBL is an outlier for high or low use of a particular treatment, that doesn't necessarily mean they are good or bad prescribers. These are <em>measures</em> rather than <em>indicators</em>, and they need to be interpreted judiciously.</p>
+<p>Just because a practice or NHS organisation is an outlier for high or low use of a particular treatment, that doesn't necessarily mean they are good or bad prescribers. These are <em>measures</em> rather than <em>indicators</em>, and they need to be interpreted judiciously.</p>
 
 <p>For example, a practice that prescribes a lot of benzodiazepines may have a lower threshold for prescribing them, or may run a specialist service for people with substance misuse, or have one doctor with an interest in - and long list of - such patients.</p>
 <div class="alert alert-danger" role="alert" style="max-width: 800pxt">
@@ -184,12 +184,12 @@
 </div>
 
 <h3 id="measurechose">How are the measures chosen?</h3>
-<p>Our original measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://www.bennett.ox.ac.uk/about-us/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://www.bennett.ox.ac.uk/about-us/richard-croker/">Richard Croker</a> from Devon SICBL.  The Datalab team now create measures based on ideas for research, national guidelines, and from our users.  Please do <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">get in touch</a> if you have an idea for a possible new measure.</p>
+<p>Our original measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://www.bennett.ox.ac.uk/about-us/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://www.bennett.ox.ac.uk/about-us/richard-croker/">Richard Croker</a> from NHS Devon.  The Bennett Institute team now create measures based on ideas for research, national guidelines, and from our users.  Please do <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">get in touch</a> if you have an idea for a possible new measure.</p>
 
 <h3 id="measurechose">How do you work out savings on individual presentations?</h3>
 
 <p>
-  There can be huge variation in the price a practice or SICBL pay for a treatment, even for the same drug at the same dose. It is well known that branded and generic versions of the same treatment will have different prices; but different specific “brands” of “branded generic” may also have different prices; and there are many other similar sources of variation in price. Every month we estimate what could be saved if every organisation were prescribing as well as the best 10%, for each item prescribed. <a href="/price-per-unit-faq/">Read our detailed FAQ on the subject here</a>.</p>
+  There can be huge variation in the price a practice or NHS organisation pay for a treatment, even for the same drug at the same dose. It is well known that branded and generic versions of the same treatment will have different prices; but different specific “brands” of “branded generic” may also have different prices; and there are many other similar sources of variation in price. Every month we estimate what could be saved if every organisation were prescribing as well as the best 10%, for each item prescribed. <a href="/price-per-unit-faq/">Read our detailed FAQ on the subject here</a>.</p>
 
 <h3 id="ghostgenerics">How do you calculate savings for ghost-branded generics?</h3>
 <p>Ghost-branded generics are generic items which have unintentionally been prescribed with a manufacturer name. For example, Naratriptan 2.5mg Tablets is the correct generic name; a ghost-branded version is Naratriptan 2.5mg Tablets (Teva UK Limited). When an item is prescribed generically, the dispenser is reimbursed at the price in the Drug Tariff; but when a manufacturer is stated, the reimbursement price is usually more expensive.</p>
@@ -198,26 +198,18 @@
 
 <p>The prescribing data released by NHS BSA aggregates all generic and ghost-generic prescribing together, so it is not possible for us to break down the data precisely.</p>
 
-<p>In addition, the published Drug Tariff prices are not necessarily the ones used by BSA for reimbursement (see <a href="https://github.com/ebmdatalab/openprescribing/issues/1318">our technical notes here</a> for an explanation of this). Therefore, to estimate the size of the problem for individual practices or SICBLs, we first have to estimate the Drug Tariff price for a generic, which we do by taking the median price paid for that generic item across the entire country. This gives us a price that <em>should</em> be paid for all prescriptions of that generic. We then compare this with the price that was used for reimbursement. This difference gives a reasonable estimate of the total possible savings if a generic were prescribed correctly. We only include savings of more than £5. Note that we use Net Ingredient Cost for our calculations; the true reimbursement cost will typically be 7% less due to bulk discounts.</p>
+<p>In addition, the published Drug Tariff prices are not necessarily the ones used by BSA for reimbursement (see <a href="https://github.com/ebmdatalab/openprescribing/issues/1318">our technical notes here</a> for an explanation of this). Therefore, to estimate the size of the problem for individual practices or NHS organisations, we first have to estimate the Drug Tariff price for a generic, which we do by taking the median price paid for that generic item across the entire country. This gives us a price that <em>should</em> be paid for all prescriptions of that generic. We then compare this with the price that was used for reimbursement. This difference gives a reasonable estimate of the total possible savings if a generic were prescribed correctly. We only include savings of more than £5. Note that we use Net Ingredient Cost for our calculations; the true reimbursement cost will typically be 7% less due to bulk discounts.</p>
 
 <p>You can read more about the background of this issue <a href="https://www.bennett.ox.ac.uk/blog/2018/12/ghost-branded-generics-why-does-the-cost-of-generic-atorvastatin-vary/">on our blog</a>.</p>
 
 <h3 id="ghostgenericshow">How can I decrease our use of ghost-branded generics?</h3>
-<p>The spreadsheet download on ghost-branded generics page for each SICBL or practice is sorted by total possible savings.  The practices and items appearing near the top of this list are likely to be prescribing the highest level of ghost-branded generics.  ePACT2 now carries data at an <em>AMPP</em> level for ghost-generics (termed "premium price generics"), meaning you can identify individual scripts which are at fault; PrescQIPP has also added ghost-generic reports and searches.</p>
+<p>The spreadsheet download on ghost-branded generics page is sorted by total possible savings.  The practices and items appearing near the top of this list are likely to be prescribing the highest level of ghost-branded generics.  ePACT2 now carries data at an <em>AMPP</em> level for ghost-generics (termed "premium price generics"), meaning you can identify individual scripts which are at fault; PrescQIPP has also added ghost-generic reports and searches.</p>
 <p>In general, the fix will be dependent on your prescribing software. It should be possible to configure it so only true generics can be picked, at least for the most egregious items.</p>
 <p>We are currently gathering feedback from practices who have implemented such fixes, and will publish a summary on our blog in due course</p>.
 
 <h3 id="gpclose">A GP Practice has closed or merged - why is it included on your dashboards?</h3>
 <p>
-  OpenPrescribing uses the prescribing dataset published monthly by NHS
-  Digital, which includes the past prescribing for practices that have merged
-  or closed. Data will still show for a closed practice if a prescription
-  prescribed by that surgery was dispensed in the community after the closure
-  date. The historical data for closed practices will continue to be shown on
-  OpenPrescribing, and any practice with a current status of 
-  <a href="https://www.bennett.ox.ac.uk/blog/2017/08/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">Dormant</a> 
-  or Closed will be labelled as such. They will continue to be shown under the 
-  SICBL they were last recorded under.
+  OpenPrescribing uses the prescribing dataset published monthly by NHS Digital, which includes the past prescribing for practices that have merged or closed. Data will still show for a closed practice if a prescription prescribed by that surgery was dispensed in the community after the closure date. The historical data for closed practices will continue to be shown on OpenPrescribing, and any practice with a current status of  <a href="https://www.bennett.ox.ac.uk/blog/2017/08/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">Dormant</a> or Closed will be labelled as such. They will continue to be shown under the ICB they were last recorded under.
 </p>
 
 <h2 id="longtermtrends"><a name="longtermtrends"></a>Long term trends</h2>
