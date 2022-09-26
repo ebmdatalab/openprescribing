@@ -107,15 +107,15 @@ urlpatterns = [
     path(r"pcn/", views.all_pcns, name="all_pcns"),
     path(r"pcn/<pcn_code>/", views.pcn_home_page, name="pcn_home_page"),
     # CCGs
-    path(r"ccg/", views.all_ccgs, name="all_ccgs"),
+    path(r"sicbl/", views.all_ccgs, name="all_ccgs"),
     path(
-        r"ccg/<ccg_code>/",
+        r"sicbl/<ccg_code>/",
         redirect_if_tags_query(views.ccg_home_page),
         name="ccg_home_page",
     ),
     # STPs
-    path(r"stp/", views.all_stps, name="all_stps"),
-    path(r"stp/<stp_code>/", views.stp_home_page, name="stp_home_page"),
+    path(r"icb/", views.all_stps, name="all_stps"),
+    path(r"icb/<stp_code>/", views.stp_home_page, name="stp_home_page"),
     # Regional teams
     path(r"regional-team/", views.all_regional_teams, name="all_regional_teams"),
     path(
@@ -142,7 +142,7 @@ urlpatterns = [
         name="practice_price_per_unit",
     ),
     path(
-        r"ccg/<code>/price_per_unit/",
+        r"sicbl/<code>/price_per_unit/",
         views.ccg_price_per_unit,
         name="ccg_price_per_unit",
     ),
@@ -158,7 +158,7 @@ urlpatterns = [
         name="price_per_unit_by_presentation_practice",
     ),
     path(
-        r"ccg/<entity_code>/<bnf_code>/price_per_unit/",
+        r"sicbl/<entity_code>/<bnf_code>/price_per_unit/",
         views.price_per_unit_by_presentation,
         name="price_per_unit_by_presentation",
     ),
@@ -176,7 +176,7 @@ urlpatterns = [
         kwargs={"entity_type": "practice"},
     ),
     path(
-        r"ccg/<code>/ghost_generics/",
+        r"sicbl/<code>/ghost_generics/",
         views.ghost_generics_for_entity,
         name="ccg_ghost_generics",
         kwargs={"entity_type": "CCG"},
@@ -197,13 +197,13 @@ urlpatterns = [
         kwargs={"entity_type": "pcn"},
     ),
     path(
-        r"ccg/<entity_code>/concessions/",
+        r"sicbl/<entity_code>/concessions/",
         views.spending_for_one_entity,
         name="spending_for_one_ccg",
         kwargs={"entity_type": "CCG"},
     ),
     path(
-        r"stp/<entity_code>/concessions/",
+        r"icb/<entity_code>/concessions/",
         views.spending_for_one_entity,
         name="spending_for_one_stp",
         kwargs={"entity_type": "stp"},
@@ -236,13 +236,13 @@ urlpatterns = [
         kwargs={"entity_type": "pcn"},
     ),
     path(
-        r"measure/<measure>/ccg/<entity_code>/",
+        r"measure/<measure>/sicbl/<entity_code>/",
         views.measure_for_one_entity,
         name="measure_for_one_ccg",
         kwargs={"entity_type": "ccg"},
     ),
     path(
-        r"measure/<measure>/stp/<entity_code>/",
+        r"measure/<measure>/icb/<entity_code>/",
         views.measure_for_one_entity,
         name="measure_for_one_stp",
         kwargs={"entity_type": "stp"},
@@ -270,12 +270,12 @@ urlpatterns = [
         name="measures_for_one_pcn",
     ),
     path(
-        r"ccg/<ccg_code>/measures/",
+        r"sicbl/<ccg_code>/measures/",
         views.measures_for_one_ccg,
         name="measures_for_one_ccg",
     ),
     path(
-        r"stp/<stp_code>/measures/",
+        r"icb/<stp_code>/measures/",
         views.measures_for_one_stp,
         name="measures_for_one_stp",
     ),
@@ -290,12 +290,12 @@ urlpatterns = [
         name="measure_for_practices_in_pcn",
     ),
     path(
-        r"ccg/<ccg_code>/<measure>/",
+        r"sicbl/<ccg_code>/<measure>/",
         views.measure_for_practices_in_ccg,
         name="measure_for_practices_in_ccg",
     ),
     path(
-        r"stp/<stp_code>/<measure>/",
+        r"icb/<stp_code>/<measure>/",
         views.measure_for_ccgs_in_stp,
         name="measure_for_ccgs_in_stp",
     ),
@@ -322,7 +322,7 @@ urlpatterns = [
         kwargs={"entity_type": "pcn"},
     ),
     path(
-        r"measure/<measure>/stp/",
+        r"measure/<measure>/icb/",
         views.measure_for_all_entities,
         name="measure_for_all_stps",
         kwargs={"entity_type": "stp"},

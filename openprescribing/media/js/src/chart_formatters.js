@@ -7,16 +7,16 @@ var ORG_TYPES = {
     'title': 'Practice'
   },
   'ccg': {
-    'name': 'CCG',
-    'title': 'CCG'
+    'name': 'SICBL',
+    'title': 'SICBL'
   },
   'pcn': {
     'name': 'PCN',
     'title': 'PCN'
   },
   'stp': {
-    'name': 'STP',
-    'title': 'STP'
+    'name': 'ICB',
+    'title': 'ICB'
   },
   'regional_team': {
     'name': 'regional team',
@@ -65,7 +65,7 @@ var formatters = {
       if (org === 'practice' && orgIds.length > 0) {
         str = this._getStringForIds(orgIds, true);
         if (_.any(_.map(orgIds, function(d) { return d.id.length > 3; }))) {
-          str += ' <br/>and other practices in CCG';
+          str += ' <br/>and other practices in SICBL';
         }
       } else {
         if (orgIds.length > 0) {

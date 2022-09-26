@@ -173,7 +173,7 @@ class TestSpending(ApiTestBase):
 class TestSpendingByCCG(ApiTestBase):
     def _get(self, params):
         params["format"] = "csv"
-        url = "/api/1.0/spending_by_ccg/"
+        url = "/api/1.0/spending_by_sicbl/"
         return self.client.get(url, params)
 
     def _get_rows(self, params):

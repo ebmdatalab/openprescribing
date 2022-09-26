@@ -33,11 +33,11 @@
     <div id="more-text"><a name="more-text"></a>
       <p>
         We have developed a new method that identifies very large cost-saving
-        opportunities for practices and CCGs in the NHS: between £100m and
+        opportunities for practices and SICBLs in the NHS: between £100m and
         £400m a year. This is more than any previous advice such as “always
         prescribe generically”. Our tool automatically identifies the drugs
         with the biggest cost savings opportunities for each individual
-        practice, or CCG, every month; and then helps them choose cheaper
+        practice, or SICBL, every month; and then helps them choose cheaper
         options. You can <a href="https://www.youtube.com/watch?v=o6QAgg9ZntI">view a YouTube video demonstration here</a>.
       </p>
       <p>
@@ -45,7 +45,7 @@
         prescribing advice (“always use the cheapest drug in class”) our method
         does not require that patients switch to completely different drugs.
         Our <a href="/price-per-unit-faq">full FAQ</a> gives the detail, but in
-        short: there can be huge variation in the price a practice or CCG pay
+        short: there can be huge variation in the price a practice or SICBL pay
         for a treatment, even for the same drug at the same dose. It is well
         known that branded and generic versions of the same treatment will have
         different prices; but different specific “brands” of “branded generic”
@@ -53,7 +53,7 @@
         sources of variation in price. Our tool automatically identifies all
         the biggest cost-saving opportunities by examining variation in the
         price-per-unit of all treatments, and then compares every practice or
-        CCG against the best 10% of most efficient prescribers, for every
+        SICBL against the best 10% of most efficient prescribers, for every
         treatment. This is a massive piece of computation run by our Bennett Institute at
         the University of Oxford, every month. The cost savings can be viewed
         using this tool, ranked in order of which drug has the biggest cost
@@ -91,7 +91,7 @@
         <span id="extended-info-link">{{ presentation.product_name }}</span> that are
         prescribed across the country.
         {% if entity %}
-          You can click the adjacent tab to view your own practice or CCG’s prescribing.
+          You can click the adjacent tab to view your own practice or SICBL’s prescribing.
         {% endif %}
       </p>
     {% endif %}
@@ -191,7 +191,7 @@
       // When viewing at Presentation level, link back to practice-level
       var first_column = 'pct_name';
       var first_column_render = function(data, type, full, meta) {
-        return ' <a href="/ccg/'+full['pct']+'/price_per_unit/?date='+ full['date']+ '">'+full['pct_name']+'</a>';
+        return ' <a href="/sicbl/'+full['pct']+'/price_per_unit/?date='+ full['date']+ '">'+full['pct_name']+'</a>';
       }
     {% elif by_ccg %}
       // When viewing at CCG level, drill down to practices
@@ -201,7 +201,7 @@
           var url = '{% url "all_england_price_per_unit_by_presentation" "BNFCODE" %}'.replace(/BNFCODE/, data)
           var rendered = ' <a href="'+url+'?date='+ full['date']+ '">'+full['name']+'</a>';
         {% else %}
-          var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
+          var rendered = ' <a href="/sicbl/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
         {% endif %}
         if (full['price_concession'] ) {
           rendered += ' <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Price concessions" data-content="Savings may not be achievable long term as this item was in the Price Concessions/NCSO for {{ date|date:"F Y"}}"><span class="glyphicon glyphicon-exclamation-sign text-danger"></span></a>'

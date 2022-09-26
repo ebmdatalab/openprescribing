@@ -190,9 +190,9 @@ var analyseChart = {
       if (this.globalOptions.org === 'practice') {
         if (numOrgs) {
           var isPractice = (this.globalOptions.orgIds[0].id.length > 3);
-          summaryTab = (isPractice) ? 'Show vs others in CCG' : 'Show summary';
+          summaryTab = (isPractice) ? 'Show vs others in SICBL' : 'Show summary';
         } else {
-          summaryTab = 'Show for all CCGs';
+          summaryTab = 'Show for all SICBLs';
         }
       } else {
         var orgTypeName = formatters.getFriendlyOrgType(this.globalOptions.org);

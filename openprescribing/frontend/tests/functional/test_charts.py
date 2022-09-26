@@ -94,7 +94,7 @@ class AnalyseSummaryTotalsTest(SeleniumTestCase):
         expected = {
             "panel-heading": (
                 "Total prescribing for Rosuvastatin Calcium across all "
-                "CCGs in NHS England"
+                "SICBLs in NHS England"
             ),
             "js-selected-month": "Sep '16",
             "js-financial-year-range": "Apr—Sep '16",

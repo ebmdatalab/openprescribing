@@ -388,7 +388,7 @@ describe('Utils', function () {
                              "2010-08-01", "2010-09-01", "2010-10-01", "2010-11-01",
                              "2010-12-01", "2011-01-01", "2011-02-01"]);
     });
-    it('should start in Aug 2013 for CCGs', function () {
+    it('should start in Aug 2013 for SICBLs', function () {
       var options = {
         org: 'CCG',
         data: {
