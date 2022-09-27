@@ -672,7 +672,7 @@ class TruncateSubjectTestCase(unittest.TestCase):
                     "Alverine Citrate + Boceprevir by All Sub-ICB Locations"
                 ),
                 "expected": (
-                    "Your monthly update about Items for Abacavir + Levocabastine +..."
+                    "Your monthly update about Items for Abacavir + Levo..."
                     "by All Sub-ICB Locations"
                 ),
             },
