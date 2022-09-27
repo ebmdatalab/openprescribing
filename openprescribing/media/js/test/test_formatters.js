@@ -36,7 +36,7 @@ describe('Formatters', function () {
             var str = formatters.getFriendlyOrgs('all', []);
             expect(str).to.equal('all practices in NHS England');
             str = formatters.getFriendlyOrgs('CCG', []);
-            expect(str).to.equal('all SICBLs');
+            expect(str).to.equal('all Sub-ICB Locations');
             str = formatters.getFriendlyOrgs('practice', []);
             expect(str).to.equal('all practices');
             str = formatters.getFriendlyOrgs('practice', [{'id': '03V'}, {'id': '11A'}]);

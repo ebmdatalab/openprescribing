@@ -192,7 +192,7 @@ var analyseChart = {
           var isPractice = (this.globalOptions.orgIds[0].id.length > 3);
           summaryTab = (isPractice) ? 'Show vs others in SICBL' : 'Show summary';
         } else {
-          summaryTab = 'Show for all SICBLs';
+          summaryTab = 'Show for all Sub-ICB Locations';
         }
       } else {
         var orgTypeName = formatters.getFriendlyOrgType(this.globalOptions.org);

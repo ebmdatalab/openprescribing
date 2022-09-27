@@ -669,11 +669,11 @@ class TruncateSubjectTestCase(unittest.TestCase):
                 "input": (
                     "Items for Abacavir + Levocabastine + Levacetylmethadol "
                     "Hydrochloride + 5-Hydroxytryptophan vs Frovatriptan + "
-                    "Alverine Citrate + Boceprevir by All SICBLs"
+                    "Alverine Citrate + Boceprevir by All Sub-ICB Locations"
                 ),
                 "expected": (
                     "Your monthly update about Items for Abacavir + Levocabastine +..."
-                    "by All SICBLs"
+                    "by All Sub-ICB Locations"
                 ),
             },
             {

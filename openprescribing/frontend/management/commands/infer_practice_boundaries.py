@@ -178,8 +178,8 @@ def update_national_boundary_file():
     if ccgs_without_boundary.exists():
         raise RuntimeError(
             """
-            Some active SICBLs missing boundary data, meaning we can't reliably
-            synthesize a national boundary by aggregating SICBLs
+            Some active Sub-ICB Locations missing boundary data, meaning we can't reliably
+            synthesize a national boundary by aggregating Sub-ICB Locations
             """
         )
     boundary = PCT.objects.filter(boundary__isnull=False).aggregate(

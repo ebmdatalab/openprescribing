@@ -94,7 +94,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lpzomnibus/",
         )
         self._verify_link(
@@ -127,7 +127,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/core_0/",
         )
         self._verify_link(
@@ -157,7 +157,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lp_2/",
         )
         self._verify_link(
@@ -318,7 +318,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/core_0/",
         )
         self._verify_link(
@@ -363,7 +363,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(4)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lpzomnibus/",
         )
         self._verify_link(
@@ -405,7 +405,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lp_2/",
         )
         self._verify_link(
@@ -447,7 +447,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/core_0/",
         )
         self._verify_link(
@@ -486,7 +486,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(4)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lpzomnibus/",
         )
         self._verify_link(
@@ -528,7 +528,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lp_2/",
         )
         self._verify_link(
@@ -696,7 +696,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Split the measure into charts for individual SICBLs",
+            "Split the measure into charts for individual Sub-ICB Locations",
             "/icb/E00/core_0/",
         )
         self._verify_link(
@@ -741,7 +741,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Split the measure into charts for individual SICBLs",
+            "Split the measure into charts for individual Sub-ICB Locations",
             "/icb/E00/lpzomnibus/",
         )
         self._verify_link(
@@ -783,7 +783,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Split the measure into charts for individual SICBLs",
+            "Split the measure into charts for individual Sub-ICB Locations",
             "/regional-team/Y01/core_0/",
         )
         self._verify_link(
@@ -828,7 +828,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Split the measure into charts for individual SICBLs",
+            "Split the measure into charts for individual Sub-ICB Locations",
             "/regional-team/Y01/lpzomnibus/",
         )
         self._verify_link(
@@ -960,7 +960,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".explanation li:nth-child(1)",
-            "Split the measure into charts for individual SICBLs",
+            "Split the measure into charts for individual Sub-ICB Locations",
             "/icb/E00/core_0/",
         )
         self._verify_link(
@@ -990,7 +990,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".explanation li:nth-child(1)",
-            "Split the measure into charts for individual SICBLs",
+            "Split the measure into charts for individual Sub-ICB Locations",
             "/regional-team/Y01/core_0/",
         )
         self._verify_link(
@@ -1016,7 +1016,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lp_2/",
         )
         self._verify_link(
@@ -1052,7 +1052,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lp_2/",
         )
         self._verify_link(
@@ -1088,7 +1088,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Compare all SICBLs in England on this measure",
+            "Compare all Sub-ICB Locations in England on this measure",
             "/measure/lp_2/",
         )
         self._verify_link(
@@ -1155,7 +1155,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
-            "Split the measure into charts for individual SICBLs",
+            "Split the measure into charts for individual Sub-ICB Locations",
             "/icb/E00/lp_2/",
         )
         self._verify_link(
@@ -1191,7 +1191,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
-            "Split the measure into charts for individual SICBLs",
+            "Split the measure into charts for individual Sub-ICB Locations",
             "/regional-team/Y01/lp_2/",
         )
         self._verify_link(
@@ -1302,7 +1302,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_element = self.find_by_xpath(
             "//*[@id='measure_core_0']//strong[text()='Performance:']/.."
         )
-        exp_text = "Performance: If all SICBLs in England had prescribed in line with the median, the NHS would have spent £{} less over the past 6 months. If they had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        exp_text = "Performance: If all Sub-ICB Locations in England had prescribed in line with the median, the NHS would have spent £{} less over the past 6 months. If they had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(cost_saving_50), _humanize(cost_saving_10)
         )
         self.assertEqual(perf_element.text, exp_text)
@@ -1679,7 +1679,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = "Over the past 6 months, if all SICBLs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all Sub-ICB Locations had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1798,7 +1798,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = "Over the past 6 months, if all SICBLs had prescribed at the median ratio or better, then this ICB would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all Sub-ICB Locations had prescribed at the median ratio or better, then this ICB would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1827,7 +1827,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = "Over the past 6 months, if all SICBLs had prescribed at the median ratio or better, then this Regional Team would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all Sub-ICB Locations had prescribed at the median ratio or better, then this Regional Team would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
