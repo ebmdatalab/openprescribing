@@ -24,11 +24,11 @@
     {% endif %}
 
     {% if entity_type != 'ccg' %}
-      <li><a href="{% url 'measure_for_all_ccgs' measure.id %}">Compare all SICBLs in England on this measure</a>.</li>
+      <li><a href="{% url 'measure_for_all_ccgs' measure.id %}">Compare all Sub-ICB Locations in England on this measure</a>.</li>
     {% endif %}
 
     {% if ccg %}
-      <li>See <a href="{% url 'measures_for_one_ccg' ccg.code %}">how this SICBL is doing on other standard measures</a>.</li>
+      <li>See <a href="{% url 'measures_for_one_ccg' ccg.code %}">how this Sub-ICB Location is doing on other standard measures</a>.</li>
     {% endif %}
 
     {% if measure.analyse_url %}

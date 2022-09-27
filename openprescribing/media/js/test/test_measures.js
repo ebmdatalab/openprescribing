@@ -547,7 +547,7 @@ describe('Measures', function() {
       options = {
         orgId: '99P',
         orgType: 'ccg',
-        orgTypeHuman: 'SICBL',
+        orgTypeHuman: 'Sub-ICB Location',
         rollUpBy: 'org_id',
         globalYMax: { y: 50},
         globalYMin: { y: 0}
@@ -555,7 +555,7 @@ describe('Measures', function() {
       chartOptions = { dashOptions: { chart: {}, legend: {}}};
       var result = mu.getGraphOptions(d, options, true, chartOptions);
       expect(result.series.length).to.equal(4);
-      expect(result.series[0].name).to.equal('This SICBL');
+      expect(result.series[0].name).to.equal('This Sub-ICB Location');
       expect(result.series[2].name).to.equal('50th percentile nationally');
       expect(result.series[2].isNationalSeries).to.equal(true);
       expect(result.series[2].dashStyle).to.equal('longdash');

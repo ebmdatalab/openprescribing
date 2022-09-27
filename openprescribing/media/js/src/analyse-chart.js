@@ -190,9 +190,9 @@ var analyseChart = {
       if (this.globalOptions.org === 'practice') {
         if (numOrgs) {
           var isPractice = (this.globalOptions.orgIds[0].id.length > 3);
-          summaryTab = (isPractice) ? 'Show vs others in SICBL' : 'Show summary';
+          summaryTab = (isPractice) ? 'Show vs others in Sub-ICB Location' : 'Show summary';
         } else {
-          summaryTab = 'Show for all SICBLs';
+          summaryTab = 'Show for all Sub-ICB Locations';
         }
       } else {
         var orgTypeName = formatters.getFriendlyOrgType(this.globalOptions.org);

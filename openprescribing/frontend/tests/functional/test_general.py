@@ -134,7 +134,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         self.assertIn(
             "/measure/keppra",
             measure.find_element_by_partial_link_text(
-                "Compare all SICBLs"
+                "Compare all Sub-ICB Locations"
             ).get_attribute("href"),
         )
         self.assertIn(

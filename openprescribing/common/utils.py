@@ -29,7 +29,17 @@ def nhs_abbreviations(word, **kwargs):
         return word.upper()
     elif word.lower() in ["dr", "st"]:
         return word.title()
-    elif word.upper() in ("NHS", "CCG", "SICBL", "PMS", "SMA", "PWSI", "OOH", "HIV"):
+    elif word.upper() in (
+        "NHS",
+        "CCG",
+        "SICBL",
+        "ICB",
+        "PMS",
+        "SMA",
+        "PWSI",
+        "OOH",
+        "HIV",
+    ):
         return word.upper()
     elif "&" in word:
         return word.upper()

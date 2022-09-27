@@ -20,9 +20,9 @@
 {% if entity_type == 'practice' %}
 <p>
   We estimate that in {{ latest_month|date:"F Y" }} total price concessions for
-  products reported to only be available above Drug Tariff price at {{ entity_name }} will cost your SICBL an
+  products reported to only be available above Drug Tariff price at {{ entity_name }} will cost your Sub-ICB Location an
   additional <b>£{{ additional_cost|sigfigs:5|floatformat:"0"|intcomma }}</b>.
-  This is for information only; you should discuss with your SICBL before
+  This is for information only; you should discuss with your Sub-ICB Location before
   modifying a patient's medicine treatments based solely on Price Concessions.
 </p>
 {% else %}

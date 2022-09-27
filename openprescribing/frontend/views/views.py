@@ -1730,7 +1730,7 @@ def _entity_type_human(entity_type):
     return {
         "practice": "practice",
         "pcn": "PCN",
-        "ccg": "SICBL",
+        "ccg": "Sub-ICB Location",
         "stp": "ICB",
         "regional_team": "Regional Team",
     }[entity_type]

@@ -17,7 +17,7 @@
 
 <hr/>
 
-<p>High-level prescribing trends for {{ chemical.chem_name }} (BNF code {{ chemical.bnf_code }}) across all GP practices in NHS England for the last five years. You can see <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={% if bnf_para %}{{ bnf_para.number_str }}{% else %}{{ bnf_section.number_str }}{% endif %}">which SICBLs prescribe most of this chemical</a> relative to its class, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
+<p>High-level prescribing trends for {{ chemical.chem_name }} (BNF code {{ chemical.bnf_code }}) across all GP practices in NHS England for the last five years. You can see <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={% if bnf_para %}{{ bnf_para.number_str }}{% else %}{{ bnf_section.number_str }}{% endif %}">which Sub-ICB Locations prescribe most of this chemical</a> relative to its class, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
 
 <p><a href="{% url 'dmd_search' %}?q={{ chemical.bnf_code }}">View all matching dm+d items.</a></p>
 
@@ -30,7 +30,7 @@
 <p>
 Download CSV:
 <a href="{% url 'total_spending' %}?code={{ page_id }}&format=csv">all data on {{ chemical.chem_name }}</a> or
-<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}&format=csv">data on {{ chemical.chem_name }} by SICBL</a>.
+<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}&format=csv">data on {{ chemical.chem_name }} by Sub-ICB Location</a>.
 </p>
 </div>
 

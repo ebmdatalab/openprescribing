@@ -7,8 +7,8 @@ var ORG_TYPES = {
     'title': 'Practice'
   },
   'ccg': {
-    'name': 'SICBL',
-    'title': 'SICBL'
+    'name': 'Sub-ICB Location',
+    'title': 'Sub-ICB Location'
   },
   'pcn': {
     'name': 'PCN',
@@ -65,7 +65,7 @@ var formatters = {
       if (org === 'practice' && orgIds.length > 0) {
         str = this._getStringForIds(orgIds, true);
         if (_.any(_.map(orgIds, function(d) { return d.id.length > 3; }))) {
-          str += ' <br/>and other practices in SICBL';
+          str += ' <br/>and other practices in Sub-ICB Location';
         }
       } else {
         if (orgIds.length > 0) {

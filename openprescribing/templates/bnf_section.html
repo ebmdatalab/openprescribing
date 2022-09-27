@@ -17,7 +17,7 @@
 
 <hr/>
 
-<p>High-level prescribing trends for {{ section.name }} (BNF section {{ section.number_str }}) across all GP practices in NHS England for the last five years. You can <a href="{% url 'analyse' %}#numIds={{ section.number_str }}">explore prescribing trends for this section by SICBL</a>, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
+<p>High-level prescribing trends for {{ section.name }} (BNF section {{ section.number_str }}) across all GP practices in NHS England for the last five years. You can <a href="{% url 'analyse' %}#numIds={{ section.number_str }}">explore prescribing trends for this section by Sub-ICB Location</a>, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
 
 <p><a href="{% url 'dmd_search' %}?q={{ section.bnf_code }}">View all matching dm+d items.</a></p>
 
@@ -43,7 +43,7 @@
 <h3>Download raw data</h3>
 <p>Download CSVs:
 <a href="{% url 'total_spending' %}?code={{ page_id }}&format=csv">all data on {{ section.name }}</a> or
-<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}&format=csv">data on {{ section.name }} by SICBL</a>.
+<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}&format=csv">data on {{ section.name }} by Sub-ICB Location</a>.
 </p>
 </div>
 

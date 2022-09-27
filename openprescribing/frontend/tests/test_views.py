@@ -380,7 +380,7 @@ class TestFrontendViews(TestCase):
         self.assertTemplateUsed(response, "all_ccgs.html")
         doc = pq(response.content)
         title = doc("h1")
-        self.assertEqual(title.text(), "All SICBLs")
+        self.assertEqual(title.text(), "All Sub-ICB Locations")
         ccgs = doc("a.ccg")
         self.assertEqual(len(ccgs), 2)
 

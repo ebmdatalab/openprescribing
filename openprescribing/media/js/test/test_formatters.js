@@ -36,13 +36,13 @@ describe('Formatters', function () {
             var str = formatters.getFriendlyOrgs('all', []);
             expect(str).to.equal('all practices in NHS England');
             str = formatters.getFriendlyOrgs('CCG', []);
-            expect(str).to.equal('all SICBLs');
+            expect(str).to.equal('all Sub-ICB Locations');
             str = formatters.getFriendlyOrgs('practice', []);
             expect(str).to.equal('all practices');
             str = formatters.getFriendlyOrgs('practice', [{'id': '03V'}, {'id': '11A'}]);
             expect(str).to.equal('practices in 03V + practices in 11A');
             str = formatters.getFriendlyOrgs('practice', [{'id': 'P12353'}]);
-            expect(str).to.equal('P12353 <br/>and other practices in SICBL');
+            expect(str).to.equal('P12353 <br/>and other practices in Sub-ICB Location');
         });
     });
 
