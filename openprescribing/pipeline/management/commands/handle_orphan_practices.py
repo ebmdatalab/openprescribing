@@ -142,7 +142,9 @@ class Command(BaseCommand):
         new_ccg_name = self.ccg_to_name[new_ccg]
 
         if self.dry_run:
-            self.stdout.write("All practices currently in Sub-ICB Location are closed or dormant")
+            self.stdout.write(
+                "All practices currently in Sub-ICB Location are closed or dormant"
+            )
             self.stdout.write(
                 "All active practices previously in Sub-ICB Location are now in {} ({})".format(
                     new_ccg, new_ccg_name
@@ -163,7 +165,9 @@ class Command(BaseCommand):
         name = self.ccg_to_name[ccg]
 
         if self.dry_run:
-            self.stdout.write("All practices currently in Sub-ICB Location are closed or dormant")
+            self.stdout.write(
+                "All practices currently in Sub-ICB Location are closed or dormant"
+            )
             self.stdout.write(
                 "Active practices previously in Sub-ICB Location are now in multiple Sub-ICB Locations:"
             )

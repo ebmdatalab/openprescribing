@@ -62,13 +62,16 @@ class CommandTests(TestCase):
             practice.refresh_from_db()
             self.assertEqual(practice.ccg_id, "C06")
             self.assertEqual(
-                practice.ccg_change_reason, "Sub-ICB Location set by handle_orphan_practices"
+                practice.ccg_change_reason,
+                "Sub-ICB Location set by handle_orphan_practices",
             )
 
         self.assertEqual(notify_slack.call_count, 2)
         msgs = [c[0][0] for c in notify_slack.call_args_list]
         self.assertIn("Practices have left Sub-ICB Location C01", msgs[0])
-        self.assertIn("All active practices previously in Sub-ICB Location C04", msgs[1])
+        self.assertIn(
+            "All active practices previously in Sub-ICB Location C04", msgs[1]
+        )
 
     @mock.patch("pipeline.management.commands.handle_orphan_practices.notify_slack")
     def test_dry_run(self, notify_slack):
