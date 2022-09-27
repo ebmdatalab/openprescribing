@@ -427,7 +427,7 @@ var utils = {
     return {
       orgType: options.orgType,
       orgTypeHuman: options.orgTypeHuman,
-      comparisonOrgTypeHuman: options.orgType == 'practice' ? 'SICBL' : options.orgTypeHuman,
+      comparisonOrgTypeHuman: options.orgType == 'practice' ? 'Sub-ICB Location' : options.orgTypeHuman,
       measureUrl: measureUrl,
       measureDefinitionUrl: measureDefinitionUrl,
       isAggregateEntity: isAggregateEntity,

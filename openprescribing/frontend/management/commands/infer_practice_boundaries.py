@@ -123,7 +123,7 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
         )
         raise RuntimeError(
             f"Some practices appear to be located entirely outside the national "
-            f"boundary (as determined by aggregating all SICBL boundaries) so probably "
+            f"boundary (as determined by aggregating all Sub-ICB Location boundaries) so probably "
             f"there's some dodgy data somewhere. Offending practices are:\n\n"
             f"{practice_desc}"
         )

@@ -11,7 +11,7 @@
 
     <p>Address: {{ entity.address_pretty }}</p>
     {% if entity.ccg %}
-      <p>Part of SICBL:
+      <p>Part of Sub-ICB Location:
         <a href="{% url 'ccg_home_page' entity.ccg.code %}">{{ entity.ccg.name }}</a>
       </p>
     {% endif %}

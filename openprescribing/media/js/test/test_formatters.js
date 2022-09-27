@@ -42,7 +42,7 @@ describe('Formatters', function () {
             str = formatters.getFriendlyOrgs('practice', [{'id': '03V'}, {'id': '11A'}]);
             expect(str).to.equal('practices in 03V + practices in 11A');
             str = formatters.getFriendlyOrgs('practice', [{'id': 'P12353'}]);
-            expect(str).to.equal('P12353 <br/>and other practices in SICBL');
+            expect(str).to.equal('P12353 <br/>and other practices in Sub-ICB Location');
         });
     });
 

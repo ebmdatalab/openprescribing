@@ -33,34 +33,34 @@ from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 class IntroTextTest(unittest.TestCase):
     def test_nothing(self):
         stats = _makeContext(possible_top_savings_total=9000.1)
-        msg = bookmark_utils.getIntroText(stats, "SICBL")
-        self.assertIn("We've no new information about this SICBL", msg)
+        msg = bookmark_utils.getIntroText(stats, "Sub-ICB Location")
+        self.assertIn("We've no new information about this Sub-ICB Location", msg)
 
     def test_worst(self):
         stats = _makeContext(worst=[None])
-        msg = bookmark_utils.getIntroText(stats, "SICBL")
-        self.assertNotIn("We've no new information about this SICBL", msg)
+        msg = bookmark_utils.getIntroText(stats, "Sub-ICB Location")
+        self.assertNotIn("We've no new information about this Sub-ICB Location", msg)
         self.assertIn(
             "We've found one prescribing measure where this "
-            "SICBL could be <span class='worse'>doing better",
+            "Sub-ICB Location could be <span class='worse'>doing better",
             msg,
         )
 
     def test_worst_plural(self):
         stats = _makeContext(worst=[None, None])
-        msg = bookmark_utils.getIntroText(stats, "SICBL")
+        msg = bookmark_utils.getIntroText(stats, "Sub-ICB Location")
         self.assertIn(
             "We've found two prescribing measures where this "
-            "SICBL could be <span class='worse'>doing better",
+            "Sub-ICB Location could be <span class='worse'>doing better",
             msg,
         )
 
     def test_decline_plural(self):
         stats = _makeContext(declines=[None, None])
-        msg = bookmark_utils.getIntroText(stats, "SICBL")
+        msg = bookmark_utils.getIntroText(stats, "Sub-ICB Location")
         self.assertIn(
             "We've found two prescribing measures where this "
-            "SICBL is <span class='worse'>getting worse",
+            "Sub-ICB Location is <span class='worse'>getting worse",
             msg,
         )
 
@@ -691,7 +691,7 @@ class TruncateSubjectTestCase(unittest.TestCase):
                     "Items for Zopiclone + Zolpidem Tartrate + Lorazepam + "
                     "Chlordiazepoxide Hydrochloride + Diazepam + Clonazepam + "
                     "Temazepam vs patients on list by HEATHCOT MEDICAL PRACTICE "
-                    "and other practices in SICBL"
+                    "and other practices in Sub-ICB Location"
                 ),
                 "expected": (
                     "Your monthly update about Items for Zopiclone + Zolpidem "

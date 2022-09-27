@@ -312,7 +312,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Compare all practices in this SICBL on this measure",
+            "Compare all practices in this Sub-ICB Location on this measure",
             "/sicbl/AAA/core_0/",
         )
         self._verify_link(
@@ -357,7 +357,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all practices in this SICBL on this measure",
+            "Compare all practices in this Sub-ICB Location on this measure",
             "/sicbl/AAA/lpzomnibus/",
         )
         self._verify_link(
@@ -399,7 +399,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Compare all practices in this SICBL on this measure",
+            "Compare all practices in this Sub-ICB Location on this measure",
             "/sicbl/AAA/lp_2/",
         )
         self._verify_link(
@@ -1046,7 +1046,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             ".inner li:nth-child(1)",
-            "Compare all practices in this SICBL on this measure",
+            "Compare all practices in this Sub-ICB Location on this measure",
             "/sicbl/AAA/lp_2/",
         )
         self._verify_link(
@@ -1477,13 +1477,13 @@ class MeasuresTests(SeleniumTestCase):
         c2 = [c for c in cc if c.cost_saving_10 > 0 and c.cost_saving_50 < 0][0]
         c3 = [c for c in cc if c.cost_saving_10 > 0 and c.cost_saving_50 > 0][0]
 
-        c1_exp_text = "By prescribing better than the median, this SICBL has saved the NHS £{} over the past 6 months.".format(
+        c1_exp_text = "By prescribing better than the median, this Sub-ICB Location has saved the NHS £{} over the past 6 months.".format(
             _humanize(c1.cost_saving_50)
         )
-        c2_exp_text = "By prescribing better than the median, this SICBL has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        c2_exp_text = "By prescribing better than the median, this Sub-ICB Location has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(c2.cost_saving_50), _humanize(c2.cost_saving_10)
         )
-        c3_exp_text = "If it had prescribed in line with the median, this SICBL would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        c3_exp_text = "If it had prescribed in line with the median, this Sub-ICB Location would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(c3.cost_saving_50), _humanize(c3.cost_saving_10)
         )
 
@@ -1762,14 +1762,14 @@ class MeasuresTests(SeleniumTestCase):
             if cost_saving > 0:
                 break
         else:
-            assert False, "Could not find SICBL with cost saving!"
+            assert False, "Could not find Sub-ICB Location with cost saving!"
 
         self._get("/sicbl/{}/core_0/".format(c.code))
         # Use `contains()` to ensure that loading has finished by the time we access the element
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = "Over the past 6 months, if all practices had prescribed at the median ratio or better, then this SICBL would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all practices had prescribed at the median ratio or better, then this Sub-ICB Location would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1874,14 +1874,14 @@ class MeasuresTests(SeleniumTestCase):
             if cost_saving > 0:
                 break
         else:
-            assert False, "Could not find SICBL with cost saving!"
+            assert False, "Could not find Sub-ICB Location with cost saving!"
 
         self._get("/sicbl/{}/measures/".format(c.code))
         # Use `contains()` to ensure that loading has finished by the time we access the element
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = "Over the past 6 months, if this SICBL had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if this Sub-ICB Location had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)

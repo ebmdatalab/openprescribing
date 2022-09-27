@@ -110,7 +110,7 @@ class Command(BaseCommand):
 
             if self.dry_run:
                 self.stdout.write("-" * 80)
-                self.stdout.write("SICBL: {} ({})".format(ccg, name))
+                self.stdout.write("Sub-ICB Location: {} ({})".format(ccg, name))
                 self.stdout.write(
                     "Previous practice count: {}".format(len(prev_practices))
                 )
@@ -142,9 +142,9 @@ class Command(BaseCommand):
         new_ccg_name = self.ccg_to_name[new_ccg]
 
         if self.dry_run:
-            self.stdout.write("All practices currently in SICBL are closed or dormant")
+            self.stdout.write("All practices currently in Sub-ICB Location are closed or dormant")
             self.stdout.write(
-                "All active practices previously in SICBL are now in {} ({})".format(
+                "All active practices previously in Sub-ICB Location are now in {} ({})".format(
                     new_ccg, new_ccg_name
                 )
             )
@@ -155,7 +155,7 @@ class Command(BaseCommand):
             )
         else:
             practices = Practice.objects.filter(ccg_id=ccg).exclude(status_code="A")
-            reason = "SICBL set by handle_orphan_practices"
+            reason = "Sub-ICB Location set by handle_orphan_practices"
             practices.update(ccg_id=new_ccg, ccg_change_reason=reason)
 
     def handle_case_b(self, ccg, new_ccgs):
@@ -163,9 +163,9 @@ class Command(BaseCommand):
         name = self.ccg_to_name[ccg]
 
         if self.dry_run:
-            self.stdout.write("All practices currently in SICBL are closed or dormant")
+            self.stdout.write("All practices currently in Sub-ICB Location are closed or dormant")
             self.stdout.write(
-                "Active practices previously in SICBL are now in multiple Sub-ICB Locations:"
+                "Active practices previously in Sub-ICB Location are now in multiple Sub-ICB Locations:"
             )
             for new_ccg, count in new_ccgs.most_common():
                 new_ccg_name = self.ccg_to_name[new_ccg]
@@ -173,8 +173,8 @@ class Command(BaseCommand):
 
         else:
             msg = """
-All active practices previously in SICBL {} ({}) are now in multiple Sub-ICB Locations:
-Check whether inactive practices remaining in SICBL should have moved.
+All active practices previously in Sub-ICB Location {} ({}) are now in multiple Sub-ICB Locations:
+Check whether inactive practices remaining in Sub-ICB Location should have moved.
 See instructions in handle_orphan_practices.py.
             """.format(
                 ccg, name
@@ -190,11 +190,11 @@ See instructions in handle_orphan_practices.py.
 
         if self.dry_run:
             self.stdout.write(
-                "Some practices have left SICBL and some currently in SICBL are not active"
+                "Some practices have left Sub-ICB Location and some currently in Sub-ICB Location are not active"
             )
         else:
             msg = """
-Practices have left SICBL {} ({}) and some remaining practices are not active.
+Practices have left Sub-ICB Location {} ({}) and some remaining practices are not active.
 Check whether these inactive practices should have moved.
 See instructions in handle_orphan_practices.py.
             """.format(
