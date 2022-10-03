@@ -187,16 +187,8 @@ class Command(BaseCommand):
             self.import_model(model, elements)
 
         # gtin
-        elements = self.load_elements("gtin")[0]
-        for element in elements:
-            assert element[0].tag == "AMPPID"
-            assert element[1].tag == "GTINDATA"
-
-            element[0].tag = "APPID"
-            for gtinelt in element[1]:
-                element.append(gtinelt)
-            element.remove(element[1])
-        self.import_model(models.GTIN, elements)
+        for elements in self.load_gtin_elements():
+            self.import_model(models.GTIN, elements)
 
     def load_elements(self, filename_fragment):
         """Return list of non-comment top-level elements in given file."""
@@ -213,6 +205,83 @@ class Command(BaseCommand):
         elements = list(root)
         assert isinstance(elements[0], etree._Comment)
         return elements[1:]
+
+    def load_gtin_elements(self):
+        # We have to handle GTINs differently.  The XSLT transforms something like:
+        #
+        # <GTIN_DETAILS>
+        #   <AMPPS>
+        #     <AMPP>
+        #       <AMPPID>1714711000001106</AMPPID>
+        #       <GTINDATA>
+        #         <GTIN>8712400158572</GTIN>
+        #         <STARTDT>2010-02-01</STARTDT>
+        #         <ENDDT>2013-07-21</ENDDT>
+        #       </GTINDATA>
+        #       <GTINDATA>
+        #         <GTIN>8712400360258</GTIN>
+        #         <STARTDT>2013-07-22</STARTDT>
+        #       </GTINDATA>
+        #     </AMPP>
+        #     ...
+        #   </AMPPS>
+        # </GTIN_DETAILS>
+        #
+        # to:
+        #
+        # <GTINS_DETAILS>
+        #   <GTINS>
+        #     <GTIN>
+        #       <GTIN>8712400158572</GTIN>
+        #       <APPID>1714711000001106</APPID>
+        #       <STARTDT>2010-02-01</STARTDT>
+        #       <ENDDT>2013-07-21</ENDDT>
+        #     </GTIN>
+        #     <GTIN>
+        #       <GTIN>8712400360258</GTIN>
+        #       <APPID>1714711000001106</APPID>
+        #       <STARTDT>2013-07-22</STARTDT>
+        #       <ENDDT/>
+        #     </GTIN>
+        #     ...
+        #   </GTINS>
+        # </GTINS_DETAILS>
+        #
+        # This matches the structure of all the other XML files.
+
+        paths = glob.glob(os.path.join(self.dmd_data_path, "f_gtin2_*.xml"))
+        assert len(paths) == 1
+
+        with open(paths[0]) as f:
+            doc = etree.parse(f)
+
+        xslt = etree.fromstring(
+            """
+            <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+                <xsl:output method="xml" indent="yes"/>
+
+                <xsl:template match="/GTIN_DETAILS">
+                    <GTINS_DETAILS>
+                        <GTINS>
+                            <xsl:apply-templates select="AMPPS/AMPP/GTINDATA"/>
+                        </GTINS>
+                    </GTINS_DETAILS>
+                </xsl:template>
+
+                <xsl:template match="GTINDATA">
+                    <GTIN>
+                        <GTIN><xsl:value-of select="GTIN" /></GTIN>
+                        <APPID><xsl:value-of select="../AMPPID" /></APPID>
+                        <STARTDT><xsl:value-of select="STARTDT" /></STARTDT>
+                        <ENDDT><xsl:value-of select="ENDDT" /></ENDDT>
+                    </GTIN>
+                </xsl:template>
+            </xsl:stylesheet>
+        """
+        )
+        transform = etree.XSLT(xslt)
+
+        return list(transform(doc).getroot())
 
     def import_model(self, model, elements):
         """Import model instances from list of XML elements."""

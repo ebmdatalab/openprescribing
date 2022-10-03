@@ -813,7 +813,7 @@ class GTIN(models.Model):
     class Meta:
         verbose_name = "Global Trade Item Number"
 
-    ampp = models.OneToOneField(
+    ampp = models.ForeignKey(
         db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
     )
     gtin = models.BigIntegerField(help_text="GTIN")

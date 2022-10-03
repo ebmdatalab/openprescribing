@@ -1,5 +1,6 @@
 import csv
 import shutil
+from datetime import date
 
 from mock import patch
 
@@ -103,6 +104,12 @@ class TestImportDmd2(TestCase):
         self.assertEqual(
             AMPP.objects.get(id=22479911000001108).bnf_code, "1003020U0BBADAI"
         )
+
+        ampp_with_gtins = AMPP.objects.get(id=1714711000001106)
+        self.assertEqual(ampp_with_gtins.gtin_set.count(), 2)
+        gtin = ampp_with_gtins.gtin_set.get(gtin=8712400158572)
+        self.assertEqual(gtin.startdt, date(2010, 2, 1))
+        self.assertEqual(gtin.enddt, date(2013, 7, 21))
 
     def test_vmp_bnf_codes_set(self):
         # This VMP does not have a BNF code in the mapping, but all its VMPPs
