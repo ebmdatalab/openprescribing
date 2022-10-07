@@ -32,7 +32,7 @@ pandas-gbq
 pandas
 premailer
 # later versions of psycopg2-binary require later versions of django
-psycopg2-binary==2.8.6
+psycopg2-binary==2.9.4
 pyarrow
 pysqlite3-binary
 python-dateutil

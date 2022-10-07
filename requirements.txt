@@ -225,7 +225,7 @@ protobuf==3.20.1
     #   google-api-core
     #   google-cloud-storage
     #   googleapis-common-protos
-psycopg2-binary==2.8.6
+psycopg2-binary==2.9.4
     # via -r requirements.in
 pyarrow==9.0.0
     # via
