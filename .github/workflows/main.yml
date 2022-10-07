@@ -27,7 +27,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
-          channel: technoise
+          channel: tech-noise
           status: "FAILURE (unit_test)"
           color: danger
 
@@ -73,7 +73,7 @@ jobs:
           BROWSER: ${{ matrix.browser }}
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
-          channel: technoise
+          channel: tech-noise
           status: "FAILURE (functional test $BROWSER)"
           color: danger
 
@@ -97,7 +97,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
-          channel: technoise
+          channel: tech-noise
           status: "FAILURE (linting)"
           color: danger
 
@@ -111,6 +111,6 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
-          channel: technoise
+          channel: tech-noise
           status: SUCCESS
           color: good
