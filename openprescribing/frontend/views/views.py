@@ -1019,7 +1019,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     current_month = _get_current_month()
     monthly_totals = ncso_spending_for_entity(
-        entity, entity_type, num_months=30, current_month=current_month
+        entity, entity_type, current_month=current_month
     )
     # In the very rare cases where we don't have data we just return a 404
     # rather than triggering an error

@@ -29,7 +29,7 @@ ConcessionCostMatrices = namedtuple(
 )
 
 
-def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None):
+def ncso_spending_for_entity(entity, entity_type, num_months=None, current_month=None):
     org_type, org_id = _get_org_type_and_id(entity, entity_type)
     max_ncso_date = NCSOConcession.objects.aggregate(Max("date"))["date__max"]
     max_tariff_date = TariffPrice.objects.aggregate(Max("date"))["date__max"]
@@ -38,8 +38,15 @@ def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None
     if not max_ncso_date or not max_tariff_date:
         return []
     end_date = min(max_ncso_date, max_tariff_date)
-    start_date = end_date - relativedelta(months=num_months - 1)
-    last_prescribing_date = parse_date(get_db().dates[-1]).date()
+    prescribing_dates = get_db().dates
+    first_prescribing_date = parse_date(prescribing_dates[0]).date()
+    last_prescribing_date = parse_date(prescribing_dates[-1]).date()
+    if num_months is not None:
+        start_date = max(
+            first_prescribing_date, end_date - relativedelta(months=num_months - 1)
+        )
+    else:
+        start_date = first_prescribing_date
     costs = _get_concession_cost_matrices(start_date, end_date, org_type, org_id)
     # Sum together costs over all presentations (i.e. all rows)
     tariff_costs = numpy.sum(costs.tariff_costs, axis=0)
