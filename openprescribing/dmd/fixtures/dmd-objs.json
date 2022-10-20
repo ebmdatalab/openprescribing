@@ -484,6 +484,60 @@
     "startdt": "2010-01-25",
     "enddt": null
   }
+},
+{
+  "model": "dmd.gtin",
+  "pk": 997195,
+  "fields": {
+    "ampp": 19374211000001101,
+    "gtin": 5060061161275,
+    "startdt": "2010-01-25",
+    "enddt": null
+  }
+},
+{
+  "model": "dmd.gtin",
+  "pk": 997196,
+  "fields": {
+    "ampp": 19374211000001102,
+    "gtin": 5060061161275,
+    "startdt": "2010-01-25",
+    "enddt": null
+  }
+},
+{
+  "model": "dmd.ampp",
+  "pk": 19374211000001101,
+  "fields": {
+    "invalid": false,
+    "nm": "Sectral 100mg capsules (Sanofi) 84 capsule 6 x 14 capsules",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 632811000001105,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": "6 x 14 capsules",
+    "disc": null,
+    "discdt": null,
+    "bnf_code": "ZZZZ"
+  }
+},
+{
+  "model": "dmd.ampp",
+  "pk": 19374211000001102,
+  "fields": {
+    "invalid": false,
+    "nm": "Sectral 100mg capsules (Sanofi) 84 capsule 6 x 14 capsules",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 632811000001105,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": "6 x 14 capsules",
+    "disc": null,
+    "discdt": null,
+    "bnf_code": "ZXYZ"
+  }
 }
 ]
 
