@@ -22,6 +22,9 @@ class TestSearch(TestCase):
 
     def test_by_gtin(self):
         self.assertSearchResults({"q": "5036850012349"}, {AMPP: [1389011000001108]})
+        self.assertSearchResults(
+            {"q": "5060061161275"}, {AMPP: [19374211000001101, 19374211000001102]}
+        )
 
     def test_by_term(self):
         self.assertSearchResults(

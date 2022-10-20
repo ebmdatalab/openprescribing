@@ -6,7 +6,7 @@ from frontend.utils.bnf_hierarchy import simplify_bnf_codes
 
 from .build_search_query import build_query_obj
 from .build_rules import build_rules
-from .models import VTM, VMP, VMPP, AMP, AMPP
+from .models import GTIN, VTM, VMP, VMPP, AMP, AMPP
 
 
 NUM_RESULTS_PER_OBJ_TYPE = 10
@@ -68,11 +68,11 @@ def search_by_gtin(q):
         return []
 
     try:
-        obj = AMPP.objects.get(gtin__gtin=q)
+        obj = AMPP.objects.filter(gtin__gtin=q)
     except AMPP.DoesNotExist:
         return []
 
-    return [{"cls": AMPP, "objs": [obj]}]
+    return [{"cls": AMPP, "objs": list(obj)}]
 
 
 def advanced_search(cls, search, include):
