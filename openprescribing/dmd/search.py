@@ -6,7 +6,7 @@ from frontend.utils.bnf_hierarchy import simplify_bnf_codes
 
 from .build_search_query import build_query_obj
 from .build_rules import build_rules
-from .models import GTIN, VTM, VMP, VMPP, AMP, AMPP
+from .models import VTM, VMP, VMPP, AMP, AMPP
 
 
 NUM_RESULTS_PER_OBJ_TYPE = 10
