@@ -282,11 +282,16 @@ def all_stps(request):
 
 def stp_home_page(request, stp_code):
     stp = get_object_or_404(STP, code=stp_code)
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {"stp_id": stp_code})
     ccgs = PCT.objects.filter(
         stp=stp, close_date__isnull=True, org_type="CCG"
     ).order_by("name")
     context = _home_page_context_for_entity(request, stp)
     context["ccgs"] = ccgs
+    context["form"] = form
     if context["has_prescribing"]:
         template = "entity_home_page.html"
     else:

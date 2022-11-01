@@ -61,7 +61,11 @@ def get_unsent_bookmarks(date):
     """
 
     return OrgBookmark.objects.filter(
-        practice__isnull=True, pct__isnull=True, pcn__isnull=True, user__is_active=True
+        practice__isnull=True,
+        pct__isnull=True,
+        pcn__isnull=True,
+        stp__isnull=True,
+        user__is_active=True,
     ).exclude(user__emailmessage__tags__contains=["all_england", date])
 
 
