@@ -839,7 +839,7 @@ class OrgBookmark(models.Model):
 
     def org_type(self):
         if self.pct is not None and self.practice is None:
-            return "CCG"
+            return "Sub-ICB Location"
         elif self.practice is not None:
             return "practice"
         elif self.pcn is not None:
