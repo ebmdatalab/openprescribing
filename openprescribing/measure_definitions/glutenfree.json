@@ -1,11 +1,7 @@
 {
   "name": "Prescribing of gluten free products",
-  "title": [
-    "Gluten-free products: cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of gluten-free products per 1000 patients"
-  ],
+  "title": "Gluten-free products: cost per 1000 patients",
+  "description": "Cost of gluten-free products per 1000 patients",
   "numerator_short": "Gluten-free products cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
@@ -28,22 +24,22 @@
   "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
-    "0904010AU # Gluten Free/Wheat Free Snacks",
-    "0904010AC # Gluten Free/Wheat Free Cereals",
-    "0904010AD # Gluten Free/Wheat Free Cakes/Pastries",
-    "0904010H0 # Gluten Free Bread",
-    "0904010Q0 # Gluten Free Pasta",
-    "0904010A0 # Gluten Free/Wheat Free Biscuits",
-    "0904010AB # Gluten Free/Wheat Free Cooking Aids",
-    "090401080 # Gluten Free/Wheat Free Pasta",
-    "0904010U0 # Gluten Free/Wheat Free Bread",
-    "090401070 # Gluten Free/Wheat Free Grains/Flours",
-    "0904010AA # Gluten Free/Wheat Free Mixes",
-    "090401030 # Gluten Free Mixes",
-    "0904010J0 # Gluten Free Grains/Flours",
-    "0904010AG # Gluten Free/Wheat Free Meals",
-    "0904010L0 # Gluten Free Cakes/Pastries",
-    "0904010I0 # Gluten Free Biscuits"
+    "090401030 # Gluten free mixes",
+    "090401070 # Gluten free/wheat free grains/flours",
+    "090401080 # Gluten free/wheat free pasta",
+    "0904010A0 # Gluten free/wheat free biscuits",
+    "0904010AA # Gluten free/wheat free mixes",
+    "0904010AB # Gluten free/wheat free cooking aids",
+    "0904010AC # Gluten free/wheat free cereals",
+    "0904010AD # Gluten free/wheat free cakes/pastries",
+    "0904010AG # Gluten free/wheat free meals",
+    "0904010AU # Gluten free/wheat free snacks",
+    "0904010H0 # Gluten free breads",
+    "0904010I0 # Gluten free biscuits",
+    "0904010J0 # Gluten free grains/flours",
+    "0904010L0 # Gluten free cakes/pastries",
+    "0904010Q0 # Gluten free pastas",
+    "0904010U0 # Gluten free/wheat free bread"
   ],
   "denominator_type": "list_size"
 }
