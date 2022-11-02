@@ -334,7 +334,7 @@ var queryForm = {
       templateResult: function(result) {
         if (result.loading) return result.text;
         var str, section, name;
-        str = '<strong>' + result.type;
+        str = '<strong>' + _this.getDisplayType(result.type);
         if ('is_generic' in result) {
           str += (result.is_generic) ? ', generic' : ', branded';
         }
@@ -397,6 +397,25 @@ var queryForm = {
       orgType = 'CCG,practice';
     }
     return orgType;
+  },
+
+  typeNameMap: {
+    "practice": "Practice",
+    "pcn": "PCN",
+    "ccg": "Sub-ICB Location",
+    "stp": "ICB",
+    "regional_team": "Regional Team"
+  },
+
+  getDisplayType: function(type) {
+    var mapped = this.typeNameMap[type.toLowerCase()];
+    if (mapped) {
+      return mapped;
+    } else {
+      // We expect to get many other types here which are not organisation
+      // types so we want to pass these through untouched
+      return type;
+    }
   }
 
 };
