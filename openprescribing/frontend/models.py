@@ -787,6 +787,7 @@ class OrgBookmark(models.Model):
         Practice, null=True, blank=True, on_delete=models.PROTECT
     )
     pcn = models.ForeignKey(PCN, null=True, blank=True, on_delete=models.PROTECT)
+    stp = models.ForeignKey(STP, null=True, blank=True, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def dashboard_url(self, measure=None):
@@ -815,6 +816,13 @@ class OrgBookmark(models.Model):
             else:
                 view = "measures_for_one_pcn"
                 kwargs = {"pcn_code": self.pcn.code}
+        elif self.stp is not None:
+            if measure:
+                view = "measure_for_one_stp"
+                kwargs = {"measure": measure, "entity_code": self.stp.code}
+            else:
+                view = "measures_for_one_stp"
+                kwargs = {"stp_code": self.stp.code}
         else:
             if measure:
                 fragment = measure
@@ -834,16 +842,20 @@ class OrgBookmark(models.Model):
             return self.practice.cased_name
         elif self.pcn is not None:
             return self.pcn.cased_name
+        elif self.stp is not None:
+            return self.stp.cased_name
         else:
             return "the NHS in England"
 
     def org_type(self):
         if self.pct is not None and self.practice is None:
-            return "CCG"
+            return "Sub-ICB Location"
         elif self.practice is not None:
             return "practice"
         elif self.pcn is not None:
             return "PCN"
+        elif self.stp is not None:
+            return "ICB"
         else:
             return "all_england"
 

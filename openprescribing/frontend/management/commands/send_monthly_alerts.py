@@ -12,7 +12,7 @@ from frontend.models import OrgBookmark
 from frontend.models import Profile
 from frontend.models import SearchBookmark
 from frontend.models import User
-from frontend.models import Practice, PCT, PCN
+from frontend.models import Practice, PCT, PCN, STP
 
 from common.alert_utils import EmailErrorDeferrer
 from frontend.views import bookmark_utils
@@ -62,6 +62,13 @@ class Command(BaseCommand):
             ),
         )
         parser.add_argument(
+            "--stp",
+            help=(
+                "If specified, an STP/ICB code for which a test alert "
+                "should be sent to `recipient-email`"
+            ),
+        )
+        parser.add_argument(
             "--practice",
             help=(
                 "If specified, a Practice code for which a test alert "
@@ -99,12 +106,17 @@ class Command(BaseCommand):
             Q(user__is_active=True)
             & ~Q(user__emailmessage__tags__contains=["measures", now_month])
             &
-            # Only include bookmarks for either a practice or pct or PCN: when all
+            # Only include bookmarks for either a practice, pct, PCN or STP: when all
             # are NULL this indicates an All England bookmark
-            (Q(practice__isnull=False) | Q(pct__isnull=False) | Q(pcn__isnull=False))
+            (
+                Q(practice__isnull=False)
+                | Q(pct__isnull=False)
+                | Q(pcn__isnull=False)
+                | Q(stp__isnull=False)
+            )
         )
         if options["recipient_email"] and (
-            options["ccg"] or options["practice"] or options["pcn"]
+            options["ccg"] or options["practice"] or options["pcn"] or options["stp"]
         ):
             dummy_user = User(email=options["recipient_email"], id="dummyid")
             dummy_user.profile = Profile(key="dummykey")
@@ -114,6 +126,7 @@ class Command(BaseCommand):
                     pct_id=options["ccg"],
                     practice_id=options["practice"],
                     pcn_id=options["pcn"],
+                    stp_id=options["stp"],
                 )
             ]
             logger.info("Created a single test org bookmark")
@@ -178,6 +191,8 @@ class Command(BaseCommand):
             org = org_bookmark.pct or PCT.objects.get(pk=options["ccg"])
         elif org_bookmark.pcn or options["pcn"]:
             org = org_bookmark.pcn or PCN.objects.get(pk=options["pcn"])
+        elif org_bookmark.stp or options["stp"]:
+            org = org_bookmark.stp or STP.objects.get(pk=options["stp"])
         else:
             assert False
         if getattr(org, "close_date", None):

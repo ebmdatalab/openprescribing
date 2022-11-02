@@ -12,7 +12,7 @@ from django.test import TestCase
 from common.alert_utils import BatchedEmailErrors
 from frontend.models import EmailMessage
 from frontend.models import Measure
-from frontend.models import PCN
+from frontend.models import PCN, STP
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.views.bookmark_utils import BadAlertImageError
 from frontend.tests.test_bookmark_utils import _makeContext
@@ -83,6 +83,7 @@ class GetBookmarksTestCase(TestCase):
             ccg="03V",
             practice="P87629",
             pcn=None,
+            stp=None,
             recipient_email_file=None,
             skip_email_file=None,
         )
@@ -483,6 +484,24 @@ class PCNAlertTestCase(ApiTestBase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [bookmark.user.email])
         self.assertIn("PCN", mail.outbox[0].body)
+
+
+class STPAlertTestCase(ApiTestBase):
+
+    fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
+
+    def test_stp_alerts_sent(self):
+        """Create an STP bookmark, send alerts, and make sure an email is sent to
+        correct user, and that its contents mention "ICBs" (which is what STPs have now
+        become)
+        """
+        factory = DataFactory()
+        stp = STP.objects.get(pk="E01")
+        bookmark = factory.create_org_bookmark(stp)
+        call_command(CMD_NAME)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [bookmark.user.email])
+        self.assertIn("ICB", mail.outbox[0].body)
 
 
 def call_mocked_command(context, mock_finder, **opts):

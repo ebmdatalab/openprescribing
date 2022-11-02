@@ -82,6 +82,7 @@ class OrgBookmarkForm(forms.Form):
     pct_id = forms.CharField(widget=forms.HiddenInput(), required=False)
     practice_id = forms.CharField(widget=forms.HiddenInput(), required=False)
     pcn_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+    stp_id = forms.CharField(widget=forms.HiddenInput(), required=False)
 
 
 class NCSOConcessionBookmarkForm(forms.Form):
