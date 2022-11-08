@@ -16,7 +16,7 @@ mypy-extensions==0.4.3
     # via black
 pathspec==0.10.1
     # via black
-platformdirs==2.5.2
+platformdirs==2.5.3
     # via black
 pycodestyle==2.8.0
     # via flake8
