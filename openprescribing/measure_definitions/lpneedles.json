@@ -32,7 +32,6 @@
      "p.bnf_code LIKE (SELECT bnf_code FROM dmd.vmp WHERE nm  LIKE '%insulin needles%' AND bnf_code IS NOT NULL ",
     "UNION DISTINCT ",
     "SELECT amp.bnf_code FROM dmd.amp AS amp INNER JOIN dmd.vmp ON vmp.id = amp.vmp  WHERE vmp.nm LIKE '%insulin needles%' AND amp.bnf_code IS NOT NULL) ",
-    "AND UPPER(p.bnf_name) LIKE '%NEEDLES%' --Codes contain other products as well, so this selects needles only \n",
     "AND r.median_price_per_unit >= 0.05 --this selects products with median price of >= 5 pound a box "
   ],
   "numerator_bnf_codes_query": [
