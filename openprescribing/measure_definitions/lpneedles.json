@@ -48,7 +48,7 @@
     "      OR p.bnf_code LIKE '210109008%'",
     "      OR p.bnf_code LIKE '210109009%'",
     "    )",
-    "AND p.bnf_name LIKE '%Needles%' ",
+    "AND UPPER(p.bnf_name) LIKE '%NEEDLES%' ",
     "AND r.median_price_per_unit >= 0.05",
     "AND p.month >= '{three_months_ago}'"
   ],
