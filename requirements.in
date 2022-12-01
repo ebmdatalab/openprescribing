@@ -14,7 +14,8 @@ django-cors-headers
 django-crispy-forms
 django-dotenv
 django-import-export
-django==2.2.28
+# Django 3.2 is the current LTS release
+django>=3.2,<3.3
 djangorestframework
 djangorestframework-csv
 google-api-python-client
