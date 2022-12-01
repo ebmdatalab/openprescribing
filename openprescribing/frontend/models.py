@@ -462,7 +462,7 @@ class Presentation(models.Model):
         max_length=15, primary_key=True, validators=[isAlphaNumeric]
     )
     name = models.CharField(max_length=200)
-    is_generic = models.NullBooleanField(default=None)
+    is_generic = models.BooleanField(null=True, default=None)
     is_current = models.BooleanField(default=True)
     replaced_by = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.PROTECT
@@ -486,7 +486,7 @@ class Presentation(models.Model):
     # `quantity` measures the number of packs itself. This field is set by the
     # `set_quantity_means_pack` management command and should not be modified
     # by anything else, especially not by hand.
-    quantity_means_pack = models.NullBooleanField(default=None)
+    quantity_means_pack = models.BooleanField(null=True, default=None)
 
     # The name of the corresponding product (or product pack) in dm+d.  This
     # tends to be more user-friendly than the names in the BNF.  See
@@ -628,9 +628,9 @@ class Measure(models.Model):
     )
     include_in_alerts = models.BooleanField(default=True)
     url = models.URLField(null=True, blank=True)
-    is_percentage = models.NullBooleanField()
-    is_cost_based = models.NullBooleanField()
-    low_is_good = models.NullBooleanField()
+    is_percentage = models.BooleanField(null=True)
+    is_cost_based = models.BooleanField(null=True)
+    low_is_good = models.BooleanField(null=True)
     analyse_url = models.CharField(max_length=5000, null=True)
 
     numerator_type = models.CharField(max_length=20)
