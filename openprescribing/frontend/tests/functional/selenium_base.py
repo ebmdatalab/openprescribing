@@ -2,6 +2,7 @@ import os
 import random
 import subprocess
 import unittest
+from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -154,7 +155,25 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def get_firefox_driver(cls):
-        return webdriver.Firefox(log_path="%s/logs/webdriver.log" % settings.REPO_ROOT)
+        # Newer releases of Ubuntu package Firefox as a Snap, meaning that it comes with
+        # sanboxing restrictions that prevent it writing temporary profiles into the
+        # default system tmpdir. We workaround this by changing TMPDIR to point to a
+        # directory in the project root (which we assume is within the currently running
+        # user's home directory). See:
+        # https://github.com/mozilla/geckodriver/releases/tag/v0.32.0
+        tmpdir = Path(settings.REPO_ROOT) / "tmp"
+        tmpdir.mkdir(exist_ok=True)
+        orig_tmp = os.environ.get("TMPDIR")
+        os.environ["TMPDIR"] = str(tmpdir)
+        try:
+            return webdriver.Firefox(
+                log_path="%s/logs/webdriver.log" % settings.REPO_ROOT
+            )
+        finally:
+            if orig_tmp is not None:
+                os.environ["TMPDIR"] = orig_tmp
+            else:
+                del os.environ["TMPDIR"]
 
     @classmethod
     def tearDownClass(cls):
