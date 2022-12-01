@@ -32,8 +32,7 @@ openpyxl
 pandas-gbq
 pandas
 premailer
-# later versions of psycopg2-binary require later versions of django
-psycopg2-binary==2.8.6
+psycopg2-binary
 pyarrow
 pysqlite3-binary
 python-dateutil
