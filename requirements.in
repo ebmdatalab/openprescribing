@@ -14,7 +14,7 @@ django-cors-headers
 django-crispy-forms
 django-dotenv
 django-import-export
-django==3.1.14
+django==3.2.16
 djangorestframework
 djangorestframework-csv
 google-api-python-client
