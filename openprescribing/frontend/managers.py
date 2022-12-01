@@ -246,3 +246,6 @@ class NotAnInt(str):
 
     def __int__(self):
         raise ValueError("Not an int")
+
+    def __str__(self):
+        return self
