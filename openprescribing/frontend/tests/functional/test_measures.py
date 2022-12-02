@@ -16,6 +16,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.management import call_command
 import requests
 from .selenium_base import SeleniumTestCase
+from selenium.webdriver.common.by import By
 
 from frontend.models import RegionalTeam, STP, PCT, PCN, Practice, Measure, MeasureValue
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
@@ -60,8 +61,8 @@ class MeasuresTests(SeleniumTestCase):
         self.browser.get(url)
 
     def _verify_link(self, base_element, css_selector, exp_text, exp_path):
-        element = base_element.find_element_by_css_selector(css_selector)
-        a_element = element.find_element_by_tag_name("a")
+        element = base_element.find_element(By.CSS_SELECTOR, css_selector)
+        a_element = element.find_element(By.TAG_NAME, "a")
         self.assertEqual(a_element.text, exp_text)
         href = _normalize_url(a_element.get_attribute("href"))
         expected_href = _normalize_url(self.live_server_url + exp_path)
@@ -69,7 +70,7 @@ class MeasuresTests(SeleniumTestCase):
 
     def _verify_num_elements(self, base_element, css_selector, exp_num):
         self.assertEqual(
-            len(base_element.find_elements_by_css_selector(css_selector)), exp_num
+            len(base_element.find_elements(By.CSS_SELECTOR, css_selector)), exp_num
         )
 
     def _find_measure_panel(self, id_):
@@ -1382,13 +1383,13 @@ class MeasuresTests(SeleniumTestCase):
         ccg = p1.ccg
         self._get("/sicbl/{}/core_0/".format(ccg.code))
         panel_element = self._find_measure_panel("practice_{}".format(p1.code))
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(p1_exp_text, perf_element.text)
 
         # practice_home_page
         self._get("/practice/{}/".format(p1.code))
         panel_element = self._find_measure_panel("top-measure-container")
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(p1_exp_text, perf_element.text)
 
     def test_explanation_for_pcn(self):
@@ -1449,13 +1450,13 @@ class MeasuresTests(SeleniumTestCase):
         # measure_for_all_pcns
         self._get("/measure/core_0/pcn/")
         panel_element = self._find_measure_panel("pcn_{}".format(p1.code))
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(p1_exp_text, perf_element.text)
 
         # pcn_home_page
         self._get("/pcn/{}/".format(p1.code))
         panel_element = self._find_measure_panel("top-measure-container")
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(p1_exp_text, perf_element.text)
 
     def test_explanation_for_ccg(self):
@@ -1516,13 +1517,13 @@ class MeasuresTests(SeleniumTestCase):
         # measure_for_all_ccgs
         self._get("/measure/core_0/")
         panel_element = self._find_measure_panel("ccg_{}".format(c1.code))
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(c1_exp_text, perf_element.text)
 
         # ccg_home_page
         self._get("/sicbl/{}/".format(c1.code))
         panel_element = self._find_measure_panel("top-measure-container")
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(c1_exp_text, perf_element.text)
 
     def test_explanation_for_stp(self):
@@ -1583,13 +1584,13 @@ class MeasuresTests(SeleniumTestCase):
         # measure_for_all_stps
         self._get("/measure/core_0/icb/")
         panel_element = self._find_measure_panel("stp_{}".format(s1.code))
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(s1_exp_text, perf_element.text)
 
         # stp_home_page
         self._get("/icb/{}/".format(s1.code))
         panel_element = self._find_measure_panel("top-measure-container")
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(s1_exp_text, perf_element.text)
 
     def test_explanation_for_regional_team(self):
@@ -1643,13 +1644,13 @@ class MeasuresTests(SeleniumTestCase):
         # measure_for_all_regional_teams
         self._get("/measure/core_0/regional-team/")
         panel_element = self._find_measure_panel("regional_team_{}".format(r1.code))
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(r1_exp_text, perf_element.text)
 
         # regional_team_home_page
         self._get("/regional-team/{}/".format(r1.code))
         panel_element = self._find_measure_panel("top-measure-container")
-        perf_element = panel_element.find_element_by_class_name("explanation")
+        perf_element = panel_element.find_element(By.CLASS_NAME, "explanation")
         self.assertIn(r1_exp_text, perf_element.text)
 
     def test_performance_summary_for_measure_for_all_pcns(self):
