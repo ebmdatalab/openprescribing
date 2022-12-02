@@ -382,13 +382,11 @@ class Table(object):
         self.run_job("query", args, options, default_options)
 
     def copy_to_new_dataset(self, new_dataset_key, **options):
-        default_options = {"location": settings.BQ_LOCATION}
-
         dataset_ref = self.gcbq_client.dataset(DATASETS[new_dataset_key])
         new_table_ref = dataset_ref.table(self.table_id)
 
         args = [self.gcbq_table_ref, new_table_ref]
-        self.run_job("copy_table", args, options, default_options)
+        self.run_job("copy_table", args, options, {})
 
     def move_to_new_dataset(self, new_dataset_id):
         self.copy_to_new_dataset(new_dataset_id)
