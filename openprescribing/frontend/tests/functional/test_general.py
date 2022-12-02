@@ -5,6 +5,7 @@ from urllib.parse import quote_plus
 from mock import patch
 from mock import PropertyMock
 from .selenium_base import SeleniumTestCase
+from selenium.webdriver.common.by import By
 
 
 class GeneralFrontendTest(SeleniumTestCase):
@@ -105,7 +106,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         )
 
         # Now click to sort by potential savings
-        self.browser.find_element_by_xpath("//button[@data-orderby='savings']").click()
+        self.browser.find_element(By.XPATH, "//button[@data-orderby='savings']").click()
 
         # hack: not sure of the correct way to await the element
         # being visible.
@@ -133,14 +134,14 @@ class GeneralFrontendTest(SeleniumTestCase):
         measure = self.find_by_xpath("//div[@id='measure_keppra']")
         self.assertIn(
             "/measure/keppra",
-            measure.find_element_by_partial_link_text(
-                "Compare all Sub-ICB Locations"
+            measure.find_element(
+                By.PARTIAL_LINK_TEXT, "Compare all Sub-ICB Locations"
             ).get_attribute("href"),
         )
         self.assertIn(
             "/sicbl/02Q/keppra",
-            measure.find_element_by_partial_link_text(
-                "Split the measure"
+            measure.find_element(
+                By.PARTIAL_LINK_TEXT, "Split the measure"
             ).get_attribute("href"),
         )
 

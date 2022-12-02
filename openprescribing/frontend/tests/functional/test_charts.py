@@ -11,6 +11,7 @@
 import unittest
 
 from .selenium_base import SeleniumTestCase
+from selenium.webdriver.common.by import By
 
 
 class MapTest(SeleniumTestCase):
@@ -29,8 +30,8 @@ class MapTest(SeleniumTestCase):
         # In the default month (Sept) there is one "maximum" value
         self.assertEqual(
             len(
-                self.browser.find_elements_by_xpath(
-                    "//*[@fill='#67001f' and name()='path']"
+                self.browser.find_elements(
+                    By.XPATH, "//*[@fill='#67001f' and name()='path']"
                 )
             ),
             1,
@@ -53,8 +54,8 @@ class MapTest(SeleniumTestCase):
         # Check the values for Gravesend have changed as expected
         self.assertEqual(
             len(
-                self.browser.find_elements_by_xpath(
-                    "//*[@fill='#67001f' and name()='path']"
+                self.browser.find_elements(
+                    By.XPATH, "//*[@fill='#67001f' and name()='path']"
                 )
             ),
             2,
