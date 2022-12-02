@@ -17,7 +17,6 @@ from selenium.webdriver.common.by import By
 class MapTest(SeleniumTestCase):
     # These tests run against a MockAPIServer started by the
     # custom_runner
-    @unittest.expectedFailure
     def test_map_slider(self):
         self.browser.get(
             self.live_server_url
@@ -68,7 +67,6 @@ class MapTest(SeleniumTestCase):
 class SmallListTest(SeleniumTestCase):
     # These tests run against a MockAPIServer started by the
     # custom_runner
-    @unittest.expectedFailure
     def test_nothing_hidden_by_default(self):
         self.browser.get(
             self.live_server_url
