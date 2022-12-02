@@ -490,7 +490,6 @@ def build_schema_from_model(model):
         model_fields.DecimalField: "NUMERIC",
         model_fields.IntegerField: "INTEGER",
         model_fields.BooleanField: "BOOLEAN",
-        model_fields.NullBooleanField: "BOOLEAN",
         model_fields.TextField: "STRING",
         related_fields.ForeignKey: "INTEGER",
         related_fields.OneToOneField: "INTEGER",

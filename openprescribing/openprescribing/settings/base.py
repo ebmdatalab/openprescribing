@@ -74,6 +74,8 @@ USE_L10N = True
 USE_TZ = True
 # END GENERAL CONFIGURATION
 
+# https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # MEDIA CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
@@ -449,7 +451,3 @@ CHECK_DATA_IN_BQ = True
 # Prefix we add to measure IDs to indicate that they are "previews" and should not be
 # shown by default
 MEASURE_PREVIEW_PREFIX = "preview_"
-
-# Only required if you need to use a version of GDAL other than the system-installed
-# one, which you may do when developing locally.
-GDAL_LIBRARY_PATH = utils.get_env_setting("GDAL_LIBRARY_PATH", default="")
