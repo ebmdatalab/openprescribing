@@ -17,7 +17,6 @@ from selenium.webdriver.common.by import By
 class MapTest(SeleniumTestCase):
     # These tests run against a MockAPIServer started by the
     # custom_runner
-    @unittest.expectedFailure
     def test_map_slider(self):
         self.browser.get(
             self.live_server_url
@@ -89,7 +88,6 @@ class SmallListTest(SeleniumTestCase):
 
 
 class AnalyseSummaryTotalsTest(SeleniumTestCase):
-    @unittest.expectedFailure
     def test_summary_totals_on_analyse_page(self):
         self.browser.get(self.live_server_url + "/analyse/#org=CCG&numIds=0212000AA")
         expected = {
