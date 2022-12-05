@@ -1,7 +1,6 @@
 import re
 
 from django.core.management import BaseCommand
-
 from gcutils.bigquery import Client, TableExporter
 from gcutils.storage import Client as StorageClient
 

@@ -5,7 +5,6 @@ import lz4.frame
 import pyarrow
 from scipy.sparse import csc_matrix
 
-
 # When we get the time to work on this we can just get rid of pyarrow
 # altogether. The new pickle protocol (pickle 5) allows for zero-copy
 # deserialisation and I've benchmarked this as being faster than pyarrow even

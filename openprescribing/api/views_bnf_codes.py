@@ -1,8 +1,9 @@
+from django.db.models import Q
+from frontend.models import Chemical, Presentation, Product, Section
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.db.models import Q
+
 from . import view_utils as utils
-from frontend.models import Chemical, Section, Product, Presentation
 
 
 @api_view(["GET"])

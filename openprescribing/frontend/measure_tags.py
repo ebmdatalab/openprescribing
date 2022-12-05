@@ -4,7 +4,6 @@ from functools import partial
 
 from django.conf import settings
 from django.utils.functional import SimpleLazyObject
-
 from frontend.models import Measure
 
 

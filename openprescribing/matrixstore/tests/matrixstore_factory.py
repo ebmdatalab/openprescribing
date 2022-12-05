@@ -1,9 +1,9 @@
-import mock
 import sqlite3
 
+import mock
 from frontend.price_per_unit.substitution_sets import get_substitution_sets
-from matrixstore.connection import MatrixStore
 from matrixstore import db
+from matrixstore.connection import MatrixStore
 from matrixstore.tests.import_test_data_fast import import_test_data_fast
 
 

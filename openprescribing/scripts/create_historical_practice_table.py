@@ -7,6 +7,7 @@
 
 import csv
 import sys
+
 from google.cloud import bigquery as gcbq
 from google.cloud import storage as gcs
 from google.cloud.exceptions import Conflict

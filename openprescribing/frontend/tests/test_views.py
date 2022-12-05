@@ -1,24 +1,22 @@
-import mock
-from mock import Mock
-import os
 import datetime
+import os
 from urllib.parse import parse_qs, urlparse
 
-from pyquery import PyQuery as pq
-
+import mock
 from django.conf import settings
 from django.core import mail
 from django.core.management import call_command
 from django.http import QueryDict
-from django.test import TestCase, SimpleTestCase, override_settings
-
-from frontend.models import EmailMessage, OrgBookmark, SearchBookmark, Measure
-from frontend.views.views import BadRequestError, _get_measure_tag_filter, cached
+from django.test import SimpleTestCase, TestCase, override_settings
+from frontend.models import EmailMessage, Measure, OrgBookmark, SearchBookmark
 from frontend.price_per_unit.substitution_sets import (
-    get_substitution_sets_by_presentation,
     get_substitution_sets,
+    get_substitution_sets_by_presentation,
 )
+from frontend.views.views import BadRequestError, _get_measure_tag_filter, cached
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
+from mock import Mock
+from pyquery import PyQuery as pq
 
 
 class TestAlertViews(TestCase):

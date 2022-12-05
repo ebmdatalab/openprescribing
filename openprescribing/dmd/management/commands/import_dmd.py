@@ -3,22 +3,21 @@ import glob
 import os
 from datetime import datetime
 
-from lxml import etree
-from openpyxl import load_workbook
-
 from django.apps import apps
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError
 from django.db import connection, transaction
-from django.db.models import fields as django_fields
 from django.db.models import ForeignKey
-
+from django.db.models import fields as django_fields
 from dmd import models
 from dmd.models import AMP, AMPP, VMP, VMPP
-from dmd.view_schema import schema
 from dmd.obj_types import cls_to_obj_type
+from dmd.view_schema import schema
 from frontend.models import ImportLog, Presentation
 from gcutils.bigquery import Client
+from lxml import etree
+from openpyxl import load_workbook
+
 from openprescribing.slack import notify_slack
 from openprescribing.utils import mkdir_p
 

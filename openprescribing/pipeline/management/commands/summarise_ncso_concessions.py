@@ -1,7 +1,6 @@
 from datetime import date
 
 from django.core.management import BaseCommand
-
 from frontend.models import NCSOConcession
 
 

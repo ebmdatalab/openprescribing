@@ -3,19 +3,17 @@ import warnings
 
 from django.core.cache import CacheKeyWarning
 from django.test import override_settings
-
 from frontend.models import (
+    ImportLog,
     Practice,
     PracticeStatistics,
     Prescription,
     Presentation,
-    ImportLog,
 )
 from matrixstore.tests.matrixstore_factory import (
     matrixstore_from_data_factory,
     patch_global_matrixstore,
 )
-
 
 # The dummy cache backend we use in testing warns that our binary cache keys
 # won't be compatible with memcached, but we really don't care

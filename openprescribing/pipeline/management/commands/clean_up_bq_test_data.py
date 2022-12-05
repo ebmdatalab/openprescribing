@@ -1,4 +1,5 @@
 import os
+
 from django.core.management import BaseCommand, CommandError
 from gcutils.bigquery import Client
 

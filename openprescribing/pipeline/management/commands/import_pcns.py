@@ -1,7 +1,6 @@
 from django.core.management import BaseCommand
 from django.db import transaction
 from frontend.models import PCN, Practice
-
 from openpyxl import load_workbook
 
 

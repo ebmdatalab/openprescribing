@@ -1,45 +1,47 @@
 # -*- coding: utf-8 -*-
-from datetime import date
-from tempfile import NamedTemporaryFile
 import html.parser
 import logging
 import os
 import re
 import subprocess
 import urllib.parse
+from datetime import date
+from tempfile import NamedTemporaryFile
 
-from anymail.message import attach_inline_image_file
-from dateutil.relativedelta import relativedelta
-from premailer import Premailer
 import numpy as np
 import pandas as pd
-
+from anymail.message import attach_inline_image_file
+from common.utils import email_as_text, nhs_titlecase
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.mail import EmailMultiAlternatives
-from django.urls import reverse
 from django.template.loader import get_template
+from django.urls import reverse
 from django.utils.safestring import mark_safe
-
-from common.utils import email_as_text
-from common.utils import nhs_titlecase
-from frontend.models import ImportLog
-from frontend.models import Measure
-from frontend.models import MeasureValue
-from frontend.models import NCSOConcessionBookmark
-from frontend.models import Practice, PCN, PCT, STP
+from frontend.models import (
+    PCN,
+    PCT,
+    STP,
+    ImportLog,
+    Measure,
+    MeasureValue,
+    NCSOConcessionBookmark,
+    Practice,
+)
 from frontend.views.spending_utils import (
-    ncso_spending_for_entity,
     ncso_spending_breakdown_for_entity,
+    ncso_spending_for_entity,
 )
 from frontend.views.views import (
+    all_england_low_priority_savings,
+    all_england_low_priority_total,
+    all_england_measure_savings,
     cached,
     first_or_none,
-    all_england_low_priority_total,
-    all_england_low_priority_savings,
-    all_england_measure_savings,
     get_total_savings_for_org,
 )
+from premailer import Premailer
 
 GRAB_CMD = (
     "/usr/local/bin/phantomjs "

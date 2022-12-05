@@ -1,15 +1,13 @@
 import random
 
 import numpy
-from scipy.sparse import spmatrix as SparseMatrixBase
-
 from django.test import SimpleTestCase
-
 from matrixstore.matrix_ops import (
     convert_to_smallest_int_type,
     finalise_matrix,
     sparse_matrix,
 )
+from scipy.sparse import spmatrix as SparseMatrixBase
 
 
 class TestConvertToSmallestIntType(SimpleTestCase):

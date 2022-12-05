@@ -1,14 +1,11 @@
-from fabric.api import run, sudo
-from fabric.api import prefix, warn, abort
-from fabric.api import settings, task, env, shell_env
-from fabric.context_managers import cd
-from fabric.contrib.files import exists
-
-from datetime import datetime
 import json
 import os
 import shlex
+from datetime import datetime
 
+from fabric.api import abort, env, prefix, run, settings, shell_env, sudo, task, warn
+from fabric.context_managers import cd
+from fabric.contrib.files import exists
 
 env.hosts = ["web2.openprescribing.net"]
 env.forward_agent = True

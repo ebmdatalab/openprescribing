@@ -2,8 +2,8 @@ import itertools
 import json
 import random
 
-from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
+from dateutil.relativedelta import relativedelta
 
 
 class DataFactory(object):

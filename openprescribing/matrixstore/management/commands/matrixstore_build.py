@@ -8,18 +8,16 @@ import sqlite3
 
 from django.conf import settings
 from django.core.management import BaseCommand
-
 from matrixstore.build.common import get_temp_filename
 from matrixstore.build.dates import DEFAULT_NUM_MONTHS
-from matrixstore.build.init_db import init_db
 from matrixstore.build.download_practice_stats import download_practice_stats
-from matrixstore.build.import_practice_stats import import_practice_stats
 from matrixstore.build.download_prescribing import download_prescribing
-from matrixstore.build.import_prescribing import import_prescribing
-from matrixstore.build.update_bnf_map import update_bnf_map
-from matrixstore.build.precalculate_totals import precalculate_totals
 from matrixstore.build.generate_filename import generate_filename
-
+from matrixstore.build.import_practice_stats import import_practice_stats
+from matrixstore.build.import_prescribing import import_prescribing
+from matrixstore.build.init_db import init_db
+from matrixstore.build.precalculate_totals import precalculate_totals
+from matrixstore.build.update_bnf_map import update_bnf_map
 
 logger = logging.getLogger(__name__)
 

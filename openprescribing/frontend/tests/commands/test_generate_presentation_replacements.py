@@ -1,10 +1,6 @@
 from django.core.management import call_command
 from django.test import TestCase
-from frontend.models import Chemical
-from frontend.models import Presentation
-from frontend.models import Product
-from frontend.models import Section
-
+from frontend.models import Chemical, Presentation, Product, Section
 from mock import patch
 
 

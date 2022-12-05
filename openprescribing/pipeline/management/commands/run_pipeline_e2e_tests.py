@@ -1,21 +1,20 @@
-from distutils.dir_util import copy_tree
 import glob
 import os
 import shutil
+from distutils.dir_util import copy_tree
 
 from django.apps import apps
-from django.core.management import BaseCommand, CommandError
 from django.conf import settings
-
-from django.core.management import call_command
-
-from gcutils.bigquery import Client as BQClient, DATASETS, build_schema
-from gcutils.storage import Client as StorageClient
+from django.core.management import BaseCommand, CommandError, call_command
 from frontend import bq_schemas as schemas
-from frontend.models import MeasureValue, MeasureGlobal, TariffPrice
-from openprescribing.slack import notify_slack
+from frontend.models import MeasureGlobal, MeasureValue, TariffPrice
+from gcutils.bigquery import DATASETS
+from gcutils.bigquery import Client as BQClient
+from gcutils.bigquery import build_schema
+from gcutils.storage import Client as StorageClient
 from pipeline import runner
 
+from openprescribing.slack import notify_slack
 
 e2e_path = os.path.join(settings.APPS_ROOT, "pipeline", "e2e-test-data")
 

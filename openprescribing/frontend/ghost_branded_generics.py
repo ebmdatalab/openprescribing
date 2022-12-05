@@ -11,15 +11,14 @@ price is; the BSA's internal version doesn't always match the published
 version. So we attempt to infer the correct price by looking at all prescribing
 of that drug and finding the median price.
 """
-import numpy
 import hashlib
 
+import numpy
 from django.db import connection
-
 from frontend.models import Presentation
+from matrixstore.cachelib import memoize
 from matrixstore.db import get_db, get_row_grouper
 from matrixstore.matrix_ops import get_submatrix
-from matrixstore.cachelib import memoize
 
 # Minimum difference (positive or negative) between a practice's net costs for
 # a drug and our calculated tariff costs. Any differences below this level we

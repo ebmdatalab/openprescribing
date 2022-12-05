@@ -1,8 +1,8 @@
 import os
-import requests
 import sys
 
 import dotenv
+import requests
 
 
 def notify_slack(message):

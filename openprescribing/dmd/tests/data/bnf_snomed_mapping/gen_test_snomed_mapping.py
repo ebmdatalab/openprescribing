@@ -10,8 +10,8 @@
 import os
 import sys
 
-from openpyxl import Workbook, load_workbook
 import psycopg2
+from openpyxl import Workbook, load_workbook
 
 if len(sys.argv) != 3:
     print("Usage: python gen_test_snomed_mapping.py [inp_path] [outp_path]")

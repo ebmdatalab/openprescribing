@@ -2,14 +2,13 @@ import csv
 import shutil
 from datetime import date
 
-from mock import patch
-
 from django.core.management import call_command
 from django.test import TestCase
-
-from dmd.models import AMP, AMPP, VMP, VMPP
 from dmd.management.commands.import_dmd import get_common_name
-from frontend.models import ImportLog, Presentation, NCSOConcession
+from dmd.models import AMP, AMPP, VMP, VMPP
+from frontend.models import ImportLog, NCSOConcession, Presentation
+from mock import patch
+
 from openprescribing.utils import mkdir_p
 
 

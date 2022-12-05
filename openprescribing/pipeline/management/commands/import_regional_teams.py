@@ -1,4 +1,5 @@
 import csv
+
 from django.core.management import BaseCommand
 from frontend.models import RegionalTeam
 

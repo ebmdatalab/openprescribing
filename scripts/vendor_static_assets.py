@@ -3,7 +3,6 @@ import os
 
 import requests
 
-
 FILES = {
     "datatables/datatables-bs.css": "https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css",
     "datatables/datatables-bs.js": "https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js",

@@ -1,11 +1,9 @@
-from mock import patch
-
 from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase
-
 from frontend.tests.data_factory import DataFactory
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
+from mock import patch
 
 
 @patch("frontend.views.bookmark_utils.attach_image")

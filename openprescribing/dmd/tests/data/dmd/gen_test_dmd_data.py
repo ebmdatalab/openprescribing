@@ -21,10 +21,10 @@
 #   vpids is a comma-separated list of IDs of VMPs
 
 
-from glob import glob
 import os
 import shutil
 import sys
+from glob import glob
 
 from lxml import etree
 

@@ -1,70 +1,69 @@
 import datetime
+import functools
 import json
-from lxml import html
+import logging
 import os
 import re
-from urllib.parse import urlencode
-from urllib.parse import urlparse, urlunparse
-import functools
-import logging
-import requests
 import sys
+from urllib.parse import urlencode, urlparse, urlunparse
 
+import requests
+from common.utils import parse_date
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
-from django.urls import get_resolver
 from django.db.models import Avg, Sum
-from django.http import Http404
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import redirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.urls import get_resolver, reverse
 from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
-
-from dateutil.relativedelta import relativedelta
-
-from common.utils import parse_date
-from gcutils.bigquery import interpolate_sql
 from dmd.models import VMP
-from frontend.forms import BookmarkListForm
-from frontend.forms import FeedbackForm
-from frontend.forms import OrgBookmarkForm
-from frontend.forms import SearchBookmarkForm
-from frontend.forms import NCSOConcessionBookmarkForm
-from frontend.measure_tags import MEASURE_TAGS
-from frontend.models import Chemical
-from frontend.models import EmailMessage
-from frontend.models import ImportLog
-from frontend.models import Measure
-from frontend.models import MeasureValue
-from frontend.models import MeasureGlobal
-from frontend.models import OrgBookmark
-from frontend.models import NCSOConcessionBookmark
-from frontend.models import Practice, PCT, Section
-from frontend.models import PCN
-from frontend.models import Presentation
-from frontend.models import Profile
-from frontend.models import RegionalTeam
-from frontend.models import STP
-from frontend.models import SearchBookmark
 from frontend.feedback import send_feedback_mail
-from frontend.views.spending_utils import (
-    ncso_spending_for_entity,
-    ncso_spending_breakdown_for_entity,
-    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
+from frontend.forms import (
+    BookmarkListForm,
+    FeedbackForm,
+    NCSOConcessionBookmarkForm,
+    OrgBookmarkForm,
+    SearchBookmarkForm,
+)
+from frontend.measure_tags import MEASURE_TAGS
+from frontend.models import (
+    PCN,
+    PCT,
+    STP,
+    Chemical,
+    EmailMessage,
+    ImportLog,
+    Measure,
+    MeasureGlobal,
+    MeasureValue,
+    NCSOConcessionBookmark,
+    OrgBookmark,
+    Practice,
+    Presentation,
+    Profile,
+    RegionalTeam,
+    SearchBookmark,
+    Section,
 )
 from frontend.price_per_unit.savings import get_total_savings_for_org
 from frontend.price_per_unit.substitution_sets import (
     get_substitution_sets_by_presentation,
 )
-from matrixstore.db import org_has_prescribing, latest_prescribing_date
-
+from frontend.views.spending_utils import (
+    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
+    ncso_spending_breakdown_for_entity,
+    ncso_spending_for_entity,
+)
+from gcutils.bigquery import interpolate_sql
+from lxml import html
+from matrixstore.db import latest_prescribing_date, org_has_prescribing
 
 logger = logging.getLogger(__name__)
 

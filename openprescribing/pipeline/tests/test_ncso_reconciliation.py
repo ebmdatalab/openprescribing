@@ -1,9 +1,7 @@
-from mock import patch
-
-from django.core.management import call_command, CommandError
+from django.core.management import CommandError, call_command
 from django.test import TestCase
-
 from frontend.models import NCSOConcession
+from mock import patch
 
 
 class TestNCSOReconciliation(TestCase):

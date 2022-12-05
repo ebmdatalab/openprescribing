@@ -3,11 +3,9 @@ import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
 from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V1, RAW_PRESCRIBING_SCHEMA_V2
 from gcutils.bigquery import Client, build_schema
 from google.cloud.exceptions import Conflict
-
 
 logger = logging.getLogger(__name__)
 

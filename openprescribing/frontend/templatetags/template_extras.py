@@ -1,11 +1,10 @@
 import math
 
 from django import template
-from django.utils.safestring import mark_safe
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils import timezone
-
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 

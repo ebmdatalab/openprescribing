@@ -1,7 +1,6 @@
 import logging
 
 from django.conf import settings
-
 from frontend.models import PCN
 
 logger = logging.getLogger(__name__)

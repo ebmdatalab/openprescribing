@@ -20,18 +20,17 @@ import time
 from datetime import datetime
 from glob import glob
 
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.management import BaseCommand
 from django.urls import get_resolver
-
-from bs4 import BeautifulSoup
+from pipeline.runner import in_progress as import_in_progress
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.firefox.options import Options
 
 from openprescribing.slack import notify_slack
 from openprescribing.utils import mkdir_p
-from pipeline.runner import in_progress as import_in_progress
 
 
 class Command(BaseCommand):

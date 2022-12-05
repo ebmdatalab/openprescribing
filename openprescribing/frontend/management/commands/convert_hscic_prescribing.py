@@ -2,13 +2,10 @@ import datetime
 import logging
 import os
 
-from django.core.management.base import BaseCommand
-from django.core.management.base import CommandError
-
-from gcutils.bigquery import Client, NotFound
+from django.core.management.base import BaseCommand, CommandError
 from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V2
 from frontend.models import ImportLog
-
+from gcutils.bigquery import Client, NotFound
 
 logger = logging.getLogger(__name__)
 

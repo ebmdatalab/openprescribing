@@ -1,17 +1,15 @@
-from itertools import product
-from random import Random
 import json
 import os
 import platform
 import sqlite3
 import subprocess
 import sys
-
-from django.test import SimpleTestCase
+from itertools import product
+from random import Random
 
 import numpy
-
-from matrixstore.matrix_ops import sparse_matrix, finalise_matrix
+from django.test import SimpleTestCase
+from matrixstore.matrix_ops import finalise_matrix, sparse_matrix
 from matrixstore.serializer import deserialize, serialize, serialize_compressed
 
 

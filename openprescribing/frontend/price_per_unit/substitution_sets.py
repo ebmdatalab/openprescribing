@@ -15,15 +15,14 @@ for most purposes. We maintain a manually curated spreadsheet which lists these
 kind of substitution (see FORMULATION_SWAPS_FILE).
 """
 import csv
-from collections import defaultdict
 import hashlib
 import os.path
 import re
-
+from collections import defaultdict
 from functools import lru_cache
 
-from matrixstore.db import get_db
 from frontend.models import Presentation
+from matrixstore.db import get_db
 
 
 # This would be a good candidate for a dataclass when we move to Python 3.7

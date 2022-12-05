@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.urls import reverse
-
 from frontend.models import User
 
 

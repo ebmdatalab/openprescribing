@@ -6,7 +6,6 @@ import os
 
 from django.conf import settings
 from django.core.management import BaseCommand
-
 from gcutils.bigquery import Client
 
 

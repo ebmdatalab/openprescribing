@@ -1,9 +1,9 @@
-from io import BytesIO
-import requests
-from zipfile import ZipFile
 import datetime
 import os
+from io import BytesIO
+from zipfile import ZipFile
 
+import requests
 from django.conf import settings
 from django.core.management import BaseCommand
 

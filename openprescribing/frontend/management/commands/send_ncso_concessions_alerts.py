@@ -6,9 +6,8 @@ Send alerts about about NCSO concessions.
 import datetime
 import logging
 
-from django.core.management import BaseCommand
-
 from common.alert_utils import EmailErrorDeferrer
+from django.core.management import BaseCommand
 from frontend.models import EmailMessage, NCSOConcessionBookmark
 from frontend.views import bookmark_utils
 

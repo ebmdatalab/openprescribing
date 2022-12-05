@@ -12,6 +12,13 @@ status=$(( $status + $? ))
 echo
 echo
 
+echo 'Running isort ...'
+python -m isort --diff .
+status=$(( $status + $? ))
+
+echo
+echo
+
 echo 'Running flake8 ...'
 python -m flake8 --show-source
 status=$(( $status + $? ))

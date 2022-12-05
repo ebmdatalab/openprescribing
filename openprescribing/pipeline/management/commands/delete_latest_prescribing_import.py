@@ -14,12 +14,12 @@ import os
 import networkx as nx
 from django.conf import settings
 from django.core.management import BaseCommand
-
 from frontend.models import ImportLog
-from gcutils.bigquery import Client as BQClient, NotFound
+from gcutils.bigquery import Client as BQClient
+from gcutils.bigquery import NotFound
 from gcutils.storage import Client as StorageClient
 from pipeline.models import TaskLog
-from pipeline.runner import load_import_records, dump_import_records
+from pipeline.runner import dump_import_records, load_import_records
 
 
 class Command(BaseCommand):

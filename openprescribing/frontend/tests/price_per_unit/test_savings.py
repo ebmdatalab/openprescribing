@@ -1,25 +1,22 @@
-from collections import defaultdict
 import json
 import warnings
+from collections import defaultdict
 
 import numpy
-
 from django.core.cache import CacheKeyWarning
 from django.test import TestCase, override_settings
-
-from matrixstore.tests.data_factory import DataFactory
-from matrixstore.tests.matrixstore_factory import (
-    patch_global_matrixstore,
-    matrixstore_from_data_factory,
-)
-from frontend.models import Practice, PCT, Presentation
-from frontend.price_per_unit.substitution_sets import get_substitution_sets
+from frontend.models import PCT, Practice, Presentation
 from frontend.price_per_unit.savings import (
     CONFIG_MIN_SAVINGS_FOR_ORG_TYPE,
     CONFIG_TARGET_CENTILE,
     get_total_savings_for_org,
 )
-
+from frontend.price_per_unit.substitution_sets import get_substitution_sets
+from matrixstore.tests.data_factory import DataFactory
+from matrixstore.tests.matrixstore_factory import (
+    matrixstore_from_data_factory,
+    patch_global_matrixstore,
+)
 
 # The dummy cache backend we use in testing warns that our binary cache keys
 # won't be compatible with memcached, but we really don't care

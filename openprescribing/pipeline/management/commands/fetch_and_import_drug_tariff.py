@@ -1,26 +1,23 @@
 """
 Fetches Drug Tariff from NHSBSA website, and saves to CSV
 """
-from io import StringIO
+import calendar
+import csv
 import datetime
-from urllib.parse import unquote, urljoin
 import logging
 import os
 import re
-import requests
-import csv
+from io import StringIO
+from urllib.parse import unquote, urljoin
 
 import bs4
-import calendar
-
+import requests
 from django.core.management import BaseCommand
 from django.db import transaction
-
+from frontend.models import ImportLog, TariffPrice
 from gcutils.bigquery import Client
-from frontend.models import TariffPrice
-from frontend.models import ImportLog
-from openprescribing.slack import notify_slack
 
+from openprescribing.slack import notify_slack
 
 logger = logging.getLogger(__name__)
 

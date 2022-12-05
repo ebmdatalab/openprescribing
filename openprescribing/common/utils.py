@@ -1,14 +1,13 @@
+import logging
+import re
 from contextlib import contextmanager
 from datetime import datetime
 from os import environ
-from titlecase import titlecase
+
 import html2text
-import logging
-import re
-
-from django.core.exceptions import ImproperlyConfigured
 from django import db
-
+from django.core.exceptions import ImproperlyConfigured
+from titlecase import titlecase
 
 logger = logging.getLogger(__name__)
 

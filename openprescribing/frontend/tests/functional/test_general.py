@@ -2,10 +2,10 @@
 import unittest
 from urllib.parse import quote_plus
 
-from mock import patch
-from mock import PropertyMock
-from .selenium_base import SeleniumTestCase
+from mock import PropertyMock, patch
 from selenium.webdriver.common.by import By
+
+from .selenium_base import SeleniumTestCase
 
 
 class GeneralFrontendTest(SeleniumTestCase):

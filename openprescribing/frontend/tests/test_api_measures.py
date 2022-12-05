@@ -1,9 +1,9 @@
 import datetime
 import json
 
-from .api_test_base import ApiTestBase
-
 from frontend.models import PCT
+
+from .api_test_base import ApiTestBase
 
 
 class TestAPIMeasureViews(ApiTestBase):

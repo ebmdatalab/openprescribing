@@ -1,11 +1,11 @@
-import requests
-from lxml import html
 import datetime
-import subprocess
 import os
+import subprocess
 
+import requests
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError
+from lxml import html
 
 from openprescribing.utils import mkdir_p
 

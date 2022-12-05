@@ -10,8 +10,9 @@
 # failures, unlike the intermittent ones we had with Travis/Saucelabs.
 import unittest
 
-from .selenium_base import SeleniumTestCase
 from selenium.webdriver.common.by import By
+
+from .selenium_base import SeleniumTestCase
 
 
 class MapTest(SeleniumTestCase):

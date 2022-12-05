@@ -1,4 +1,5 @@
 import csv
+
 from django.core.management import BaseCommand
 from django.db import transaction
 from frontend.models import STP

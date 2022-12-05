@@ -19,7 +19,6 @@ from django.contrib.gis.geos import GEOSException, GEOSGeometry, MultiPolygon, P
 from django.core.management.base import BaseCommand
 from django.db import connection, transaction
 from django.db.models import Func
-
 from frontend.models import PCT, Practice
 
 NATIONAL_BOUNDARY_FILE = os.path.join(

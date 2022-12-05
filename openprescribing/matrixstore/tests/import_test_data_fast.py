@@ -1,19 +1,19 @@
 import csv
 
-from matrixstore.build.init_db import SCHEMA_SQL, generate_dates, import_dates
 from matrixstore.build.import_practice_stats import (
-    write_practice_stats,
     parse_practice_statistics_csv,
+    write_practice_stats,
 )
 from matrixstore.build.import_prescribing import (
-    write_prescribing,
     parse_prescribing_csv,
+    write_prescribing,
 )
-from matrixstore.build.update_bnf_map import (
-    move_values_from_old_code_to_new,
-    delete_presentations_with_no_prescribing,
-)
+from matrixstore.build.init_db import SCHEMA_SQL, generate_dates, import_dates
 from matrixstore.build.precalculate_totals import precalculate_totals_for_db
+from matrixstore.build.update_bnf_map import (
+    delete_presentations_with_no_prescribing,
+    move_values_from_old_code_to_new,
+)
 
 
 def import_test_data_fast(sqlite_conn, data_factory, end_date, months=None):

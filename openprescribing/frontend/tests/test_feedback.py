@@ -2,7 +2,6 @@
 from django.conf import settings
 from django.core import mail
 from django.test import TestCase
-
 from frontend.feedback import send_feedback_mail
 
 

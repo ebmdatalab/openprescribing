@@ -1,12 +1,11 @@
-import mock
-import os
 import json
+import os
 
+import mock
 from django.conf import settings
 from django.test import TestCase, override_settings
-
 from pipeline.models import TaskLog
-from pipeline.runner import load_tasks, run_task, in_progress
+from pipeline.runner import in_progress, load_tasks, run_task
 
 
 class PipelineTests(TestCase):

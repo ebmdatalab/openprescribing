@@ -1,7 +1,8 @@
-from django.db.models import fields, ForeignKey, ManyToOneRel, OneToOneRel, Q
+from functools import reduce
+
+from django.db.models import ForeignKey, ManyToOneRel, OneToOneRel, Q, fields
 
 from .obj_types import clss
-from functools import reduce
 
 
 def build_query_obj(cls, search):

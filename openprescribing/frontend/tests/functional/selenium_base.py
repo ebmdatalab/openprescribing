@@ -4,15 +4,13 @@ import subprocess
 import unittest
 from pathlib import Path
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.conf import settings
-
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 # Django 1.11 removes the ability to supply a port range for liveserver tests,
 # so we replicate that here.  See: https://code.djangoproject.com/ticket/28212

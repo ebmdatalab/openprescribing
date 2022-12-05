@@ -1,5 +1,4 @@
-from django.db.models import fields, ForeignKey, ManyToOneRel, OneToOneRel
-
+from django.db.models import ForeignKey, ManyToOneRel, OneToOneRel, fields
 
 from .obj_types import clss
 from .search_schema import schema as search_schema

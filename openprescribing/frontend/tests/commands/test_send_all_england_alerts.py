@@ -1,9 +1,8 @@
 from django.core import mail
 from django.core.management import call_command
-
 from frontend.models import ImportLog, MeasureGlobal
-from frontend.tests.test_api_spending import ApiTestBase
 from frontend.tests.data_factory import DataFactory
+from frontend.tests.test_api_spending import ApiTestBase
 
 
 class CommandTestCase(ApiTestBase):

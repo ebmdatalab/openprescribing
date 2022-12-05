@@ -3,14 +3,12 @@
 import os
 
 import bs4
-from mock import patch
-
 from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
-
 from dmd.models import VMPP
 from frontend.models import NCSOConcession
+from mock import patch
 
 
 class TestFetchAndImportNCSOConcesions(TestCase):

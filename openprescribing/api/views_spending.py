@@ -1,25 +1,23 @@
-from django.shortcuts import get_object_or_404
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.exceptions import APIException, NotFound
-
 from common.utils import nhs_titlecase, parse_date
-from frontend.models import Practice, PCT, STP, RegionalTeam, PCN, NCSOConcession
-from frontend.price_per_unit.prescribing_breakdown import (
-    get_prescribing,
-    get_ppu_breakdown,
-    get_mean_ppu,
-)
-from frontend.price_per_unit.savings import (
-    get_savings_for_orgs,
-    get_all_savings_for_orgs,
-)
+from django.shortcuts import get_object_or_404
 from frontend.ghost_branded_generics import (
     get_ghost_branded_generic_spending,
     get_total_ghost_branded_generic_spending,
 )
+from frontend.models import PCN, PCT, STP, NCSOConcession, Practice, RegionalTeam
+from frontend.price_per_unit.prescribing_breakdown import (
+    get_mean_ppu,
+    get_ppu_breakdown,
+    get_prescribing,
+)
+from frontend.price_per_unit.savings import (
+    get_all_savings_for_orgs,
+    get_savings_for_orgs,
+)
 from matrixstore.db import get_db, get_row_grouper
+from rest_framework.decorators import api_view
+from rest_framework.exceptions import APIException, NotFound
+from rest_framework.response import Response
 
 from . import view_utils as utils
 

@@ -14,7 +14,6 @@ import functools
 
 from django.core.cache import cache as default_cache
 
-
 MISSING = object()
 BASIC_TYPES = (bool, int, float, str)
 

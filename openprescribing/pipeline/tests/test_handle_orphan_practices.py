@@ -1,12 +1,11 @@
-import mock
 import os
-from io import StringIO
 import sys
+from io import StringIO
 
+import mock
 from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
-
 from frontend.models import PCT
 
 

@@ -5,10 +5,9 @@ Send alerts about all of NHS England
 
 import logging
 
-from django.core.management import BaseCommand
-
 from common.alert_utils import EmailErrorDeferrer
-from frontend.models import EmailMessage, OrgBookmark, User, Profile, ImportLog
+from django.core.management import BaseCommand
+from frontend.models import EmailMessage, ImportLog, OrgBookmark, Profile, User
 from frontend.views import bookmark_utils
 
 logger = logging.getLogger(__name__)

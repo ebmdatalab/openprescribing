@@ -1,7 +1,6 @@
 from django.core.management import call_command
 from django.test import TestCase
-
-from frontend.models import Section, Chemical, Product, Presentation
+from frontend.models import Chemical, Presentation, Product, Section
 from matrixstore.tests.contextmanagers import (
     patched_global_matrixstore_from_data_factory,
 )

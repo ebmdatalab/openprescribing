@@ -1,10 +1,9 @@
 import json
 
-from django.test import TestCase
-from django.core.serializers import serialize
-
-from frontend.models import PCT
 from api.geojson_serializer import as_geojson_stream
+from django.core.serializers import serialize
+from django.test import TestCase
+from frontend.models import PCT
 
 
 class GeoJSONSerializerTest(TestCase):

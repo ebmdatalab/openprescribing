@@ -1,5 +1,5 @@
-from collections import defaultdict
 import hashlib
+from collections import defaultdict
 
 import numpy
 import scipy.sparse

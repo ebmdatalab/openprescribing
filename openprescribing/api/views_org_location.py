@@ -1,12 +1,10 @@
-from django.http import HttpResponse
-from django.db.models import F
-from django.contrib.gis.db.models.aggregates import Union
-
-from rest_framework.decorators import api_view
-
-from frontend.models import PCT, Practice, STP, RegionalTeam, PCN
-from api.geojson_serializer import as_geojson_stream
 import api.view_utils as utils
+from api.geojson_serializer import as_geojson_stream
+from django.contrib.gis.db.models.aggregates import Union
+from django.db.models import F
+from django.http import HttpResponse
+from frontend.models import PCN, PCT, STP, Practice, RegionalTeam
+from rest_framework.decorators import api_view
 
 
 @api_view(["GET"])

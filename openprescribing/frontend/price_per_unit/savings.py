@@ -1,12 +1,10 @@
 import numpy
-
 from matrixstore.cachelib import memoize
 from matrixstore.db import get_db, get_row_grouper
 from matrixstore.matrix_ops import get_submatrix, zeros_like
 from matrixstore.sql_functions import MatrixSum
 
 from .substitution_sets import get_substitution_sets
-
 
 # Defines how we determine the target PPU against which savings are calculated.
 # We want to know which set of practices we are comparing with and which

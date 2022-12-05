@@ -7,9 +7,9 @@ Invoke with:
 Currently set up to profile the total spending code, but easy to adapt to
 profile other functions (e.g. PPU savings - see commented out code)
 """
-from cProfile import Profile
 import datetime
 import time
+from cProfile import Profile
 
 # from frontend.price_per_unit.savings import get_all_savings_for_orgs
 from api.views_spending import _get_total_prescribing_entries

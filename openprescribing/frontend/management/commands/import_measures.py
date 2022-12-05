@@ -8,32 +8,26 @@ most of the logic now lives in SQL which is harder to read and test
 clearly.
 """
 
-from contextlib import contextmanager
 import csv
-from datetime import datetime
 import glob
 import json
 import logging
 import os
 import re
 import tempfile
+from contextlib import contextmanager
+from datetime import datetime
 from urllib.parse import urlencode
 
+from common import utils
 from dateutil.relativedelta import relativedelta
-
 from django.conf import settings
 from django.core.management import BaseCommand
+from django.db import connection, transaction
 from django.urls import reverse
-from django.db import connection
-from django.db import transaction
-
-from gcutils.bigquery import Client
-
-from common import utils
-
-from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
+from frontend.models import ImportLog, Measure, MeasureGlobal, MeasureValue
 from frontend.utils.bnf_hierarchy import get_all_bnf_codes, simplify_bnf_codes
-
+from gcutils.bigquery import Client
 from google.api_core.exceptions import BadRequest
 
 logger = logging.getLogger(__name__)

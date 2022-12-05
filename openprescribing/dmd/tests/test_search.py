@@ -2,16 +2,14 @@ from urllib.parse import parse_qs
 
 from django.db.models import Q
 from django.test import TestCase
-
+from dmd.build_rules import build_rules
+from dmd.build_search_query import build_query_obj
+from dmd.models import AMP, AMPP, VMP, VMPP
+from dmd.search import advanced_search, search
 from matrixstore.tests.contextmanagers import (
     patched_global_matrixstore_from_data_factory,
 )
 from matrixstore.tests.data_factory import DataFactory
-
-from dmd.build_search_query import build_query_obj
-from dmd.build_rules import build_rules
-from dmd.models import AMP, AMPP, VMP, VMPP
-from dmd.search import advanced_search, search
 
 
 class TestSearch(TestCase):

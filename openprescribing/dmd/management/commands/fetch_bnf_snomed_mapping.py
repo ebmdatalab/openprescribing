@@ -7,16 +7,15 @@ Does nothing if file already downloaded.
 
 import glob
 import os
-from pathlib import Path
 import re
-from urllib.parse import urljoin, urlparse, unquote
 import zipfile
-
-from django.conf import settings
-from django.core.management import BaseCommand
+from pathlib import Path
+from urllib.parse import unquote, urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from django.conf import settings
+from django.core.management import BaseCommand
 
 from openprescribing.utils import mkdir_p
 

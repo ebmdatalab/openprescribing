@@ -1,6 +1,5 @@
-from graphviz import Digraph
-
 from django.core.management import BaseCommand
+from graphviz import Digraph
 
 from ...runner import load_tasks
 

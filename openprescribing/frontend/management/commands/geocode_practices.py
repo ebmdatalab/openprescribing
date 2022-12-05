@@ -1,7 +1,8 @@
 import csv
-from django.core.management.base import BaseCommand
-from django.contrib.gis.gdal import SpatialReference, CoordTransform
+
+from django.contrib.gis.gdal import CoordTransform, SpatialReference
 from django.contrib.gis.geos import Point
+from django.core.management.base import BaseCommand
 from frontend.models import Practice
 
 

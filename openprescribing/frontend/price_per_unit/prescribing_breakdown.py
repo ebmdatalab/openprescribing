@@ -1,5 +1,4 @@
 import numpy
-
 from frontend.models import Presentation
 from matrixstore.db import get_db, get_row_grouper
 from matrixstore.matrix_ops import get_submatrix

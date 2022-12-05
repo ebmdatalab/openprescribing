@@ -4,8 +4,7 @@ Sets is_current to True on any BNF class with prescribing.
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
-from frontend.models import Section, Chemical, Product, Presentation
+from frontend.models import Chemical, Presentation, Product, Section
 from frontend.utils.bnf_hierarchy import get_all_bnf_codes
 
 

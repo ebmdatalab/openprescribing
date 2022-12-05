@@ -1,15 +1,9 @@
-from mock import MagicMock
-from mock import patch
-
 from django.core.management import call_command
 from django.test import TestCase
-from frontend.models import Presentation
-
-from gcutils.bigquery import Client
-from gcutils.bigquery import NotFound
-
 from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V2
-from frontend.models import ImportLog
+from frontend.models import ImportLog, Presentation
+from gcutils.bigquery import Client, NotFound
+from mock import MagicMock, patch
 
 
 class CommandsTestCase(TestCase):

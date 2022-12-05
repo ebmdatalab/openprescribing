@@ -1,15 +1,12 @@
 from collections import namedtuple
 
+import numpy
+from dateutil.parser import parse as parse_date
+from dateutil.relativedelta import relativedelta
 from django.db import connection
 from django.db.models import Max
-
-from dateutil.relativedelta import relativedelta
-from dateutil.parser import parse as parse_date
-import numpy
-
 from frontend.models import NCSOConcession, Presentation, TariffPrice
 from matrixstore.db import get_db, get_row_grouper
-
 
 # The tariff (or concession) price is not what actually gets paid as each CCG
 # will have some kind of discount with the dispenser. However the average

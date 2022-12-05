@@ -4,7 +4,6 @@ import tempfile
 from django.conf import settings
 from django.core.management import call_command
 from django.test.utils import override_settings
-
 from frontend import bq_schemas as schemas
 from gcutils.bigquery import Client
 
