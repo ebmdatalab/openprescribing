@@ -1,2 +1,2 @@
 [tool.black]
-exclude = '/migrations/'
+extend-exclude = '/migrations/'
