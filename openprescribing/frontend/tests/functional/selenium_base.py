@@ -136,7 +136,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         super(SeleniumTestCase, cls).tearDownClass()
 
     def _find_and_wait(self, locator_type, locator, waiter):
-        wait = 5
+        wait = 15
         try:
             element = WebDriverWait(self.browser, wait).until(
                 waiter((locator_type, locator))
