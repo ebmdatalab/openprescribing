@@ -156,7 +156,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     @classmethod
     def get_firefox_driver(cls):
         # Newer releases of Ubuntu package Firefox as a Snap, meaning that it comes with
-        # sanboxing restrictions that prevent it writing temporary profiles into the
+        # sandboxing restrictions that prevent it writing temporary profiles into the
         # default system tmpdir. We workaround this by changing TMPDIR to point to a
         # directory in the project root (which we assume is within the currently running
         # user's home directory). See:
