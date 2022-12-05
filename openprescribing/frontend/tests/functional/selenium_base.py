@@ -81,15 +81,6 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             "project": os.environ["BROWSERSTACK_PROJECT_NAME"],
             "name": os.environ["BROWSERSTACK_BUILD_NAME"],
         }
-        # Disable slow script warning in IE
-        caps["prerun"] = {
-            "executable": (
-                "https://raw.githubusercontent.com/"
-                "ebmdatalab/openprescribing/"
-                "master/scripts/setup_ie_8.bat"
-            ),
-            "background": "false",
-        }
         username = os.environ["BROWSERSTACK_USERNAME"]
         access_key = os.environ["BROWSERSTACK_ACCESS_KEY"]
         hub_url = "https://%s:%s@hub-cloud.browserstack.com/wd/hub" % (
