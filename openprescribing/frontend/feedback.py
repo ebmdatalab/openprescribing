@@ -1,7 +1,7 @@
 from email.utils import formataddr
 
 from django.conf import settings
-from django.core.mail import get_connection, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import get_template
 
 

@@ -11,13 +11,9 @@ import datetime
 import re
 
 import pandas as pd
-
-from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
-
-from frontend.models import ImportLog
-from frontend.models import Practice
-from frontend.models import PracticeStatistics
+from django.core.management.base import BaseCommand
+from frontend.models import ImportLog, Practice, PracticeStatistics
 
 
 class Command(BaseCommand):

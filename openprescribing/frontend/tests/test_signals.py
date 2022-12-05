@@ -1,12 +1,7 @@
-from anymail.signals import AnymailTrackingEvent
-from anymail.signals import tracking
-from mock import ANY
-from mock import patch
-
+from anymail.signals import AnymailTrackingEvent, tracking
 from django.test import TestCase
-
-from frontend.models import MailLog
-from frontend.models import User
+from frontend.models import MailLog, User
+from mock import ANY, patch
 
 
 def send_event(**kwargs):

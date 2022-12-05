@@ -1,11 +1,10 @@
 import datetime
 
 from django.core.management import BaseCommand
-
+from frontend import bq_schemas as schemas
+from frontend import models
 from gcutils.bigquery import Client as BQClient
 from gcutils.storage import Client as StorageClient
-from frontend import models
-from frontend import bq_schemas as schemas
 
 
 class Command(BaseCommand):

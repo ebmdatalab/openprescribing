@@ -1,18 +1,13 @@
 import re
 
+from frontend.measure_tags import MEASURE_TAGS
+from frontend.models import Measure, MeasureGlobal, MeasureValue, Presentation
+from matrixstore.db import get_db, get_row_grouper
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.exceptions import APIException
-from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
+from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
-
-from frontend.measure_tags import MEASURE_TAGS
-from frontend.models import Measure
-from frontend.models import MeasureGlobal
-from frontend.models import MeasureValue
-from frontend.models import Presentation
-
-from matrixstore.db import get_db, get_row_grouper
 
 from . import view_utils as utils
 

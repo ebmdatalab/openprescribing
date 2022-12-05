@@ -1,6 +1,5 @@
 from gcutils.bigquery import build_schema
 
-
 DMD_SCHEMA = build_schema(
     ("dmdid", "STRING"),
     ("bnf_code", "STRING"),

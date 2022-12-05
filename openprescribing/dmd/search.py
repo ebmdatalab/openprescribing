@@ -1,13 +1,11 @@
 from urllib.parse import urlencode
 
 from django.urls import reverse
-
 from frontend.utils.bnf_hierarchy import simplify_bnf_codes
 
-from .build_search_query import build_query_obj
 from .build_rules import build_rules
-from .models import VTM, VMP, VMPP, AMP, AMPP
-
+from .build_search_query import build_query_obj
+from .models import AMP, AMPP, VMP, VMPP, VTM
 
 NUM_RESULTS_PER_OBJ_TYPE = 10
 

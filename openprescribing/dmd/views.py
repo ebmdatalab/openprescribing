@@ -7,19 +7,18 @@ from copy import copy
 from urllib.parse import urlencode
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import fields, ForeignKey
+from django.db.models import ForeignKey, fields
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-
 from frontend.models import ImportLog, Presentation, TariffPrice
 from matrixstore.db import get_db
 
 from .build_search_filters import build_search_filters
 from .forms import AdvancedSearchForm, SearchForm
-from .models import VMP, VMPP, AMP, AMPP
-from .obj_types import obj_type_to_cls, cls_to_obj_type
-from .search import search, advanced_search
+from .models import AMP, AMPP, VMP, VMPP
+from .obj_types import cls_to_obj_type, obj_type_to_cls
+from .search import advanced_search, search
 from .view_schema import schema as view_schema
 
 

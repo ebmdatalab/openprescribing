@@ -1,5 +1,4 @@
 from django.core.management import BaseCommand, CommandError
-
 from dmd.models import VMPP
 from frontend.models import NCSOConcession
 

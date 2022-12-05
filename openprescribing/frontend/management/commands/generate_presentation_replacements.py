@@ -84,19 +84,11 @@ import logging
 import re
 import tempfile
 
-from django.core.management.base import BaseCommand
-from django.core.management.base import CommandError
-from django.db import connection
-from django.db import transaction
-
-from frontend.models import Chemical
-from frontend.models import Presentation
-from frontend.models import Product
-from frontend.models import Section
+from django.core.management.base import BaseCommand, CommandError
+from django.db import connection, transaction
 from frontend import bq_schemas as schemas
-
+from frontend.models import Chemical, Presentation, Product, Section
 from gcutils.bigquery import Client, TableExporter
-
 
 logger = logging.getLogger(__name__)
 

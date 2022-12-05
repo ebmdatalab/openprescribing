@@ -1,10 +1,9 @@
-from mock import Mock
 import warnings
 
 from django.core.cache import CacheKeyWarning
 from django.test import SimpleTestCase, override_settings
-
 from matrixstore.cachelib import memoize
+from mock import Mock
 
 # The local memory cache backend we use in testing warns that our binary cache
 # keys won't be compatible with memcached, but we really don't care

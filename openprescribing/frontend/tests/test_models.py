@@ -1,16 +1,17 @@
-from django.test import TestCase
 from django.core.exceptions import ValidationError
-
-from frontend.models import Chemical
-from frontend.models import EmailMessage
-from frontend.models import MailLog
-from frontend.models import PCT
-from frontend.models import Practice
-from frontend.models import Presentation
-from frontend.models import RegionalTeam
-from frontend.models import SearchBookmark
-from frontend.models import Section
-from frontend.models import User
+from django.test import TestCase
+from frontend.models import (
+    PCT,
+    Chemical,
+    EmailMessage,
+    MailLog,
+    Practice,
+    Presentation,
+    RegionalTeam,
+    SearchBookmark,
+    Section,
+    User,
+)
 
 
 class ValidationTestCase(TestCase):

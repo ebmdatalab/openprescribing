@@ -2,13 +2,11 @@ import random
 from itertools import product
 
 from django.test import TestCase
-
+from frontend.utils.bnf_hierarchy import _prune_paths, simplify_bnf_codes
 from matrixstore.tests.contextmanagers import (
     patched_global_matrixstore_from_data_factory,
 )
 from matrixstore.tests.data_factory import DataFactory
-
-from frontend.utils.bnf_hierarchy import simplify_bnf_codes, _prune_paths
 
 
 class TestPrunePaths(TestCase):

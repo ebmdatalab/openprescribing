@@ -1,8 +1,7 @@
-from collections import defaultdict
 import numbers
+from collections import defaultdict
 
 from django.test import SimpleTestCase
-
 from matrixstore.tests.data_factory import DataFactory
 from matrixstore.tests.matrixstore_factory import matrixstore_from_data_factory
 

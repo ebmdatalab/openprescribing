@@ -1,9 +1,7 @@
-from django import forms
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, ButtonHolder, Submit
 from crispy_forms.bootstrap import InlineCheckboxes
-
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import ButtonHolder, Field, Layout, Submit
+from django import forms
 
 obj_types_choices = [
     ("vtm", "VTMs"),

@@ -2,9 +2,8 @@ import csv
 import tempfile
 
 from django.test import TestCase
-
-from gcutils.table_dumper import TableDumper
 from frontend.models import PCT
+from gcutils.table_dumper import TableDumper
 
 
 class TableDumperTests(TestCase):

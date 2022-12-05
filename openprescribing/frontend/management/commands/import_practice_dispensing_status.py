@@ -1,6 +1,7 @@
 import xlrd
 from django.core.management.base import BaseCommand, CommandError
-from frontend.models import Practice, PracticeIsDispensing as PID
+from frontend.models import Practice
+from frontend.models import PracticeIsDispensing as PID
 
 
 class Command(BaseCommand):

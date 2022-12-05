@@ -7,12 +7,11 @@ import re
 
 import bs4
 import requests
-
 from django.core.management import BaseCommand
-
 from dmd.models import VMPP
 from frontend.models import NCSOConcession
 from gcutils.bigquery import Client
+
 from openprescribing.slack import notify_slack
 
 logger = logging.getLogger(__file__)

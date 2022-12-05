@@ -1,19 +1,16 @@
-from collections import defaultdict
 import csv
 import json
-
-from django.test import TestCase
-
-from .api_test_base import ApiTestBase
-
-from frontend.models import Prescription
-from frontend.models import TariffPrice
-from frontend.tests.data_factory import DataFactory
-from frontend.ghost_branded_generics import MIN_GHOST_GENERIC_DELTA
-from dmd.models import VMPP
-from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
+from collections import defaultdict
 
 import numpy as np
+from django.test import TestCase
+from dmd.models import VMPP
+from frontend.ghost_branded_generics import MIN_GHOST_GENERIC_DELTA
+from frontend.models import Prescription, TariffPrice
+from frontend.tests.data_factory import DataFactory
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
+
+from .api_test_base import ApiTestBase
 
 
 def _parse_json_response(response):

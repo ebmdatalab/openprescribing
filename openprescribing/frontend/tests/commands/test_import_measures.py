@@ -6,41 +6,38 @@ import json
 import os
 import re
 import tempfile
-from mock import patch
 from random import Random
 from urllib.parse import parse_qs
 
-from google.api_core.exceptions import BadRequest
-from google.cloud.exceptions import Conflict
 import numpy as np
 import pandas as pd
-
 from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase, override_settings
-
 from frontend import bq_schemas as schemas
+from frontend.management.commands.import_measures import (
+    build_bnf_codes_query,
+    load_measure_defs,
+)
 from frontend.models import (
+    PCN,
+    PCT,
+    STP,
     ImportLog,
     Measure,
     MeasureGlobal,
     MeasureValue,
     Practice,
-    PCN,
-    PCT,
-    STP,
     RegionalTeam,
 )
-from frontend.management.commands.import_measures import (
-    load_measure_defs,
-    build_bnf_codes_query,
-)
 from gcutils.bigquery import Client
+from google.api_core.exceptions import BadRequest
+from google.cloud.exceptions import Conflict
 from matrixstore.tests.contextmanagers import (
     patched_global_matrixstore_from_data_factory,
 )
 from matrixstore.tests.data_factory import DataFactory
-
+from mock import patch
 
 # These tests test import_measures by repeating the measure calculations with
 # Pandas, and asserting that the values stored on MeasureValue and

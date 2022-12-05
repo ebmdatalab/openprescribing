@@ -29,16 +29,16 @@
 # To manually move a practice to a new CCG, you will need to update
 # Practice.ccg_id and Practice.ccg_change_reason.
 
-from collections import Counter, defaultdict
 import csv
 import glob
 import os
+from collections import Counter, defaultdict
 
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError
+from frontend.models import PCT, Practice
 
 from openprescribing.slack import notify_slack
-from frontend.models import Practice, PCT
 
 
 class Command(BaseCommand):

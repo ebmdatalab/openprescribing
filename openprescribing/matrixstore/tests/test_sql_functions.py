@@ -1,9 +1,7 @@
-from django.test import SimpleTestCase
-
 import numpy
 import scipy.sparse
-
-from matrixstore.sql_functions import fast_in_place_add, MatrixSum
+from django.test import SimpleTestCase
+from matrixstore.sql_functions import MatrixSum, fast_in_place_add
 
 
 class TestMatrixSum(SimpleTestCase):

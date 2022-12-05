@@ -1,6 +1,5 @@
-from google.cloud import storage as gcs
-
 from django.conf import settings
+from google.cloud import storage as gcs
 
 
 class Client(object):

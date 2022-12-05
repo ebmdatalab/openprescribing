@@ -1,28 +1,26 @@
-import pickle
 import json
+import pickle
 import uuid
 
-from django.contrib.gis.db import models
-from django.db.models import JSONField
-from django.contrib.postgres.fields import ArrayField
-from django.contrib.auth.models import User
-from django.urls import reverse
-from django.db.models.functions import Coalesce
-
 from anymail.signals import EventType
-
 from common.utils import nhs_titlecase
+from django.contrib.auth.models import User
+from django.contrib.gis.db import models
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import JSONField
+from django.db.models.functions import Coalesce
+from django.urls import reverse
 from dmd.models import (
-    VMP,
     AMP,
+    VMP,
     VMPP,
-    DtPaymentCategory,
     AvailabilityRestriction,
+    DtPaymentCategory,
     VirtualProductPresStatus,
 )
+from frontend import model_prescribing_units
 from frontend.managers import MeasureValueQuerySet
 from frontend.validators import isAlphaNumeric
-from frontend import model_prescribing_units
 
 
 class Section(models.Model):

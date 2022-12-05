@@ -1,12 +1,10 @@
-from django.db import connection
-from django.test import SimpleTestCase
-from django.test import TestCase
-
 from common.utils import (
     constraint_and_index_reconstructor,
     get_env_setting,
     nhs_titlecase,
 )
+from django.db import connection
+from django.test import SimpleTestCase, TestCase
 
 
 class GetEnvSettingTests(SimpleTestCase):

@@ -2,9 +2,7 @@ import csv
 
 from django.http import Http404
 from django.test import TestCase
-
-from frontend.models import Prescription, ImportLog
-
+from frontend.models import ImportLog, Prescription
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 

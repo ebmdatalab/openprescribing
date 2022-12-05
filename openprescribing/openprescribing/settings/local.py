@@ -1,10 +1,11 @@
 """Development settings and globals."""
 
 
-from .base import *
-from common import utils
 import os
 
+from common import utils
+
+from .base import *
 
 # DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug

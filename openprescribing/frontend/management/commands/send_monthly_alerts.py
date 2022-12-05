@@ -3,19 +3,23 @@ from __future__ import print_function
 
 import logging
 
-from django.core.management.base import BaseCommand
-from django.core.management.base import CommandError
-from django.db.models import Q
-from frontend.models import EmailMessage
-from frontend.models import ImportLog
-from frontend.models import OrgBookmark
-from frontend.models import Profile
-from frontend.models import SearchBookmark
-from frontend.models import User
-from frontend.models import Practice, PCT, PCN, STP
-
 from common.alert_utils import EmailErrorDeferrer
+from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
+from frontend.models import (
+    PCN,
+    PCT,
+    STP,
+    EmailMessage,
+    ImportLog,
+    OrgBookmark,
+    Practice,
+    Profile,
+    SearchBookmark,
+    User,
+)
 from frontend.views import bookmark_utils
+
 from .send_all_england_alerts import send_alerts as send_all_england_alerts
 
 logger = logging.getLogger(__name__)

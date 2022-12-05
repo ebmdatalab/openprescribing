@@ -9,12 +9,14 @@ from django.utils.safestring import mark_safe
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import EmailMessage
-from .models import MailLog
-from .models import OrgBookmark
-from .models import SearchBookmark
-from .models import NCSOConcessionBookmark
-from .models import User
+from .models import (
+    EmailMessage,
+    MailLog,
+    NCSOConcessionBookmark,
+    OrgBookmark,
+    SearchBookmark,
+    User,
+)
 
 admin.site.unregister(User)
 

@@ -2,10 +2,9 @@
 import unittest
 
 from django.urls import reverse
+from frontend.models import OrgBookmark, User
 
 from .selenium_base import SeleniumTestCase
-
-from frontend.models import User, OrgBookmark
 
 
 class BookmarksTest(SeleniumTestCase):

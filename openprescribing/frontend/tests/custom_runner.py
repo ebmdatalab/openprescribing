@@ -3,7 +3,6 @@ import subprocess
 
 from django.conf import settings
 from django.test.runner import DiscoverRunner
-
 from frontend.tests.functional.mock_api_server import MockApiServer
 
 

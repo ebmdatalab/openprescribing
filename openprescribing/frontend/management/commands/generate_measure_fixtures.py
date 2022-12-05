@@ -35,18 +35,17 @@ from random import randint
 
 from django.conf import settings
 from django.core.management import BaseCommand, call_command
-
 from frontend import bq_schemas as schemas
 from frontend.models import (
+    PCN,
+    PCT,
+    STP,
     ImportLog,
     Measure,
     MeasureGlobal,
     MeasureValue,
     Practice,
     Prescription,
-    PCN,
-    PCT,
-    STP,
     RegionalTeam,
 )
 from gcutils.bigquery import Client

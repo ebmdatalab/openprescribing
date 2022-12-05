@@ -1,10 +1,8 @@
-from itertools import product
 import random
-
-from django.test import SimpleTestCase
+from itertools import product
 
 import numpy
-
+from django.test import SimpleTestCase
 from matrixstore.matrix_ops import finalise_matrix, sparse_matrix
 from matrixstore.row_grouper import RowGrouper
 

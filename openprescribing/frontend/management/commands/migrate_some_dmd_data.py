@@ -2,13 +2,12 @@
 # from the dmd app to the frontend app.  It can be deleted once the dmd app has
 # been removed.
 
-from django.db import transaction
 from django.core.management import BaseCommand
-
-from dmd.models import TariffPrice as TariffPriceOld
+from django.db import transaction
 from dmd.models import NCSOConcession as NCSOConcessionOld
-from frontend.models import TariffPrice as TariffPriceNew
+from dmd.models import TariffPrice as TariffPriceOld
 from frontend.models import NCSOConcession as NCSOConcessionNew
+from frontend.models import TariffPrice as TariffPriceNew
 
 
 class Command(BaseCommand):

@@ -8,11 +8,8 @@ details.
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
-from frontend.models import ImportLog
-from frontend.models import Presentation
+from frontend.models import ImportLog, Presentation
 from gcutils.bigquery import Client
-
 
 SQL = """
 WITH

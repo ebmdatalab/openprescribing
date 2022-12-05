@@ -1,12 +1,14 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
-from . import views_bnf_codes
-from . import views_spending
-from . import views_org_codes
-from . import views_org_details
-from . import views_org_location
-from . import views_measures
 
+from . import (
+    views_bnf_codes,
+    views_measures,
+    views_org_codes,
+    views_org_details,
+    views_org_location,
+    views_spending,
+)
 
 urlpatterns = [
     path(r"spending/", views_spending.total_spending, name="total_spending"),

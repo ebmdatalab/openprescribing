@@ -1,18 +1,17 @@
 import json
 
 from django.test import TestCase
-
 from dmd.models import DtPaymentCategory
 from frontend.models import Presentation, TariffPrice
 from frontend.tests.data_factory import DataFactory
+from matrixstore.tests.contextmanagers import (
+    patched_global_matrixstore_from_data_factory,
+)
 from matrixstore.tests.data_factory import DataFactory as MSDataFactory
 from matrixstore.tests.decorators import (
     copy_fixtures_to_matrixstore,
-    patch_global_matrixstore,
     matrixstore_from_postgres,
-)
-from matrixstore.tests.contextmanagers import (
-    patched_global_matrixstore_from_data_factory,
+    patch_global_matrixstore,
 )
 
 

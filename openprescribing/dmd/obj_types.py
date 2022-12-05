@@ -1,5 +1,4 @@
-from .models import VTM, VMP, VMPP, AMP, AMPP
-
+from .models import AMP, AMPP, VMP, VMPP, VTM
 
 obj_types = ["vtm", "vmp", "vmpp", "amp", "ampp"]
 obj_type_to_cls = {"vtm": VTM, "vmp": VMP, "vmpp": VMPP, "amp": AMP, "ampp": AMPP}

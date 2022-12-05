@@ -1,10 +1,11 @@
 import json
 import os
-import openpyxl as op
 import re
+import sys
+
+import openpyxl as op
 from django.conf import settings
 from django.core.management.base import BaseCommand
-import sys
 
 
 class Command(BaseCommand):

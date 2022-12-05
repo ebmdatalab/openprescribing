@@ -2,23 +2,18 @@
 import re
 import unittest
 
-from mock import patch
-from mock import MagicMock
-
+from common.alert_utils import BatchedEmailErrors
 from django.core import mail
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
-from common.alert_utils import BatchedEmailErrors
-from frontend.models import EmailMessage
-from frontend.models import Measure
-from frontend.models import PCN, STP
 from frontend.management.commands.send_monthly_alerts import Command
-from frontend.views.bookmark_utils import BadAlertImageError
-from frontend.tests.test_bookmark_utils import _makeContext
+from frontend.models import PCN, STP, EmailMessage, Measure
 from frontend.tests.data_factory import DataFactory
 from frontend.tests.test_api_spending import ApiTestBase
-
+from frontend.tests.test_bookmark_utils import _makeContext
+from frontend.views.bookmark_utils import BadAlertImageError
+from mock import MagicMock, patch
 
 CMD_NAME = "send_monthly_alerts"
 

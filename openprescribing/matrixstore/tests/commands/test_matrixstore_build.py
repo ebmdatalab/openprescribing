@@ -15,19 +15,17 @@ produced by the full end-to-end process.
 """
 
 
-from collections import defaultdict
-import os
 import json
 import numbers
+import os
 import shutil
 import sqlite3
 import sys
 import tempfile
-
-from django.test import SimpleTestCase
+from collections import defaultdict
 
 import numpy
-
+from django.test import SimpleTestCase
 from matrixstore.serializer import deserialize
 from matrixstore.tests.data_factory import DataFactory
 from matrixstore.tests.import_test_data_fast import import_test_data_fast

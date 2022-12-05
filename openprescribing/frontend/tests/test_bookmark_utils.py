@@ -1,33 +1,31 @@
-from dateutil.relativedelta import relativedelta
+import base64
 import os
 import re
-import unittest
-from mock import patch
-
-from django.test import SimpleTestCase
-from django.test import TestCase
-import base64
-from datetime import datetime
-from http.server import BaseHTTPRequestHandler
-from http.server import HTTPServer
 import socket
+import unittest
+from datetime import datetime
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
-import requests
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
-from mock import MagicMock
 
-from frontend.models import ImportLog
-from frontend.models import Measure
-from frontend.models import MeasureValue
-from frontend.models import PCT
-from frontend.models import Practice
-from frontend.models import NCSOConcessionBookmark
+import requests
+from dateutil.relativedelta import relativedelta
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.test import SimpleTestCase, TestCase
+from frontend.models import (
+    PCT,
+    ImportLog,
+    Measure,
+    MeasureValue,
+    NCSOConcessionBookmark,
+    Practice,
+)
 from frontend.templatetags.template_extras import deltawords
+from frontend.tests.data_factory import DataFactory
 from frontend.views import bookmark_utils
 from frontend.views.spending_utils import ncso_spending_for_entity
-from frontend.tests.data_factory import DataFactory
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
+from mock import MagicMock, patch
 
 
 class IntroTextTest(unittest.TestCase):

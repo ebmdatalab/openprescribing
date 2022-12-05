@@ -1,15 +1,12 @@
 import logging
 
 from anymail.signals import tracking
-from requests_futures.sessions import FuturesSession
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
-from frontend.models import MailLog
-from frontend.models import Profile
+from frontend.models import MailLog, Profile
+from requests_futures.sessions import FuturesSession
 
 logger = logging.getLogger(__name__)
 

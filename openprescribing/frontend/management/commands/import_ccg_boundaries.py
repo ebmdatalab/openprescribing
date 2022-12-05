@@ -11,7 +11,6 @@ from django.contrib.gis.utils import LayerMapping
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import F
-
 from frontend.models import PCT
 
 

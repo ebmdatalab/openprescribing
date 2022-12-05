@@ -2,9 +2,7 @@ import textwrap
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
 from frontend.models import Presentation
-
 
 BNF_CODES = """
 0206010F0AACJCJ

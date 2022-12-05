@@ -1,10 +1,10 @@
 """Common settings and globals."""
+import sys
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
-from django.core.exceptions import ImproperlyConfigured
-from common import utils
 
-import sys
+from common import utils
+from django.core.exceptions import ImproperlyConfigured
 
 # Replace stdlib sqlite3 with a more up-to-date version. This bit of
 # monkey-patching is required because we want the DiskCache library to use this

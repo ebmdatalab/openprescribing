@@ -12,8 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import BaseCommand
 from django.db.models.fields.related import ForeignKey
 from django.db.models.fields.reverse_related import ManyToOneRel, OneToOneRel
-
-from dmd.models import VMP, VMPP, AMP, AMPP, GTIN
+from dmd.models import AMP, AMPP, GTIN, VMP, VMPP
 
 
 class Command(BaseCommand):

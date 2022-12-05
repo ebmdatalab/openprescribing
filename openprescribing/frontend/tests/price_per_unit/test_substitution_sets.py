@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from frontend.price_per_unit.substitution_sets import (
     get_substitution_sets_from_bnf_codes,
     groups_from_pairs,

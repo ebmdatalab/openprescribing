@@ -1,27 +1,25 @@
 import itertools
 import random
 
-from django.contrib.auth.models import User
-
-from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
-
+from dateutil.relativedelta import relativedelta
+from django.contrib.auth.models import User
+from dmd import models as dmd_models
 from frontend.models import (
-    ImportLog,
-    Practice,
     PCN,
     PCT,
     STP,
-    RegionalTeam,
-    Prescription,
-    Presentation,
-    NCSOConcessionBookmark,
-    OrgBookmark,
+    ImportLog,
     Measure,
     NCSOConcession,
+    NCSOConcessionBookmark,
+    OrgBookmark,
+    Practice,
+    Prescription,
+    Presentation,
+    RegionalTeam,
     TariffPrice,
 )
-from dmd import models as dmd_models
 
 
 class DataFactory(object):

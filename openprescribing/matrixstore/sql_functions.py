@@ -1,7 +1,7 @@
-from scipy.sparse import csc_matrix, _sparsetools
+from scipy.sparse import _sparsetools, csc_matrix
 
 from .matrix_ops import zeros_like
-from .serializer import serialize, deserialize
+from .serializer import deserialize, serialize
 
 
 class MatrixSum(object):

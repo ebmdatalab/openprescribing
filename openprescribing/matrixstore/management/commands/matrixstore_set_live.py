@@ -11,7 +11,6 @@ import re
 
 from django.conf import settings
 from django.core.management import BaseCommand
-
 from matrixstore.build.common import get_temp_filename
 
 

@@ -2,14 +2,12 @@ import csv
 import tempfile
 from decimal import Decimal
 
-from google.cloud.exceptions import NotFound
 from django.test import TestCase
-
-from gcutils.bigquery import Client, TableExporter, build_schema
-from gcutils.storage import Client as StorageClient
-
 from dmd.models import VMPP
 from frontend.models import PCT
+from gcutils.bigquery import Client, TableExporter, build_schema
+from gcutils.storage import Client as StorageClient
+from google.cloud.exceptions import NotFound
 
 
 class BQClientTest(TestCase):

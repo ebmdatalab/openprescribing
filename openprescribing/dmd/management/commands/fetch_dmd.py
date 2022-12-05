@@ -12,7 +12,6 @@ from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
-
 from django.conf import settings
 from django.core.management import BaseCommand
 

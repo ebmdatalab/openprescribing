@@ -1,8 +1,7 @@
 from django.db import models
-from django.db.models import FloatField, Func, F, Q, Value, Sum, JSONField
-from django.db.models.functions import Cast, Coalesce, Greatest
+from django.db.models import F, FloatField, Func, JSONField, Q, Sum, Value
 from django.db.models.fields.json import KeyTextTransform as ValueFromJsonObject
-
+from django.db.models.functions import Cast, Coalesce, Greatest
 
 CENTILES = ["10", "20", "30", "40", "50", "60", "70", "80", "90"]
 

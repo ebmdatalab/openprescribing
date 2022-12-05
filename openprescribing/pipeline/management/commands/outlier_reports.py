@@ -1,11 +1,11 @@
 import os.path
 import re
+import shutil
 import traceback
 import warnings
-import shutil
 from base64 import b64encode
+from concurrent.futures import ProcessPoolExecutor
 from datetime import date, datetime
-from dateutil import relativedelta
 from io import BytesIO
 from os import path
 from typing import Dict, List
@@ -17,11 +17,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from dateutil import relativedelta
+from django.conf import settings
 from django.core.management import BaseCommand
 from gcutils.bigquery import Client
 from lxml import html
-from concurrent.futures import ProcessPoolExecutor
-from django.conf import settings
 
 
 class Command(BaseCommand):

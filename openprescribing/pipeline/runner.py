@@ -1,4 +1,3 @@
-from collections import defaultdict
 import datetime
 import fnmatch
 import glob
@@ -8,13 +7,13 @@ import random
 import re
 import shlex
 import textwrap
+from collections import defaultdict
 
 import networkx as nx
-
 from django.conf import settings
 from django.core.management import call_command as django_call_command
-
 from gcutils.storage import Client as StorageClient
+
 from openprescribing.slack import notify_slack
 from openprescribing.utils import find_files
 

@@ -1,8 +1,7 @@
 import datetime
 
 from django.test import TestCase
-
-from frontend.models import MeasureValue, MeasureGlobal
+from frontend.models import MeasureGlobal, MeasureValue
 
 
 class MeasureValueManagerTests(TestCase):

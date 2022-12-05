@@ -1,19 +1,22 @@
 import collections
 
-from django.test import TestCase
-from django.db.models import Max
-
-from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
-
-from frontend.models import Prescription, Presentation, NCSOConcessionBookmark
-from frontend.models import NCSOConcession, TariffPrice
-from frontend.views.spending_utils import (
-    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
-    ncso_spending_for_entity,
-    ncso_spending_breakdown_for_entity,
+from dateutil.relativedelta import relativedelta
+from django.db.models import Max
+from django.test import TestCase
+from frontend.models import (
+    NCSOConcession,
+    NCSOConcessionBookmark,
+    Prescription,
+    Presentation,
+    TariffPrice,
 )
 from frontend.tests.data_factory import DataFactory
+from frontend.views.spending_utils import (
+    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
+    ncso_spending_breakdown_for_entity,
+    ncso_spending_for_entity,
+)
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 

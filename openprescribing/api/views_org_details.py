@@ -1,12 +1,11 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.exceptions import APIException
 from django.db.models import Q
-
-from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
-from . import view_utils as utils
+from frontend.models import PCN, PCT, STP, Practice, RegionalTeam
 from matrixstore.db import get_db, get_row_grouper
+from rest_framework.decorators import api_view
+from rest_framework.exceptions import APIException
+from rest_framework.response import Response
 
+from . import view_utils as utils
 
 STATS_COLUMN_WHITELIST = (
     "total_list_size",

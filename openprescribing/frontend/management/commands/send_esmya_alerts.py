@@ -2,7 +2,6 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.core.management import BaseCommand
 from django.template.loader import get_template
-
 from frontend.models import Practice
 from gcutils.bigquery import Client
 

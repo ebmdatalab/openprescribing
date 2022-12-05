@@ -1,9 +1,8 @@
 import json
 import os
-import requests
 
 import dotenv
-
+import requests
 
 # This zone ID may change if/when our account changes
 # Run `list_cloudflare_zones` (below) to get a full list

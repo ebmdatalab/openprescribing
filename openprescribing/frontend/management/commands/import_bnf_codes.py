@@ -1,9 +1,9 @@
 import csv
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-
-from frontend.models import Chemical, Section, Product, Presentation
+from frontend.models import Chemical, Presentation, Product, Section
 
 
 class Command(BaseCommand):

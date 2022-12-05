@@ -5,7 +5,6 @@ import re
 from collections import Counter
 
 from django.core.management import BaseCommand
-
 from frontend.models import NCSOConcession
 from pipeline.management.commands.fetch_and_import_ncso_concessions import (
     regularise_ncso_name,

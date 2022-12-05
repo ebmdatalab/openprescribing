@@ -1,8 +1,9 @@
+from django.db.models import Q
+from frontend.models import PCN, PCT, STP, Practice, RegionalTeam
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 from . import view_utils as utils
-from django.db.models import Q
-from frontend.models import PCT, Practice, STP, RegionalTeam, PCN
 
 
 @api_view(["GET"])

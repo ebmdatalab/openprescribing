@@ -1,14 +1,13 @@
-from argparse import RawTextHelpFormatter
 import datetime
 import glob
 import os
 import zipfile
+from argparse import RawTextHelpFormatter
 
-from lxml import html
 import requests
-
 from django.conf import settings
 from django.core.management import BaseCommand
+from lxml import html
 
 from openprescribing.utils import mkdir_p
 

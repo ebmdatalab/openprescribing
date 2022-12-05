@@ -1,22 +1,18 @@
-from contextlib import contextmanager
 import subprocess
 import sys
 import tempfile
 import warnings
+from contextlib import contextmanager
 
-from google.cloud import bigquery as gcbq
-from google.cloud.exceptions import Conflict, NotFound
-
-from six import reraise
 import pandas as pd
-
 from django.conf import settings
 from django.db.models import fields as model_fields
 from django.db.models.fields import related as related_fields
-
 from gcutils.storage import Client as StorageClient
 from gcutils.table_dumper import TableDumper
-
+from google.cloud import bigquery as gcbq
+from google.cloud.exceptions import Conflict, NotFound
+from six import reraise
 
 DATASETS = {
     "hscic": settings.BQ_HSCIC_DATASET,

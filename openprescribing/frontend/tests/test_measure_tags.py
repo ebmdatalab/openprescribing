@@ -1,8 +1,6 @@
 from django.test import TestCase
-
-from frontend.tests.data_factory import DataFactory
-
 from frontend.measure_tags import _lazy_load_measure_tags
+from frontend.tests.data_factory import DataFactory
 
 
 class TestMeasureTags(TestCase):

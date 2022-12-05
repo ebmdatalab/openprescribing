@@ -5,11 +5,11 @@ postgres volume it takes a few seconds to become ready.
 
 """
 
-import time
 import os
-import psycopg2
-import dotenv
+import time
 
+import dotenv
+import psycopg2
 
 if __name__ == "__main__":
     env_path = os.path.join(

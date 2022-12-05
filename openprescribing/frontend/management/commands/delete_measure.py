@@ -2,7 +2,6 @@ import sys
 
 from django.conf import settings
 from django.core.management import BaseCommand
-
 from frontend.models import Measure
 from gcutils.bigquery import Client
 

@@ -1,7 +1,7 @@
 import datetime
-import mock
 import unittest
 
+import mock
 from frontend.templatetags import template_extras as t
 
 

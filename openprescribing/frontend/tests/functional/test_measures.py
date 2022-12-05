@@ -12,14 +12,14 @@
 from collections import defaultdict
 from urllib import parse
 
+import requests
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.management import call_command
-import requests
-from .selenium_base import SeleniumTestCase
+from frontend.models import PCN, PCT, STP, Measure, MeasureValue, Practice, RegionalTeam
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 from selenium.webdriver.common.by import By
 
-from frontend.models import RegionalTeam, STP, PCT, PCN, Practice, Measure, MeasureValue
-from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
+from .selenium_base import SeleniumTestCase
 
 MEASURE_CORE_0_ANALYSE_URL = "/analyse/#numIds=0001&denomIds=00&measure=core_0"
 MEASURE_LPZOMNIBUS_ANALYSE_URL = (

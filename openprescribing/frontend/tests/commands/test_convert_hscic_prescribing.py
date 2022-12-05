@@ -2,11 +2,10 @@ import os
 
 from django.core.management import call_command
 from django.test import TestCase
-
-from gcutils.bigquery import Client as BQClient, NotFound, results_to_dicts
-from gcutils.storage import Client as StorageClient
-
 from frontend.bq_schemas import PRESCRIBING_SCHEMA
+from gcutils.bigquery import Client as BQClient
+from gcutils.bigquery import NotFound, results_to_dicts
+from gcutils.storage import Client as StorageClient
 
 
 class ConvertHscicPrescribingTests(TestCase):

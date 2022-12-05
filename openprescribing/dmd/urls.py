@@ -2,7 +2,6 @@ from django.urls import path
 
 from . import views
 
-
 urlpatterns = [
     path(r"", views.search_view, name="dmd_search"),
     path(r"<obj_type>/<int:id>/", views.dmd_obj_view, name="dmd_obj"),

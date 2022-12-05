@@ -5,7 +5,6 @@ import csv
 import json
 from collections import OrderedDict
 
-
 table_names = ["vtm", "vmp", "vmpp", "amp", "ampp"]
 
 records = OrderedDict()

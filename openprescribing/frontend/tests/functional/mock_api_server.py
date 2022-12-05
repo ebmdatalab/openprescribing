@@ -1,11 +1,10 @@
-from http.server import BaseHTTPRequestHandler
-from http.server import HTTPServer
 import logging
-import requests
-from threading import Thread
-import urllib.parse
 import os
+import urllib.parse
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from threading import Thread
 
+import requests
 
 FIXTURES_BASE = "frontend/tests/fixtures/functional/"
 logger = logging.getLogger(__name__)

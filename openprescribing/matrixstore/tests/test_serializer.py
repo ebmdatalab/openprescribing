@@ -2,10 +2,8 @@ import sqlite3
 
 import numpy
 import scipy.sparse
-
 from django.test import SimpleTestCase
-
-from matrixstore.serializer import serialize, serialize_compressed, deserialize
+from matrixstore.serializer import deserialize, serialize, serialize_compressed
 
 
 class TestSerializer(SimpleTestCase):
