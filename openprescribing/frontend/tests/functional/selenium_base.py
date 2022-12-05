@@ -24,10 +24,6 @@ random.shuffle(test_port_range)
 available_test_ports = iter(test_port_range)
 
 
-def use_saucelabs():
-    return os.environ.get("TRAVIS") or os.environ.get("USE_SAUCELABS")
-
-
 def use_browserstack():
     return os.environ.get("GITHUB_ACTIONS") or os.environ.get("USE_BROWSERSTACK")
 
@@ -56,9 +52,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def get_browser(cls):
-        if use_saucelabs():
-            return cls.get_saucelabs_browser()
-        elif use_browserstack():
+        if use_browserstack():
             return cls.get_browserstack_browser()
         else:
             if cls.use_xvfb():
@@ -69,64 +63,23 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             return cls.get_firefox_driver()
 
     @classmethod
-    def get_saucelabs_browser(cls):
-        browser, version, platform = os.environ["BROWSER"].split(":")
-        caps = {"browserName": browser}
-        caps["platform"] = platform
-        caps["version"] = version
-        caps["screenResolution"] = "1600x1200"
-        # Disable slow script warning in IE
-        caps["prerun"] = {
-            "executable": (
-                "https://raw.githubusercontent.com/"
-                "ebmdatalab/openprescribing/"
-                "master/scripts/setup_ie_8.bat"
-            ),
-            "background": "false",
-        }
-        username = os.environ["SAUCE_USERNAME"]
-        access_key = os.environ["SAUCE_ACCESS_KEY"]
-        if os.environ.get("TRAVIS"):
-            caps["tunnel-identifier"] = os.environ.get("TRAVIS_JOB_NUMBER", "n/a")
-            caps["build"] = os.environ.get("TRAVIS_BUILD_NUMBER", "n/a")
-            caps["tags"] = ["CI"]
-        else:
-            caps["tags"] = ["from-dev-sandbox"]
-        if os.environ.get("TRAVIS") or os.path.exists("/.dockerenv"):
-            hub_url = "%s:%s@saucehost:4445" % (username, access_key)
-        else:
-            hub_url = "%s:%s@localhost:4445" % (username, access_key)
-        return webdriver.Remote(
-            desired_capabilities=caps, command_executor="http://%s/wd/hub" % hub_url
-        )
-
-    @classmethod
     def get_browserstack_browser(cls):
         browser, browser_version, browserstack_os, browserstack_os_version = os.environ[
             "BROWSER"
         ].split(":")
         local_identifier = os.environ["BROWSERSTACK_LOCAL_IDENTIFIER"]
         caps = {
-            # 'browser' has precedence over 'browserName'
-            # 'browserName': browser,
-            "resolution": "1600x1200",
-            "browser": browser,
-            "browser_version": browser_version,
-            "os": browserstack_os,
-            "os_version": browserstack_os_version,
-            "browserstack.local": "true",
-            "browserstack.localIdentifier": local_identifier,
-            "project": os.environ["BROWSERSTACK_PROJECT_NAME"],
-            "name": os.environ["BROWSERSTACK_BUILD_NAME"],
+            "browserName": browser,
+            "browserVersion": browser_version,
         }
-        # Disable slow script warning in IE
-        caps["prerun"] = {
-            "executable": (
-                "https://raw.githubusercontent.com/"
-                "ebmdatalab/openprescribing/"
-                "master/scripts/setup_ie_8.bat"
-            ),
-            "background": "false",
+        caps["bstack:options"] = {
+            "os": browserstack_os,
+            "osVersion": browserstack_os_version,
+            "resolution": "1600x1200",
+            "local": "true",
+            "localIdentifier": local_identifier,
+            "projectName": os.environ["BROWSERSTACK_PROJECT_NAME"],
+            "buildName": os.environ["BROWSERSTACK_BUILD_NAME"],
         }
         username = os.environ["BROWSERSTACK_USERNAME"]
         access_key = os.environ["BROWSERSTACK_ACCESS_KEY"]
@@ -156,7 +109,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     @classmethod
     def get_firefox_driver(cls):
         # Newer releases of Ubuntu package Firefox as a Snap, meaning that it comes with
-        # sanboxing restrictions that prevent it writing temporary profiles into the
+        # sandboxing restrictions that prevent it writing temporary profiles into the
         # default system tmpdir. We workaround this by changing TMPDIR to point to a
         # directory in the project root (which we assume is within the currently running
         # user's home directory). See:
@@ -183,10 +136,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         super(SeleniumTestCase, cls).tearDownClass()
 
     def _find_and_wait(self, locator_type, locator, waiter):
-        if use_saucelabs():
-            wait = 60
-        else:
-            wait = 5
+        wait = 15
         try:
             element = WebDriverWait(self.browser, wait).until(
                 waiter((locator_type, locator))

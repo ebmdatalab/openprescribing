@@ -11,12 +11,12 @@
 import unittest
 
 from .selenium_base import SeleniumTestCase
+from selenium.webdriver.common.by import By
 
 
 class MapTest(SeleniumTestCase):
     # These tests run against a MockAPIServer started by the
     # custom_runner
-    @unittest.expectedFailure
     def test_map_slider(self):
         self.browser.get(
             self.live_server_url
@@ -29,8 +29,8 @@ class MapTest(SeleniumTestCase):
         # In the default month (Sept) there is one "maximum" value
         self.assertEqual(
             len(
-                self.browser.find_elements_by_xpath(
-                    "//*[@fill='#67001f' and name()='path']"
+                self.browser.find_elements(
+                    By.XPATH, "//*[@fill='#67001f' and name()='path']"
                 )
             ),
             1,
@@ -53,8 +53,8 @@ class MapTest(SeleniumTestCase):
         # Check the values for Gravesend have changed as expected
         self.assertEqual(
             len(
-                self.browser.find_elements_by_xpath(
-                    "//*[@fill='#67001f' and name()='path']"
+                self.browser.find_elements(
+                    By.XPATH, "//*[@fill='#67001f' and name()='path']"
                 )
             ),
             2,
@@ -67,7 +67,6 @@ class MapTest(SeleniumTestCase):
 class SmallListTest(SeleniumTestCase):
     # These tests run against a MockAPIServer started by the
     # custom_runner
-    @unittest.expectedFailure
     def test_nothing_hidden_by_default(self):
         self.browser.get(
             self.live_server_url
@@ -76,7 +75,7 @@ class SmallListTest(SeleniumTestCase):
                 "&denom=total_list_size&selectedTab=summary"
             )
         )
-        warning = self.find_by_xpath("//div[contains(@class, 'toggle')]/a")
+        warning = self.find_visible_by_xpath("//div[contains(@class, 'toggle')]/a")
         self.assertIn("Remove", warning.text)
         xlabels = self.find_by_xpath("//*[contains(@class, 'highcharts-xaxis-labels')]")
         self.assertIn("GREEN", xlabels.text)
@@ -113,7 +112,7 @@ class AnalyseSummaryTotalsTest(SeleniumTestCase):
                     id="js-summary-totals", classname=classname
                 )
             )
-            element = self.find_by_xpath(selector)
+            element = self.find_visible_by_xpath(selector)
             self.assertTrue(
                 element.is_displayed(), ".{} is not visible".format(classname)
             )

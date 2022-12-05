@@ -12,11 +12,11 @@ class AssetBuildingTestRunner(DiscoverRunner):
 
     * Building JS and CSS assets when running functional tests
     * Only running functional tests when TEST_SUITE environment says so
-    * Custom settings to support running in SauceLabs
+    * Custom settings to support running in Browserstack
     * Starting a mock API server
     """
 
-    # We must run the test server on a port supported by Saucelabs
+    # We must run the test server on a port supported by Browserstack
     os.environ["DJANGO_LIVE_TEST_SERVER_ADDRESS"] = "0.0.0.0:6080-6580"
 
     def build_suite(self, test_labels, extra_tests=None, **kwargs):
@@ -40,7 +40,7 @@ class AssetBuildingTestRunner(DiscoverRunner):
                 npm_cmd, shell=True, cwd=settings.APPS_ROOT + "/media/js"
             )
         if not os.environ.get("BROWSER"):
-            # Default test environment for Saucelabs
+            # Default test environment for Browserstack
             os.environ["BROWSER"] = "firefox:latest:Windows 10"
         # I had previously tried patching the API methods, but patching
         # is not a thread-safe operation: the methods are set in the
