@@ -24,10 +24,6 @@ random.shuffle(test_port_range)
 available_test_ports = iter(test_port_range)
 
 
-def use_saucelabs():
-    return os.environ.get("TRAVIS") or os.environ.get("USE_SAUCELABS")
-
-
 def use_browserstack():
     return os.environ.get("GITHUB_ACTIONS") or os.environ.get("USE_BROWSERSTACK")
 
@@ -56,9 +52,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def get_browser(cls):
-        if use_saucelabs():
-            return cls.get_saucelabs_browser()
-        elif use_browserstack():
+        if use_browserstack():
             return cls.get_browserstack_browser()
         else:
             if cls.use_xvfb():
@@ -67,38 +61,6 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 cls.display = Display(visible=0, size=(1200, 800))
                 cls.display.start()
             return cls.get_firefox_driver()
-
-    @classmethod
-    def get_saucelabs_browser(cls):
-        browser, version, platform = os.environ["BROWSER"].split(":")
-        caps = {"browserName": browser}
-        caps["platform"] = platform
-        caps["version"] = version
-        caps["screenResolution"] = "1600x1200"
-        # Disable slow script warning in IE
-        caps["prerun"] = {
-            "executable": (
-                "https://raw.githubusercontent.com/"
-                "ebmdatalab/openprescribing/"
-                "master/scripts/setup_ie_8.bat"
-            ),
-            "background": "false",
-        }
-        username = os.environ["SAUCE_USERNAME"]
-        access_key = os.environ["SAUCE_ACCESS_KEY"]
-        if os.environ.get("TRAVIS"):
-            caps["tunnel-identifier"] = os.environ.get("TRAVIS_JOB_NUMBER", "n/a")
-            caps["build"] = os.environ.get("TRAVIS_BUILD_NUMBER", "n/a")
-            caps["tags"] = ["CI"]
-        else:
-            caps["tags"] = ["from-dev-sandbox"]
-        if os.environ.get("TRAVIS") or os.path.exists("/.dockerenv"):
-            hub_url = "%s:%s@saucehost:4445" % (username, access_key)
-        else:
-            hub_url = "%s:%s@localhost:4445" % (username, access_key)
-        return webdriver.Remote(
-            desired_capabilities=caps, command_executor="http://%s/wd/hub" % hub_url
-        )
 
     @classmethod
     def get_browserstack_browser(cls):
@@ -183,10 +145,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         super(SeleniumTestCase, cls).tearDownClass()
 
     def _find_and_wait(self, locator_type, locator, waiter):
-        if use_saucelabs():
-            wait = 60
-        else:
-            wait = 5
+        wait = 5
         try:
             element = WebDriverWait(self.browser, wait).until(
                 waiter((locator_type, locator))
