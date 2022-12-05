@@ -1,7 +1,7 @@
 import numpy
 import scipy.sparse
 from scipy.sparse import csc_matrix
-from scipy.sparse.compressed import _process_slice, get_csr_submatrix
+from scipy.sparse._compressed import _process_slice, get_csr_submatrix
 
 
 def sparse_matrix(shape, integer=False):

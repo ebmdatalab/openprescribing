@@ -192,4 +192,4 @@ def is_matrix(value):
     """
     # This is harder than it ought to be because `numpy.matrix` inherits from
     # `numpy.ndarray`, but the scipy sparse type doesn't inherit from either
-    return isinstance(value, (numpy.matrix, scipy.sparse.compressed._cs_matrix))
+    return isinstance(value, (numpy.matrix, scipy.sparse._compressed._cs_matrix))
