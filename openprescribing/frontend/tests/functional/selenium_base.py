@@ -69,17 +69,17 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         ].split(":")
         local_identifier = os.environ["BROWSERSTACK_LOCAL_IDENTIFIER"]
         caps = {
-            # 'browser' has precedence over 'browserName'
-            # 'browserName': browser,
-            "resolution": "1600x1200",
-            "browser": browser,
-            "browser_version": browser_version,
+            "browserName": browser,
+            "browserVersion": browser_version,
+        }
+        caps["bstack:options"] = {
             "os": browserstack_os,
-            "os_version": browserstack_os_version,
-            "browserstack.local": "true",
-            "browserstack.localIdentifier": local_identifier,
-            "project": os.environ["BROWSERSTACK_PROJECT_NAME"],
-            "name": os.environ["BROWSERSTACK_BUILD_NAME"],
+            "osVersion": browserstack_os_version,
+            "resolution": "1600x1200",
+            "local": "true",
+            "localIdentifier": local_identifier,
+            "projectName": os.environ["BROWSERSTACK_PROJECT_NAME"],
+            "buildName": os.environ["BROWSERSTACK_BUILD_NAME"],
         }
         username = os.environ["BROWSERSTACK_USERNAME"]
         access_key = os.environ["BROWSERSTACK_ACCESS_KEY"]
