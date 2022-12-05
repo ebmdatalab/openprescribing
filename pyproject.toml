@@ -1,2 +1,6 @@
 [tool.black]
 extend-exclude = '/migrations/'
+
+[tool.isort]
+profile = "black"
+skip_glob = ['*/migrations/*']
