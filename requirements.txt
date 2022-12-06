@@ -376,7 +376,7 @@ urllib3[socks]==1.26.13
     # via
     #   requests
     #   selenium
-watchdog==2.1.9
+watchdog==2.2.0
     # via when-changed
 wheel==0.38.4
     # via pip-tools
