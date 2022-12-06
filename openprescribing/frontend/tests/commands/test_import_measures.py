@@ -888,17 +888,8 @@ def upload_practice_statistics(randint):
     """Generate practice statistics data, and upload to BQ."""
 
     practice_statistics_rows = []
+    dataframe_rows = []
     seen_practice_with_no_statistics = False
-    columns = [
-        "month",
-        "regional_team_id",
-        "stp_id",
-        "ccg_id",
-        "pcn_id",
-        "practice_id",
-        "total_list_size",
-    ]
-    practice_stats = pd.DataFrame(columns=columns)
 
     for practice in Practice.objects.all():
         for month in [7, 8]:
@@ -939,7 +930,7 @@ def upload_practice_statistics(randint):
             ]
 
             practice_statistics_rows.append(row)
-            practice_stats = practice_stats.append(
+            dataframe_rows.append(
                 {
                     "month": timestamp[:10],
                     "practice_id": practice.code,
@@ -948,8 +939,7 @@ def upload_practice_statistics(randint):
                     "stp_id": practice.ccg.stp_id,
                     "regional_team_id": practice.ccg.regional_team_id,
                     "thousand_patients": total_list_size / 1000.0,
-                },
-                ignore_index=True,
+                }
             )
 
     assert seen_practice_with_no_statistics
@@ -964,7 +954,7 @@ def upload_practice_statistics(randint):
         f.seek(0)
         table.insert_rows_from_csv(f.name, schemas.PRACTICE_STATISTICS_SCHEMA)
 
-    return practice_stats
+    return pd.DataFrame.from_records(dataframe_rows)
 
 
 def build_factory():
