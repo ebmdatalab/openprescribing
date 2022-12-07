@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.11
 
 LABEL maintainer="Seb Bacon version: 0.2"
 ENV PYTHONUNBUFFERED 1
