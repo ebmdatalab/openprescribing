@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-asgiref==3.5.2
+asgiref==3.6.0
     # via django
 async-generator==1.10
     # via
