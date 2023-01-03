@@ -42,7 +42,7 @@ contourpy==1.0.6
     # via matplotlib
 coverage==7.0.1
     # via -r requirements.in
-cryptography==38.0.4
+cryptography==39.0.0
     # via paramiko
 cssselect==1.2.0
     # via
