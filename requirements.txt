@@ -134,7 +134,7 @@ google-cloud-bigquery==3.4.1
     # via
     #   -r requirements.in
     #   pandas-gbq
-google-cloud-bigquery-storage==2.17.0
+google-cloud-bigquery-storage==2.18.0
     # via
     #   -r requirements.in
     #   pandas-gbq
