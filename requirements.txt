@@ -20,7 +20,7 @@ bcrypt==4.0.1
     # via paramiko
 beautifulsoup4==4.11.1
     # via -r requirements.in
-build==0.9.0
+build==0.10.0
     # via pip-tools
 cachetools==5.2.1
     # via
@@ -239,8 +239,6 @@ pandas-gbq==0.18.1
     # via -r requirements.in
 paramiko==2.12.0
     # via fabric3
-pep517==0.13.0
-    # via build
 pillow==9.4.0
     # via matplotlib
 pip-tools==6.12.1
@@ -287,6 +285,8 @@ pyparsing==3.0.9
     #   httplib2
     #   matplotlib
     #   packaging
+pyproject-hooks==1.0.0
+    # via build
 pyquery==2.0.0
     # via -r requirements.in
 pysocks==1.7.1
@@ -358,7 +358,7 @@ titlecase==0.12.0
 tomli==2.0.1
     # via
     #   build
-    #   pep517
+    #   pyproject-hooks
 trio==0.22.0
     # via
     #   selenium
