@@ -245,7 +245,7 @@ pip-tools==6.12.1
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
-proto-plus==1.22.1
+proto-plus==1.22.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
