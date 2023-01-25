@@ -1404,17 +1404,22 @@ def _sort_core_tag_first(option):
 
 
 def _specified_or_last_date(request, category):
+    if category == "prescribing":
+        latest_date = parse_date(latest_prescribing_date())
+    else:
+        latest_date = ImportLog.objects.latest_in_category(category).current_at
     date = request.GET.get("date", None)
-    if date:
+    if not date:
+        date = latest_date
+    else:
         try:
             date = parse_date(date)
         except ValueError:
             raise BadRequestError("Date not in valid YYYY-MM-DD format: %s" % date)
-    else:
-        if category == "prescribing":
-            date = parse_date(latest_prescribing_date())
-        else:
-            date = ImportLog.objects.latest_in_category(category).current_at
+        if date > latest_date:
+            raise BadRequestError(
+                f"No data available for {date} (latest is {latest_date})"
+            )
     return date
 
 
