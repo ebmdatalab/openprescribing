@@ -223,7 +223,7 @@ openpyxl==3.0.10
     #   tablib
 outcome==1.2.0
     # via trio
-packaging==21.3
+packaging==23.0
     # via
     #   build
     #   db-dtypes
@@ -284,7 +284,6 @@ pyparsing==3.0.9
     # via
     #   httplib2
     #   matplotlib
-    #   packaging
 pyproject-hooks==1.0.0
     # via build
 pyquery==2.0.0
