@@ -259,7 +259,7 @@ protobuf==4.21.12
     #   proto-plus
 psycopg2-binary==2.9.5
     # via -r requirements.in
-pyarrow==10.0.1
+pyarrow==11.0.0
     # via
     #   -r requirements.in
     #   db-dtypes
