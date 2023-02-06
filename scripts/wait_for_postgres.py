@@ -27,7 +27,7 @@ if __name__ == "__main__":
                 database=os.environ["DB_NAME"],
             )
             break
-        except (psycopg2.OperationalError):
+        except psycopg2.OperationalError:
             if elapsed == 0:
                 print("Waiting for postgres to start...")
             time.sleep(1)

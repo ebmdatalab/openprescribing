@@ -216,7 +216,6 @@ class TestPresentationDMDLinks(TestCase):
 
 
 class RegionalTeamTest(TestCase):
-
     fixtures = ["orgs"]
 
     def test_regional_team_with_no_pcts_excluded(self):

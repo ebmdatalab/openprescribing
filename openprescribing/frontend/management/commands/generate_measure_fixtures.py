@@ -208,7 +208,6 @@ class Command(BaseCommand):
 
         for practice_ix, practice in enumerate(Practice.objects.all()):
             for month, timestamp in enumerate(timestamps, start=1):
-
                 # 0 <= practice_ix <= 15; 1 <= month <= 8
                 item_ratio = (22 + practice_ix - 2 * month + randint(-5, 5)) / 43.0
                 assert 0 < item_ratio < 1

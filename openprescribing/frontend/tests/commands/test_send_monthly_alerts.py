@@ -449,7 +449,6 @@ class SearchEmailTestCase(TestCase):
 
 
 class AllEnglandAlertTestCase(ApiTestBase):
-
     fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     def test_all_england_alerts_sent(self):
@@ -464,7 +463,6 @@ class AllEnglandAlertTestCase(ApiTestBase):
 
 
 class PCNAlertTestCase(ApiTestBase):
-
     fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     def test_pcn_alerts_sent(self):
@@ -482,7 +480,6 @@ class PCNAlertTestCase(ApiTestBase):
 
 
 class STPAlertTestCase(ApiTestBase):
-
     fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     def test_stp_alerts_sent(self):

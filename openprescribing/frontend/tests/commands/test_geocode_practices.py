@@ -37,7 +37,6 @@ class CommandsTestCase(TestCase):
         "Skipping this test on Travis CI.",
     )
     def test_import_practice_geocoding(self):
-
         args = []
         opts = {"filename": "frontend/tests/fixtures/commands/gridall.csv"}
         call_command("geocode_practices", *args, **opts)

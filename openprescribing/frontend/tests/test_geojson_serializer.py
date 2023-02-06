@@ -7,7 +7,6 @@ from frontend.models import PCT
 
 
 class GeoJSONSerializerTest(TestCase):
-
     fixtures = ["orgs"]
 
     def test_output_is_the_same_as_core_serializer(self):

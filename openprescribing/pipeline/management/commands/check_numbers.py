@@ -102,7 +102,6 @@ def paths_to_scrape():
     # functions to a data structure that describes how requests should be
     # dispatched.
     for k, v in get_resolver().reverse_dict.items():
-
         # Ignore records where the key is a view function.
         if not isinstance(k, str):
             continue

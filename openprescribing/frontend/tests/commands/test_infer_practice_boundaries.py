@@ -4,7 +4,6 @@ from frontend.models import Practice
 
 
 class InferPracticeBoundariesTestCase(TestCase):
-
     fixtures = ["orgs", "practices"]
 
     def test_basic_smoketest(self):

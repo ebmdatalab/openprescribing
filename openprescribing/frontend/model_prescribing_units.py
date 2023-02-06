@@ -5,7 +5,6 @@ from django.conf import settings
 
 
 def set_units(practice):
-
     list_total = (
         practice.male_0_4
         + practice.female_0_4

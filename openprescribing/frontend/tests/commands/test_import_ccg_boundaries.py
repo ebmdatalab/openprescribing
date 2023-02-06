@@ -4,7 +4,6 @@ from frontend.models import PCT
 
 
 class CommandsTestCase(TestCase):
-
     fixtures = ["orgs"]
 
     def test_import_ccg_boundaries(self):
