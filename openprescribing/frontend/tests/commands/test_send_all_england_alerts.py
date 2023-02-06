@@ -6,7 +6,6 @@ from frontend.tests.test_api_spending import ApiTestBase
 
 
 class CommandTestCase(ApiTestBase):
-
     fixtures = ApiTestBase.fixtures + ["functional-measures-dont-edit"]
 
     @classmethod

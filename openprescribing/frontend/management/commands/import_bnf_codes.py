@@ -25,7 +25,6 @@ class Command(BaseCommand):
         sections = {}
         with transaction.atomic():
             for row in reader:
-
                 # Add to sections list.
                 c_id = row["BNF Chapter Code"]
                 if c_id not in sections:

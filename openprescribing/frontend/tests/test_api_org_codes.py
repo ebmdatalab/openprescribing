@@ -6,7 +6,6 @@ from frontend.models import PCT
 
 
 class TestAPIOrgViews(TestCase):
-
     fixtures = ["orgs", "practices"]
     api_prefix = "/api/1.0"
 

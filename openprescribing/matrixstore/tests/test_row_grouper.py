@@ -8,7 +8,6 @@ from matrixstore.row_grouper import RowGrouper
 
 
 class TestGrouper(SimpleTestCase):
-
     # Show large diffs on assertEqual failures
     maxDiff = None
 

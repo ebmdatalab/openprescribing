@@ -8,7 +8,6 @@ from frontend.models import PCT
 
 
 class TestAPIOrgLocationViews(TestCase):
-
     fixtures = ["orgs", "practices"]
     api_prefix = "/api/1.0"
 

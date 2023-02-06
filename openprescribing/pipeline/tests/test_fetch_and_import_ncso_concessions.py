@@ -12,7 +12,6 @@ from mock import patch
 
 
 class TestFetchAndImportNCSOConcesions(TestCase):
-
     fixtures = ["for_ncso_concessions"]
 
     def test_fetch_and_import_ncso_concessions(self):

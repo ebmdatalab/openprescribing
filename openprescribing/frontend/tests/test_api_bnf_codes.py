@@ -4,7 +4,6 @@ from .api_test_base import ApiTestBase
 
 
 class TestAPIBNFCodeViews(ApiTestBase):
-
     api_prefix = "/api/1.0"
 
     def assertNotJson(self, content):

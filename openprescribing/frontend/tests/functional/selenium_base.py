@@ -31,7 +31,6 @@ def use_browserstack():
     "nonfunctional tests specified in TEST_SUITE environment variable",
 )
 class SeleniumTestCase(StaticLiveServerTestCase):
-
     host = "0.0.0.0"
     display = None
 

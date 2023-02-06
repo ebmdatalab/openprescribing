@@ -155,7 +155,6 @@ class DataFactory(object):
     def create_prescribing_for_practice(
         self, practice, presentations=None, months=None
     ):
-
         if months is None:
             months = self.create_months_array()
 

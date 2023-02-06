@@ -5,7 +5,6 @@ from mock import patch
 
 
 class TestNCSOReconciliation(TestCase):
-
     fixtures = ["for_ncso_concessions"]
 
     def test_reconcile_ncso_concession(self):

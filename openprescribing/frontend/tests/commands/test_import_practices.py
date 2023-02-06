@@ -51,7 +51,6 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.ccg, None)
 
     def test_import_practices_from_hscic(self):
-
         args = []
         hscic = "frontend/tests/fixtures/commands/hscic_practices.csv"
         opts = {"hscic_address": hscic}

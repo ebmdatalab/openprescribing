@@ -100,7 +100,6 @@ class NCSOConcessionBookmarkForm(forms.Form):
 
 
 class FeedbackForm(forms.Form):
-
     # This incredibly crude captcha technique has proved enough in the past to
     # deter spam bots which blindly fill out any contact form they can find
     HUMAN_TEST_ANSWER = "health"

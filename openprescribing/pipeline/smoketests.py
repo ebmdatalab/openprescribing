@@ -21,7 +21,6 @@ PRESCRIBING_DATA_MONTHS = 5 * 12
 
 
 class SmokeTestBase(unittest.TestCase):
-
     DOMAIN = "https://openprescribing.net"
 
     def _now_date(self):

@@ -119,7 +119,6 @@ def constraint_and_index_reconstructor(table_name):
 
     """
     with db.connection.cursor() as cursor:
-
         # Record index and constraint definitions
         indexes = {}
         constraints = {}

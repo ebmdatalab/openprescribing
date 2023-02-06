@@ -27,7 +27,6 @@ NATIONAL_BOUNDARY_FILE = os.path.join(
 
 
 class Command(BaseCommand):
-
     help = __doc__
 
     def handle(self, *args, **options):
