@@ -112,7 +112,7 @@ google-api-core[grpc]==2.11.0
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.76.0
+google-api-python-client==2.77.0
     # via -r requirements.in
 google-auth==2.16.0
     # via
