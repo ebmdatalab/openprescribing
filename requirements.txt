@@ -63,6 +63,7 @@ django==3.2.18
     #   -r requirements.in
     #   django-anymail
     #   django-cors-headers
+    #   django-crispy-forms
     #   django-debug-toolbar
     #   django-debug-toolbar-template-timings
     #   django-extensions
@@ -72,7 +73,7 @@ django-anymail[mailgun]==9.1
     # via -r requirements.in
 django-cors-headers==3.14.0
     # via -r requirements.in
-django-crispy-forms==1.14.0
+django-crispy-forms==2.0
     # via -r requirements.in
 django-debug-toolbar==3.8.1
     # via
