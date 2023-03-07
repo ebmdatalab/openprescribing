@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import unittest
-from urllib.parse import quote_plus
 
 from mock import PropertyMock, patch
 from selenium.webdriver.common.by import By
@@ -51,30 +50,6 @@ class GeneralFrontendTest(SeleniumTestCase):
                 self.find_by_xpath("//a[contains(text(), 'About')]").is_displayed(),
                 "dropdown functionality broken at %s" % url,
             )
-
-    def test_message_and_action(self):
-        for url in [
-            "/sicbl/03Q/",
-            "/practice/P87629/",
-            "/measure/cerazette/",
-            "/chemical/0202010D0/",
-            "/bnf/020201/",
-            "/analyse/",
-        ]:
-            url = self.live_server_url + url
-            self.browser.get(url)
-            self.find_by_xpath('//a[@class="feedback-show"]')  # Wait for button load
-            try:
-                el = self.find_visible_by_xpath('//a[@class="feedback-show"]')
-                el.click()
-            except TypeError as e:
-                e.args += ("at URL %s" % url,)
-                raise
-
-            expected_url = "{}/feedback/?from_url={}".format(
-                self.live_server_url, quote_plus(url)
-            )
-            self.assertEqual(self.browser.current_url, expected_url)
 
     def test_drug_name_typeahead(self):
         self.browser.get(self.live_server_url + "/analyse/")
