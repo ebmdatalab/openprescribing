@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import quote_plus
 
 from django.conf import settings
 
@@ -6,9 +7,11 @@ logger = logging.getLogger(__name__)
 
 
 def support_email(request):
+    subject = f"OpenPrescribing Feedback ({request.get_full_path()}):"
     return {
         "SUPPORT_TO_EMAIL": settings.SUPPORT_TO_EMAIL,
         "SUPPORT_FROM_EMAIL": settings.SUPPORT_FROM_EMAIL,
+        "FEEDBACK_MAILTO": f"{settings.SUPPORT_TO_EMAIL}?subject={quote_plus(subject)}",
     }
 
 

@@ -193,13 +193,13 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
           </div>
             <div class="col-md-9 col-sm-9 col-xs-12 attribution text-muted">
               <div>Designed and built by the <a href="https://www.bennett.ox.ac.uk/">Bennett Institute for Applied Data Science</a>, <a href="https://www.phc.ox.ac.uk/">Department of Primary Care Health Sciences</a>, University of Oxford. Please see the <a href="https://openprescribing.net/about/"> about page</a> for details of our funding.
-              Contact us: <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">{{ SUPPORT_TO_EMAIL }}</a> and find us on <a href="https://twitter.com/openprescribing">Twitter</a>.</div>
+              Contact us: <a href="mailto:{{ FEEDBACK_MAILTO }}" class="feedback-show">{{ SUPPORT_TO_EMAIL }}</a> and find us on <a href="https://twitter.com/openprescribing">Twitter</a>.</div>
             </div>
         </div>
       </div>
     </footer>
 
-    <button id="feedback-button" class="feedback-show">Feedback</button>
+    <a href="mailto:{{ FEEDBACK_MAILTO }}" id="feedback-button" class="feedback-show">Feedback</a>
 
     {% conditional_js 'common' %}
     {% conditional_js 'global' %}
