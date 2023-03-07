@@ -21,13 +21,10 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import get_resolver, reverse
-from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
 from dmd.models import VMP
-from frontend.feedback import send_feedback_mail
 from frontend.forms import (
     BookmarkListForm,
-    FeedbackForm,
     NCSOConcessionBookmarkForm,
     OrgBookmarkForm,
     SearchBookmarkForm,
@@ -1285,44 +1282,6 @@ def gdoc_view(request, doc_id):
     content += "".join([html.tostring(child).decode("utf8") for child in tree.body])
     context = {"content": content}
     return render(request, "gdoc.html", context)
-
-
-def feedback_view(request):
-    url = request.GET.get("from_url", "/")
-    if request.POST:
-        form = FeedbackForm(request.POST)
-        if form.is_valid():
-            user_name = form.cleaned_data["name"].strip()
-            user_email_addr = form.cleaned_data["email"].strip()
-            send_feedback_mail(
-                user_name=user_name,
-                user_email_addr=user_email_addr,
-                subject=form.cleaned_data["subject"].strip(),
-                message=form.cleaned_data["message"],
-                url=url,
-            )
-
-            msg = (
-                "Thanks for sending your feedback/query! A copy of the "
-                "message has been sent to you at {}. Please check your spam "
-                "folder for our reply.".format(user_email_addr)
-            )
-            messages.success(request, msg)
-
-            if is_safe_url(url, allowed_hosts=[request.get_host()]):
-                redirect_url = url
-            else:
-                logger.error("Unsafe redirect URL: {}".format(url))
-                redirect_url = "/"
-            return HttpResponseRedirect(redirect_url)
-    else:
-        form = FeedbackForm()
-
-    show_warning = "/practice/" in url
-
-    return render(
-        request, "feedback.html", {"form": form, "show_warning": show_warning}
-    )
 
 
 ##################################################
