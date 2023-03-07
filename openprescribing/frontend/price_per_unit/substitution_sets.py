@@ -120,7 +120,8 @@ EXCLUSIONS_RE = re.compile(
       190201000AABLBL |  # issue #14
       190201000AABMBM |  # issue #14
       190201000AABNBN |  # issue #14
-      190202000AAADAD    # issue #14
+      190202000AAADAD |  # issue #14
+      190700000AABABA    # issue 9
     )
     """,
     re.VERBOSE,
