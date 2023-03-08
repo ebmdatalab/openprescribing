@@ -7,7 +7,12 @@ logger = logging.getLogger(__name__)
 
 
 def support_email(request):
-    subject = f"OpenPrescribing Feedback ({request.get_full_path()}):"
+    path = request.get_full_path()
+    if path.strip("/"):
+        page_hint = f" ({path})"
+    else:
+        page_hint = ""
+    subject = f"OpenPrescribing Feedback{page_hint}:"
     return {
         "SUPPORT_TO_EMAIL": settings.SUPPORT_TO_EMAIL,
         "SUPPORT_FROM_EMAIL": settings.SUPPORT_FROM_EMAIL,
