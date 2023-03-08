@@ -650,34 +650,6 @@ class TestGetMeasureTagFilter(TestCase):
         self.assertEqual(tag_filter["names"], ["NHS England Low Priority"])
 
 
-class TestFeedbackView(TestCase):
-    def test_get(self):
-        from_url = "https://openprescribing.net/bnf/090603/"
-        rsp = self.client.get("/feedback/?from_url={}".format(from_url))
-        self.assertEqual(rsp.status_code, 200)
-
-    def test_post(self):
-        mail.outbox = []
-
-        form_data = {
-            "name": "Alice Apple",
-            "email": "alice@example.com",
-            "subject": "An apple a day...",
-            "human_test": "health",
-            "message": "...keeps the doctor away",
-        }
-
-        from_url = "http://testserver/bnf/"
-
-        rsp = self.client.post(
-            "/feedback/?from_url={}".format(from_url), form_data, follow=True
-        )
-
-        self.assertRedirects(rsp, from_url)
-        self.assertContains(rsp, "Thanks for sending your feedback")
-        self.assertEqual(len(mail.outbox), 2)
-
-
 @override_settings(
     ENABLE_CACHING=True,
     CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}},

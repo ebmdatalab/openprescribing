@@ -17,11 +17,6 @@ if (!window.console) {
   };
 }
 domready(function() {
-  $('.feedback-show').click(function(e) {
-    e.preventDefault();
-    window.location.href='/feedback/?from_url=' + encodeURIComponent(window.location.href);
-  });
-
   $('.js-submit-on-change').on('change', function() {
     this.form.submit();
   });

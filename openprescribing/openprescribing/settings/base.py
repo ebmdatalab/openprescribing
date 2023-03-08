@@ -158,7 +158,6 @@ TEMPLATES = [
                 "frontend.context_processors.source_commit_id",
                 "frontend.context_processors.api_host",
                 "frontend.context_processors.debug",
-                "frontend.context_processors.pcns_enabled",
                 "pipeline.context_processors.import_in_progress",
             ],
             "debug": DEBUG,

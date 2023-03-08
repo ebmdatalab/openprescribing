@@ -68,7 +68,6 @@ urlpatterns = [
     path(
         r"contact/", TemplateView.as_view(template_name="contact.html"), name="contact"
     ),
-    path(r"feedback/", views.feedback_view, name="feedback"),
     path(
         r"how-to-use/",
         TemplateView.as_view(template_name="how-to-use.html"),

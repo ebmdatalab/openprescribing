@@ -1,7 +1,0 @@
-Hi {{ name }},
-
-This is a copy of the feedback you sent to the OpenPrescribing.net team.
-
-~~~
-
-{{ message }}
