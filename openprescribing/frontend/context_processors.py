@@ -1,5 +1,5 @@
 import logging
-from urllib.parse import quote_plus
+from urllib.parse import quote
 
 from django.conf import settings
 
@@ -16,7 +16,7 @@ def support_email(request):
     return {
         "SUPPORT_TO_EMAIL": settings.SUPPORT_TO_EMAIL,
         "SUPPORT_FROM_EMAIL": settings.SUPPORT_FROM_EMAIL,
-        "FEEDBACK_MAILTO": f"{settings.SUPPORT_TO_EMAIL}?subject={quote_plus(subject)}",
+        "FEEDBACK_MAILTO": f"{settings.SUPPORT_TO_EMAIL}?subject={quote(subject)}",
     }
 
 
