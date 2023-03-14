@@ -7,9 +7,7 @@
 asgiref==3.6.0
     # via django
 async-generator==1.10
-    # via
-    #   trio
-    #   trio-websocket
+    # via trio
 attrs==22.2.0
     # via
     #   outcome
@@ -97,7 +95,9 @@ djangorestframework-csv==2.1.1
 et-xmlfile==1.1.0
     # via openpyxl
 exceptiongroup==1.1.0
-    # via trio
+    # via
+    #   trio
+    #   trio-websocket
 fabric3==1.14.post1
     # via -r requirements.in
 flake8==6.0.0
@@ -364,7 +364,7 @@ trio==0.22.0
     # via
     #   selenium
     #   trio-websocket
-trio-websocket==0.9.2
+trio-websocket==0.10.0
     # via selenium
 unicodecsv==0.14.1
     # via djangorestframework-csv
