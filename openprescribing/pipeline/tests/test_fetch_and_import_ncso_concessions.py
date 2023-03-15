@@ -68,8 +68,8 @@ class TestFetchAndImportNCSOConcesions(TestCase):
         for date, drug, pack_size, price_pence, vmpp in [
             ["2017-10-01", "Amiloride 5mg tablets", "28", 925, vmpp1],
             ["2017-10-01", "Anastrozole 1mg tablets", "28", 1445, vmpp2],
-            ["2017-11-01", "Amiloride 5mg tablets", "28", 925, vmpp1],
-            ["2017-11-01", "Amlodipine 5mg tablets", "28", 375, None],
+            ["2023-03-01", "Amiloride 5mg tablets", "28", 925, vmpp1],
+            ["2023-03-01", "Amlodipine 5mg tablets", "28", 375, None],
         ]:
             concession = NCSOConcession.objects.get(date=date, drug=drug)
             self.assertEqual(concession.pack_size, pack_size)

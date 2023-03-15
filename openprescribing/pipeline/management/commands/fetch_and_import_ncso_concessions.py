@@ -63,10 +63,12 @@ class Command(BaseCommand):
 
         doc = self.download_current()
 
-        h1s = doc.find_all("h1", string=re.compile("\w+ \d{4}"))
-        assert len(h1s) == 1
+        updated_date_spans = doc.find_all(
+            "span", string=re.compile("Updated on: .+\d{4}")
+        )
+        assert len(updated_date_spans) == 1
 
-        date = self.date_from_heading(h1s[0])
+        date = self.date_from_heading(updated_date_spans[0], to_strip="Updated on: ")
 
         drugs_and_pack_sizes = set()
 
@@ -80,11 +82,12 @@ class Command(BaseCommand):
         rsp = requests.get(url, headers=DEFAULT_HEADERS)
         return bs4.BeautifulSoup(rsp.content, "html.parser")
 
-    def date_from_heading(self, heading):
-        text = heading.text.strip()
+    def date_from_heading(self, heading, to_strip=None):
+        to_strip = to_strip or ""
+        text = heading.text.strip(to_strip)
         if re.match(r"\d{4}", text):
             return
-        month_name, year = text.split()
+        month_name, year = text.split()[-2:]
         month_names = list(calendar.month_name)
         month = month_names.index(month_name)
         return datetime.date(int(year), month, 1)
