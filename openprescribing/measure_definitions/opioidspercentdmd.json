@@ -60,5 +60,11 @@
     "OR (vpi.ing IN (387173000)  AND route.descr LIKE 'patch.transdermal') --Buprenorphine patches (ing code) \n",
     "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral') --Morphine Sulfate MR oral preps [excluding MXL] (strengths equal to or higher than 60mg) (ing code) \n",
     "OR (vpi.ing IN (387485001)  AND route.descr LIKE '%modified-release.oral')) --Hydromorphone HCl MR oral preps (ing code) \n"
- ]
+ ],
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-03-17",
+  "next_review": "2024-03-17",
+  "measure_complexity": "medium",
+  "measure_type": "dmd"
 }
