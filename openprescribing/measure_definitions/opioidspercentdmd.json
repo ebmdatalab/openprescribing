@@ -57,6 +57,6 @@
     "OR (vpi.ing IN (442699004,40755011000001109)  AND route.descr LIKE '%modified-release.oral') --Tapentadol HCl/Phosphate MR oral preps (ing code) \n",
     "OR (vpi.ing IN (387173000)  AND route.descr LIKE 'patch.transdermal') --Buprenorphine patches (ing code) \n",
     "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral') --Morphine Sulfate MR oral preps [excluding MXL] (strengths equal to or higher than 60mg) (ing code) \n",
-    "OR (vpi.ing IN (387485001)  AND route.descr LIKE '%modified-release.oral') --Hydromorphone HCl MR oral preps (ing code) \n"
+    "OR (vpi.ing IN (387485001)  AND route.descr LIKE '%modified-release.oral')) --Hydromorphone HCl MR oral preps (ing code) \n"
  ]
 }
