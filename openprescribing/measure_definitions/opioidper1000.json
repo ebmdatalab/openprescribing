@@ -1,11 +1,7 @@
 {
   "name": "High dose opioids per 1000 patients",
-  "title": [
-    "high dose opioid items per 1000 patients"
-  ],
-  "description": [
-    "Opioids with likely daily dose of ≥120mg morphine equivalence per 1000 patients"
-  ],
+  "title": "High dose opioid items per 1000 patients",
+  "description": "Opioids with likely daily dose of ≥120mg morphine equivalence per 1000 patients",
   "numerator_short": "High dose opioid items",
   "denominator_short": "1000 patients",
   "why_it_matters": [
@@ -32,34 +28,27 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "bnf_items",
-  "numerator_bnf_codes_filter": [
-    "0407020A0%AF     # Fentanyl_Transdermal Patch 50mcg/hr (brands and generic)",
-    "0407020A0%AG     # Fentanyl_Transdermal Patch 75mcg/hr (brands and generic)",
-    "0407020A0%AH     # Fentanyl_Transdermal Patch 100mcg/hr (brands and generic)",
-    "0407020AD%AH     # Oxycodone HCl_Tab 40mg M/R (brands and generic)",
-    "0407020AD%AQ     # Oxycodone HCl_Tab 60mg M/R (brands and generic)",
-    "0407020AD%AI     # Oxycodone HCl_Tab 80mg M/R (brands and generic)",
-    "0407020AD%AP     # Oxycodone HCl_Tab 120mg M/R (brands and generic)",
-    "0407020AF%AD     # Oxycodone HCl/NaloxoneHCl_Tab 40/20mgM/R (brands and generic)",
-    "0407020AG%AF     # Tapentadol HCl_Tab 200mg M/R (brands and generic)",
-    "0407020AG%AG     # Tapentadol HCl_Tab 250mg M/R (brands and generic)",
-    "0407020B0%AF     # Buprenorphine_Patch 52.5mcg/hr (96hr) (brands and generic)",
-    "0407020B0%AG     # Buprenorphine_Patch 70mcg/hr (96hr) (brands and generic)",
-    "0407020Q0%AI     # Morph Sulf_Tab 60mg M/R (brands and generic)",    
-    "0407020Q0%DC     # Morph Sulf_Gran Sach 60mg M/R S/F (brands and generic)",  
-    "0407020Q0%EH     # Morph Sulf_Cap 60mg M/R (brands and generic)",  
-    "~0407020Q0BIABEH # MXL Cap 60mg (excluded as 24hr prep)",
-    "0407020Q0%DU     # Morph Sulf_Cap 90mg M/R (brands and generic)", 
-    "~0407020Q0BIACDU # MXL Cap 90mg (excluded as 24hr prep)",
-    "0407020Q0%AH     # Morph Sulf_Tab 100mg M/R (brands and generic)",
-    "0407020Q0%DD     # Morph Sulf_Gran Sach 100mg M/R S/F (brands and generic)", 
-    "0407020Q0%EB     # Morph Sulf_Cap 100mg M/R (brands and generic)",    
-    "0407020Q0%DV     # Morph Sulf_Cap 120mg M/R (brands and generic)",
-    "0407020Q0%DW     # Morph Sulf_Cap 150mg M/R (brands and generic)",    
-    "0407020Q0%AG     # Morph Sulf_Tab 200mg M/R (brands and generic)",
-    "0407020Q0%DE     # Morph Sulf_Gran Sach 200mg M/R S/F (brands and generic)",
-    "0407020Q0%EI     # Morph Sulf_Cap 200mg M/R (brands and generic)"
+  "numerator_type": "custom",
+  "numerator_columns": "SUM(p.items) AS numerator",
+  "numerator_from": [
+    "{hscic}.normalised_prescribing p ",
+    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
-  "denominator_type": "list_size"
+  "numerator_where": [
+    "((vpi.ing = 373492002 AND route.descr = 'patch.transdermal' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=50) --Fentanyl patches (strengths equal to or higher than 50mcg/hour) (ing code) \n",
+    "OR (vpi.ing = 387024006 AND route.descr LIKE '%modified-release.oral' AND p.bnf_name NOT LIKE '%Onexila%40mg%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=40) --Oxycodone MR oral preps [excluding Onexila 40mg as 24hr] (strengths equal to or higher than 40mg) (ing code) \n",
+    "OR (vpi.ing IN (442699004,40755011000001109)  AND route.descr LIKE '%modified-release.oral' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=150) --Tapentadol HCl/Phosphate MR oral preps (strengths equal to or higher than 150mg) (ing code) \n",
+    "OR (vpi.ing = (387173000)  AND route.descr LIKE 'patch.transdermal' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=52.5) --Buprenorphine patches (strengths equal to or higher than 52.5mg/hour) (ing code) \n",
+    "OR (vpi.ing = (60886004) AND route.descr LIKE '%modified-release.oral' AND p.bnf_name NOT LIKE '%MXL%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=60)) --Morphine Sulfate MR oral preps [excluding MXL as 24hr] (strengths equal to or higher than 60mg) (ing code)"
+  ],
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
+  "date_reviewed": "2023-03-20",
+  "next_review": "2024-03-20",
+  "measure_complexity": "medium",
+  "measure_type": "dmd"
 }
