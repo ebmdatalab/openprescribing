@@ -32,14 +32,14 @@
   "numerator_columns": "SUM(p.items) AS numerator",
   "numerator_from": [
   "{hscic}.normalised_prescribing p ",
-  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
-  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
-  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
+    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
   "numerator_where": [
     "((vpi.ing = 373492002 AND route.descr = 'patch.transdermal' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=50) --Fentanyl patches (strengths equal to or higher than 50mcg/hour) (ing code) \n",
-    "OR (vpi.ing = 387024006 AND route.descr LIKE '%modified-release.oral' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=40) --Oxycodone MR oral preps (strengths equal to or higher than 40mg) (ing code) \n",
+    "OR (vpi.ing = 387024006 AND route.descr LIKE '%modified-release.oral' AND p.bnf_name NOT LIKE '%Onexila%40mg%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=40) --Oxycodone MR oral preps (strengths equal to or higher than 40mg) (ing code) \n",
     "OR (vpi.ing IN (442699004,40755011000001109)  AND route.descr LIKE '%modified-release.oral' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=150) --Tapentadol HCl/Phosphate MR oral preps (strengths equal to or higher than 150mg) (ing code) \n",
     "OR (vpi.ing IN (387173000)  AND route.descr LIKE 'patch.transdermal' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=52.5) --Buprenorphine patches (strengths equal to or higher than 52.5mg/hour) (ing code) \n",
     "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral' AND p.bnf_name NOT LIKE '%MXL%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=60)) --Morphine Sulfate MR oral preps [excluding MXL] (strengths equal to or higher than 60mg) (ing code)"
@@ -48,10 +48,10 @@
   "denominator_columns": "SUM(p.items) AS denominator",
   "denominator_from": [
   "{hscic}.normalised_prescribing p ",
-  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
-  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
-  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
+    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
   "denominator_where": [
     "((vpi.ing = 373492002 AND route.descr = 'patch.transdermal') --Fentanyl patches (ing code) \n",
