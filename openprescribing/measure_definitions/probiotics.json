@@ -1,11 +1,7 @@
 {
   "name": "Probiotics that have been removed from the drug tariff",
-  "title": [
-    "Cost of VSL#3 and Vivomixx per 1000 patients"
-  ],
-  "description": [
-    "Cost of VSL#3 and Vivomixx per 1000 patients"
-  ],
+  "title": "Cost of VSL#3 and Vivomixx per 1000 patients",
+  "description": "Cost of VSL#3 and Vivomixx per 1000 patients",
   "why_it_matters": [
     "<p>The Advisory Committee on Borderline Substances (ACBS) is responsible for assessing and recommending products applying for ",
     "listing in Part XV of the Drug Tariff. The ACBS recently reviewed some products listed in Part XV to ensure they are still ",
@@ -35,27 +31,15 @@
   ],
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
-   "091104000BBNMA0 # vsl",
-   "091104000BBNVA0 # vivomix caps",
-   "091104000BBNUA0 # vivomix powder sachet"
+   "0913531A0 # Liquid OTC probiotic (0913531)",
+   "0913531C0 # Powder delisted probiotic (0913531)",
+   "0913531B0 # Capsules delisted probiotic (0913531)"
   ],
   "denominator_type": "list_size",
-  "authored_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2020-03-05"
-  ],
-  "next_review": [
-    "2020-06-05"
-  ],
-  "measure_notebook_url": [
-    ""
-  ],
-  "measure_complexity": [
-    "low"
-  ]
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-03-27",
+  "next_review": "2024-03-27",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code"
 }
