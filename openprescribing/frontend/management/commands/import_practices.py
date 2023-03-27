@@ -44,7 +44,7 @@ class Command(BaseCommand):
         return row
 
     def import_practices_from_epraccur(self, filename):
-        entries = csv.reader(open(filename, "rU"))
+        entries = csv.reader(open(filename))
         count = 0
         for row in entries:
             row = [r.strip() for r in row]
@@ -98,7 +98,7 @@ class Command(BaseCommand):
         if self.IS_VERBOSE:
             print("Importing practices from %s" % filename)
         count = 0
-        practices = csv.reader(open(filename, "rU"))
+        practices = csv.reader(open(filename))
         for row in practices:
             row = [i.strip() for i in row]
             p, created = Practice.objects.get_or_create(code=row[1])

@@ -29,7 +29,7 @@ class Command(BaseCommand):
         ccg_file = options["by_ccg"]
         practice_file = options["by_practice"]
 
-        ccg_prevalence = csv.DictReader(open(ccg_file, "rU"))
+        ccg_prevalence = csv.DictReader(open(ccg_file))
         for row in ccg_prevalence:
             ccg_code = row["ccgcode"]
             ccg = PCT.objects.get(code=ccg_code)
@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 disease_register_size=row["disease_register_size"],
             )
 
-        practice_prevalence = csv.DictReader(open(practice_file, "rU"))
+        practice_prevalence = csv.DictReader(open(practice_file))
         for row in practice_prevalence:
             practicecode = row["practicecode"]
             practice = Practice.objects.get(code=practicecode)

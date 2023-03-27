@@ -39,7 +39,7 @@ class Command(BaseCommand):
         if self.IS_VERBOSE:
             print("Importing Chemicals from %s" % filename)
         lines = count = 0
-        chemicals = csv.DictReader(open(filename, "rU"))
+        chemicals = csv.DictReader(open(filename))
         for row in chemicals:
             row = self._strip_dict(row)
             bnf_code = row["CHEM SUB"]

@@ -12,7 +12,7 @@ class Command(BaseCommand):
         parser.add_argument("--ccg")
 
     def handle(self, **options):
-        for row in csv.reader(open(options["ccg"], "rU")):
+        for row in csv.reader(open(options["ccg"])):
             row = [r.strip() for r in row]
             if row[2] == "Y99" or row[3] == "Q99":
                 # This indicates a National Commissioning Hub which does not

@@ -20,7 +20,7 @@ class Command(BaseCommand):
         if "filename" not in options:
             raise CommandError("Please supply a filename")
 
-        reader = csv.DictReader(open(options["filename"], "rU"))
+        reader = csv.DictReader(open(options["filename"]))
 
         sections = {}
         with transaction.atomic():
