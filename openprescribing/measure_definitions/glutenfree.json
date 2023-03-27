@@ -28,22 +28,14 @@
   "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
-    "0904010AU # Gluten Free/Wheat Free Snacks",
-    "0904010AC # Gluten Free/Wheat Free Cereals",
-    "0904010AD # Gluten Free/Wheat Free Cakes/Pastries",
-    "0904010H0 # Gluten Free Bread",
-    "0904010Q0 # Gluten Free Pasta",
-    "0904010A0 # Gluten Free/Wheat Free Biscuits",
-    "0904010AB # Gluten Free/Wheat Free Cooking Aids",
-    "090401080 # Gluten Free/Wheat Free Pasta",
-    "0904010U0 # Gluten Free/Wheat Free Bread",
-    "090401070 # Gluten Free/Wheat Free Grains/Flours",
-    "0904010AA # Gluten Free/Wheat Free Mixes",
-    "090401030 # Gluten Free Mixes",
-    "0904010J0 # Gluten Free Grains/Flours",
-    "0904010AG # Gluten Free/Wheat Free Meals",
-    "0904010L0 # Gluten Free Cakes/Pastries",
-    "0904010I0 # Gluten Free Biscuits"
+    "091327 # Food - Gluten free",
+    "091346 # Non-ACBS gluten free food"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-03-27",
+  "next_review": "2024-03-27",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code"
 }
