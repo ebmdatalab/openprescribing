@@ -25,7 +25,7 @@ class Command(BaseCommand):
             if options["verbosity"] > 1:
                 self.IS_VERBOSE = True
 
-            gridall = csv.reader(open(options["filename"], "rU"))
+            gridall = csv.reader(open(options["filename"]))
             postcodes = {}
             for row in gridall:
                 postcode = row[1].replace(" ", "").strip()

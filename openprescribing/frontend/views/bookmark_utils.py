@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-import html.parser
 import logging
 import os
 import re
 import subprocess
 import urllib.parse
 from datetime import date
+from html import unescape
 from tempfile import NamedTemporaryFile
 
 import numpy as np
@@ -876,9 +876,8 @@ def unescape_href(text):
     do about it](https://github.com/peterbe/premailer/issues/72).
     Unencode them again."""
     hrefs = re.findall(r'href=["\']([^"\']+)["\']', text)
-    html_parser = html.parser.HTMLParser()
     for href in hrefs:
-        text = text.replace(href, html_parser.unescape(href))
+        text = text.replace(href, unescape(href))
     return text
 
 

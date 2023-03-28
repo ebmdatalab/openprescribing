@@ -1,6 +1,6 @@
 import csv
 
-reader = csv.DictReader(open("statins.csv", "rU"))
+reader = csv.DictReader(open("statins.csv"))
 high_cost_codes = []
 all_codes = []
 for row in reader:
