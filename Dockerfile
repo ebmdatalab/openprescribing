@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.11
 
 LABEL maintainer="Seb Bacon version: 0.2"
 ENV PYTHONUNBUFFERED 1
@@ -6,7 +6,17 @@ RUN mkdir /code
 WORKDIR /code
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y  nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1v5 && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y binutils libproj-dev gdal-bin libgeoip1 libgeos-c1v5 && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install Node & NPM
+RUN \
+  cd $(mktemp --directory) && \
+  curl --silent --location 'https://nodejs.org/dist/v10.23.0/node-v10.23.0-linux-x64.tar.gz' \
+    | tar --no-same-owner --no-same-permissions -xzf - && \
+  mv --no-target-directory node-* /usr/local/lib/node && \
+  ln --symbolic /usr/local/lib/node/bin/node /usr/local/bin/node && \
+  ln --symbolic /usr/local/lib/node/bin/node /usr/local/bin/nodejs && \
+  ln --symbolic /usr/local/lib/node/bin/npm /usr/local/bin/npm && \
+  rmdir "$PWD"
 RUN mkdir /npm
 ADD openprescribing/media/js /npm/
 RUN ls -l /npm/
