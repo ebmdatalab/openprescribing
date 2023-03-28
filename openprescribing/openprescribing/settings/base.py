@@ -213,6 +213,7 @@ LOCAL_APPS = ("frontend", "dmd", "pipeline", "gcutils", "matrixstore")
 CONTRIB_APPS = (
     "anymail",
     "crispy_forms",
+    "crispy_bootstrap3",
     "raven.contrib.django.raven_compat",
     "import_export",
 )

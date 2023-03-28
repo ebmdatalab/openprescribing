@@ -8,6 +8,7 @@
 
 backports.csv
 beautifulsoup4
+crispy-bootstrap3
 diskcache
 django-anymail[mailgun]
 django-cors-headers
