@@ -1,13 +1,14 @@
 # coding=utf8
 
-import calendar
 import datetime
 import logging
 import re
+from collections import defaultdict
 
 import bs4
 import requests
 from django.core.management import BaseCommand
+from django.db import transaction
 from dmd.models import VMPP
 from frontend.models import NCSOConcession
 from gcutils.bigquery import Client
@@ -16,171 +17,156 @@ from openprescribing.slack import notify_slack
 
 logger = logging.getLogger(__file__)
 
+# This page is the newsletter archive for PSNC System Supplier emails. It extends
+# further back in time than the RSS feed, hence it is useful for testing that we can
+# import historical data but doesn't have a role in regular imports.
+ARCHIVE_URL = (
+    "https://us7.campaign-archive.com/home/?u=86d41ab7fa4c7c2c5d7210782&id=63383868f3"
+)
+
+# This is the RSS feed for the above mailing list. As it contains the email contents
+# inline it's easier to work with this than that archive index.
+RSS_URL = (
+    "https://us7.campaign-archive.com/feed?u=86d41ab7fa4c7c2c5d7210782&id=63383868f3"
+)
+
 DEFAULT_HEADERS = {
     "User-Agent": "OpenPrescribing-Bot (+https://openprescribing.net)",
 }
 
 
+# Match strings like "March 2020 Price Concessions"
+MONTH_DATE_RE = re.compile(
+    r"""
+    (?P<month>
+        january | february | march | april | may | june | july | august |
+        september | october | november | december
+    )
+    \s+
+    (?P<year> 20\d\d)
+    \s+ price \s+ concessions
+    """,
+    re.VERBOSE | re.IGNORECASE,
+)
+
+# Match strings like "Concessions Announcement Wednesday 15th March 2023"
+PUBLISH_DATE_RE = re.compile(
+    r"""
+    concessions \s+ announcement \s+
+    ( monday | tuesday | wednesday | thursday | friday | saturday | sunday )
+    \s+
+    (?P<day> \d+) \s* ( st | nd | rd | th )
+    \s+
+    (?P<month>
+        january | february | march | april | may | june | july | august |
+        september | october | november | december
+    )
+    \s+
+    (?P<year> 20\d\d)
+    """,
+    re.VERBOSE | re.IGNORECASE,
+)
+
+
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        self.vmpps = VMPP.objects.values("id", "nm")
-        num_before = NCSOConcession.objects.count()
-        self.import_from_archive()
-        self.import_from_current()
-        self.reconcile()
-        num_after = NCSOConcession.objects.count()
-        num_unmatched = NCSOConcession.objects.filter(vmpp__isnull=True).count()
+        # Fetch and parse the concession data
+        response = requests.get(RSS_URL, headers=DEFAULT_HEADERS)
+        items = parse_concessions_from_rss(response.content)
 
+        # Find matching VMPPs for each concession, where possible
+        vmpp_id_to_name = get_vmpp_id_to_name_map()
+        matched = match_concession_vmpp_ids(items, vmpp_id_to_name)
+
+        # Insert into database
+        new_concession_count = insert_or_update(matched)
+
+        # Upload to BigQuery
         Client("dmd").upload_model(NCSOConcession)
 
-        if num_before == num_after:
-            msg = "Found no new concessions to import"
-        else:
-            msg = "Imported %s new concessions" % (num_after - num_before)
-        if num_unmatched:
-            msg += "\nThere are %s unmatched concessions" % num_unmatched
+        # Report results
+        msg = format_message(matched, new_concession_count)
         notify_slack(msg)
 
-    def import_from_archive(self):
-        logger.info("import_from_archive")
 
-        doc = self.download_archive()
-        for h2 in doc.find_all("h2", class_="trigger"):
-            table = h2.find_next("table")
-            date = self.date_from_heading(h2)
-            if date is None:
-                continue
-            drugs_and_pack_sizes = self.import_from_table(table, date)
-            self.delete_missing(drugs_and_pack_sizes, date)
+def parse_concessions_from_rss(feed_content):
+    feed = bs4.BeautifulSoup(feed_content, "xml")
+    for item in feed.find_all("item"):
+        url = item.find("link").string
+        item_content = item.find("content:encoded").string
+        yield from parse_concessions_from_html(item_content, url=url)
 
-    def download_archive(self):
-        url = "https://psnc.org.uk/funding-and-reimbursement/reimbursement/price-concessions/archive/"
-        rsp = requests.get(url, headers=DEFAULT_HEADERS)
-        return bs4.BeautifulSoup(rsp.content, "html.parser")
 
-    def import_from_current(self):
-        logger.info("import_from_current")
+def parse_concessions_from_archive():  # pragma: no cover
+    archive_html = requests.get(ARCHIVE_URL).content
+    doc = bs4.BeautifulSoup(archive_html, "html.parser")
+    for li in doc.find_all("li", class_="campaign"):
+        url = li.find("a")["href"]
+        response = requests.get(url)
+        yield from parse_concessions_from_html(response.content, url=response.url)
 
-        doc = self.download_current()
 
-        updated_date_spans = doc.find_all(
-            "span", string=re.compile("Updated on: .+\d{4}")
-        )
-        assert len(updated_date_spans) == 1
+def parse_concessions_from_html(html, url=None):
+    doc = bs4.BeautifulSoup(html, "html.parser")
+    # Find the publication date
+    publish_date = get_single_item(
+        parse_date(f"{match['day']} {match['month']} {match['year']}")
+        for match in PUBLISH_DATE_RE.finditer(doc.text)
+    )
+    # Find the month for which these concessions apply
+    date = get_single_item(
+        parse_date(f"1 {match['month']} {match['year']}")
+        for match in MONTH_DATE_RE.finditer(doc.text)
+    )
+    # Find the table containing the "VMPP Snomed Code" header
+    table = get_single_item(
+        td.find_parent("table")
+        for td in doc.find_all("td")
+        if (td.text or "").strip().lower() == "vmpp snomed code"
+    )
+    rows = rows_from_table(table)
+    headers = next(rows)
+    assert [s.lower() for s in headers] == [
+        "drug",
+        "pack size",
+        "price concession",
+        "vmpp snomed code",
+    ]
+    for row in rows:
+        # Sometimes all-blank rows are used as spacers
+        if row == ["", "", "", ""]:
+            continue
+        # Sometimes colspans are used to inject section headings
+        if len(row) != 4:
+            continue
+        # After a section heading we usually see the column headings repeated again
+        if row == headers:
+            continue
+        yield {
+            "url": url,
+            "date": date,
+            "publish_date": publish_date,
+            "drug": row[0],
+            "pack_size": row[1],
+            "price_pence": parse_price(row[2]),
+            "supplied_vmpp_id": int(row[3]),
+        }
 
-        date = self.date_from_heading(updated_date_spans[0], to_strip="Updated on: ")
 
-        drugs_and_pack_sizes = set()
+def get_single_item(iterator):
+    unique = set(iterator)
+    assert len(unique) == 1, f"Expected exactly one item, got: {unique}"
+    return list(unique)[0]
 
-        for table in doc.find_all("table"):
-            drugs_and_pack_sizes |= self.import_from_table(table, date)
 
-        self.delete_missing(drugs_and_pack_sizes, date)
+def parse_date(date_str):
+    # Parses dates like "1 January 2020"
+    return datetime.datetime.strptime(date_str, "%d %B %Y").date()
 
-    def download_current(self):
-        url = "https://psnc.org.uk/funding-and-reimbursement/reimbursement/price-concessions/"
-        rsp = requests.get(url, headers=DEFAULT_HEADERS)
-        return bs4.BeautifulSoup(rsp.content, "html.parser")
 
-    def date_from_heading(self, heading, to_strip=None):
-        to_strip = to_strip or ""
-        text = heading.text.strip(to_strip)
-        if re.match(r"\d{4}", text):
-            return
-        month_name, year = text.split()[-2:]
-        month_names = list(calendar.month_name)
-        month = month_names.index(month_name)
-        return datetime.date(int(year), month, 1)
-
-    def import_from_table(self, table, date):
-        """Creates NCSOConcession objects for any new records in the table.
-
-        Returns set of strings containing drug name and pack size for all
-        records in the table.
-        """
-
-        logger.info("import_from_table %s", date)
-
-        if date < datetime.date(2014, 8, 1):
-            # Data older than August 2018 is in a different format and we don't
-            # need it at the moment.
-            return set()
-
-        trs = table.find_all("tr")
-        records = [[td.text.strip() for td in tr.find_all("td")] for tr in trs]
-
-        if len(records[0]) != 3:
-            # Some tables on a page don't actually list concessions, but
-            # there's no obvious way of selecting just the tables with
-            # concessions. We can ignore tables that don't have three columns.
-            # Non-concession tables with three columns will obviously slip
-            # through the net here, but will presumably trigger the asserts
-            # below, and we can cross that bridge when the time comes.
-            return set()
-
-        # Make sure the first row contains expected headers.
-        # Unfortunately, the header names are not consistent.
-        assert "drug" in records[0][0].lower()
-        assert "pack" in records[0][1].lower()
-        assert "price" in records[0][2].lower()
-
-        drugs_and_pack_sizes = set()
-
-        for record in records[1:]:
-            drug, pack_size, price_pence = [fix_spaces(item) for item in record]
-            drug = drug.replace("(new)", "").strip()
-            match = re.search("£(\d+)\.(\d\d)", price_pence)
-            price_pence = 100 * int(match.groups()[0]) + int(match.groups()[1])
-            drug_and_pack_size = "{} {}".format(drug, pack_size)
-            drugs_and_pack_sizes.add(drug_and_pack_size)
-
-            _, created = NCSOConcession.objects.get_or_create(
-                date=date, drug=drug, pack_size=pack_size, price_pence=price_pence
-            )
-
-            if created:
-                logger.info("Creating %s %s", drug_and_pack_size, date)
-
-        return drugs_and_pack_sizes
-
-    def delete_missing(self, drugs_and_pack_sizes, date):
-        for concession in NCSOConcession.objects.filter(date=date):
-            if concession.drug_and_pack_size not in drugs_and_pack_sizes:
-                logger.info("Deleting %s %s", concession.drug_and_pack_size, date)
-                concession.delete()
-
-    def reconcile(self):
-        for concession in NCSOConcession.objects.filter(vmpp_id__isnull=True):
-            logger.info("Reconciling %s", concession.drug_and_pack_size)
-            matching_vmpp_id = self.get_matching_vmpp_id(concession)
-            if matching_vmpp_id is not None:
-                concession.vmpp_id = matching_vmpp_id
-                concession.save()
-
-    def get_matching_vmpp_id(self, concession):
-        previous_concession = (
-            NCSOConcession.objects.filter(
-                drug=concession.drug, pack_size=concession.pack_size, vmpp__isnull=False
-            )
-            .exclude(date=concession.date)
-            .first()
-        )
-
-        if previous_concession is not None:
-            logger.info("Found previous matching concession")
-            return previous_concession.vmpp_id
-
-        ncso_name = regularise_ncso_name(concession.drug_and_pack_size)
-
-        for vmpp in self.vmpps:
-            vpmm_name = re.sub(" */ *", "/", vmpp["nm"].lower())
-
-            if vpmm_name == ncso_name or vpmm_name.startswith(ncso_name + " "):
-                logger.info("Found match")
-                return vmpp["id"]
-
-        logger.info("No match found")
-        return None
+def rows_from_table(table):
+    for tr in table.find_all("tr"):
+        yield [fix_spaces(td.text or "") for td in tr.find_all("td")]
 
 
 def fix_spaces(s):
@@ -192,7 +178,65 @@ def fix_spaces(s):
     return s
 
 
-def regularise_ncso_name(name):
+def parse_price(price_str):
+    match = re.fullmatch(r"£(\d+)\.(\d\d)", price_str)
+    return int(match[1]) * 100 + int(match[2])
+
+
+def match_concession_vmpp_ids(items, vmpp_id_to_name):
+    # Build mapping from regularised names to VMPPs. Most such names map to just one
+    # VMPP, but there are some ambiguous cases.
+    regular_name_to_vmpp_ids = defaultdict(list)
+    for vmpp_id, name in vmpp_id_to_name.items():
+        regular_name_to_vmpp_ids[regularise_name(name)].append(vmpp_id)
+
+    matched = []
+
+    for item in items:
+        supplied_name = f"{item['drug']} {item['pack_size']}"
+        supplied_vmpp_name = vmpp_id_to_name.get(item["supplied_vmpp_id"])
+
+        # If the names match then we assume that the supplied VMPP ID is correct
+        if regularise_name(supplied_name) == regularise_name(supplied_vmpp_name):
+            item["vmpp_id"] = item["supplied_vmpp_id"]
+        else:
+            # Otherwise we try to find other matches by names
+            matched_vmpp_ids = regular_name_to_vmpp_ids[regularise_name(supplied_name)]
+            # If there's an unambiguous match then we assume that is the correct VMPP
+            if len(matched_vmpp_ids) == 1:
+                item["vmpp_id"] = matched_vmpp_ids[0]
+            # Finally, we check if we've previously manually reconciled this concession
+            # to a VMPP then re-use that ID if so
+            else:
+                item["vmpp_id"] = get_vmpp_id_from_previous_concession(
+                    item["drug"], item["pack_size"]
+                )
+
+        # Record the original names associated with both supplied and matched VMPP ID
+        item["supplied_vmpp_name"] = supplied_vmpp_name
+        item["vmpp_name"] = vmpp_id_to_name.get(item["vmpp_id"])
+
+        matched.append(item)
+
+    return matched
+
+
+def get_vmpp_id_to_name_map():
+    # Build mapping from ID to name for all valid VMPPs. We only want VMPPs which are
+    # not marked as "invalid" and which we can match to prescribing data. See:
+    # https://github.com/ebmdatalab/openprescribing/issues/3978
+    return {
+        vmpp_id: name
+        for vmpp_id, name in VMPP.objects.filter(bnf_code__isnull=False)
+        .exclude(invalid=True)
+        .values_list("id", "nm")
+    }
+
+
+def regularise_name(name):
+    if name is None:
+        return
+
     # dm+d uses "microgram" or "micrograms", usually with these rules
     name = name.replace("mcg ", "microgram ")
     name = name.replace("mcg/", "micrograms/")
@@ -212,7 +256,7 @@ def regularise_ncso_name(name):
     # eg: Estriol 0.01% cream 80 gram
     name = re.sub(r"(\d)g$", r"\1 gram", name)
 
-    # Misc. commont replacements
+    # Misc. common replacements
     name = name.replace("Oral Susp SF", "oral suspension sugar free")
     name = name.replace("gastro- resistant", "gastro-resistant")
     name = name.replace("/ml", "/1ml")
@@ -223,4 +267,126 @@ def regularise_ncso_name(name):
     # Remove spaces around slashes
     name = re.sub(" */ *", "/", name)
 
+    # dm+d names often have the units appended after the pack size (e.g. "12 tablets"),
+    # we want to remove the units leaving just the "12" so as to match the names we get
+    # from the price concessions feed. Note that this can, in rare cases, result in
+    # ambiguities. Where these arise we say that we are unable to find a matching name,
+    # rather than arbitrarily picking one. See:
+    # https://github.com/ebmdatalab/openprescribing/issues/3979
+    name = re.sub(r"(\d+) [^\d]+$", r"\1", name)
+
     return name
+
+
+def get_vmpp_id_from_previous_concession(drug, pack_size):
+    previous_vmpp_ids = list(
+        NCSOConcession.objects.filter(
+            drug=drug, pack_size=pack_size, vmpp__isnull=False
+        ).values_list("vmpp_id", flat=True)
+    )
+    if previous_vmpp_ids:
+        return get_single_item(previous_vmpp_ids)
+
+
+def insert_or_update(items):
+    # Sort by published date so most recent prices are always applied last
+    items = sorted(items, key=lambda i: i["publish_date"])
+
+    new_concession_count = 0
+
+    with transaction.atomic():
+        for item in items:
+            if item["vmpp_id"] is not None:
+                _, created = NCSOConcession.objects.update_or_create(
+                    date=item["date"],
+                    vmpp_id=item["vmpp_id"],
+                    defaults=dict(
+                        drug=item["drug"],
+                        pack_size=item["pack_size"],
+                        price_pence=item["price_pence"],
+                    ),
+                )
+            else:
+                # Unmatched concessions get inserted as placeholder entries, ready for
+                # manual reconciliation
+                _, created = NCSOConcession.objects.update_or_create(
+                    date=item["date"],
+                    drug=item["drug"],
+                    pack_size=item["pack_size"],
+                    vmpp_id=None,
+                    defaults=dict(
+                        price_pence=item["price_pence"],
+                    ),
+                )
+
+            if created:
+                new_concession_count += 1
+                logger.info("Creating {drug} {pack_size} {price_pence}".format(**item))
+
+    return new_concession_count
+
+
+def format_message(matched, new_concession_count):
+    msg = f"Fetched {len(matched)} concessions. "
+
+    if new_concession_count == 0:
+        msg += "Found no new concessions to import"
+    else:
+        msg += f"Imported {new_concession_count} new concessions"
+
+    # We warn about cases where we couldn't match the drug name and pack size to a VMPP,
+    # or where we could match it but the VMPP is different from the one supplied
+    unmatched = []
+    mismatched = []
+    for item in matched:
+        if item["vmpp_id"] is None:
+            unmatched.append(item)
+        elif item["vmpp_id"] != item["supplied_vmpp_id"]:
+            mismatched.append(item)
+
+    if unmatched:
+        msg += (
+            "\n\n"
+            "We could not confirm that the following concessions have correct "
+            "VMPP IDs:\n"
+        )
+        for item in most_recent_examples(unmatched):
+            msg += (
+                f"\n"
+                f"            Name: {item['drug']} {item['pack_size']}\n"
+                f"Supplied VMPP ID: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
+                f"       VMPP name: {item['supplied_vmpp_name']}\n"
+                f"       Last seen: {item['url']}\n"
+                f"                - {item['publish_date']}\n"
+            )
+
+    if mismatched:
+        msg += (
+            "\n\n"
+            "The following concessions were supplied with incorrect VMPP IDs "
+            "but have been automatically corrected:\n"
+        )
+        for item in most_recent_examples(mismatched):
+            msg += (
+                f"\n"
+                f"            Name: {item['drug']} {item['pack_size']}\n"
+                f"Supplied VMPP ID: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
+                f"                - {item['supplied_vmpp_name']}\n"
+                f" Matched VMPP ID: https://openprescribing.net/dmd/vmpp/{item['vmpp_id']}/\n"
+                f"                - {item['vmpp_name']}\n"
+                f"       Last seen: {item['url']}\n"
+                f"                - {item['publish_date']}\n"
+            )
+
+    return msg
+
+
+def most_recent_examples(items):
+    # We only want to show the most recent example for each problematic case
+    latest_first = sorted(items, key=lambda i: i["publish_date"], reverse=True)
+    seen = set()
+    for item in latest_first:
+        key = (item["drug"], item["pack_size"], item["supplied_vmpp_id"])
+        if key not in seen:
+            seen.add(key)
+            yield item
