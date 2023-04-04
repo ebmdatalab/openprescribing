@@ -1,11 +1,7 @@
 {
   "name": "NHS England Low Priority Treatment - herbal medicines",
-  "title": [
-    "Herbal medicines cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of herbal medicines per 1000 patients"
-  ],
+  "title": "Herbal medicines cost per 1000 patients"
+  "description": "Cost of herbal medicines per 1000 patients"
   "numerator_short": "Herbal medicines cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
@@ -23,6 +19,6 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM ebmdatalab.measures.vw__herbal_list",
+  "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM {dmd}.amp WHERE lic_auth = 4 AND bnf_code NOT LIKE '190203%'",
   "denominator_type": "list_size"
 }
