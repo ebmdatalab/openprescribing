@@ -1,7 +1,7 @@
 {
   "name": "NHS England Low Priority Treatment - herbal medicines",
-  "title": "Herbal medicines cost per 1000 patients"
-  "description": "Cost of herbal medicines per 1000 patients"
+  "title": "Herbal medicines cost per 1000 patients",
+  "description": "Cost of herbal medicines per 1000 patients",
   "numerator_short": "Herbal medicines cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
