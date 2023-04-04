@@ -1,0 +1,32 @@
+{
+  "name": "Quantity of salbutamol inhalers per 1000 patients",
+  "title": "",
+  "description":"Quantity of salbutamol inhalers per 1000 patients",
+  "numerator_short": "Total salbutamol inhalers",
+  "denominator_short": "1000 patients",
+  "why_it_matters": [
+    "tbc"
+  ],
+  "tags": [
+    "core",
+    "nice",
+    "respiratory"
+  ],  
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_quantity",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.dmd_objs_with_form_route",
+    "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
+    "AND bnf_code LIKE '0301011R0%' --Salbutamol"
+  ],
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "",
+  "next_review": "",
+  "measure_complexity": "low"
+}
