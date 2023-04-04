@@ -48,6 +48,6 @@
   "next_review": "",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by":"",
-  "measure_complexity":"medium"
+  "measure_complexity":"medium",
   "measure_type": "dmd"
 }
