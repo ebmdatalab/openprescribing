@@ -79,13 +79,13 @@ class Command(BaseCommand):
         matched = match_concession_vmpp_ids(items, vmpp_id_to_name)
 
         # Insert into database
-        new_concession_count = insert_or_update(matched)
+        inserted = insert_or_update(matched)
 
         # Upload to BigQuery
         Client("dmd").upload_model(NCSOConcession)
 
         # Report results
-        msg = format_message(matched, new_concession_count)
+        msg = format_message(inserted)
         notify_slack(msg)
 
 
@@ -292,8 +292,7 @@ def insert_or_update(items):
     # Sort by published date so most recent prices are always applied last
     items = sorted(items, key=lambda i: i["publish_date"])
 
-    new_concession_count = 0
-
+    inserted = []
     with transaction.atomic():
         for item in items:
             if item["vmpp_id"] is not None:
@@ -319,74 +318,57 @@ def insert_or_update(items):
                     ),
                 )
 
+            item["created"] = created
+            inserted.append(item)
             if created:
-                new_concession_count += 1
                 logger.info("Creating {drug} {pack_size} {price_pence}".format(**item))
 
-    return new_concession_count
+    return inserted
 
 
-def format_message(matched, new_concession_count):
-    msg = f"Fetched {len(matched)} concessions. "
+def format_message(inserted):
+    created = [i for i in inserted if i["created"]]
+    unmatched = [i for i in inserted if i["vmpp_id"] is None]
+    new_mismatched = [
+        i for i in inserted if i["vmpp_id"] != i["supplied_vmpp_id"] and i["created"]
+    ]
 
-    if new_concession_count == 0:
-        msg += "Found no new concessions to import"
+    msg = f"Fetched {len(inserted)} concessions. "
+
+    if not created:
+        msg += "Found no new concessions to import."
     else:
-        msg += f"Imported {new_concession_count} new concessions"
+        msg += f"Imported {len(created)} new concessions."
 
     # We warn about cases where we couldn't match the drug name and pack size to a VMPP,
     # or where we could match it but the VMPP is different from the one supplied
-    unmatched = []
-    mismatched = []
-    for item in matched:
-        if item["vmpp_id"] is None:
-            unmatched.append(item)
-        elif item["vmpp_id"] != item["supplied_vmpp_id"]:
-            mismatched.append(item)
-
     if unmatched:
         msg += (
             "\n\n"
             "We could not confirm that the following concessions have correct "
             "VMPP IDs:\n"
         )
-        for item in most_recent_examples(unmatched):
+        for item in unmatched:
             msg += (
                 f"\n"
-                f"            Name: {item['drug']} {item['pack_size']}\n"
-                f"Supplied VMPP ID: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
-                f"       VMPP name: {item['supplied_vmpp_name']}\n"
-                f"       Last seen: {item['url']}\n"
-                f"                - {item['publish_date']}\n"
+                f"Name: {item['drug']} {item['pack_size']}\n"
+                f"VMPP: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
+                f"From: {item['url']}\n"
             )
 
-    if mismatched:
+    if new_mismatched:
         msg += (
             "\n\n"
             "The following concessions were supplied with incorrect VMPP IDs "
             "but have been automatically corrected:\n"
         )
-        for item in most_recent_examples(mismatched):
+        for item in new_mismatched:
             msg += (
                 f"\n"
-                f"            Name: {item['drug']} {item['pack_size']}\n"
-                f"Supplied VMPP ID: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
-                f"                - {item['supplied_vmpp_name']}\n"
-                f" Matched VMPP ID: https://openprescribing.net/dmd/vmpp/{item['vmpp_id']}/\n"
-                f"                - {item['vmpp_name']}\n"
-                f"       Last seen: {item['url']}\n"
-                f"                - {item['publish_date']}\n"
+                f"Name: {item['drug']} {item['pack_size']}\n"
+                f"Supplied VMPP: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
+                f"Matched VMPP: https://openprescribing.net/dmd/vmpp/{item['vmpp_id']}/\n"
+                f"From: {item['url']}\n"
             )
 
     return msg
-
-
-def most_recent_examples(items):
-    # We only want to show the most recent example for each problematic case
-    latest_first = sorted(items, key=lambda i: i["publish_date"], reverse=True)
-    seen = set()
-    for item in latest_first:
-        key = (item["drug"], item["pack_size"], item["supplied_vmpp_id"])
-        if key not in seen:
-            seen.add(key)
-            yield item

@@ -234,7 +234,7 @@ class TestFetchAndImportNCSOConcesions(TestCase):
 
             self.assertEqual(NCSOConcession, Client().upload_model.call_args[0][0])
             self.assertIn(
-                "Fetched 3 concessions. Imported 2 new concessions",
+                "Fetched 3 concessions. Imported 2 new concessions.",
                 notify_slack.call_args[0][0],
             )
 
@@ -251,42 +251,9 @@ class TestFetchAndImportNCSOConcesions(TestCase):
             )
 
     def test_format_message_when_nothing_to_do(self):
-        msg = fetch_ncso.format_message([], 0)
+        msg = fetch_ncso.format_message([])
         self.assertEqual(
-            msg, "Fetched 0 concessions. Found no new concessions to import"
-        )
-
-    def test_most_recent_examples(self):
-        examples = [
-            {
-                "drug": "Amiloride 5mg tablets",
-                "pack_size": "28",
-                "supplied_vmpp_id": 1191111000001100,
-                "publish_date": datetime.date(2023, 1, 20),
-            },
-            {
-                "drug": "Amiloride 5mg tablets",
-                "pack_size": "28",
-                "supplied_vmpp_id": 1191111000001100,
-                "publish_date": datetime.date(2021, 8, 10),
-            },
-            {
-                "drug": "Amiloride 5mg tablets",
-                "pack_size": "28",
-                "supplied_vmpp_id": 1191111000001100,
-                "publish_date": datetime.date(2023, 3, 1),
-            },
-        ]
-        self.assertEqual(
-            list(fetch_ncso.most_recent_examples(examples)),
-            [
-                {
-                    "drug": "Amiloride 5mg tablets",
-                    "pack_size": "28",
-                    "supplied_vmpp_id": 1191111000001100,
-                    "publish_date": datetime.date(2023, 3, 1),
-                }
-            ],
+            msg, "Fetched 0 concessions. Found no new concessions to import."
         )
 
 
