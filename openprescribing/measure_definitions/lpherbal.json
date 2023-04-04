@@ -22,3 +22,4 @@
   "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM {dmd}.amp WHERE lic_auth = 4 AND bnf_code NOT LIKE '190203%'",
   "denominator_type": "list_size"
 }
+ 
