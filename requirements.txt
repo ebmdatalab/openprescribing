@@ -16,7 +16,7 @@ backports-csv==1.0.7
     # via -r requirements.in
 bcrypt==4.0.1
     # via paramiko
-beautifulsoup4==4.12.0
+beautifulsoup4==4.12.2
     # via -r requirements.in
 build==0.10.0
     # via pip-tools
