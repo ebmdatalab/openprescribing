@@ -53,6 +53,7 @@
     "bnf_code LIKE '0501130R0%AG' OR # Nitrofurantoin_Cap 100mg M/R (brands and generic) \n",
     "bnf_code LIKE '0501070AE%AD' # Fosfomycin_Sachet 3g (brands and generic)"
   ],
+  "no_analyse_url": true,
   "authored_by": "",
   "checked_by": "",
   "date_reviewed": "",
