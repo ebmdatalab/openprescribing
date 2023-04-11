@@ -24,7 +24,8 @@
     "<li>Pivmecillinam 200mg tablets: 400mg immediately then 200mg three times daily for 3 days (quantity: 10 tablets)</li>",
     "<li>Trimethoprim 200mg tablets: 200mg twice daily for 3 days (quantity: 6 tablets)</li>",
     "<li>Nitrofurantoin 50mg capsules or tablets: 50mg four times daily for 3 days (quantity: 12 tablets)</li>",
-    "<li>Nitrofurantoin 100mg modified-release capsules: 100mg twice daily for 3 days (quantity: 6 tablets)</li></p>"
+    "<li>Nitrofurantoin 100mg modified-release capsules: 100mg twice daily for 3 days (quantity: 6 tablets)</li>",
+    "<li>Fosfomycin 3g granules sachet: 3g sachet as a single dose (quantity: 1 sachet)</li></p>"
   
   ],
   "tags": [
@@ -47,7 +48,8 @@
     "(bnf_code LIKE '0501080W0%AE' AND quantity_per_item >6) OR --Trimethoprim 200mg tablets (brands and generic) 200mg bd for 3 days\n",
     "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item >12) OR --Nitrofurantoin 50mg capsules (brands and generic) 50mg qds for 3 days \n",
     "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item >12) OR --Nitrofurantoin 50mg tablets (brands and generic) 50mg qds for 3 days\n",
-    "(bnf_code LIKE '0501130R0%AG%' AND quantity_per_item >6) --Nitrofurantoin 100mg modified-release capsules (brands and generic) 100mg bd for 3 days"
+    "(bnf_code LIKE '0501130R0%AG%' AND quantity_per_item >6) --Nitrofurantoin 100mg modified-release capsules (brands and generic) 100mg bd for 3 days\n",
+    "(bnf_code LIKE '0501070AE%AD' AND quantity_per_item >1) --Fosfomycin 3g granules sachet (brands and generic) 3g sachet as a single dose"
   ],
   "denominator_type": "custom",
   "denominator_columns": [
@@ -59,7 +61,8 @@
     "bnf_code LIKE '0501080W0%AE' OR # Trimethoprim_Tab 200mg (brands and generic) \n",
     "bnf_code LIKE '0501130R0%AA' OR # Nitrofurantoin_Cap 50mg (brands and generic) \n",
     "bnf_code LIKE '0501130R0%AD' OR # Nitrofurantoin_Tab 50mg (brands and generic) \n",
-    "bnf_code LIKE '0501130R0%AG' # Nitrofurantoin_Cap 100mg M/R (brands and generic)"
+    "bnf_code LIKE '0501130R0%AG' OR # Nitrofurantoin_Cap 100mg M/R (brands and generic) \n",
+    "bnf_code LIKE '0501070AE%AD' # Fosfomycin_Sachet 3g (brands and generic)"
   ],
   "authored_by": "",
   "checked_by": "",
