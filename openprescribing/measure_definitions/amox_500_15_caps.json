@@ -1,7 +1,7 @@
 {
   "name": "Antibiotic stewardship: courses for amoxicillin 500mg greater than 15 capsules",
   "title": "this is a title",
-  "description": "Proportion of prescription items of amoxicilln 500mg capsules with quantity greater than 15 capsules",
+  "description": "Proportion of prescription items of amoxicillin 500mg capsules with quantity greater than 15 capsules",
   "numerator_short": "amoxicillin capsules 500mg items for greater than 15 caps",
   "denominator_short": "amoxicillin capsules 500mg items",
   "why_it_matters": [
