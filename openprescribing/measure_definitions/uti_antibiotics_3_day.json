@@ -48,7 +48,7 @@
     "(bnf_code LIKE '0501080W0%AE' AND quantity_per_item >6) OR --Trimethoprim 200mg tablets (brands and generic) 200mg bd for 3 days\n",
     "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item >12) OR --Nitrofurantoin 50mg capsules (brands and generic) 50mg qds for 3 days \n",
     "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item >12) OR --Nitrofurantoin 50mg tablets (brands and generic) 50mg qds for 3 days\n",
-    "(bnf_code LIKE '0501130R0%AG%' AND quantity_per_item >6) --Nitrofurantoin 100mg modified-release capsules (brands and generic) 100mg bd for 3 days\n",
+    "(bnf_code LIKE '0501130R0%AG' AND quantity_per_item >6) --Nitrofurantoin 100mg modified-release capsules (brands and generic) 100mg bd for 3 days\n",
     "(bnf_code LIKE '0501070AE%AD' AND quantity_per_item >1) --Fosfomycin 3g granules sachet (brands and generic) 3g sachet as a single dose"
   ],
   "denominator_type": "custom",
