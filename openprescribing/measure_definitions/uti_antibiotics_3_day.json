@@ -1,18 +1,7 @@
 {
   "name": "Antibiotic stewardship: three-day courses for uncomplicated UTIs",
-  "title": [
-    "Antibiotic stewardship: three-day courses for uncomplicated UTIs: ",
-    "Number of average daily quantities (ADQs) per",
-    "item for trimethoprim 200mg tablets,",
-    "nitrofurantoin 50mg tablets and capsules,",
-    "nitrofurantoin 100mg m/r capsules and pivmecillinam 200mg tablets."
-  ],
-  "description": [
-    "Number of average daily quantities (ADQs) per",
-    "item for trimethoprim 200mg tablets,",
-    "nitrofurantoin 50mg tablets and capsules,",
-    "nitrofurantoin 100mg m/r capsules and pivmecillinam 200mg tablets."
-  ],
+  "title": "Antibiotic stewardship: three-day courses for uncomplicated UTIs",
+  "description": "Proportion of commonly used antibiotics for urinary-tract infections prescribed for more than 3 days",
   "numerator_short": "Antibiotic items for more than 3 days",
   "denominator_short": "Antibiotic items",
   "why_it_matters": [
