@@ -58,7 +58,7 @@ defusedxml==0.6.0
     # via odfpy
 diff-match-patch==20200713
     # via django-import-export
-diskcache==5.4.0
+diskcache==5.5.1
     # via -r requirements.in
 django==3.2.18
     # via
