@@ -202,7 +202,7 @@ matplotlib==3.7.1
     #   seaborn
 mccabe==0.7.0
     # via flake8
-mock==5.0.1
+mock==5.0.2
     # via -r requirements.in
 networkx==3.1
     # via -r requirements.in
