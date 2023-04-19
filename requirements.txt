@@ -350,7 +350,7 @@ sortedcontainers==2.4.0
     # via trio
 soupsieve==2.4.1
     # via beautifulsoup4
-sqlparse==0.4.3
+sqlparse==0.4.4
     # via
     #   django
     #   django-debug-toolbar
