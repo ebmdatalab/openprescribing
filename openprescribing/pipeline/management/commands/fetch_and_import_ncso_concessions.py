@@ -118,26 +118,25 @@ def parse_concessions_from_html(html, url=None):
         parse_date(f"1 {match['month']} {match['year']}")
         for match in MONTH_DATE_RE.finditer(doc.text)
     )
-    # Find the table containing the "VMPP Snomed Code" header
+    # Find the table containing the "Pack Size" header
     table = get_single_item(
         td.find_parent("table")
         for td in doc.find_all("td")
-        if (td.text or "").strip().lower() == "vmpp snomed code"
+        if (td.text or "").strip().lower() == "pack size"
     )
     rows = rows_from_table(table)
     headers = next(rows)
-    assert [s.lower() for s in headers] == [
+    assert [s.lower() for s in headers][:3] == [
         "drug",
         "pack size",
         "price concession",
-        "vmpp snomed code",
     ]
     for row in rows:
         # Sometimes all-blank rows are used as spacers
-        if row == ["", "", "", ""]:
+        if all(v == "" for v in row):
             continue
         # Sometimes colspans are used to inject section headings
-        if len(row) != 4:
+        if len(row) < 3:
             continue
         # After a section heading we usually see the column headings repeated again
         if row == headers:
@@ -149,7 +148,7 @@ def parse_concessions_from_html(html, url=None):
             "drug": row[0],
             "pack_size": row[1],
             "price_pence": parse_price(row[2]),
-            "supplied_vmpp_id": int(row[3]),
+            "supplied_vmpp_id": int(row[3]) if len(row) == 4 else None,
         }
 
 
@@ -330,7 +329,11 @@ def format_message(inserted):
     created = [i for i in inserted if i["created"]]
     unmatched = [i for i in inserted if i["vmpp_id"] is None]
     new_mismatched = [
-        i for i in inserted if i["vmpp_id"] != i["supplied_vmpp_id"] and i["created"]
+        i
+        for i in inserted
+        if i["vmpp_id"] != i["supplied_vmpp_id"]
+        and i["created"]
+        and i["supplied_vmpp_id"] is not None
     ]
 
     msg = f"Fetched {len(inserted)} concessions. "
