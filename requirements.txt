@@ -150,7 +150,7 @@ google-cloud-storage==2.8.0
     # via -r requirements.in
 google-crc32c==1.5.0
     # via google-resumable-media
-google-resumable-media==2.4.1
+google-resumable-media==2.5.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
