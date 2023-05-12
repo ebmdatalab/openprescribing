@@ -118,7 +118,7 @@ def create_code_mapping(filenames):
                     # Skip 'withdrawn' &c
                     continue
 
-                if len(prev_code) <= 7:  # section, subsection, paragraph
+                if len(prev_code) <= 7:  # section, subsection, paragraph, subparagraph
                     Section.objects.filter(bnf_id__startswith=prev_code).update(
                         is_current=False
                     )
@@ -221,6 +221,7 @@ def cleanup_empty_classes():
     classes = [
         ("section_code", Section, "bnf_id"),
         ("para_code", Section, "bnf_id"),
+        ("subpara_code", Section, "bnf_id"),
         ("chemical_code", Chemical, "bnf_code"),
         ("product_code", Product, "bnf_code"),
         ("presentation_code", Presentation, "bnf_code"),

@@ -29,28 +29,22 @@ class ValidationTestCase(TestCase):
 
 
 class SectionTestCase(TestCase):
-    def setUp(self):
-        Section.objects.create(bnf_id="09", name="Nutrition And Blood", bnf_chapter=9)
+    def test_get_number_str(self):
+        # Chapters
+        self.assertEqual(Section.get_number_str("01"), "1")
+        self.assertEqual(Section.get_number_str("12"), "12")
 
-    def tearDown(self):
-        pass
+        # Sections
+        self.assertEqual(Section.get_number_str("0102"), "1.2")
+        self.assertEqual(Section.get_number_str("1234"), "12.34")
 
-    def test_methods(self):
-        section = Section.objects.get(bnf_id="09")
+        # Paragraphs
+        self.assertEqual(Section.get_number_str("010203"), "1.2.3")
+        self.assertEqual(Section.get_number_str("123456"), "12.34.56")
 
-        self.assertEqual(section.get_number_str("12"), "12")
-        self.assertEqual(section.get_number_str("2315"), "23.15")
-        self.assertEqual(section.get_number_str("1202"), "12.2")
-        self.assertEqual(section.get_number_str("090101"), "9.1.1")
-        self.assertEqual(section.get_number_str("0901012"), "9.1.1.2")
-        self.assertEqual(section.get_number_str("13110112"), "13.11.1.12")
-
-        self.assertEqual(section.strip_zeros(None), None)
-        self.assertEqual(section.strip_zeros("0"), None)
-        self.assertEqual(section.strip_zeros("00"), None)
-        self.assertEqual(section.strip_zeros("01"), 1)
-        self.assertEqual(section.strip_zeros("10"), 10)
-        self.assertEqual(section.strip_zeros("010"), 10)
+        # Subparagraphs
+        self.assertEqual(Section.get_number_str("0102030"), "1.2.3.0")
+        self.assertEqual(Section.get_number_str("1234567"), "12.34.56.7")
 
 
 class PracticeTestCase(TestCase):
