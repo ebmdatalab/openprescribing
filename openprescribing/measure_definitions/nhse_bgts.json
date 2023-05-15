@@ -1,5 +1,6 @@
 {
   "name": "Blood glucose testing strips not included in NHS England commissioning recommendations",
+  "title": "Blood glucose testing strips not included in NHS England commissioning recommendations",
   "description": "Percentage of prescriptions for blood glucose testing strips (BGTS) not included in NHS England commissioning recommendations",
   "numerator_short": "BGTS prescriptions for strips not included in guidance",
   "denominator_short": "All BGTS prescriptions",
