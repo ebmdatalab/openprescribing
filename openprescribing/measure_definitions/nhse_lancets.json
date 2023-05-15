@@ -21,7 +21,7 @@
   "numerator_where": [
     "LOWER(bnf_name) LIKE '%lancets%' # All lancets \n",
     "AND (bnf_code NOT IN \n",
-    "'21010900637', # Glucoject lancets PLUS 0.2mm/33gauge (A. Menarini Diagnostics Ltd) \n",
+    "('21010900637', # Glucoject lancets PLUS 0.2mm/33gauge (A. Menarini Diagnostics Ltd) \n",
     "'21010900736', # AgaMatrix Ultra-Thin lancets 0.2mm/33gauge (AgaMatrix Europe Ltd) \n",
     "'21010900735', # AgaMatrix Ultra-Thin lancets 0.35mm/28gauge (AgaMatrix Europe Ltd) \n",
     "'21010900620', # Microlet lancets 0.5mm/28gauge (Ascensia Diabetes Care UK Ltd) \n",
