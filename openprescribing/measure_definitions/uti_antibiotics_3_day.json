@@ -55,9 +55,9 @@
     "bnf_code LIKE '0501070AE%AD' # Fosfomycin_Sachet 3g (brands and generic)"
   ],
   "no_analyse_url": true,
-  "authored_by": "",
-  "checked_by": "",
-  "date_reviewed": "",
-  "next_review": "",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-05-15",
+  "next_review": "2024-05-15",
   "measure_complexity": "low"
 }
