@@ -5,7 +5,11 @@
   "numerator_short": "BGTS prescriptions for strips not included in guidance",
   "denominator_short": "All BGTS prescriptions",
   "why_it_matters": [
-    "In April 2023 NHS England produced commissioning recommendations for blood glucose testing strips, following an evaulation process that considered both quantity and cost."
+    "In 2021-2022 there were approximately 470,000 people with diabetes receiving blood glucose strips, ketone strips, and lancets on prescription in England.  Consequently NHS England undertook a clincially-led assessment ",
+    "of available products, reviewing both clinical and cost-effectiveness for patients and the NHS, and in April 2023 published <a href='https://www.england.nhs.uk/publication/commissioning-recommendations-blood-glucose-and-ketone-meters-testing-strips-and-lancets/'>",
+    "commissioning guidelines, recommending specific meters, test strips and lancets.</a>  This measure relates to the recommended blood glucose testing strips.</p>",
+    "<b>Please note:</b> OpenPrescribing.net measures also have a consistent way of visualising measures, where 'lower is better', and therefore in this case we show the proportion of prescriptions for strips ",
+    "which are NOT in the NHS commissioning recommendations.</p>"
   ],
   "tags": [
     "diabetes",
