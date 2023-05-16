@@ -78,6 +78,10 @@ class Command(BaseCommand):
         vmpp_id_to_name = get_vmpp_id_to_name_map()
         matched = match_concession_vmpp_ids(items, vmpp_id_to_name)
 
+        # Where the PSNC announce corrections in non-standard channels we need to
+        # incorporate these manually
+        matched = add_manual_corrections(matched)
+
         # Insert into database
         inserted = insert_or_update(matched)
 
@@ -285,6 +289,25 @@ def get_vmpp_id_from_previous_concession(drug, pack_size):
     )
     if previous_vmpp_ids:
         return get_single_item(previous_vmpp_ids)
+
+
+def add_manual_corrections(items):
+    # Where the PSNC announce corrections in non-standard channels we need to
+    # incorporate these manually
+    if any(i["date"] == datetime.date(2023, 4, 1) for i in items):
+        items.append(
+            {
+                "url": "https://psnc.org.uk/our-news/price-concession-update-for-april-2023-chlorphenamine-2mg-5ml-oral-solution/",
+                "publish_date": datetime.date(2023, 5, 10),
+                "date": datetime.date(2023, 4, 1),
+                "vmpp_id": 1240211000001107,
+                "supplied_vmpp_id": 1240211000001107,
+                "drug": "Chlorphenamine 2mg/5ml oral solution",
+                "pack_size": "150",
+                "price_pence": 334,
+            }
+        )
+    return items
 
 
 def insert_or_update(items):

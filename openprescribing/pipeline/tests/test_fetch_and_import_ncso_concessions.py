@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 from frontend.models import NCSOConcession
+from dmd.models import VMPP
 
 
 class TestFetchAndImportNCSOConcesions(TestCase):
@@ -254,6 +255,55 @@ class TestFetchAndImportNCSOConcesions(TestCase):
         msg = fetch_ncso.format_message([])
         self.assertEqual(
             msg, "Fetched 0 concessions. Found no new concessions to import."
+        )
+
+    def test_fetch_and_import_ncso_concessions_with_corrections(self):
+        matched = [
+            {
+                "date": datetime.date(2023, 4, 1),
+                "drug": "Amiloride 5mg tablets",
+                "pack_size": "28",
+                "price_pence": 925,
+                "supplied_vmpp_id": 1191111000001100,
+                "vmpp_id": 1191111000001100,
+                "vmpp_name": "Amiloride 5mg tablets 28 tablet",
+                "supplied_vmpp_name": "Amiloride 5mg tablets 28 tablet",
+                "publish_date": datetime.date(2023, 4, 30),
+                "url": "https://example.com",
+            },
+        ]
+
+        # We need a VMPP object corresponding to the correction we're going to insert,
+        # but we don't want to have to create the whole graph of related objects so we
+        # just copy an existing fixture and give it a new name and ID
+        vmpp = VMPP.objects.get(id=1191111000001100)
+        vmpp.id = 1240211000001107
+        vmpp.nm = "Chlorphenamine 2mg/5ml oral solution 150 ml"
+        vmpp.save()
+
+        with ContextStack(mock.patch.object) as patch:
+            patch(fetch_ncso, "requests")
+            patch(fetch_ncso, "parse_concessions_from_rss")
+            patch(fetch_ncso, "match_concession_vmpp_ids", return_value=matched)
+
+            Client = patch(fetch_ncso, "Client")
+            notify_slack = patch(fetch_ncso, "notify_slack")
+
+            call_command("fetch_and_import_ncso_concessions")
+
+            self.assertEqual(NCSOConcession, Client().upload_model.call_args[0][0])
+            self.assertIn(
+                "Fetched 2 concessions. Imported 2 new concessions.",
+                notify_slack.call_args[0][0],
+            )
+
+        # Check that the explicitly supplied concession and the manual correction now
+        # exist in the database
+        self.assertTrue(
+            NCSOConcession.objects.filter(vmpp_id=1191111000001100).exists()
+        )
+        self.assertTrue(
+            NCSOConcession.objects.filter(vmpp_id=1240211000001107).exists()
         )
 
 
