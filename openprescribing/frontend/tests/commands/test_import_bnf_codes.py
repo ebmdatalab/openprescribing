@@ -31,7 +31,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual(r.count(), 1)
 
         sections = Section.objects.all()
-        self.assertEqual(sections.count(), 6)
+        self.assertEqual(sections.count(), 7)
 
         section = Section.objects.get(bnf_id="010101")
         self.assertEqual(section.bnf_chapter, 1)
@@ -39,9 +39,12 @@ class CommandsTestCase(TestCase):
         self.assertEqual(section.bnf_para, 1)
         self.assertEqual(section.number_str, "1.1.1")
 
-        # Test that trailing zeroes are trimmed
-        section = Section.objects.filter(bnf_id="0101010")
-        self.assertEqual(section.count(), 0)
+        section = Section.objects.get(bnf_id="0101010")
+        self.assertEqual(section.bnf_chapter, 1)
+        self.assertEqual(section.bnf_section, 1)
+        self.assertEqual(section.bnf_para, 1)
+        self.assertEqual(section.bnf_subpara, 0)
+        self.assertEqual(section.number_str, "1.1.1.0")
 
         section = Section.objects.get(bnf_id="20")
         self.assertEqual(section.bnf_chapter, 20)

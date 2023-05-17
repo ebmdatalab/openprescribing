@@ -50,6 +50,7 @@ def get_subsection_prefixes(prefix):
         2,  # Chapter
         4,  # Section
         6,  # Paragraph
+        7,  # Subparagraph
         9,  # Chemical
         11,  # Product
         15,  # Presentation
