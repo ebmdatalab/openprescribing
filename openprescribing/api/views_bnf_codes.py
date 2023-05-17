@@ -27,7 +27,9 @@ def _convert_querysets(querysets):
                 item["id"] = qu_item.number_str
                 item["name"] = qu_item.name
                 levels = item["id"].split(".")
-                if len(levels) > 2:
+                if len(levels) == 4:
+                    item["type"] = "BNF subparagraph"
+                elif len(levels) == 3:
                     item["type"] = "BNF paragraph"
                 elif len(levels) == 2:
                     item["type"] = "BNF section"
