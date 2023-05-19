@@ -6,6 +6,7 @@ from django.http.response import HttpResponseRedirect
 from django.urls import path, reverse
 from django.views.generic import RedirectView, TemplateView
 from frontend.views import views
+from outliers import views as outliers
 
 admin.autodiscover()
 
@@ -219,6 +220,39 @@ urlpatterns = [
         kwargs={"entity_type": "all_england", "entity_code": None},
     ),
     path(r"all-england/concessions/", all_england_redirects),
+    # Outliers
+    # (This must go above Measures because of the measure_for_practices_in_ccg
+    # pattern)
+    path(
+        r"practice/<entity_code>/outliers/",
+        outliers.outliers_for_one_entity,
+        name="outliers_for_one_practice",
+        kwargs={"entity_type": "practice"},
+    ),
+    path(
+        r"pcn/<entity_code>/outliers/",
+        outliers.outliers_for_one_entity,
+        name="outliers_for_one_pcn",
+        kwargs={"entity_type": "pcn"},
+    ),
+    path(
+        r"sicbl/<entity_code>/outliers/",
+        outliers.outliers_for_one_entity,
+        name="outliers_for_one_ccg",
+        kwargs={"entity_type": "ccg"},
+    ),
+    path(
+        r"icb/<entity_code>/outliers/",
+        outliers.outliers_for_one_entity,
+        name="outliers_for_one_stp",
+        kwargs={"entity_type": "stp"},
+    ),
+    path(
+        r"regional-team/<entity_code>/outliers/",
+        outliers.outliers_for_one_entity,
+        name="outliers_for_one_regional_team",
+        kwargs={"entity_type": "regional_team"},
+    ),
     # Measures
     path(r"measure/", views.all_measures, name="all_measures"),
     path(

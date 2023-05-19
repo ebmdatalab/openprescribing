@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Prototype Prescribing Outlier Dashboard for {{ entity.name_and_status }}</h1>
+
+<h2>Prescribing where this {{ entity_type }} is higher than most</h1>
+{% include './_outliers_table.html' with outliers=high_outliers %}
+
+<h2>Prescribing where this {{ entity_type }} is lower than most</h1>
+{% include './_outliers_table.html' with outliers=low_outliers %}
+{% endblock %}
