@@ -108,7 +108,7 @@ EXCLUSIONS_RE = re.compile(
       0904010H0.*     |  # issue #9
       1311070S0....AA |  # issue #9
       1311020L0....BS |  # issue #9
-      0913011C0AAAHAH |  # issue #9
+      0913011C0AA.... |  # issue #9
       0301020S0....AA |  # issue #12
       190700000BBCJA0 |  # issue #12
       0604011L0BGAAAH |  # issue #12
