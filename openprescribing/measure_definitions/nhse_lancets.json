@@ -53,7 +53,7 @@
   "denominator_from": "{hscic}.normalised_prescribing ",
   "denominator_where": "LOWER(bnf_name) LIKE '%lancets%' # All lancets \n",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
   "date_reviewed": "2023-05-15",
   "next_review": "2024-05-15",
   "measure_complexity": "medium",
