@@ -280,7 +280,7 @@ pycodestyle==2.10.0
     # via flake8
 pycparser==2.21
     # via cffi
-pydata-google-auth==1.7.0
+pydata-google-auth==1.8.0
     # via pandas-gbq
 pyflakes==3.0.1
     # via flake8
