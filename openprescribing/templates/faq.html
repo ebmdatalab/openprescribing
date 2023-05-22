@@ -28,6 +28,7 @@
 <p><a href="#actualcost">What is actual cost?</a></p>
 <p><a href="#bnfchange">How do you deal with BNF code changes?</a></p>
 <p><a href="#ccgchange">How do you determine ICB membership when GP practices have moved ICBs or ICBs have merged?</a></p>
+<p><a href="#fp34">Do items claimed on FP34 forms show on OpenPrescribing?</a></p>
 
 <h2>Analyse</h2>
 <p><a href="#analysetutorial">How do I use the analyse page?</a></p>
@@ -149,10 +150,18 @@
 <p>We have done this by mapping the old codes to the new codes, by using a map the NHS Business Services Authority provided us in a personal communication (after correcting for obvious typos etc.). You can read how we did this on <a href="https://github.com/ebmdatalab/openprescribing/pull/380/commits/7f968027263c62318403584e4ad5e0b96869bb7e">github</a>.</p>
 <p>You can read more about BNF codes and how they are structured <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">here</a>.</p>
 
-<h3 id="ccgchange">"How do you determine ICB membership when GP practices have moved ICB or ICB have merged?</h3>
+<h3 id="ccgchange">How do you determine ICB membership when GP practices have moved ICB or ICB have merged?</h3>
 <p>We use the current Integrated Care Board (ICB) membership of a practice in our analyses. If a GP Practice moved ICB, the data from before the move will be included in the data for their current ICB. Their former ICB will not include that practice's data. This means that when you look at our prescribing measures, you will be looking at the past prescribing of the current GP practices in that ICB.</p>
 <p>When ICBs merge, we create a new dashboard for the newly formed ICB and remove the old ICB dashboards. We use the prescribing data for the current practices in the new ICB in our measures. Any data for practices in the old ICBs that closed prior to the merger will be included in the new ICB's data</p>
 <p>Data from our analyse and trends pages also use current practice membership of a ICB when aggregating the data by ICB</p>
+
+<h3 id="fp34">Do items claimed on FP34 forms show on OpenPrescribing?</h3>
+<p>Medicines claimed under an "FP34" form by GP practices fall into two categories:</p>
+<ul>
+  <li><b>High Volume Vaccines (influenza, typhoid, hepatitis A, hepatitis B , pneumococcal, meningococcal vaccines). </b>These vaccines are purchased by the practices, and are claimed for on <a href="https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/prescribing-and-dispensing/high-volume-vaccine-forms-fp34dpd-appendix-forms"> FP34D (for dispensing practices) and FP34PD (for other practices) appendices</a>.  No FP10 is required to claim these items.</li>
+  <li><b>Other items (for example injections and local anaesthetics. </b>These items are often "personally adminstered" by GP practices, and although the payment for the <i>administration</i> is claimed for via the FP34 form by the practice, a separate FP10 for item will need to be submitted as well.</li>
+</ul>
+<p>Medicines administered to patients under both categories appear in OpenPrescribing data.  For example <a href="https://openprescribing.net/chemical/1404000H0/"> here is data on influenza vaccines</a>, which are usually claimed on FP34D/PD.</p>
 
 <h2>Analyse</h2>
 <h3 id="analysetutorial">How do I use the analyse page?</h3>
