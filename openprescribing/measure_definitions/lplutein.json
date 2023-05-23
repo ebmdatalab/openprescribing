@@ -1,11 +1,7 @@
 {
   "name": "NHS England Low Priority Treatment - lutein and antioxidants",
-  "title": [
-    "Lutein and antioxidant cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of lutein and antioxidant per 1000 patients"
-  ],
+  "title": "Lutein and antioxidant cost per 1000 patients",
+  "description": "Cost of lutein and antioxidant per 1000 patients",
   "numerator_short": "Lutein and antioxidant  cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
@@ -25,18 +21,21 @@
   "numerator_bnf_codes_filter": [
     "091200000BEJYFS # Equazen eye q family capsules",
     "091200000BEXXFR # Equazen eye q liquid",
+    "091200000BFSIA0 # Eyewise tablets",
     "091200000BFWUFT # ICaps One A Day tablets",
     "091200000BFWVFT # ICaps tablets",
     "091000000BBWVBU # MacuLEH Light tablets",
-    "091200000BFSIA0 # Eyewise tablets",
     "091000000BBWJA0 # Macusan plus tablets",
     "091000000BBWHA0 # Macusan tablets",
+    "190500000BBDPA0 # MacuShield capsules",
+    "190500000BBDYA0 # MacuShield Gold capsules",
     "091000000BBVXBT # Ocuvite Complete capsules",
     "091000000BBXRBT # Ocuvite Lutein capsules",
     "091000000BBVGBT # PreserVision Lutein capsules",
     "091000000BBVFBT # PreserVision Original capsules",
     "091000000BBTPBU # PreserVision tablets",
     "091200000BFXRFT # Visionace tablets",
+    "091000000BBWYBT # VH Essentials Lutein & Zeaxanthin capsules",
     "091000000BBWPBT # Viteyes 2 + Omega 3 capsules",
     "091000000BBVTBT # Viteyes 2 Advanced capsules",
     "091000000BBWQBT # Viteyes 2 Formula capsules",
@@ -50,5 +49,11 @@
     "091000000BBUQBT # Viteyes Original Formula Plus Lutein capsules",
     "091000000BBUSBT # Viteyes Plus Lutein Beta-Carotene Free capsules"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-05-15",
+  "next_review": "2024-05-15",
+  "measure_complexity": "medium",
+  "measure_type": "bnf_code"
 }
