@@ -42,7 +42,7 @@ coverage==7.2.5
     # via -r requirements.in
 crispy-bootstrap3==2022.1
     # via -r requirements.in
-cryptography==40.0.2
+cryptography==41.0.0
     # via
     #   django-anymail
     #   paramiko
