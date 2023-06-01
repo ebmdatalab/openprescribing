@@ -53,8 +53,10 @@ MONTH_DATE_RE = re.compile(
 PUBLISH_DATE_RE = re.compile(
     r"""
     concessions \s+ announcement \s+
-    ( monday | tuesday | wednesday | thursday | friday | saturday | sunday )
-    \s+
+    (
+      ( monday | tuesday | wednesday | thursday | friday | saturday | sunday )
+      \s+
+    ) ?
     (?P<day> \d+) \s* ( st | nd | rd | th )
     \s+
     (?P<month>
