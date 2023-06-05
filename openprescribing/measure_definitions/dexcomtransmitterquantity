@@ -1,0 +1,55 @@
+{
+"name": "Possible excess quantities of Dexcom One transmitter",
+	"title": [
+		"Prescriptions for more than one Dexcom One transmitter"
+	],
+	"description": [
+		"Total quantity where a prescription is for more than one transmitter",
+		"as a proportion of all Dexcom One transmitter prescribing "
+	],
+	"why_it_matters": "",
+	"numerator_short": "More than one transmitters",
+	"denominator_short": "total number of transmitters",
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": false,
+	"low_is_good": true,
+	"tags": [
+		"core",
+		"cost",
+		"diabetes",
+		"safety"
+	],
+	"numerator_type": "custom",
+	"numerator_columns": [
+		"SUM(total_quantity) AS numerator"
+	],
+	"numerator_from": "{hscic}.raw_prescribing_normalised",
+	"numerator_where": [
+		"quantity_per_item>1",
+		"AND bnf_code = '21480000106' --Dexcom One Transmitter  \n"
+	],
+	"denominator_type": "custom",
+	"denominator_columns": [
+		"SUM(total_quantity) AS denominator"
+	],
+	"denominator_from": "{hscic}.raw_prescribing_normalised",
+	"denominator_where": [
+		"bnf_code = '21480000106' --Dexcom One Transmitter  \n"
+	],
+"date_reviewed": [
+    ""
+  ],
+  "next_review": [
+    ""
+  ],
+  "authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "low"
+  ]
+}
