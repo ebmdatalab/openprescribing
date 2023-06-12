@@ -38,10 +38,9 @@
   "numerator_where": [
     "(p.bnf_code LIKE '0408010AE%' --Pregabalin \n",
     "OR p.bnf_code LIKE '0408010G0%') --Gabapentin \n",
-    "AND i.ing IN ( /n",
+    "AND i.ing IN ( \n",
     "415160008, --Pregabalin ing_code \n",
-    "386845007  --Gabapentin ing_code \n",
-    ")"
+    "386845007)  --Gabapentin ing_code"
   ],
   "denominator_type": "list_size",
    "date_reviewed":"",
