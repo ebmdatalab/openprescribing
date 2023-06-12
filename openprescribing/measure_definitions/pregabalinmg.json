@@ -4,7 +4,7 @@
   "description": "Prescribing of pregabalin (total mg) per 1000 patients",
   "why_it_matters": [
     "Pregabalin is a relatively new drug, which is increasingly used in neuropathic and other types of pain. ",
-    "Also its costs have reduced recently, its use is rising increasingly rapidly in the NHS. ",
+    "Although its costs have reduced recently, its use is rising increasingly rapidly in the NHS. ",
     "There are also <a href='https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/385791/PHE-NHS_England_pregabalin_and_gabapentin_advice_Dec_2014.pdf'>concerns about the potential for abuse</a>. ",
     "This measure shows the total amount in miligrams of pregabalin prescribed.  ",
     "There is an additional measure showing numbers of prescriptions on our measures page."
@@ -22,7 +22,7 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(p.quantity * i.strnt_nmrtr_val/COALESCE(i.strnt_dnmtr_val,1)) AS numerator -- calculate number of mgs using dm+d"
+    "SUM(p.quantity * i.strnt_nmrtr_val/COALESCE(i.strnt_dnmtr_val,1)) AS numerator -- calculate number of mgs using dm+d, using COALESCE to default value of 1 for strnt_dnmtr_val if not available for presentation"
   ],
   "numerator_from": [
    "{hscic}.normalised_prescribing p", 
@@ -31,8 +31,10 @@
    "INNER JOIN {dmd}.vpi i -- joins vmp to vpi table to get ingredient strengths \n",
    "ON v.id = i.vmp"
   ],
-  "numerator_where": "SUBSTR(p.bnf_code,0,9) = '0408010AE' AND i.ing IN (415160008)--Pregabalin (bnf_code and ing code)",
-  "numerator_bnf_codes_query": "SELECT DISTINCT presentation_code FROM {hscic}.bnf WHERE presentation_code LIKE '0408010AE%'",
+  "numerator_where": [
+  "p.bnf_code LIKE '0408010AE%' --Pregabalin \n",
+  "AND i.ing = 415160008 --Pregabalin"
+  ],
   "denominator_type": "list_size",
   "date_reviewed":"",
   "next_review": "",
