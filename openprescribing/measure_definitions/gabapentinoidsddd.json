@@ -1,11 +1,7 @@
 {
   "name": "Prescribing of gabapentin and pregabalin (DDD)",
-  "title": [
-    "Prescribing of gabapentin and pregabalin (combined Defined Daily Dose (DDD) per 1000 patients"
-  ],
-  "description": [
-    "Total DDD of pregabalin + gabapentin per 1000 patients"
-  ],
+  "title": "Prescribing of gabapentin and pregabalin (combined Defined Daily Dose (DDD) per 1000 patients",
+  "description": "Total DDD of pregabalin + gabapentin per 1000 patients",
   "why_it_matters": [
     "Gabapentin and pregabalin are increasingly used in neuropathic and other types of pain, and use is ",
     "rising rapidly in the NHS. There are also concerns about the ",
@@ -30,7 +26,7 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM((p.quantity * i.strnt_nmrtr_val/COALESCE(i.strnt_dnmtr_val,1))/CASE WHEN p.bnf_code LIKE '0408010AE%' THEN 300 ELSE 1800 END) AS numerator -- calculate number of mgs and then divide by 300 (pregab) or 1800 (gaba) to get DDD "
+    "SUM((p.quantity * i.strnt_nmrtr_val/COALESCE(i.strnt_dnmtr_val,1))/CASE WHEN p.bnf_code LIKE '0408010AE%' THEN 300 ELSE 1800 END) AS numerator -- calculate number of mgs and then divide by 300 (pregabalin) or 1800 (gabapentin) to get DDD. Uses COALESCE to default to value of 1 if not available"
   ],
  "numerator_from": [
    "{hscic}.normalised_prescribing p", 
@@ -40,7 +36,10 @@
    "ON v.id = i.vmp"
   ],
   "numerator_where": [
-    "SUBSTR(p.bnf_code,0,9) IN ('0408010AE','0408010G0') AND i.ing IN (415160008,386845007)--Pregabalin  and gabapentin (bnf_code and ing code)"
+    "(p.bnf_code LIKE '0408010AE%' --Pregabalin /n",
+    "OR p.bnf_code LIKE '0408010G0%') --Gabapentin /n",
+    "AND (i.ing = 415160008 --Pregabalin ing_code /n",
+    "OR i.ing = 386845007)--Gabapentin ing_code)"
   ],
   "denominator_type": "list_size",
    "date_reviewed":"",
