@@ -42,7 +42,6 @@
   "numerator_where": [
     "SUBSTR(p.bnf_code,0,9) IN ('0408010AE','0408010G0') AND i.ing IN (415160008,386845007)--Pregabalin  and gabapentin (bnf_code and ing code)"
   ],
-  "numerator_bnf_codes_query": "SELECT DISTINCT presentation_code FROM {hscic}.bnf WHERE presentation_code LIKE '0408010AE%' or presentation_code LIKE '0408010G0%'",
   "denominator_type": "list_size",
    "date_reviewed":"",
   "next_review": "",
