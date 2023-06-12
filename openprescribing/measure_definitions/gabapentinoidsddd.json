@@ -43,10 +43,10 @@
     "386845007)  --Gabapentin ing_code"
   ],
   "denominator_type": "list_size",
-   "date_reviewed":"",
-  "next_review": "",
+   "date_reviewed":"12/06/2023",
+  "next_review": "12/06/2024",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by":"",
+  "checked_by":"andrew.brown@phc.ox.ac.uk",
   "measure_complexity":"medium",
   "measure_type": "dmd"
 }
