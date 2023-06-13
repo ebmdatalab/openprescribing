@@ -38,7 +38,7 @@
    "ON v.id = i.vmp \n",
    "INNER JOIN measures.vw__measure_conversion n -- joins unit conversion view to numerator unit of measure \n",
    "ON i.strnt_nmrtr_uom = n.cd \n",
-   "INNER JOIN measures.vw__measure_conversion d -- joins unit conversion view to denominator unit of measure \n",
+   "LEFT JOIN measures.vw__measure_conversion d -- joins unit conversion view to denominator unit of measure (LEFT join as not all products have a denominator UOM) \n",
    "ON i.strnt_dnmtr_uom = d.cd"
   ],
   "numerator_where": [
