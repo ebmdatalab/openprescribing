@@ -26,9 +26,9 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(p.quantity * i.strnt_nmrtr_val * COALESCE(n.nmtr_unit_conversion,1) / -- calculate the total unit of drug, and convert if neccesary to miligrams). Uses COALESCE to default to 1 if conversion not available \n",
+    "SUM((p.quantity * i.strnt_nmrtr_val * COALESCE(n.nmtr_unit_conversion,1) / -- calculate the total unit of drug, and convert if neccesary to miligrams). Uses COALESCE to default to 1 if conversion not available \n",
     "COALESCE(d.nmtr_unit_conversion * i.strnt_dnmtr_val,1) / --divides unit dose if multiple, and converts to mililitre if necessary. Uses COALESCE to default to 1 if conversion or denominator strength not available \n",
-    "CASE WHEN p.bnf_code LIKE '0408010AE%' THEN 300 ELSE 1800 END) AS numerator -- divide number of miligram by 300 (pregabalin) or 1800 (gabapentin) to get DDD"
+    "CASE WHEN p.bnf_code LIKE '0408010AE%' THEN 300 ELSE 1800 END)) AS numerator -- divide number of miligram by 300 (pregabalin) or 1800 (gabapentin) to get DDD"
   ],
  "numerator_from": [
    "{hscic}.normalised_prescribing p", 
