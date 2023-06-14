@@ -76,7 +76,7 @@ django==3.2.19
     #   djangorestframework
 django-anymail[mailgun]==10.0
     # via -r requirements.in
-django-cors-headers==3.14.0
+django-cors-headers==4.1.0
     # via -r requirements.in
 django-crispy-forms==2.0
     # via
