@@ -184,6 +184,10 @@ def fix_spaces(s):
 
 
 def parse_price(price_str):
+    # Correct typo. If these happen more regularly we'll need to take a different
+    # approach but I want to be maximally conservative to begin with.
+    if price_str == "11..35":
+        price_str = "£11.35"
     match = re.fullmatch(r"£(\d+)\.(\d\d)", price_str)
     return int(match[1]) * 100 + int(match[2])
 
