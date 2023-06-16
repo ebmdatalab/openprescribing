@@ -336,7 +336,7 @@ scipy==1.10.1
     # via -r requirements.in
 seaborn==0.12.2
     # via -r requirements.in
-selenium==4.9.1
+selenium==4.10.0
     # via -r requirements.in
 six==1.16.0
     # via
