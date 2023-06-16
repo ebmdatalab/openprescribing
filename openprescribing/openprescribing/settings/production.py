@@ -93,7 +93,6 @@ LOGGING = {
             "level": "WARNING",
             "propagate": True,
         },
-        "frontend": {"level": "WARN", "handlers": ["gunicorn"], "propagate": True},
         "frontend.signals.handlers": {
             "level": "DEBUG",
             "handlers": ["signals"],
@@ -101,6 +100,15 @@ LOGGING = {
         },
     },
 }
+
+
+# Log everything produced by our apps at INFO or above
+for app in LOCAL_APPS:
+    LOGGING["loggers"][app] = {
+        "level": "INFO",
+        "handlers": ["gunicorn"],
+        "propagate": True,
+    }
 
 # Base directory for pipeline metadata
 PIPELINE_METADATA_DIR = os.path.join(APPS_ROOT, "pipeline", "metadata")
