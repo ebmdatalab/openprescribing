@@ -22,7 +22,7 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM((p.quantity * i.strnt_nmrtr_val * COALESCE(n.nmtr_unit_conversion,1) / -- calculate the total unit of drug, and convert if neccesary to miligrams). Uses COALESCE to default to 1 if conversion not available \n",
+    "SUM((p.quantity * i.strnt_nmrtr_val * COALESCE(n.nmtr_unit_conversion,1)) / -- calculate the total unit of drug, and convert if neccesary to miligrams). Uses COALESCE to default to 1 if conversion not available \n",
     "COALESCE(d.nmtr_unit_conversion * i.strnt_dnmtr_val,1)) AS numerator "
   ],
   "numerator_from": [
