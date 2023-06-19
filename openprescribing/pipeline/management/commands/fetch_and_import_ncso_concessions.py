@@ -313,6 +313,18 @@ def add_manual_corrections(items):
                 "price_pence": 334,
             }
         )
+    for item in items:
+        if (
+            item["date"] == datetime.date(2023, 6, 1)
+            and item["vmpp_id"] == 1140011000001100
+            and item["price_pence"] == 219
+        ):
+            item.update(
+                {
+                    "url": "https://cpe.org.uk/our-news/june-2023-price-concessions-2nd-update/",
+                    "price_pence": 448,
+                }
+            )
     return items
 
 
