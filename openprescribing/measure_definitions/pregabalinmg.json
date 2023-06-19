@@ -37,7 +37,7 @@
    "ON i.strnt_dnmtr_uom = d.cd"
   ],
   "numerator_where": [
-  "p.bnf_code LIKE '0408010AE%' --Pregabalin \n",
+  "p.bnf_code LIKE '0408010AE%' --Pregabalin  \n",
   "AND i.ing = 415160008 --Pregabalin"
   ],
   "denominator_type": "list_size",
