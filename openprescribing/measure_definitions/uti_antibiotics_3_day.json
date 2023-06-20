@@ -1,0 +1,63 @@
+{
+  "name": "Antibiotic stewardship: three-day courses for uncomplicated UTIs",
+  "title": "Antibiotic stewardship: three-day courses for uncomplicated UTIs",
+  "description": "Proportion of commonly used antibiotics for urinary-tract infections prescribed for more than 3 days",
+  "numerator_short": "Antibiotic items for more than 3 days",
+  "denominator_short": "Antibiotic items",
+  "why_it_matters": [
+    "<a href='https://www.nice.org.uk/guidance/ng109/resources/visual-summary-pdf-6544021069'>NICE guidance on prescribing for lower urinary-tract infections</a> ",
+    "recommends a three day course of antibiotics for most women. ",
+    "Prescribing longer courses may be unnecessary, and also cost more. ",
+    "There are however some groups, such as males and pregnant patients, where longer durations are recommended.</p>",
+    "<p> The antibiotics included in this measure are:",
+    "<ul>",
+    "<li>Pivmecillinam 200mg tablets: 400mg immediately then 200mg three times daily for 3 days (quantity: 10 tablets)</li>",
+    "<li>Trimethoprim 200mg tablets: 200mg twice daily for 3 days (quantity: 6 tablets)</li>",
+    "<li>Nitrofurantoin 50mg capsules or tablets: 50mg four times daily for 3 days (quantity: 12 tablets)</li>",
+    "<li>Nitrofurantoin 100mg modified-release capsules: 100mg twice daily for 3 days (quantity: 6 tablets)</li>",
+    "<li>Fosfomycin 3g granules sachet: 3g sachet as a single dose (quantity: 1 sachet)</li></p>"
+  
+  ],
+  "tags": [
+    "antimicrobial",
+    "core",
+    "infections",
+    "nice"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(items) AS numerator"
+  ],
+  "numerator_from": "{hscic}.raw_prescribing_normalised",
+  "numerator_where": [
+    "(bnf_code LIKE '0501015P0%AB' AND quantity_per_item >10) OR --Pivmecillinam 200mg tablets (brands and generic) 400mg stat then 200mg tds for 3 days\n",
+    "(bnf_code LIKE '0501080W0%AE' AND quantity_per_item >6) OR --Trimethoprim 200mg tablets (brands and generic) 200mg bd for 3 days\n",
+    "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item >12) OR --Nitrofurantoin 50mg capsules (brands and generic) 50mg qds for 3 days \n",
+    "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item >12) OR --Nitrofurantoin 50mg tablets (brands and generic) 50mg qds for 3 days\n",
+    "(bnf_code LIKE '0501130R0%AG' AND quantity_per_item >6) OR --Nitrofurantoin 100mg modified-release capsules (brands and generic) 100mg bd for 3 days\n",
+    "(bnf_code LIKE '0501070AE%AD' AND quantity_per_item >1) --Fosfomycin 3g granules sachet (brands and generic) 3g sachet as a single dose"
+  ],
+  "denominator_type": "custom",
+  "denominator_columns": [
+    "SUM(items) AS denominator"
+  ],
+  "denominator_from": "{hscic}.raw_prescribing_normalised",
+  "denominator_where": [
+    "bnf_code LIKE '0501015P0%AB' OR # Pivmecillinam HCl_Tab 200mg (brands and generic) \n",
+    "bnf_code LIKE '0501080W0%AE' OR # Trimethoprim_Tab 200mg (brands and generic) \n",
+    "bnf_code LIKE '0501130R0%AA' OR # Nitrofurantoin_Cap 50mg (brands and generic) \n",
+    "bnf_code LIKE '0501130R0%AD' OR # Nitrofurantoin_Tab 50mg (brands and generic) \n",
+    "bnf_code LIKE '0501130R0%AG' OR # Nitrofurantoin_Cap 100mg M/R (brands and generic) \n",
+    "bnf_code LIKE '0501070AE%AD' # Fosfomycin_Sachet 3g (brands and generic)"
+  ],
+  "no_analyse_url": true,
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-05-15",
+  "next_review": "2024-05-15",
+  "measure_complexity": "low"
+}
