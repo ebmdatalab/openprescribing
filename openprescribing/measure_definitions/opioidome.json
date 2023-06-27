@@ -40,9 +40,13 @@
   ],
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT presentation.bnf_code",
-    "FROM {hscic}.presentation",
-    "JOIN ebmdatalab.measures.vw__opioid_measure_dmd",
-    "ON presentation.bnf_code = vw__opioid_measure_dmd.bnf_code"
+    "FROM {hscic}.presentation pr",
+    "JOIN {measures}.vw__opioid_measure_dmd op",
+    "ON pr.bnf_code = op.bnf_code"
+    SELECT DISTINCT presentation.bnf_code
+FROM hscic.presentation
+JOIN ebmdatalab.measures.vw__opioids_total_dmd op
+ON presentation.bnf_code = op.bnf_code
   ],
   "denominator_type": "list_size"
 }
