@@ -42,7 +42,7 @@
     "OR (vpi.ing = 387024006 AND route.descr LIKE '%modified-release.oral' AND p.bnf_name NOT LIKE '%Onexila%40mg%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=40) --Oxycodone MR oral preps (strengths equal to or higher than 40mg) (ing code) \n",
     "OR (vpi.ing IN (442699004,40755011000001109)  AND route.descr LIKE '%modified-release.oral' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=150) --Tapentadol HCl/Phosphate MR oral preps (strengths equal to or higher than 150mg) (ing code) \n",
     "OR (vpi.ing IN (387173000)  AND route.descr LIKE 'patch.transdermal' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=52.5) --Buprenorphine patches (strengths equal to or higher than 52.5mg/hour) (ing code) \n",
-    "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral' AND p.bnf_name NOT LIKE '%MXL%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=60)) --Morphine Sulfate MR oral preps [excluding MXL] (strengths equal to or higher than 60mg) (ing code)"
+    "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral' AND p.bnf_name NOT LIKE '%MXL%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=60)) --Morphine Sulfate MR oral preps [excluding MXL] (strengths equal to or higher than 60mg) (ing code)",
     "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral' AND p.bnf_name LIKE '%MXL%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=120)) --MXL (strengths equal to or higher than 120mg) (ing code)"
   ],
   "denominator_type": "custom",
