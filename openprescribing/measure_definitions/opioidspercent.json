@@ -43,6 +43,7 @@
     "OR (vpi.ing IN (442699004,40755011000001109)  AND route.descr LIKE '%modified-release.oral' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=150) --Tapentadol HCl/Phosphate MR oral preps (strengths equal to or higher than 150mg) (ing code) \n",
     "OR (vpi.ing IN (387173000)  AND route.descr LIKE 'patch.transdermal' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=52.5) --Buprenorphine patches (strengths equal to or higher than 52.5mg/hour) (ing code) \n",
     "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral' AND p.bnf_name NOT LIKE '%MXL%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=60)) --Morphine Sulfate MR oral preps [excluding MXL] (strengths equal to or higher than 60mg) (ing code)"
+    "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral' AND p.bnf_name LIKE '%MXL%' AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >=120)) --MXL (strengths equal to or higher than 120mg) (ing code)"
   ],
   "denominator_type": "custom",
   "denominator_columns": "SUM(p.items) AS denominator",
@@ -58,13 +59,13 @@
     "OR (vpi.ing = 387024006 AND route.descr LIKE '%modified-release.oral') --Oxycodone MR oral preps (ing code) \n",
     "OR (vpi.ing IN (442699004,40755011000001109)  AND route.descr LIKE '%modified-release.oral') --Tapentadol HCl/Phosphate MR oral preps (ing code) \n",
     "OR (vpi.ing IN (387173000)  AND route.descr LIKE 'patch.transdermal') --Buprenorphine patches (ing code) \n",
-    "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral') --Morphine Sulfate MR oral preps [excluding MXL] (strengths equal to or higher than 60mg) (ing code) \n",
+    "OR (vpi.ing IN (60886004) AND route.descr LIKE '%modified-release.oral') --Morphine Sulfate MR oral preps (ing code) \n",
     "OR (vpi.ing IN (387485001)  AND route.descr LIKE '%modified-release.oral')) --Hydromorphone HCl MR oral preps (ing code) \n"
  ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "andrew.brown@phc.ox.ac.uk",
-  "date_reviewed": "2023-03-17",
-  "next_review": "2024-03-17",
+  "date_reviewed": "2023-06-23",
+  "next_review": "2024-06-23",
   "measure_complexity": "medium",
   "measure_type": "dmd"
 }
