@@ -32,9 +32,9 @@
   "low_is_good": null,
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(total_ome) AS numerator"
+    "SUM(ome_dose) AS numerator"
   ],
-  "numerator_from": "{measures}.vw__opioids_total_ome",
+  "numerator_from": "{measures}.vw__opioids_total_dmd",
   "numerator_where": [
     "1 = 1"
   ],
