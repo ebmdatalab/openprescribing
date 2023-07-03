@@ -247,7 +247,7 @@ paramiko==2.12.0
     # via fabric3
 pillow==9.5.0
     # via matplotlib
-pip-tools==6.13.0
+pip-tools==6.14.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
