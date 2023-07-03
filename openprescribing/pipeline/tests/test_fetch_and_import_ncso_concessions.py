@@ -306,6 +306,11 @@ class TestFetchAndImportNCSOConcesions(TestCase):
             NCSOConcession.objects.filter(vmpp_id=1240211000001107).exists()
         )
 
+    def test_regularise_name(self):
+        self.assertEqual(
+            fetch_ncso.regularise_name(" * Some Drug Name 500 mg"), "some drug name 500"
+        )
+
 
 class ContextStack(contextlib.ExitStack):
     """

@@ -270,6 +270,10 @@ def regularise_name(name):
     name = name.replace("gastro- resistant", "gastro-resistant")
     name = name.replace("/ml", "/1ml")
 
+    # Strip leading asterisks which are sometimes used to indicate the presence of
+    # additional notes
+    name = re.sub(r"^\s*\*\s*", "", name)
+
     # Lowercase
     name = name.lower()
 
@@ -372,9 +376,10 @@ def format_message(inserted):
     new_mismatched = [
         i
         for i in inserted
-        if i["vmpp_id"] != i["supplied_vmpp_id"]
-        and i["created"]
+        if i["vmpp_id"] is not None
         and i["supplied_vmpp_id"] is not None
+        and i["vmpp_id"] != i["supplied_vmpp_id"]
+        and i["created"]
     ]
 
     msg = f"Fetched {len(inserted)} concessions. "
