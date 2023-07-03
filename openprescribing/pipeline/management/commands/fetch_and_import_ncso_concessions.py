@@ -372,9 +372,10 @@ def format_message(inserted):
     new_mismatched = [
         i
         for i in inserted
-        if i["vmpp_id"] != i["supplied_vmpp_id"]
-        and i["created"]
+        if i["vmpp_id"] is not None
         and i["supplied_vmpp_id"] is not None
+        and i["vmpp_id"] != i["supplied_vmpp_id"]
+        and i["created"]
     ]
 
     msg = f"Fetched {len(inserted)} concessions. "
