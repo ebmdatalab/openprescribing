@@ -36,5 +36,6 @@
   "checked_by": "christopher.wood@phc.ox.ac.uk",
   "date_reviewed": "2023-06-05",
   "next_review": "2024-06-05",
-  "measure_complexity": "medium"
+  "measure_complexity": "medium",
+  "radar_exclude": true
 }
