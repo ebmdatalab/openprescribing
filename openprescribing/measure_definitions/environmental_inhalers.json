@@ -8,9 +8,7 @@
     "The NHS has <a href='https://www.england.nhs.uk/greenernhs/a-net-zero-nhs/'> committed to reducing its carbon footprint by 80% by 2028 to 2032</a>, ",
     "including a shift to lower carbon inhalers. Dry powder inhalers (DPIs) and other newer types of inhalers like soft ",
     "mist inhalers are less harmful to the environment than traditional metered dose inhalers (MDIs). </p>",
-    "<p>The 2022-2023 PCN Investment and Impact Fund (IIF) <a href='https://www.england.nhs.uk/publication/network-contract-directed-enhanced-service-investment-and-impact-fund-2022-23-updated-guidance/'>",
-    "includes an indicator</a> focusing on the percentage of non-salbutamol MDI prescriptions issued. NHSE England’s aim is that, in line with best ",
-    "practice in other European countries, by 2023/24 only 25% of non-salbutamol inhalers prescribed will be MDIs.</p>",
+    "<p>NHSE England’s aim is that, in line with best practice in other European countries, by 2023/24 only 25% of non-salbutamol inhalers prescribed will be MDIs.</p>",
     "<p><a href='https://www.nice.org.uk/guidance/ng80/resources/inhalers-for-asthma-patient-decision-aid-pdf-6727144573'>NICE has ",
     "produced a inhaler decision aid</a> to facilitiate discussion about inhaler options.</p>",
     "<b><p>Please note: </b>as prescribing data does not contain patient information, this measure uses prescription items for all ages. ",
@@ -19,7 +17,6 @@
   "tags": [
     "core",
     "greenernhs",
-    "iif",
     "nice",
     "respiratory"
   ],  
