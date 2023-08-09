@@ -317,6 +317,19 @@ def add_manual_corrections(items):
                 "price_pence": 334,
             }
         )
+    if any(i["date"] == datetime.date(2023, 7, 1) for i in items):
+        items.append(
+            {
+                "url": "https://cpe.org.uk/our-news/price-improvement-for-atorvastatin-80mg-dispensed-in-july-2023/",
+                "publish_date": datetime.date(2023, 8, 9),
+                "date": datetime.date(2023, 7, 1),
+                "vmpp_id": 1161411000001107,
+                "supplied_vmpp_id": 1161411000001107,
+                "drug": "Atorvastatin 80mg tablets",
+                "pack_size": "28",
+                "price_pence": 391,
+            }
+        )
     for item in items:
         if (
             item["date"] == datetime.date(2023, 6, 1)
