@@ -79,7 +79,7 @@
     "envify": "^3.4.1",
     "eslint": "^4.13.1",
     "eslint-config-google": "latest",
-    "jsdom": "^11.2.0",
+    "jsdom": "^16.5.0",
     "less": "^2.5.1",
     "mocha": "^2.2.5",
     "uglifyjs": "^2.4.10",
