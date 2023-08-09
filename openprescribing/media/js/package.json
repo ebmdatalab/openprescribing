@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --require test/setup.js",
-    "build-js": "nodejs build.js production",
-    "watch-js": "nodejs build.js",
+    "build-js": "node build.js production",
+    "watch-js": "node build.js",
     "build-css": "lessc ../css/index.less > ../../static/css/index.css",
     "build-config": "browserify src/config.js --standalone config -t envify | uglifyjs > ../../static/js/config.min.js",
     "build-clipboardjs": "cp node_modules/clipboard/dist/clipboard.min.js ../../static/js/",
