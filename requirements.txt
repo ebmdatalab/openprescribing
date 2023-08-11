@@ -160,12 +160,12 @@ googleapis-common-protos==1.59.1
     #   grpcio-status
 graphviz==0.20.1
     # via -r requirements.in
-grpcio==1.56.0
+grpcio==1.57.0
     # via
     #   google-api-core
     #   google-cloud-bigquery
     #   grpcio-status
-grpcio-status==1.56.0
+grpcio-status==1.57.0
     # via google-api-core
 gunicorn==20.0.4
     # via -r requirements.in
