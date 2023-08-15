@@ -47,8 +47,13 @@
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT bnf_code FROM {dmd}.vmp_full ",
-    "WHERE vtm =775934002 # Fentanyl ",
-    "AND dform_form NOT IN ('Transdermal patch','Solution for infusion','Infusion','Solution for injection') "
+    "WHERE vtm =775934002 ",
+    "AND dform_form NOT IN ('Transdermal patch','Solution for infusion','Infusion','Solution for injection')",
+    "UNION ALL",
+    "SELECT DISTINCT a.bnf_code FROM {dmd}.amp_full a",
+    "INNER JOIN {dmd}.vmp_full v ON a.vmp = v.id",
+    "WHERE v.vtm =775934002 ",
+    "AND v.dform_form NOT IN ('Transdermal patch','Solution for infusion','Infusion','Solution for injection')"
   ],
   "denominator_type": "list_size",
   "denominator_type": "list_size",
