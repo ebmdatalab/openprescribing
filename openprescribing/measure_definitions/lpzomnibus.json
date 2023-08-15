@@ -9,7 +9,7 @@
   "numerator_short": "cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "NHS England have recently published a <a href='https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/'>number of areas which should not be routinely prescribed in primary care</a> (updated June 2019).",
+    "In August 2023 NHS England updated guidance on a <a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/'>number of areas which should not be routinely prescribed in primary care</a>.",
     "This is the combined cost per 1000 patients for all of these measures. "
   ],
   "tags": [
@@ -35,7 +35,7 @@
   "numerator_is_list_of_bnf_codes": false,
   "denominator_type": "custom",
   "denominator_columns": [
-    "SUM(denominator)/25 AS denominator"
+    "SUM(denominator)/24 AS denominator"
   ],
   "denominator_from": "{measures}.practice_data_all_low_priority ",
   "denominator_where": [
