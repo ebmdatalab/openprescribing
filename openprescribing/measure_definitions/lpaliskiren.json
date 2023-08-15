@@ -12,10 +12,12 @@
     "are available yet.<p>",
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#aliskiren-updated-2023'>",
     "NHS England recommend that GPs</a>:",
+    "<ul>",
     "<li>Do not initiate.</li>",
     "<li>Deprescribe in patients currently prescribed this medicine.</li>",
     "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
-    "<li>Prescribe only if no other item or intervention is available.</li>"
+    "<li>Prescribe only if no other item or intervention is available.</li>",
+    "</ul>",
   ],
   "tags": [
     "cost",
