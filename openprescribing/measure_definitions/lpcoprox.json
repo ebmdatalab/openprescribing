@@ -1,20 +1,33 @@
 {
   "name": "NHS England Low Priority Treatment - co-proxamol",
-  "title": [
-    "Co-proxamol cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of co-proxamol per 1000 patients"
-  ],
+  "title": "Co-proxamol cost per 1000 patients",
+  "description": "Cost of co-proxamol per 1000 patients",
   "numerator_short": "Co-proxamol cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Co-proxamol is a painkiller which was withdrawn in 2005 due to safety concerns.  All marketing authorisations were cancelled at the end of 2007. ",
-    "There remains some prescribing of co-proxamol (which is now unlicensed) at a cost of over £100 per box."
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#co-proxamol-updated-2023'>",
+    "NHS England guidance states</a>:</p>",
+    "<p><i>The Medicines and Healthcare products Regulatory Agency (MHRA) fully withdrew the painkiller co-proxamol from the UK market in 2007 due to safety concerns. ",
+    "All use in the UK is now on an unlicensed basis. Prescribing an unlicensed medicine should be in line with ",
+    "<a href='https://www.gmc-uk.org/-/media/documents/prescribing-guidance-before-cie_pdf-85261358.pdf'>General Medical Council (GMC) guidance</a>, ",
+    "which states suitably licensed alternatives need to be considered and the prescriber must be satisfied that there is sufficient evidence or experience ",
+    "of using the medicine to demonstrate its safety and efficacy.</p>",
+    "<p>Since 1985 advice aimed at the reduction of co-proxamol toxicity and fatal overdose has been provided, but this was not effective and resulted in withdrawal ",
+    "of co-proxamol by the MHRA. In 2011 MHRA reported that the withdrawal of co-proxamol from the UK had saved an estimated 300 to 400 lives each year from self-poisoning, ",
+    "around a fifth of which would have been accidental. Since the withdrawal, further safety concerns have been raised, resulting in co-proxamol ",
+    "being withdrawn in other countries.</p>",
+    "<p>Due to the significant safety concerns, the joint clinical working group considered co-proxamol suitable for inclusion in this guidance. ",
+    "Co-proxamol is no longer manufactured or supplied in the UK and any use on an unlicensed basis requires it to be imported for individual use, ",
+    "at an increasing cost to the NHS and the environment. The average cost per item is £265 (January 2022), which is an increase of £44 since 2021.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li></ul>"
   ],
   "tags": [
     "cost",
     "lowpriority",
+    "lowpriority_noexceptions",
     "pain",
     "safety"
   ],
@@ -26,5 +39,12 @@
   "numerator_bnf_codes_filter": [
     "0407010Q0 # Co-Proxamol (Dextroprop HCl/Paracet)"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-08-15",
+  "next_review": "2025-08-15",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
