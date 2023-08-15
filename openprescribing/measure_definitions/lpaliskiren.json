@@ -1,23 +1,27 @@
 {
   "name": "NHS England Low Priority Treatment - Aliskiren",
-  "title": [
-    "Aliskiren cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of Aliskiren per 1000 patients"
-  ],
+  "title": "Aliskiren cost per 1000 patients",
+  "description": "Cost of Aliskiren per 1000 patients",
   "numerator_short": "Aliskiren cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/cg127/evidence'> NICE hypertension guidance states</a> there is insufficient",
     "evidence of its effectiveness to determine its suitability for use in resistant hypertension.",
     "Whilst aliskiren has shown comparable efficacy to other antihypertensive agents in terms of blood ",
-    "pressure reduction, its effects on mortality and long-term morbidity are currently unknown."
+    "pressure reduction, its effects on mortality and long-term morbidity are currently unknown.  The patent expired April 2020 but as of Augusg 2003 no generics ",
+    "are available yet.<p>",
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#aliskiren-updated-2023'>",
+    "NHS England recommend that GPs</a>:",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>",
   ],
   "tags": [
     "cost",
     "cardiovascular",
     "lowpriority",
+    "lowpriority_exclusions",
     "nice"
   ],
   "url": null,
@@ -28,5 +32,12 @@
   "numerator_bnf_codes_filter": [
     "0205053A0 # Aliskiren"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-08-15",
+  "next_review": "2025-08-15",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
