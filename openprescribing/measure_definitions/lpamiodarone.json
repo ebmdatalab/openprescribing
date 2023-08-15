@@ -1,22 +1,29 @@
 {
   "name": "NHS England Low Priority Treatment - Amiodarone",
-  "title": [
-    "Amiodarone cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of Amiodarone per 1000 patients"
-  ],
+  "title": ["Amiodarone cost per 1000 patients",
+  "description": "Cost of Amiodarone per 1000 patients",
   "numerator_short": "Amiodarone cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Amiodarone is used to treat severe cardiac rhythm disorders but also has the potential to cause severe toxicity and side-effects",
-    "and must be closely monitored. <a href='https://www.nice.org.uk/guidance/CG180'>NICE advise in their guidance for Atrial Fibrillation </a>",
-    "that amiodarone should not be used for long-term rate control."
+  "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#amiodarone-updated-2023'>",
+  "NHS England guidance states</a>:</p>",
+  "<p><i>May be suitable in patients prior and post cardioversion or in specific patients who also have heart failure or left ventricular impairment.</p>",
+  "<p>Must be initiated by a specialist and only continued under a shared care arrangement for patients where other treatments cannot be used, ",
+  "have failed or is in line with NICE Guidance CG180.</p>",
+  "<p>Where there is an existing cohort of patients taking amiodarone who are not currently under shared care, it is recommended that these patients ",
+  "are reviewed to ensure that prescribing remains safe and appropriate and a shared care arrangement is introduced.</p>",
+  "NHS England recommend that GPs</a>:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if for a named indication in this guidance.</li>",
+    "</ul>"
   ],
   "tags": [
     "cost",
     "cardiovascular",
-    "lowpriority",
+    "lowpriority_exclusions",
     "nice",
     "safety"
   ],
@@ -29,4 +36,11 @@
     "0203020D0 # Amiodarone"
   ],
   "denominator_type": "list_size"
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-08-15",
+  "next_review": "2025-08-15",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
