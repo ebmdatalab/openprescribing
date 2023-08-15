@@ -36,7 +36,7 @@
     "INNER JOIN {dmd}.vtm t ",
     "ON t.id = v.vtm # joins to VTM table ",
     "WHERE LOWER(t.nm) LIKE '%glucosamine%' OR LOWER(t.nm) LIKE '%chondroitin%' ",
-    "UNION ALL --creates UNION join for branded products ",
+    "UNION ALL ",
     "SELECT DISTINCT a.bnf_code FROM {dmd}.amp_full a ",
     "INNER JOIN {dmd}.vmp v ON a.vmp = v.id ",
     "INNER JOIN {dmd}.vtm t ON t.id = v.vtm ",
