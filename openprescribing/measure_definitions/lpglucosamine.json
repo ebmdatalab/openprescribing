@@ -32,7 +32,7 @@
   "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_query": [
-    "SELECT DISTINCT v.bnf_code FROM {dmd}.vmp v ",
+    "SELECT DISTINCT v.bnf_code AS bnf_code FROM {dmd}.vmp v ",
     "INNER JOIN {dmd}.vtm t ",
     "ON t.id = v.vtm ",
     "WHERE LOWER(t.nm) LIKE '%glucosamine%' OR LOWER(t.nm) LIKE '%chondroitin%' ",
