@@ -34,7 +34,7 @@
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT v.bnf_code FROM {dmd}.vmp_full v ",
     "INNER JOIN {dmd}.vtm t ",
-    "ON t.id = v.vtm # joins to VTM table ",
+    "ON t.id = v.vtm ",
     "WHERE LOWER(t.nm) LIKE '%glucosamine%' OR LOWER(t.nm) LIKE '%chondroitin%' ",
     "UNION ALL ",
     "SELECT DISTINCT a.bnf_code FROM {dmd}.amp_full a ",
