@@ -310,7 +310,7 @@ pytz==2023.3
     #   pandas
 pyvirtualdisplay==3.0
     # via -r requirements.in
-pyyaml==6.0
+pyyaml==6.0.1
     # via tablib
 raven==6.10.0
     # via -r requirements.in
