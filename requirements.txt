@@ -378,7 +378,7 @@ urllib3[socks]==1.26.13
     #   selenium
 watchdog==3.0.0
     # via when-changed
-wheel==0.40.0
+wheel==0.41.1
     # via pip-tools
 when-changed==0.3.0
     # via -r requirements.in
