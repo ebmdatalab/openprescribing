@@ -19,7 +19,7 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_bnf_codes_filter": [ 
+  "numerator_bnf_codes_query": [ 
     "SELECT DISTINCT v.bnf_code FROM dmd.vmp v", 
     "INNER JOIN dmd.vtm t", 
     "ON t.id = v.vtm",
