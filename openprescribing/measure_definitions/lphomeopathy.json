@@ -9,13 +9,23 @@
   "numerator_short": "Homeopathy cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "In 2010 House of Commons Science and Technology Committee found that the use of homeopathy was ",
-    "<a href='https://publications.parliament.uk/pa/cm200910/cmselect/cmsctech/45/4504.htm#a18'>not evidence-based, and any benefits to patients was due to placebo effect</a>. "
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#homeopathy-2017'>",
+    "NHS England guidance states</a>:</p>",
+    "<p><i>Homeopathy seeks to treat patients with highly diluted substances that are administered orally.</p>",
+    "<p>During the consultation we received a range of submissions pertaining to homeopathy and it was deemed necessary to have a further review to include the up to date evidence; this was conducted by the ",
+    "<a href='https://www.england.nhs.uk/publication/items-which-should-not-be-routinely-prescribed-in-primary-care-evidence-reviews/'>Specialist Pharmacy Service</a>. ",
+    "This review found no clear or robust evidence to support the use of homeopathy on the NHS.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "</ul>"
   ],
   "tags": [
     "cost",
     "efficacy",
-    "lowpriority"
+    "lowpriority",
+    "lowpriority_noexceptions"
   ],
   "url": null,
   "is_percentage": false,
@@ -26,4 +36,11 @@
     "190203 # Other Homeopathic Preps"
   ],
   "denominator_type": "list_size"
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-08-22",
+  "next_review": "2025-08-22",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
