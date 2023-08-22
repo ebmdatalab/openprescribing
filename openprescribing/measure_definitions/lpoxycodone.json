@@ -1,20 +1,30 @@
 {
   "name": "NHS England Low Priority Treatment - oxycodone and naloxone combination product",
-  "title": [
-    "Oxycodone and naloxone combination cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of oxycodone and naloxone combination per 1000 patients"
-  ],
+  "title": "Oxycodone and naloxone combination cost per 1000 patients",
+  "description": "Cost of oxycodone and naloxone combination per 1000 patients",
   "numerator_short": "Oxycodone and naloxone combination cost (£)",
   "denominator_short": "1000 patients",
-  "why_it_matters": [
-    "Oxycodone is an opioid analgesic used to treat severe pain. Naloxone is added to reduce constipation.  ",
-    "The combination product is expensive, and the benefit is unclear."
+"why_it_matters": [
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#oxycodone-and-naloxone-combination-product-2017'>",
+    "NHS England guidance states</a>:</p>",
+    "<p><i>Oxycodone and naloxone combination product is used to treat severe pain and can also be used second line in restless legs syndrome. ",
+    "The opioid antagonist naloxone is added to counteract opioid-induced constipation by blocking the action of oxycodone at opioid receptors in the gut.</p>",
+    "PrescQIPP CIC has issued a <a href='https://www.prescqipp.info/-oxycodone/naloxone-prolonged-release-tablets/send/105-oxycodone-naloxone-prolonged-release-targinact-tablets/1307-bulletin-56-oxycodone-naloxone-prolonged-release'>",
+    "bulletin</a>, which does not identify a benefit of oxycodone and naloxone in a single product over other analgesia (with laxatives if necessary).</p>",
+    "<p>Due to the significant cost of the oxycodone and naloxone combination product and the unclear role of the combination product in therapy compared with individual products, ",
+    "the joint clinical working group considered oxycodone and naloxone suitable for inclusion in this guidance.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+  "<li>Prescribe only if no other item or intervention is available.</li>",
+    "</ul>"
   ],
   "tags": [
     "cost",
     "lowpriority",
+    "lowpriority_exceptions",
     "opioids",
     "pain"
   ],
@@ -24,7 +34,14 @@
   "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
-    "0407020AF # Oxycodone HCl/Naloxone HCl"
+    "0407020AF # Oxycodone hydrochloride/naloxone hydrochloride"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-08-22",
+  "next_review": "2025-08-22",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
