@@ -37,7 +37,6 @@
   "is_percentage": false,
   "is_cost_based": true,
   "low_is_good": true,
-  "numerator_type": "custom",
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT p.bnf_code",
