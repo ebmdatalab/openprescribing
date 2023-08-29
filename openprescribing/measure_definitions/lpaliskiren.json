@@ -1,11 +1,11 @@
 {
-  "name": "NHS England Low Priority Treatment - Aliskiren",
+  "name": "Items which should not routinely be prescribed in primary care - Aliskiren",
   "title": "Aliskiren cost per 1000 patients",
   "description": "Cost of Aliskiren per 1000 patients",
   "numerator_short": "Aliskiren cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#aliskiren-updated-2023'>",
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#aliskiren-updated-2023' target='_blank'>",
     "NHS England guidance states</a>:</p>",
     "<p><i>Aliskiren is a direct renin inhibitor; renin converts angiotensinogen to angiotensin. ",
     "It is indicated for essential hypertension either alone or in combination with other antihypertensives. ",
