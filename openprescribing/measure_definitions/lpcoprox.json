@@ -1,15 +1,15 @@
 {
-  "name": "NHS England Low Priority Treatment - co-proxamol",
+  "name": "Items which should not routinely be prescribed in primary care - co-proxamol",
   "title": "Co-proxamol cost per 1000 patients",
   "description": "Cost of co-proxamol per 1000 patients",
   "numerator_short": "Co-proxamol cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#co-proxamol-updated-2023'>",
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#co-proxamol-updated-2023' target='_blank'>",
     "NHS England guidance states</a>:</p>",
     "<p><i>The Medicines and Healthcare products Regulatory Agency (MHRA) fully withdrew the painkiller co-proxamol from the UK market in 2007 due to safety concerns. ",
     "All use in the UK is now on an unlicensed basis. Prescribing an unlicensed medicine should be in line with ",
-    "<a href='https://www.gmc-uk.org/-/media/documents/prescribing-guidance-before-cie_pdf-85261358.pdf'>General Medical Council (GMC) guidance</a>, ",
+    "<a href='https://www.gmc-uk.org/-/media/documents/prescribing-guidance-before-cie_pdf-85261358.pdf' target='_blank'>General Medical Council (GMC) guidance</a>, ",
     "which states suitably licensed alternatives need to be considered and the prescriber must be satisfied that there is sufficient evidence or experience ",
     "of using the medicine to demonstrate its safety and efficacy.</p>",
     "<p>Since 1985 advice aimed at the reduction of co-proxamol toxicity and fatal overdose has been provided, but this was not effective and resulted in withdrawal ",
