@@ -1,23 +1,38 @@
 {
-  "name": "NHS England Low Priority Treatment - rubefacients",
-  "title": [
-    "Rubefacients cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of rubefacients per 1000 patients"
-  ],
+  "name": "NHS England Low Priority Treatment - rubefacients, benzydamine, mucopolysaccharide and cooling products",
+  "title": "Rubefacients cost per 1000 patients",
+  "description":"Cost of rubefacients per 1000 patients",
   "numerator_short": "Rubefacients cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Rubifacients deep heat rubs and ointments are used to provide pain relief in musculoskeletal conditions. ",
-    "However, the BNF states that <a href='https://bnf.nice.org.uk/treatment-summary/soft-tissue-disorders.html'>the evidence ",
-    "available does not support the use of topical rubefacients in acute or chronic musculoskeletal pain</a>. ",
-    "This measure excludes topical NSAIDs and Capsaicin as per NHS England guidance."
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/",
+    "#rubefacients-benzydamine-mucopolysaccharide-and-cooling-products-excluding-topical-nsaids-and-capsaicin-updated-2023' target='_blank'>",
+    "NHS England guidance states</a>:</p>",
+    "<p><i>Rubefacients are topical preparations that cause irritation and reddening of the skin due to increased blood flow. They are believed to relieve pain in various musculoskeletal conditions",
+    " and are available on prescription and in OTC remedies. They may contain nicotinate compounds, salicylate compounds, essential oils and camphor.</p>",
+    "<p>The BNF states: &ldquo;The evidence available does not support the use of topical rubefacients in acute or chronic musculoskeletal pain&rdquo;.</p>",
+    "<p>NICE has issued the following &lsquo;do not do&rsquo; recommendation: Do not offer rubefacients for treating osteoarthritis.</p>",
+    "<p>Due to limited evidence and NICE recommendations, the joint clinical working group considered rubefacients (excluding topical NSAIDs) suitable for inclusion in this guidance.</p>",
+    "<p>Other miscellaneous topical analgesics containing benzydamine, mucopolysaccharide polysulphate or cooling ingredients fall under this category. Benzydamine and mucopolysaccharide ",
+    "are weak prostaglandin inhibitors and are therefore pharmacologically different from those routinely referred to as NSAIDs in current practice (such as ibuprofen and diclofenac), ",
+    "so it cannot be presumed that the clinical evidence relating to NSAIDs can be extrapolated to benzydamine or mucopolysaccharide polysulphate containing products ",
+    "(Rubefacients and miscellaneous topical analgesics, PrescQIPP, July 2021). </p>",
+    "<p>The Clinical Knowledge Summary on sprains and strains (NICE, 2020) does not specifically discuss cooling sprays and gels, but does suggest ice is used for self-management strategies",
+    "in the first 48-72 hours after injury.</p>",
+    "<p>Due to limited evidence and the NICE recommendations, the joint clinical working group considered these additional products suitable for inclusion in this category.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>",
+    "</ul>"
   ],
   "tags": [
     "cost",
     "efficacy",
     "lowpriority",
+    "lowpriority_exceptions",
     "pain"
   ],
   "url": null,
@@ -26,29 +41,14 @@
   "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
-    "100302000 # Other Rubefacient&Top AntirheumaticPreps",
-    "100302040 # Dimethyl Sulfoxide",
-    "1003020AB # Ephedrine Hydrochloride",
-    "1003020B0 # Aconite",
-    "1003020C0 # Adrenaline",
-    "1003020D0 # Belladonna Root",
-    "1003020E0 # Cantharidin",
-    "1003020F0 # Benzydamine Hydrochloride",
-    "1003020G0 # Camphor",
-    "1003020H0 # Capsicum",
-    "1003020I0 # Diethylamine Salicylate",
-    "1003020J0 # Iodine",
-    "1003020K0 # Cantharides",
-    "1003020L0 # Kaolin Heavy",
-    "1003020N0 # Methyl Salicylate",
-    "1003020Q0 # Iodine & Methyl Salicylate",
-    "1003020S0 # Soft Soap",
-    "1003020T0 # Nicotinates",
-    "1003020V0 # Turpentine Oil",
-    "1003020W0 # Heparinoid",
-    "1003020X0 # Mustard Oil Expressed",
-    "1003020Y0 # Freeze Sprays & Gels",
-    "1003020Z0 # Indometacin"
+    "1003020 # Rubefacients, topical NSAIDS, capsaicin and poultice",
+    "~100302010 # Ketoprofen",
+    "~1003020AA # Capsaicin",
+    "~1003020AF # Diclofenac diethyl",
+    "~1003020M0 # Felbinac",
+    "~1003020P0 # Ibuprofen",
+    "~1003020R0 # Piroxicam",
+    "~1003020U0 # Diclofenac sodium"
   ],
   "denominator_type": "list_size"
 }
