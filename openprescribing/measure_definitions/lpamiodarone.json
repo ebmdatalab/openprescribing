@@ -1,11 +1,11 @@
 {
-  "name": "NHS England Low Priority Treatment - Amiodarone",
-  "title": ["Amiodarone cost per 1000 patients",
+  "name": "Items which should not routinely be prescribed in primary care  - Amiodarone",
+  "title": "Amiodarone cost per 1000 patients",
   "description": "Cost of Amiodarone per 1000 patients",
   "numerator_short": "Amiodarone cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-  "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#amiodarone-updated-2023'>",
+  "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#amiodarone-updated-2023' target='_blank'>",
   "NHS England guidance states</a>:</p>",
   "<p><i>May be suitable in patients prior and post cardioversion or in specific patients who also have heart failure or left ventricular impairment.</p>",
   "<p>Must be initiated by a specialist and only continued under a shared care arrangement for patients where other treatments cannot be used, ",
