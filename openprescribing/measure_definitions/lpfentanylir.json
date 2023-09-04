@@ -45,11 +45,13 @@
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT bnf_code FROM {dmd}.vmp_full ",
     "WHERE vtm =775934002 ",
+    "AND bnf_code IS NOT NULL",
     "AND dform_form NOT IN ('Transdermal patch','Solution for infusion','Infusion','Solution for injection')",
     "UNION ALL",
     "SELECT DISTINCT a.bnf_code FROM {dmd}.amp_full a",
     "INNER JOIN {dmd}.vmp_full v ON a.vmp = v.id",
     "WHERE v.vtm =775934002 ",
+    "AND a.bnf_code IS NOT NULL",
     "AND v.dform_form NOT IN ('Transdermal patch','Solution for infusion','Infusion','Solution for injection')"
   ],
   "denominator_type": "list_size",
