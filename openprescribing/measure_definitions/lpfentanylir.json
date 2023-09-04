@@ -1,11 +1,7 @@
 {
   "name": "Items which should not routinely be prescribed in primary care - immediate release fentanyl",
-  "title": [
-    "Fentanyl immediate release cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of fentanyl immediate release per 1000 patients"
-  ],
+  "title": "Fentanyl immediate release cost per 1000 patients",
+  "description": "Cost of fentanyl immediate release per 1000 patients",
   "numerator_short": "Fentanyl immediate release cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
