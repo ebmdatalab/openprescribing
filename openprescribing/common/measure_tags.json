@@ -56,11 +56,27 @@
     "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings."
   },
   "lowpriority": {
-    "name": "NHS England Low Priority",
+    "name": "NHS England - items which should not routinely be prescribed in primary care",
     "description": [
       "This is a list of products",
       "considered a low priority for NHS Funding",
-      "<a href=\"https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/\">by NHS England</a>. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
+      "<a href=\"https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/\">by NHS England</a>. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
+    ]
+  },
+  "lowpriority_exceptions": {
+    "name": "NHS England - items which should not routinely be prescribed in primary care (some exceptions)",
+    "description": [
+      "This is a list of products",
+      "considered a low priority for NHS Funding",
+      "<a href=\"https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/\">by NHS England</a>. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
+    ]
+  },
+  "lowpriority_noexceptions": {
+    "name": "NHS England - items which should not routinely be prescribed in primary care (no exceptions)",
+    "description": [
+      "This is a list of products",
+      "considered a low priority for NHS Funding",
+      "<a href=\"https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/\">by NHS England</a>. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
     ]
   },
     "mentalhealth": {
