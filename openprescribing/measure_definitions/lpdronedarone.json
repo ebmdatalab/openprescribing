@@ -5,22 +5,22 @@
   "numerator_short": "Dronedarone cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#dronedarone-2019>",
-    "NHS England guidance states</a>:</p>",
-    "<p>Dronedarone is used for the maintenance of sinus heart rhythm after cardioversion in clinically stable patients with paroxysmal or persistent atrial fibrillation, ",
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#dronedarone-2019 target='_blank'>",
+    "NHS England guidance states</a></p>",
+    "<p><i>Dronedarone is used for the maintenance of sinus heart rhythm after cardioversion in clinically stable patients with paroxysmal or persistent atrial fibrillation, ",
     "when alternative treatments are unsuitable (initiated under specialist supervision).</p>",
     "<p>Dronedarone was originally approved to prevent atrial fibrillation from coming back or to lower the heart rate in adults who have had or have non-permanent atrial ",
     "fibrillation. In September 2011 this indication was restricted to the maintenance of normal heart rhythm in ‘persistent’ or ‘paroxysmal’ atrial fibrillation after ",
     "normal heart rhythm has been restored. This followed a review of data that became available since its authorisation, including data from the ",
-    "<a href='https://www.nejm.org/doi/full/10.1056/nejmoa1109867'>PALLAS study</a></p>.",
-    "<p>NICE guidance puts greater emphasis on rate rather than rhythm control and clarifies the place of dronedarone in the treatment pathway.</p><i>",
+    "<a href='https://www.nejm.org/doi/full/10.1056/nejmoa1109867' target='_blank'>PALLAS study</a></p>.",
+    "<p>NICE guidance puts greater emphasis on rate rather than rhythm control and clarifies the place of dronedarone in the treatment pathway.</p></i>",
     "<p>NHS England recommend that GPs:",
     "<ul>",
     "<li>Do not initiate.</li>",
     "<li>Deprescribe in patients currently prescribed this medicine.</li>",
     "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
     "<li>Prescribe only if no other item or intervention is available.</li>",
-    </ul>"
+    "</ul>"
   ],
   "tags": [
     "cost",
