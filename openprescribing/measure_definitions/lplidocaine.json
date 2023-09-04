@@ -1,15 +1,15 @@
 {
-  "name": "NHS England Low Priority Treatment - lidocaine plasters",
+  "name": "Items which should not routinely be prescribed in primary care - lidocaine plasters",
   "title": "lidocaine plasters cost per 1000 patients",
   "description": "Cost of lidocaine plasters per 1000 patients",
   "numerator_short": "Lidocaine plasters cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#lidocaine-plasters-updated-2023'>",
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#lidocaine-plasters-updated-2023' target='_blank'>",
     "NHS England guidance states</a>:</p>",
     "<p><i>Lidocaine plasters are licensed for symptomatic relief of neuropathic pain associated with previous herpes zoster infection (PHN) in adults.",
     "<p>NICE guidance on chronic pain does not recommend lidocaine plasters for treating neuropathic pain.</p>",
-    "<p>The joint clinical working group also considered a <a href='https://www.prescqipp.info/-lidocaine-plasters/send/54-lidocaine-plasters/852-bulletin-51-lidocaine-plasters'>PrescQIPP CIC review</a>, ",
+    "<p>The joint clinical working group also considered a <a href='https://www.prescqipp.info/-lidocaine-plasters/send/54-lidocaine-plasters/852-bulletin-51-lidocaine-plasters' target='_blank'>PrescQIPP CIC review</a>, ",
     "and during the consultation more evidence was provided and an up to date evidence summary was deemed necessary and prepared by the ",
     "<a href='https://www.england.nhs.uk/publication/items-which-should-not-be-routinely-prescribed-in-primary-care-evidence-reviews/' target='_blank'>",
     "Specialist Pharmacy Service</a> to inform the joint clinical working group’s recommendations. Based on this review, lidocaine plasters can be prescribed only for patients who are intolerant of first-line ",
