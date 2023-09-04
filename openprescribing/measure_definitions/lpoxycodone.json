@@ -1,15 +1,15 @@
 {
-  "name": "NHS England Low Priority Treatment - oxycodone and naloxone combination product",
+  "name": "Items which should not routinely be prescribed in primary care - oxycodone and naloxone combination product",
   "title": "Oxycodone and naloxone combination cost per 1000 patients",
   "description": "Cost of oxycodone and naloxone combination per 1000 patients",
   "numerator_short": "Oxycodone and naloxone combination cost (£)",
   "denominator_short": "1000 patients",
-"why_it_matters": [
-    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#oxycodone-and-naloxone-combination-product-2017'>",
+  "why_it_matters": [
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#oxycodone-and-naloxone-combination-product-2017' target='_Blank'>",
     "NHS England guidance states</a>:</p>",
     "<p><i>Oxycodone and naloxone combination product is used to treat severe pain and can also be used second line in restless legs syndrome. ",
     "The opioid antagonist naloxone is added to counteract opioid-induced constipation by blocking the action of oxycodone at opioid receptors in the gut.</p>",
-    "PrescQIPP CIC has issued a <a href='https://www.prescqipp.info/-oxycodone/naloxone-prolonged-release-tablets/send/105-oxycodone-naloxone-prolonged-release-targinact-tablets/1307-bulletin-56-oxycodone-naloxone-prolonged-release'>",
+    "PrescQIPP CIC has issued a <a href='https://www.prescqipp.info/-oxycodone/naloxone-prolonged-release-tablets/send/105-oxycodone-naloxone-prolonged-release-targinact-tablets/1307-bulletin-56-oxycodone-naloxone-prolonged-release' target='_Blank'>",
     "bulletin</a>, which does not identify a benefit of oxycodone and naloxone in a single product over other analgesia (with laxatives if necessary).</p>",
     "<p>Due to the significant cost of the oxycodone and naloxone combination product and the unclear role of the combination product in therapy compared with individual products, ",
     "the joint clinical working group considered oxycodone and naloxone suitable for inclusion in this guidance.</p></i>",
