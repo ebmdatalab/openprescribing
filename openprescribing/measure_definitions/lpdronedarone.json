@@ -5,8 +5,8 @@
   "numerator_short": "Dronedarone cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#dronedarone-2019 target='_blank'>",
-    "NHS England guidance states</a></p>",
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#dronedarone-2019' target='_blank'>",
+    "NHS England guidance states:</a></p>",
     "<p><i>Dronedarone is used for the maintenance of sinus heart rhythm after cardioversion in clinically stable patients with paroxysmal or persistent atrial fibrillation, ",
     "when alternative treatments are unsuitable (initiated under specialist supervision).</p>",
     "<p>Dronedarone was originally approved to prevent atrial fibrillation from coming back or to lower the heart rate in adults who have had or have non-permanent atrial ",
