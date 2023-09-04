@@ -38,7 +38,7 @@
     "cost",
     "efficacy",
     "lowpriority",
-    "lowpriority_noexceptions"
+    "lowpriority_noexceptions",
     "nice"
   ],
   "url": null,
