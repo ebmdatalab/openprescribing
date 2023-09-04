@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment - paracetamol and tramadol combination",
+  "name": "Items which should not routinely be prescribed in primary care - paracetamol and tramadol combination",
   "title": "Paracetamol and tramadol combination cost per 1000 patients",
   "description": "Cost of paracetamol and tramadol combination per 1000 patients",
   "numerator_short": "Paracetamol and tramadol combination cost (£)",
@@ -35,7 +35,7 @@
     "SELECT DISTINCT v.bnf_code FROM dmd.vmp v ",
     "INNER JOIN dmd.vtm t",
     "ON t.id = v.vtm ",
-    "WHERE t.id =  777074005",
+    "WHERE t.id =  777074005 \n # paracetmol and tramadol",
     "AND v.bnf_code IS NOT NULL ",
     "UNION ALL ",
     "SELECT DISTINCT a.bnf_code FROM dmd.amp a ",
