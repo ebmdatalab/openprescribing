@@ -9,9 +9,10 @@
   "numerator_short": "Trimethoprim items",
   "denominator_short": "Total trimethoprim and nitrofurantoin items",
   "why_it_matters": [
-    "Resistance to trimethoprim is increasing, and therefore Public Health England ",
-    "is recommending that <a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/664740/Managing_common_infections_guidance_for_consultation_and_adaptation.pdf'> ",
-    "nitrofurantoin is used first for empirical treatment of urinary tract infections.</a>",
+    "Resistance to trimethoprim is increasing, and therefore NICE ",
+    "guidelines recommend that <a href='https://www.nice.org.uk/guidance/ng109'> ",
+    "nitrofurantoin is used first for empirical treatment of urinary tract infections</a> ",
+    "unless there is a low risk of trimethoprim resistance.",
     "<p> You can read our paper on the implementation of this guidance in the <a href='https://doi.org/10.1093/jac/dky509'>Journal of Antimicrobial Chemotherapy</a>.</p>"
     
   ],
@@ -32,5 +33,11 @@
   "denominator_bnf_codes_filter": [
     "0501130R0 # Nitrofurantoin",
     "0501080W0 # Trimethoprim"
-  ]
+  ],
+  "authored_by": "christopher.wood@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-04",
+  "next_review": "2024-09-04",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code"
 }
