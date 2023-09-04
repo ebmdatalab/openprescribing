@@ -16,7 +16,7 @@ bcrypt==4.0.1
     # via paramiko
 beautifulsoup4==4.12.2
     # via -r requirements.in
-build==0.10.0
+build==1.0.0
     # via pip-tools
 cachetools==5.3.1
     # via
