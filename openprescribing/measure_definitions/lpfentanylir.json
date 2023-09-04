@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment - fentanyl immediate release",
+  "name": "Items which should not routinely be prescribed in primary care - immediate release fentanyl",
   "title": [
     "Fentanyl immediate release cost per 1000 patients"
   ],
@@ -9,20 +9,20 @@
   "numerator_short": "Fentanyl immediate release cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#immediate-release-fentanyl-updated-2023'>",
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#immediate-release-fentanyl-updated-2023' target='_blank'>",
     "NHS England guidance states</a>:</p>",
     "<p><i>Fentanyl, in the form of tablets, lozenges, films and nasal spray, is an opioid analgesic used for breakthrough cancer pain.",
     "There is little evidence it is more effective than oral morphine (such as oramorph) but it is much more expensive.",
     "This indicator does not include fentanyl patches, which are not immediate release.",
     "Fentanyl is a strong opioid analgesic. It is available as an immediate-release substance in various dosage forms; tablets, lozenges, films and nasal spray. ",
     "Immediate-release fentanyl is licensed for the treatment of breakthrough pain in adults with cancer who are already receiving at least 60mg oral morphine daily ",
-    "or equivalent. <a href='https://www.nice.org.uk/guidance/CG140'> NICE CG140 Opioids in palliative care states</a>: ",
+    "or equivalent. <a href='https://www.nice.org.uk/guidance/CG140' target='_blank'> NICE CG140 Opioids in palliative care states</a>: ",
     "'Do not offer fast-acting fentanyl as first-line rescue medication'.</p>",
     "<p>This recommendation does not apply to longer sustained release versions of fentanyl, which come in patch form.</p>",
     "<p>Due to the recommendations from NICE and immediate-release fentanyl only being licensed for use in cancer, the joint clinical working group considered ",
     "immediate-release fentanyl was suitable for inclusion in this guidance with specific exceptions for people receiving palliative care, ",
     "reflecting NICE and the terms of the product licence.</p>",
-    "<p>The recommendations also reflect findings from the <a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/940255/PHE_PMR_report_Dec2020.pdf'>",
+    "<p>The recommendations also reflect findings from the <a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/940255/PHE_PMR_report_Dec2020.pdf' target='_blank'>",
     "PHE Prescribed Review (September 2019)</a>, which outlined the risks of prescribing that can cause dependence ",
     "or withdrawal and could cause problems for people taking them or coming off them, especially those who have been taking them for a long time.</p></i>",
     "NHS England recommend that GPs:",
@@ -36,6 +36,7 @@
   "tags": [
     "cost",
     "lowpriority",
+    "lowpriority_exceptions",
     "opioids",
     "pain",
     "safety"
