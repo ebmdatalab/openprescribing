@@ -394,10 +394,10 @@ def run_task(task, year, month, **kwargs):
         import traceback
 
         task_log.mark_failed(formatted_tb=traceback.format_exc())
-        msg = "Importing data for {}_{} has failed when running {}. Calling tech-support.".format(
+        msg = "Importing data for {}_{} has failed when running {}.".format(
             year, month, task.name
         )
-        notify_slack(msg)
+        notify_slack(msg, is_error=True)
         raise
 
 
