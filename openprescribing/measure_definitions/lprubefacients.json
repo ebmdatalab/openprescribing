@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment - rubefacients, benzydamine, mucopolysaccharide and cooling products",
+  "name": "Items which should not routinely be prescribed in primary care - rubefacients, benzydamine, mucopolysaccharide and cooling products",
   "title": "Rubefacients cost per 1000 patients",
   "description":"Cost of rubefacients per 1000 patients",
   "numerator_short": "Rubefacients cost (£)",
@@ -50,5 +50,12 @@
     "~1003020R0 # Piroxicam",
     "~1003020U0 # Diclofenac sodium"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-09-05",
+  "next_review": "2023-09-05",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
