@@ -60,7 +60,7 @@ diff-match-patch==20230430
     # via django-import-export
 diskcache==5.6.1
     # via -r requirements.in
-django==3.2.20
+django==3.2.21
     # via
     #   -r requirements.in
     #   crispy-bootstrap3
