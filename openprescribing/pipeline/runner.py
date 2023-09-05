@@ -397,7 +397,7 @@ def run_task(task, year, month, **kwargs):
         msg = "Importing data for {}_{} has failed when running {}.".format(
             year, month, task.name
         )
-        notify_slack(msg)
+        notify_slack(msg, is_error=True)
         raise
 
 
