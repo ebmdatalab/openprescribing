@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment - travel vaccines",
+  "name": "Items which should not routinely be prescribed in primary care - travel vaccines",
   "title": "Travel vaccines cost per 1000 patients",
   "description": "Cost of travel vaccines per 1000 patients",
   "numerator_short": "Travel vaccines cost (£)",
