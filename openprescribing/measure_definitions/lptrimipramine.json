@@ -1,11 +1,11 @@
 {
-  "name": "NHS England Low Priority Treatment - trimipramine",
+  "name": "Items which should not routinely be prescribed in primary care - trimipramine",
   "title": "Trimipramine cost per 1000 patients",
   "description": "Cost of trimipramine per 1000 patients",
   "numerator_short": "Trimipramine cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#trimipramine-2017'>",
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#trimipramine-2017' target='_Blank'>",
     "NHS England guidance states</a>:</p>",
     "<i><p>The tricyclic antidepressant (TCA) trimipramine is significantly more expensive than other antidepressants.</p>",
     "<p>NICE guidance on depression in adults recommends selective serotonin reuptake inhibitor (SSRI) antidepressants first line if are indicated as they have a more favourable risk-to-benefit ratio ",
