@@ -1,8 +1,8 @@
 {
-  "name": "NHS England Low Priority Treatment - Silk Garments",
-  "title":"Silk Garments cost per 1000 patients",
-  "description":"Silk Garments per 1000 patients",
-  "numerator_short": "Silk Garments (£)",
+  "name": "Items which should not routinely be prescribed in primary care - silk garments",
+  "title":"Silk garments cost per 1000 patients",
+  "description":"Silk garments per 1000 patients",
+  "numerator_short": "Silk garments (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#silk-garments-2019' target='_blank'>",
@@ -27,6 +27,7 @@
   "tags": [
     "cost",
     "lowpriority",
+    "lowpriority_exceptions",
     "efficacy"
   ],
   "url": null,
