@@ -1,0 +1,39 @@
+{
+    "name": "Antibiotic stewardship: courses for doxycycline 100mg greater than 6 capsules",
+    "title": "Antibiotic stewardship: courses for doxycycline 100mg greater than 6 capsules",
+    "description": "Proportion of prescription items of doxycycline 100mg capsules with quantity greater than 6 capsules",
+    "numerator_short": "doxycycline capsules 100mg items for greater than 6 caps",
+    "denominator_short": "doxycycline capsules 100mg items",
+    "why_it_matters": [
+      "<a href='https://academic.oup.com/jac/article/73/suppl_2/ii2/4841822'>The most common indication for the prescribing of doxycyline in primary care</a> ",
+      "is the treatment of respiratory-tract infections. NICE guidance recommends for example that, where doxycycline is used for cough, the dose is ",
+      "<a href='https://www.nice.org.uk/guidance/ng120/resources/visual-summary-pdf-6664861405'> 200mg on the first day, then 100mg once a day for 4 days (5-day course in total).</a> ", 
+      "Where greater than 5 days treatment is prescribed for these indications, this increases both the unnecessary prescribing of antibiotics, as well as cost.",
+      " There are however some indications which require higher doses/longer durations of doxycycline for example, treatment of infected leg ulcers."
+    ],
+    "tags": [
+      "antimicrobial",
+      "core",
+      "infections",
+      "nice"
+    ],
+    "url": null,
+    "is_percentage": true,
+    "is_cost_based": false,
+    "low_is_good": true,
+    "numerator_type": "custom",
+    "numerator_columns": "SUM(items) AS numerator",
+    "numerator_from": "{hscic}.raw_prescribing_normalised",
+    "numerator_where": "bnf_code LIKE '0501030I0%AB' AND quantity_per_item > 6 --Doxycycline 100mg capsules (brands and generic)",
+    "denominator_type": "custom",
+    "denominator_columns": "SUM(items) AS denominator",
+    "denominator_from": "{hscic}.raw_prescribing_normalised",
+    "denominator_where": "bnf_code LIKE '0501030I0%AB' --Doxycycline 100mg capsules (brands and generic)",
+    "no_analyse_url": true,
+    "authored_by": "christopher.wood@phc.ox.ac.uk",
+    "checked_by": "richard.croker@phc.ox.ac.uk",
+    "date_reviewed": "2023-09-11",
+    "next_review": "2024-09-11",
+    "measure_complexity": "low"
+  }
+  
