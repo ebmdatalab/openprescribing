@@ -303,7 +303,7 @@ python-dateutil==2.8.2
     #   google-cloud-bigquery
     #   matplotlib
     #   pandas
-pytz==2023.3
+pytz==2023.3.post1
     # via
     #   -r requirements.in
     #   django
