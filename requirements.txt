@@ -167,7 +167,7 @@ grpcio==1.57.0
     #   grpcio-status
 grpcio-status==1.57.0
     # via google-api-core
-gunicorn==20.0.4
+gunicorn==21.2.0
     # via -r requirements.in
 h11==0.14.0
     # via wsproto
@@ -232,6 +232,7 @@ packaging==23.1
     #   build
     #   db-dtypes
     #   google-cloud-bigquery
+    #   gunicorn
     #   matplotlib
 pandas==2.0.3
     # via
