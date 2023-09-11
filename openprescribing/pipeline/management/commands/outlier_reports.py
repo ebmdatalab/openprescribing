@@ -519,8 +519,8 @@ class DatasetBuild:
         numerator_column: str = "chemical",
         denominator_column: str = "subpara",
     ) -> None:
-        assert (
-            type(to_date) == date and type(from_date) == date
+        assert isinstance(to_date, date) and isinstance(
+            from_date, date
         ), "date args must be dates"
         assert to_date > from_date, "to date must be after from date"
         self.from_date = from_date
@@ -705,7 +705,7 @@ class DatasetBuild:
             print(f"Error getting BQ data for {entity}")
             traceback.print_stack()
         try:
-            if type(res.iloc[0]["array"]) != np.ndarray:
+            if not isinstance(res.iloc[0]["array"], np.ndarray):
                 res["array"] = res["array"].apply(
                     lambda x: np.fromstring(x[1:-1], sep=",")
                 )
