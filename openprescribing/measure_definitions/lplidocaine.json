@@ -28,7 +28,6 @@
     "cost",
     "efficacy",
     "lowpriority",
-    "lowpriority_exceptions",
     "nice",
     "pain"
   ],
