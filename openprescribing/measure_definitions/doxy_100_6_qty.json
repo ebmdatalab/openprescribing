@@ -2,15 +2,15 @@
     "name": "Antibiotic stewardship: courses for doxycycline 100mg greater than 6 capsules/dispersible tablets",
     "title": "Antibiotic stewardship: courses for doxycycline 100mg greater than 6 capsules/dispersible tablets",
     "description": "Proportion of prescription items of doxycycline 100mg capsules with quantity greater than 6 capsules/dispersible tablets",
-    "numerator_short": "doxycycline capsules/dispersible tablets 100mg items for greater than 6 caps/tabs",
-    "denominator_short": "doxycycline capsules/dispersible tablets 100mg items",
+    "numerator_short": "Doxycycline capsules/dispersible tablets 100mg items for greater than 6 caps/tabs",
+    "denominator_short": "Doxycycline capsules/dispersible tablets 100mg items",
     "why_it_matters": [
-      "<a href='https://academic.oup.com/jac/article/73/suppl_2/ii2/4841822'>The most common indication for the prescribing of doxycycline in primary care</a> ",
-      "is the treatment of respiratory-tract infections. <a href='https://www.nice.org.uk/guidance/conditions-and-diseases/infections/antimicrobial-stewardship/products?Status=Published'>NICE guidance</a> ",
+      "<a href='https://academic.oup.com/jac/article/73/suppl_2/ii2/4841822' target='_Blank'>The most common indication for the prescribing of doxycycline in primary care</a> ",
+      "is the treatment of respiratory-tract infections. <a href='https://www.nice.org.uk/guidance/conditions-and-diseases/infections/antimicrobial-stewardship/products?Status=Published' target='_Blank'>NICE guidance</a> ",
       "recommends five-day courses when antibiotics are indicated for sinusitis, sore throat, COPD infective exacerbation, cough (acute), pneumonia (community-acquired) and otitis media.",
       "For doxycycline this would be 200mg on the first day, then 100mg once a day for 4 days (5-day course in total) requiring a total of 6 capsules/dispersible tablets. ", 
       "Where greater than 5 days treatment is prescribed for these indications, this increases both the unnecessary exposure to antibiotics, as well as cost.</p>",
-      "<p><a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#14-reducing-course-length-of-antimicrobial-prescribing'>NHS England National Medicines Optimisation Opportunities for 2023/24</a>",
+      "<p><a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#14-reducing-course-length-of-antimicrobial-prescribing' target='_Blank'>NHS England National Medicines Optimisation Opportunities for 2023/24</a>",
       "identify use of the shortest effective antibiotic courses as an area for improvement.",
       " There are however some indications which require higher doses/longer durations of doxycycline for example, treatment of infected leg ulcers."
     ],
@@ -37,7 +37,7 @@
     "authored_by": "christopher.wood@phc.ox.ac.uk",
     "checked_by": "richard.croker@phc.ox.ac.uk",
     "date_reviewed": "2023-09-11",
-    "next_review": "2024-09-11",
+    "next_review": "2025-09-11",
     "measure_complexity": "low"
   }
   
