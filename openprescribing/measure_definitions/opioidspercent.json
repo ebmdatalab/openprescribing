@@ -66,7 +66,7 @@
     "OR (vpi.ing IN (387485001)  AND route.descr LIKE '%modified-release.oral')) --Hydromorphone HCl MR oral preps (ing code) \n"
  ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
   "date_reviewed": "2023-09-12",
   "next_review": "2024-09-12",
   "measure_complexity": "medium",
