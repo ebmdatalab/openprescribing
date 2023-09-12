@@ -47,6 +47,10 @@
     "name": "Greener NHS",
     "description": "These measures support work to reduce the impact of medicines on overall environmental impact of the NHS. More resources for reviewing prescribing are available at <a href=\"https://www.greenerpractice.co.uk\">Greener Practice </a>"
   },
+  "iif": {
+    "name": "IIF",
+    "description": "TEMPORARY HOLDER."
+  },
   "infections": {
     "name": "Infections",
     "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings."
