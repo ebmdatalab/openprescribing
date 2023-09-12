@@ -33,13 +33,13 @@
   "numerator_bnf_codes_filter": [
     "SELECT DISTINCT v.bnf_code FROM dmd.vmp v",
     "INNER JOIN dmd.vtm t ON t.id = v.vtm",
-    "WHERE t.id=777074005 --VTM for paracetamol and tramadol \n",
+    "WHERE t.id=777074005",
     "AND v.bnf_code IS NOT NULL",
     "UNION ALL",
     "SELECT DISTINCT a.bnf_code FROM dmd.amp a",
     "INNER JOIN dmd.vmp v ON a.vmp = v.id",
     "INNER JOIN dmd.vtm t ON t.id = v.vtm",
-    "WHERE t.id =  777074005",
+    "WHERE t.id=777074005",
     "AND a.bnf_code IS NOT NULL"
     ],
   "denominator_type": "list_size",
