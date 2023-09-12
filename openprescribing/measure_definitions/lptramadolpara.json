@@ -34,7 +34,7 @@
     "SELECT DISTINCT v.bnf_code FROM dmd.vmp v ",
     "INNER JOIN dmd.vtm t",
     "ON t.id = v.vtm ",
-    "WHERE t.id =  777074005 \n # paracetmol and tramadol",
+    "WHERE t.id =  777074005 #paracetamol and tramadol \n",
     "AND v.bnf_code IS NOT NULL ",
     "UNION ALL ",
     "SELECT DISTINCT a.bnf_code FROM dmd.amp a ",
