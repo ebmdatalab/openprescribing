@@ -30,8 +30,7 @@
     "cost",
     "efficacy",
     "diabetes",
-    "lowpriority",
-    "lowpriority_exceptions"
+    "lowpriority"
   ],
   "url": null,
   "is_percentage": false,
