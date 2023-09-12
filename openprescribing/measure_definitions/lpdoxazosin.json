@@ -27,8 +27,7 @@
   "tags": [
     "cardiovascular",
     "cost",
-    "lowpriority",
-    "lowpriority_noexceptions"
+    "lowpriority"
   ],
   "url": null,
   "is_percentage": false,
@@ -39,7 +38,6 @@
     "0205040D0%AQ # Doxazosin Mesil_Tab 4mg M/R (brands and generic)",
     "0205040D0%AR # Doxazosin Mesil_Tab 8mg M/R (brands and generic)"
   ],
-  "denominator_type": "list_size",
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
