@@ -26,9 +26,9 @@
   ],
   "tags": [
     "cost",
-    "lowpriority",
-    "lowpriority_exceptions",
-    "efficacy"
+    "efficacy",
+    "lowpriority"
+
   ],
   "url": null,
   "is_percentage": false,
