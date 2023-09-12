@@ -8,18 +8,16 @@
     "The NHS has <a href='https://www.england.nhs.uk/greenernhs/a-net-zero-nhs/'> ",
     "committed to reducing its carbon footprint by 80% by 2028 to 2032</a>, including a shift to lower carbon inhalers.</p>",
     "<p>Salbutamol metered dose inhalers (MDIs) are the single biggest source of carbon emissions from NHS medicines prescribing.",
-    "The 2022-2023 PCN Investment and Impact Fund (IIF) therefore ",
-    "<a href='https://www.england.nhs.uk/publication/network-contract-directed-enhanced-service-investment-and-impact-fund-2022-23-updated-guidance/'>",
-    "includes an indicator</a> focusing on mean carbon emissions per salbutamol inhaler prescribed (kg CO<sub>2</sub>e).",
-    "The aim is to encourage prescribing of salbutamol products associated with lower carbon emissions, resulting in a significant reduction in NHS carbon emissions.</p>",
+    "<p>The <a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#11-improving-respiratory-outcomes-while-reducing-the-carbon-emissions-from-inhalers' target='_Blank'>",
+    "NHS England National Medicines Optimisation Opportunities for 2023/24</a> identify reducing carbon emissions from inhalers as an area for improvement.</p>",
     "<p>Data on carbon emissions per salbutamol inhaler can be viewed in the ",
-    "<a href='https://docs.google.com/spreadsheets/d/1eyk2iqNM_4sobDzevZWWcRR00O2tmJO5HwdFZLjhfa4'>",
+    "<a href='https://docs.google.com/spreadsheets/d/1eyk2iqNM_4sobDzevZWWcRR00O2tmJO5HwdFZLjhfa4' target='_Blank'>",
     "table here</a>.</p>"
   ],
   "tags": [
     "core",
     "greenernhs",
-    "iif",
+    "opportunities",
     "respiratory"
   ],
   "url": null,
@@ -62,8 +60,10 @@
      "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC','0301011R0AAAAAA','0301011R0AABZBZ','0301011R0AACBCB','0301011R0AACCCC')"
   ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "christopher.wood@phc.ox.ac.uk",
-  "date_reviewed": "2022-05-22",
-  "next_review": "2022-11-22",
-  "measure_complexity": "high"
+  "checked_by": "",
+  "date_reviewed": "2023-09-12",
+  "next_review": "2024-09-12",
+  "measure_complexity": "high",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
