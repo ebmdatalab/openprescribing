@@ -25,6 +25,7 @@
     "<ul>",
     "<li>Do not initiate.</li>",
     "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
     "<li>Prescribe only if no other item or intervention is available.</li>",
     "<li>Prescribe only if for a named indication in this guidance.</li>",
     "</ul>"
