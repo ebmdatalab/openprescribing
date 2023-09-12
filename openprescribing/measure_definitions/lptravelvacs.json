@@ -28,8 +28,7 @@
   ],
   "tags": [
     "cost",
-    "lowpriority",
-    "lowpriority_noexceptions"
+    "lowpriority"
   ],
   "url": null,
   "is_percentage": false,
