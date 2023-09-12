@@ -21,7 +21,7 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "bnf_items",
+  "numerator_type": "bnf_quantity",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.dmd_objs_with_form_route",
@@ -30,7 +30,7 @@
   "numerator_bnf_codes_filter": [
     "0301011R0 #Salbutamol"
   ],
-  "denominator_type": "bnf_items",
+  "denominator_type": "bnf_quantity",
   "denominator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.dmd_objs_with_form_route",
