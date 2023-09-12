@@ -28,7 +28,8 @@
     "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "numerator_bnf_codes_filter": [
-    "0301011R0 #Salbutamol"
+    "0301011R0 #Salbutamol",
+    "0301011V0% #Terbutaline"
   ],
   "denominator_type": "bnf_quantity",
   "denominator_bnf_codes_query": [
@@ -37,7 +38,9 @@
     "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "denominator_bnf_codes_filter": [
-    "0302 # Corticosteroids (Respiratory)"
+    "0301011R0 #Salbutamol",
+    "0301011V0% #Terbutaline",
+    "0302 #Corticosteroids (Respiratory)"
   ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
