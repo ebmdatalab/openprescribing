@@ -5,7 +5,7 @@
   "numerator_short": "High dose opioid items",
   "denominator_short": "All opioid items",
   "why_it_matters": [
-    "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
+    "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware' target='_Blank'> Opioids Aware</a> project seeks to ",
     "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
     "and the risk of harm increases significantly above 120mg morphine (or equivalent) per day, without much increase in benefit. ",
     "We have assumed that if a patient is on regular doses of 120mg morphine a day or above that they are likely to have also had ",
@@ -15,13 +15,16 @@
     "twice daily (120mg daily dose), whereas MST 30mg are not, as the daily dose is 60mg. ",
     "We have not included preparations used for breakthrough pain, e.g. Oramorph, or opioid injections which tend to be ",
     "used more commonly in palliative care.  We have calculated morphine equivalencies using ",
-    "the updated August 2020 <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware/structured-approach-to-prescribing/dose-equivalents-and-changing-opioids'> ",
-    "tables available </a> from the Faculty of Pain Medicine, Royal College of Anaesthetists."
+    "the updated August 2020 <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware/structured-approach-to-prescribing/dose-equivalents-and-changing-opioids' target='_Blank'> ",
+    "tables available </a> from the Faculty of Pain Medicine, Royal College of Anaesthetists.</p>",
+    "<p>The <a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#15-reducing-opioid-use-in-chronic-non-cancer-pain' target='_Blank'>",
+    "NHS England National Medicines Optimisation Opportunities for 2023/24</a> identify reducing opioid use in chronic non-cancer pain as an area for improvement.</p>"
   ],
   "tags": [
     "core",
     "opioids",
     "pain",
+    "opportunities",
     "safety"
   ],
   "url": null,
@@ -63,9 +66,10 @@
     "OR (vpi.ing IN (387485001)  AND route.descr LIKE '%modified-release.oral')) --Hydromorphone HCl MR oral preps (ing code) \n"
  ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "andrew.brown@phc.ox.ac.uk",
-  "date_reviewed": "2023-06-23",
-  "next_review": "2024-06-23",
+  "checked_by": "",
+  "date_reviewed": "2023-09-12",
+  "next_review": "2024-09-12",
   "measure_complexity": "medium",
-  "measure_type": "dmd"
+  "measure_type": "dmd",
+  "radar_exclude": false
 }

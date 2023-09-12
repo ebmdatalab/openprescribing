@@ -1,28 +1,27 @@
 {
   "name": "Prescribing of opioids (total oral morphine equivalence)",
-  "title": [
-    "Total opioid prescribing (as oral morphine equivalence) per 1000 patients"
-  ],
-  "description": [
-    "Total opioid prescribing (as oral morphine equivalence) per 1000 patients"
-  ],
+  "title": "Total opioid prescribing (as oral morphine equivalence) per 1000 patients",
+  "description": "Total opioid prescribing (as oral morphine equivalence) per 1000 patients",
   "numerator_short": "Total opioids prescribed (in OME mg)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
+    "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware' target='_Blank'> Opioids Aware</a> project seeks to ",
     "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
-    "and the risk of <a href='https://fpm.ac.uk/opioids-aware-clinical-use-opioids/opioids-long-term-pain'> harm increases significantly above 120mg morphine</a> ",
+    "and the risk of <a href='https://fpm.ac.uk/opioids-aware-clinical-use-opioids/opioids-long-term-pain' target='_Blank'> harm increases significantly above 120mg morphine</a> ",
     "(or equivalent) per day, without much increase in benefit. ",
-    "This measure describes the total Oral Morphine Equivalence (OME) in ALL opioid prescribing (excluding prescribing for addiction) ",
+    "<p>The <a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#15-reducing-opioid-use-in-chronic-non-cancer-pain' target='_Blank'>",
+    "NHS England National Medicines Optimisation Opportunities for 2023/24</a> identify reducing opioid use in chronic non-cancer pain as an area for improvement.</p>",
+    "<p>This measure describes the total Oral Morphine Equivalence (OME) in ALL opioid prescribing (excluding prescribing for addiction) ",
     "including low-dose opioids in drugs such as co-codamol and co-dydramol.  This measure is experimental and should be used ",
     "with caution, as OME conversions vary in different reference sources. We have amended the measure to take into account changes in equivalency ",
     "in the BNF.",
     "<p> We have written a paper about the increase in opioid prescribing in England since 1999, which can be found in",
-    "<i><a href= 'https://www.thelancet.com/journals/lanpsy/article/PIIS2215-0366(18)30471-1'>The Lancet Psychiatry</a></i>."
+    "<i><a href= 'https://www.thelancet.com/journals/lanpsy/article/PIIS2215-0366(18)30471-1' target='_Blank'>The Lancet Psychiatry</a></i>."
   ],
   "tags": [
     "core",
     "opioids",
+    "opportunities",
     "pain",
     "safety"
   ],
@@ -35,14 +34,19 @@
     "SUM(ome_dose) AS numerator"
   ],
   "numerator_from": "{measures}.vw__opioids_total_dmd",
-  "numerator_where": [
-    "1 = 1"
-  ],
+  "numerator_where": "1 = 1",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT pr.bnf_code",
     "FROM {hscic}.presentation pr",
     "JOIN {measures}.vw__opioids_total_dmd op",
     "ON pr.bnf_code = op.bnf_code"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2023-09-12",
+  "next_review": "2024-09-12",
+  "measure_complexity": "medium",
+  "measure_type": "dmd",
+  "radar_exclude": "false"
 }
