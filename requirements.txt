@@ -285,7 +285,7 @@ pyflakes==3.1.0
     # via flake8
 pynacl==1.5.0
     # via paramiko
-pyparsing==3.0.9
+pyparsing==3.1.1
     # via
     #   httplib2
     #   matplotlib
