@@ -1,7 +1,7 @@
 {
-  "name": "Items which should not routinely be prescribed in primary care - insulin pen needles costing ≥£5/box",
+  "name": "Items which should not routinely be prescribed in primary care - insulin pen needles costing ≥£5 per 100 needles",
   "title": "Cost per 1000 registered patients",
-  "description": "Cost of higher cost (≥£5/box) insulin pen needles per 1000 patients",
+  "description": "Cost of higher cost (≥£5 per 100 needles) insulin pen needles per 1000 patients",
   "numerator_short": "Higher cost pen needles cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
@@ -45,7 +45,7 @@
      "p.bnf_code IN (SELECT bnf_code FROM dmd.vmp WHERE LOWER(nm) LIKE '%insulin needles%' AND bnf_code IS NOT NULL -- find vmp products with vmp name containing insulin needles \n",
     "UNION DISTINCT ",
     "SELECT amp.bnf_code FROM dmd.amp AS amp INNER JOIN dmd.vmp ON vmp.id = amp.vmp  WHERE LOWER(vmp.nm) LIKE '%insulin needles%' AND amp.bnf_code IS NOT NULL) -- find amp products with vmp name containing insulin needles \n",
-    "AND r.median_price_per_unit >= 0.05 --this selects products with median price of >= 5 pound a box "
+    "AND r.median_price_per_unit >= 0.05 --this selects products with median price of >= 5 pence per needles same as >= 5 pound per 100 needles  "
   ],
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
