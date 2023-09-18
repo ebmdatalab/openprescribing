@@ -18,7 +18,6 @@
   ],
   "tags": [
     "antimicrobial",
-    "core",
     "infections"
   ],
   "url": null,
@@ -37,7 +36,7 @@
   "authored_by": "christopher.wood@phc.ox.ac.uk",
   "checked_by": "richard.croker@phc.ox.ac.uk",
   "date_reviewed": "2023-09-04",
-  "next_review": "2024-09-04",
+  "next_review": "2025-09-04",
   "measure_complexity": "low",
   "measure_type": "bnf_code"
 }
