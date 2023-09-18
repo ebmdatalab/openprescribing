@@ -11,7 +11,7 @@
     "<p>These products are knitted, medical grade silk clothing that can be used as an adjunct to normal treatment for severe eczema and allergic skin conditions.</p>",
     "<p>Four brands of knitted silk garments are currently listed as an appliance in part IX A in the <a href='https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff' target='_blank'>",
     "NHS Drug Tariff</a> and are relatively expensive. ",
-    "The<a href='https://www.prescqipp.info/media/1659/b160-silk-and-antimicrobial-garments-20.pdf' target='_blank'>PrescQIPP document on silk garments</a> states that the evidence relating to their use ",
+    "The<a href='https://www.prescqipp.info/media/1659/b160-silk-and-antimicrobial-garments-20.pdf' target='_blank'> PrescQIPP document on silk garments</a> states that the evidence relating to their use ",
     "is weak and is of low quality.</p>",
     "<p>In addition, due to limited evidence supporting the efficacy of silk clothing for the relief of eczema, the NIHR HTA programme commissioned the",
     "<a href='https://www.nottingham.ac.uk/research/groups/cebd/projects/clothes/index.aspx' target='_blank'>CLOTHES trial</a>, to examine whether adding silk garments to standard eczema care reduced eczema ",
@@ -21,7 +21,6 @@
     "<ul>",
     "<li>Do not initiate.</li>",
     "<li>Deprescribe in patients currently prescribed this medicine.</li>",
-    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
     "</ul>"
   ],
   "tags": [
@@ -40,7 +39,7 @@
   ],
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
   "date_reviewed": "2023-08-29",
   "next_review": "2025-08-29",
   "measure_complexity": "low",
