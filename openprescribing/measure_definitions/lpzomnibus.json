@@ -35,7 +35,7 @@
   "numerator_is_list_of_bnf_codes": false,
   "denominator_type": "custom",
   "denominator_columns": [
-    "SUM(denominator)/25 AS denominator"
+    "SUM(denominator)/24 AS denominator"
   ],
   "denominator_from": "{measures}.practice_data_all_low_priority ",
   "denominator_where": [
