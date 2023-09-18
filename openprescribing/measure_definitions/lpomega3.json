@@ -51,9 +51,9 @@
   ],
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
-  "date_reviewed": "2023-08-22",
-  "next_review": "2025-08-22",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-18",
+  "next_review": "2025-09-18",
   "measure_complexity": "low",
   "measure_type": "bnf_code",
   "radar_exclude": false
