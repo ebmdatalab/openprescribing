@@ -69,6 +69,11 @@ PUBLISH_DATE_RE = re.compile(
     re.VERBOSE | re.IGNORECASE,
 )
 
+UNPARSEABLE_URLS = {
+    # Contains an announcement of a withdrawal and no tables
+    "https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023"
+}
+
 # Singleton to use for withdrawn concessions
 WITHDRAWN = object()
 
@@ -116,6 +121,8 @@ def parse_concessions_from_archive():  # pragma: no cover
 
 
 def parse_concessions_from_html(html, url=None):
+    if url in UNPARSEABLE_URLS:
+        return
     doc = bs4.BeautifulSoup(html, "html.parser")
     # Find the publication date
     publish_date = get_single_item(

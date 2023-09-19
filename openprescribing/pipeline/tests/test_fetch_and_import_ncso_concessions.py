@@ -69,6 +69,13 @@ class TestFetchAndImportNCSOConcesions(TestCase):
         ]
         self.assertEqual(items, expected)
 
+    def test_parse_concessions_from_html_skips_known_unparseable(self):
+        results = fetch_ncso.parse_concessions_from_html(
+            "<broken-html>",
+            url="https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023",
+        )
+        self.assertEqual(list(results), [])
+
     def test_match_concession_vmpp_ids_when_correct(self):
         # The happy case: the supplied VMPP ID, name and pack size all match our data so
         # we accept it as is
