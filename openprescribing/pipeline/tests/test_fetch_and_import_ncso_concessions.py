@@ -69,6 +69,13 @@ class TestFetchAndImportNCSOConcesions(TestCase):
         ]
         self.assertEqual(items, expected)
 
+    def test_parse_concessions_from_html_skips_known_unparseable(self):
+        results = fetch_ncso.parse_concessions_from_html(
+            "<broken-html>",
+            url="https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023",
+        )
+        self.assertEqual(list(results), [])
+
     def test_match_concession_vmpp_ids_when_correct(self):
         # The happy case: the supplied VMPP ID, name and pack size all match our data so
         # we accept it as is
@@ -309,6 +316,41 @@ class TestFetchAndImportNCSOConcesions(TestCase):
     def test_regularise_name(self):
         self.assertEqual(
             fetch_ncso.regularise_name(" * Some Drug Name 500 mg"), "some drug name 500"
+        )
+
+    def test_insert_or_update_withdrawn_concession(self):
+        vmpp_id = 8049011000001108
+        date = datetime.date(2023, 3, 1)
+
+        # Create existing concession which we expect to be deleted
+        NCSOConcession.objects.create(
+            vmpp_id=vmpp_id,
+            date=date,
+            drug="Duloxetine 40mg gastro-resistant capsules",
+            pack_size="56",
+            price_pence=350,
+        )
+
+        items = [
+            {
+                "date": date,
+                "vmpp_id": vmpp_id,
+                # Mark concession as withdrawn
+                "price_pence": fetch_ncso.WITHDRAWN,
+                "drug": "Duloxetine 40mg gastro-resistant capsules",
+                "pack_size": "56",
+                "vmpp_name": "Duloxetine 40mg gastro-resistant capsules 56 capsule",
+                "supplied_vmpp_id": vmpp_id,
+                "supplied_vmpp_name": "Duloxetine 60mg gastro-resistant capsules 28 capsule",
+                "publish_date": datetime.date(2023, 3, 30),
+                "url": "https://example.com",
+            },
+        ]
+
+        fetch_ncso.insert_or_update(items)
+
+        self.assertFalse(
+            NCSOConcession.objects.filter(vmpp_id=vmpp_id, date=date).exists()
         )
 
 

@@ -69,6 +69,14 @@ PUBLISH_DATE_RE = re.compile(
     re.VERBOSE | re.IGNORECASE,
 )
 
+UNPARSEABLE_URLS = {
+    # Contains an announcement of a withdrawal and no tables
+    "https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023"
+}
+
+# Singleton to use for withdrawn concessions
+WITHDRAWN = object()
+
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
@@ -113,6 +121,8 @@ def parse_concessions_from_archive():  # pragma: no cover
 
 
 def parse_concessions_from_html(html, url=None):
+    if url in UNPARSEABLE_URLS:
+        return
     doc = bs4.BeautifulSoup(html, "html.parser")
     # Find the publication date
     publish_date = get_single_item(
@@ -342,6 +352,19 @@ def add_manual_corrections(items):
                     "price_pence": 448,
                 }
             )
+    if any(i["date"] == datetime.date(2023, 8, 1) for i in items):
+        items.append(
+            {
+                "url": "https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023",
+                "publish_date": datetime.date(2023, 8, 31),
+                "date": datetime.date(2023, 8, 1),
+                "vmpp_id": 7649311000001108,
+                "supplied_vmpp_id": 7649311000001108,
+                "drug": "Atomoxetine 18mg capsules",
+                "pack_size": "28",
+                "price_pence": WITHDRAWN,
+            }
+        )
     return items
 
 
@@ -352,7 +375,13 @@ def insert_or_update(items):
     inserted = []
     with transaction.atomic():
         for item in items:
-            if item["vmpp_id"] is not None:
+            if item["price_pence"] is WITHDRAWN:
+                assert item["vmpp_id"] is not None
+                NCSOConcession.objects.filter(
+                    date=item["date"], vmpp_id=item["vmpp_id"]
+                ).delete()
+                created = False
+            elif item["vmpp_id"] is not None:
                 _, created = NCSOConcession.objects.update_or_create(
                     date=item["date"],
                     vmpp_id=item["vmpp_id"],
