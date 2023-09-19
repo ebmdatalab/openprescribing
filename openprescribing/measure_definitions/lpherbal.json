@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment - herbal medicines",
+  "name": "Items which should not routinely be prescribed in primary care - herbal medicines",
   "title": "Herbal medicines cost per 1000 patients",
   "description": "Cost of herbal medicines per 1000 patients",
   "numerator_short": "Herbal medicines cost (£)",
