@@ -69,6 +69,9 @@ PUBLISH_DATE_RE = re.compile(
     re.VERBOSE | re.IGNORECASE,
 )
 
+# Singleton to use for withdrawn concessions
+WITHDRAWN = object()
+
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
@@ -352,7 +355,13 @@ def insert_or_update(items):
     inserted = []
     with transaction.atomic():
         for item in items:
-            if item["vmpp_id"] is not None:
+            if item["price_pence"] is WITHDRAWN:
+                assert item["vmpp_id"] is not None
+                NCSOConcession.objects.filter(
+                    date=item["date"], vmpp_id=item["vmpp_id"]
+                ).delete()
+                created = False
+            elif item["vmpp_id"] is not None:
                 _, created = NCSOConcession.objects.update_or_create(
                     date=item["date"],
                     vmpp_id=item["vmpp_id"],
