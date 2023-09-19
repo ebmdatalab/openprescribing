@@ -56,6 +56,7 @@
     "on",
     "ont.form = route.cd",
     "where (route.descr like '%wash.cutaneous%' or route.descr like '%bath%')",
+    "or (route.descr LIKE '%.cutaneous%' AND (lower(amp.nm) like '%shower%' OR (lower(amp.nm) like '%wash%') OR (lower(amp.nm) like '%bath%')))",
     "and amp.bnf_code is not null"
 
   ],
