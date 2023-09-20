@@ -39,6 +39,7 @@ GUNICORN_NUM_WORKERS=6
 GUNICORN_LOG_LEVEL=warn
 
 SLACK_TECHNOISE_POST_KEY=slack_technoise_post_key
+SLACK_DATATEAM_POST_KEY=slack_datateam_post_key
 CF_API_KEY=cf_api_key
 CF_API_EMAIL=cf_api_email
 
