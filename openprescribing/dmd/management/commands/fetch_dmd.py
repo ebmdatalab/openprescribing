@@ -32,6 +32,10 @@ class Command(BaseCommand):
             "commit": "LOG+IN",
         }
         rsp = session.post(login_url, params)
+        if "The email address or password is invalid" in rsp.text:
+            raise RuntimeError(
+                f"TRUD login failure for username: {settings.TRUD_USERNAME!r}"
+            )
 
         index_url = (
             base_url
