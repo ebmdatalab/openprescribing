@@ -118,7 +118,7 @@ google-api-core[grpc]==2.11.0
     #   pandas-gbq
 google-api-python-client==2.99.0
     # via -r requirements.in
-google-auth==2.23.0
+google-auth==2.23.1
     # via
     #   google-api-core
     #   google-api-python-client
@@ -369,7 +369,7 @@ unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==4.1.1
     # via google-api-python-client
-urllib3[socks]==1.26.13
+urllib3[socks]==2.0.5
     # via
     #   django-anymail
     #   google-auth
