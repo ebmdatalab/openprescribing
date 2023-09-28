@@ -352,19 +352,19 @@ def add_manual_corrections(items):
                     "price_pence": 448,
                 }
             )
-    if any(i["date"] == datetime.date(2023, 8, 1) for i in items):
-        items.append(
-            {
-                "url": "https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023",
-                "publish_date": datetime.date(2023, 8, 31),
-                "date": datetime.date(2023, 8, 1),
-                "vmpp_id": 7649311000001108,
-                "supplied_vmpp_id": 7649311000001108,
-                "drug": "Atomoxetine 18mg capsules",
-                "pack_size": "28",
-                "price_pence": WITHDRAWN,
-            }
-        )
+    for item in items:
+        if (
+            item["date"] == datetime.date(2023, 8, 1)
+            and item["vmpp_id"] == 7649311000001108
+        ):
+            item.update(
+                {
+                    "url": "https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023",
+                    "publish_date": datetime.date(2023, 8, 31),
+                    "price_pence": WITHDRAWN,
+                }
+            )
+
     return items
 
 
