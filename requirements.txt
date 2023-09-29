@@ -331,7 +331,7 @@ requests-oauthlib==1.3.1
     # via google-auth-oauthlib
 rsa==4.9
     # via google-auth
-scipy==1.11.2
+scipy==1.11.3
     # via -r requirements.in
 seaborn==0.12.2
     # via -r requirements.in
