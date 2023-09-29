@@ -118,7 +118,7 @@ google-api-core[grpc]==2.11.0
     #   pandas-gbq
 google-api-python-client==2.99.0
     # via -r requirements.in
-google-auth==2.23.0
+google-auth==2.23.2
     # via
     #   google-api-core
     #   google-api-python-client
@@ -372,7 +372,6 @@ uritemplate==4.1.1
 urllib3[socks]==1.26.13
     # via
     #   django-anymail
-    #   google-auth
     #   requests
     #   selenium
 watchdog==3.0.0
