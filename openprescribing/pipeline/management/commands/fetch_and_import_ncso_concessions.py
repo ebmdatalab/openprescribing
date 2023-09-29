@@ -164,7 +164,7 @@ def parse_concessions_from_html(html, url=None):
             "drug": row[0],
             "pack_size": row[1],
             "price_pence": parse_price(row[2]),
-            "supplied_vmpp_id": int(row[3]) if len(row) == 4 else None,
+            "supplied_vmpp_id": int(row[3]) if len(row) == 4 and row[3] else None,
         }
 
 
@@ -443,7 +443,7 @@ def format_message(inserted):
             msg += (
                 f"\n"
                 f"Name: {item['drug']} {item['pack_size']}\n"
-                f"VMPP: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
+                f"VMPP: {vmpp_url(item['supplied_vmpp_id'])}\n"
                 f"From: {item['url']}\n"
             )
 
@@ -457,9 +457,16 @@ def format_message(inserted):
             msg += (
                 f"\n"
                 f"Name: {item['drug']} {item['pack_size']}\n"
-                f"Supplied VMPP: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
-                f"Matched VMPP: https://openprescribing.net/dmd/vmpp/{item['vmpp_id']}/\n"
+                f"Supplied VMPP: {vmpp_url(item['supplied_vmpp_id'])}\n"
+                f"Matched VMPP: {vmpp_url(item['vmpp_id'])}\n"
                 f"From: {item['url']}\n"
             )
 
     return msg
+
+
+def vmpp_url(vmpp_id):
+    if vmpp_id:
+        return f"https://openprescribing.net/dmd/vmpp/{vmpp_id}/"
+    else:
+        return "None supplied"
