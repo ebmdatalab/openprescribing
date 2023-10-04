@@ -331,7 +331,7 @@ rsa==4.9
     # via google-auth
 scipy==1.11.3
     # via -r requirements.in
-seaborn==0.12.2
+seaborn==0.13.0
     # via -r requirements.in
 selenium==4.9.1
     # via -r requirements.in
