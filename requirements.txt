@@ -252,7 +252,7 @@ proto-plus==1.22.3
     # via
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
-protobuf==4.24.3
+protobuf==4.24.4
     # via
     #   google-api-core
     #   google-cloud-bigquery
