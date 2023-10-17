@@ -1,0 +1,47 @@
+{
+  "name": "Proportion of adrenaline not prescribed by brand",
+  "title": "Percentage of adrenaline not prescribed by brand",
+  "description": "Percentage adrenaline not prescribed by brand",
+  "numerator_short": "Adrenaline not prescribed by brand",
+  "denominator_short": "Adrenaline items",
+  "why_it_matters": [
+    
+  ],
+  "tags": [
+    "core",
+    "cost",
+    "opportunities"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_filter": [
+    "0304030C0AABFBF # VMP Adrenaline (base) 150micrograms/0.15ml (1 in 1,000) solution for injection pre-filled disposable devices",
+    "0304030C0AAA2A2 # VMP Adrenaline (base) 150micrograms/0.3ml (1 in 2,000) solution for injection pre-filled disposable devices",
+    "0304030C0AAA3A3 # VMP Adrenaline (base) 300micrograms/0.3ml (1 in 1,000) solution for injection pre-filled disposable devices",
+    "0304030C0AABGBG # VMP Adrenaline (base) 500micrograms/0.5ml (1 in 1,000) solution for injection pre-filled disposable devices",
+  ],
+ "denominator_type": "bnf_items",
+  "denominator_bnf_codes_filter": [
+    "0304030C0AABFBF # VMP Adrenaline (base) 150micrograms/0.15ml (1 in 1,000) solution for injection pre-filled disposable devices",
+    "0304030C0AAA2A2 # VMP Adrenaline (base) 150micrograms/0.3ml (1 in 2,000) solution for injection pre-filled disposable devices",
+    "0304030C0AAA3A3 # VMP Adrenaline (base) 300micrograms/0.3ml (1 in 1,000) solution for injection pre-filled disposable devices",
+    "0304030C0AABGBG # VMP Adrenaline (base) 500micrograms/0.5ml (1 in 1,000) solution for injection pre-filled disposable devices",
+    "0304030C0BHAABF # AMP Jext 150micrograms/0.15ml (1 in 1,000) solution for injection auto-injectors (ALK-Abello Ltd)",
+    "0304030C0BEAAA2 # AMP EpiPen Jr. 150micrograms/0.3ml (1 in 2,000) solution for injection auto-injectors (Viatris UK Healthcare Ltd)",
+    "0304030C0BEABA3 # AMP EpiPen 300micrograms/0.3ml (1 in 1,000) solution for injection auto-injectors (Viatris UK Healthcare Ltd)",
+    "0304030C0BIABA3 # AMP Emerade 300micrograms/0.3ml (1 in 1,000) solution for injection auto-injectors (Bausch & Lomb UK Ltd)",
+    "0304030C0BHABA3 # AMP Jext 300micrograms/0.3ml (1 in 1,000) solution for injection auto-injectors (ALK-Abello Ltd)",
+    "0304030C0BIACBG # AMP Emerade 500micrograms/0.5ml (1 in 1,000) solution for injection auto-injectors (Bausch & Lomb UK Ltd)",
+    
+  ],  
+"authored_by": "victoria.speed@phc.ox.ac.uk",
+  "checked_by": "TBC",
+  "date_reviewed": "TBC",
+  "next_review": "TBC",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
+}
