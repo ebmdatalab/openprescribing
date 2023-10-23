@@ -1,65 +1,43 @@
 {
-  "name": "Proportion of immediate release oral morphine prescribed as liquid",
-  "title": "Immediate release oral morphine prescribed as liquid",
-  "description": "Proportion of immediate release oral morphine prescribed as liquid formulations",
-  "numerator_short": "OME liquid oral morphine formulations",
-  "denominator_short": "OME all immediate release oral morphine formulations",
-  "why_it_matters": ["tbc"   
-  ],
-  "tags": [
-    "core",
-    "opioids",
-    "opportunities",
-    "pain",
-    "safety"
-  ],
-  "url": null,
-  "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": true,
-  "numerator_type": "custom",
-  "numerator_columns": "SUM(ome_dose) AS numerator",
-  "numerator_from":[
-    "{measures}.vw__opioids_total_dmd"
-  ],
-  "numerator_where": "1 = 1",
-  "numerator_is_list_of_bnf_codes": true, 
-  "numerator_bnf_codes_query": [
-    "SELECT DISTINCT pr.bnf_code ",
-    "FROM {hscic}.presentation pr ",
-    "INNER JOIN {measures}.vw__opioids_total_dmd op",
-    "ON pr.bnf_code = op.bnf_code ",
-    "INNER JOIN dmd.vmp vmp ON CONCAT(SUBSTR(pr.bnf_code,0,9),'AA', SUBSTR(pr.bnf_code,-2), SUBSTR(pr.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
-    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
-    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names ",
-    "WHERE ",
-    "vpi.ing = 60886004 AND route.descr = ('solution.oral') -- morphine oral solution preparations"
-  ],
-  "denominator_type": "custom",
-  "denominator_columns": "SUM(ome_dose) AS denominator",
-  "denominator_from":[
-    "{measures}.vw__opioids_total_dmd"
-  ],
-  "denominator_where": "1 = 1",
-  "denominator_is_list_of_bnf_codes": true, 
-  "denominator_bnf_codes_query": [
-    "SELECT DISTINCT pr.bnf_code ",
-    "FROM {hscic}.presentation pr ",
-    "INNER JOIN {measures}.vw__opioids_total_dmd op",
-    "ON pr.bnf_code = op.bnf_code ",
-    "INNER JOIN dmd.vmp vmp ON CONCAT(SUBSTR(pr.bnf_code,0,9),'AA', SUBSTR(pr.bnf_code,-2), SUBSTR(pr.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
-    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
-    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names ",
-    "WHERE ",
-    "vpi.ing = 60886004 AND route.descr IN ('tablet.oral','tabletdispersible.oral','solution.oral') -- morphine oral solution, oraldispersible and immediate release oral preparations"
-  ],
-  "authored_by": "",
-  "checked_by": "",
-  "date_reviewed": "",
-  "next_review": "",
-  "measure_complexity": "medium",
-  "measure_type": "dmd",
-  "radar_exclude": false
+"name": "Proportion of immediate release oral morphine prescribed as liquid",
+"title": "Immediate release oral morphine prescribed as liquid",
+"description": "Proportion of immediate release oral morphine prescribed as liquid formulations",
+"numerator_short": "OME liquid oral morphine formulations",
+"denominator_short": "OME all immediate release oral morphine formulations",
+"why_it_matters":["tbc"
+],
+"tags":[
+"core",
+"opioids",
+"opportunities",
+"pain",
+"safety"
+],
+"url":null,
+"is_percentage":false,
+"is_cost_based":false,
+"low_is_good":true,
+"numerator_type":"custom",
+"numerator_columns":"SUM(ome_dose) AS numerator",
+"numerator_from":[
+"{measures}.vw__opioids_total_dmd pr",
+"WHERE",
+"pr.bnf_codeIN('0407020Q0AAA6A6','0407020Q0AACDCD','0407020Q0AACECE','0407020Q0AACNCN','0407020Q0AACTCT','0407020Q0AACUCU','0407020Q0AADKDK','0407020Q0AADNDN','0407020Q0AADRDR','0407020Q0AADYDY','0407020Q0AAECEC','0407020Q0AAERER','0407020Q0AAESES','0407020Q0AAETET','0407020Q0AAFAFA','0407020Q0AAFBFB','0407020Q0AAFDFD','0407020Q0AAFEFE','0407020Q0AAFFFF','0407020Q0AAFGFG','0407020Q0AAFHFH','0407020Q0AAFIFI','0407020Q0AAGBGB','0407020Q0AAGEGE','0407020Q0AAGFGF','0407020Q0AAGGGG','0407020Q0AAGHGH','0407020Q0AAGIGI','0407020Q0AAGJGJ','0407020Q0BCABA6','0407020Q0BCAGCN','0407020Q0BCAHGB','0407020Q0BCAICT','0407020Q0BCAJCU','0407020Q0BHACCD','0407020Q0BHADCE','0407020Q0BHAFDR','0407020Q0BHAGCN','0407020Q0BHAHA6','0407020Q0BQAAGE','0407020Q0BQABGF','0407020Q0BQACGG','0407020Q0BQADGH','0407020Q0BQAEGI','0407020Q0BQAFGJ')"
+],
+"numerator_where":"1=1",
+"denominator_type":"custom",
+"denominator_columns":"SUM(ome_dose) AS denominator",
+"denominator_from":[
+"{measures}.vw__opioids_total_dmd pr",
+"WHERE",
+"pr.bnf_code IN ('0407020Q0BHAGCN','0407020Q0BCAGCN','0407020Q0AAGBGB','0407020Q0AACTCT','0407020Q0AACUCU','0407020Q0AACNCN','0407020Q0BCAHGB','0407020Q0BHAHA6','0407020Q0AADKDK','0407020Q0AADNDN','0407020Q0AADYDY','0407020Q0BCAICT','0407020Q0BCAJCU','0407020Q0AAERER','0407020Q0AAESES','0407020Q0AAETET','0407020Q0BCABA6','0407020Q0AAFAFA','0407020Q0AAFBFB','0407020Q0AAFFFF','0407020Q0AAFHFH','0407020Q0AAFIFI','0407020Q0AAFDFD','0407020Q0AAFEFE','0407020Q0AAFGFG','0407020Q0AAA6A6','0407020Q0AAECEC')"
+],
+"denominator_where":"1=1",
+"authored_by":"",
+"checked_by":"",
+"date_reviewed":"",
+"next_review":"",
+"measure_complexity":"medium",
+"measure_type":"dmd",
+"radar_exclude":false
 }
