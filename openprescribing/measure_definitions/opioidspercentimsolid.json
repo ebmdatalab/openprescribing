@@ -22,6 +22,7 @@
   "numerator_from":[
     "{measures}.vw__opioids_total_dmd"
   ],
+  "numerator_is_list_of_bnf_codes": true, 
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT pr.bnf_code ",
     "FROM {hscic}.presentation pr ",
@@ -39,6 +40,7 @@
   "denominator_from":[
     "{measures}.vw__opioids_total_dmd"
   ],
+  "denominator_is_list_of_bnf_codes": true, 
   "denominator_bnf_codes_query": [
     "SELECT DISTINCT pr.bnf_code ",
     "FROM {hscic}.presentation pr ",
