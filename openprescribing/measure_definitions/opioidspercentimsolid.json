@@ -28,6 +28,7 @@
     "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names \n",
     "WHERE vpi.ing = 60886004 AND route.descr = ('solution.oral') -- morphine oral solution preparations"
 ],
+"numerator_where": "1 = 1",
 "denominator_type": "custom",
 "denominator_columns": "SUM(ome_dose) AS denominator p",
 "denominator_from":[
@@ -39,6 +40,7 @@
     "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names \n",
     "vpi.ing = 60886004 AND route.descr IN ('tablet.oral','tabletdispersible.oral','solution.oral') -- morphine oral solution, oraldispersible and immediate release oral preparations"
 ],
+"denominator_where": "1 = 1",
 "authored_by": "",
 "checked_by": "",
 "date_reviewed": "",
