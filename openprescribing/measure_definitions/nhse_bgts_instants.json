@@ -1,0 +1,56 @@
+{
+  "name": "Blood glucose testing strips not included in NHS England commissioning recommendations",
+  "title": "Blood glucose testing strips not included in NHS England commissioning recommendations",
+  "description": "Percentage of prescriptions for blood glucose testing strips (BGTS) not included in NHS England commissioning recommendations",
+  "numerator_short": "BGTS prescriptions for strips not included in guidance",
+  "denominator_short": "All BGTS prescriptions",
+  "why_it_matters": [
+    " Many people with diabetes test their blood glucose levels, using a blood glucose meter, in order to help control their diabetes by adjusting diet and the dose of medicines.  A drop of blood from the user’s finger is placed on a ",
+    "testing strip in order for the meter to analyse the glucose levels.  A new strip is required each time, and is specific to a brand of meter.</p>",
+    "<p>In April 2023 NHS England published <a href='https://www.england.nhs.uk/publication/commissioning-recommendations-blood-glucose-and-ketone-meters-testing-strips-and-lancets/' target='_blank'>",
+    "commissioning guidelines, recommending specific meters, test strips and lancets.</a></p>",
+    "<p>The <a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#8-appropriate-prescribing-and-supply-of-blood-glucose-and-ketone-meters-and-testing-strips' target='_Blank'>",
+    "NHS England National Medicines Optimisation Opportunities for 2023/24</a> identify promoting uptake of best value testing strips as an area for improvement.</p>",
+    "<b>Please note:</b> OpenPrescribing.net measures also have a consistent way of visualising measures, where 'lower is better', and therefore in this case we show the proportion of prescriptions for strips ",
+    "which are NOT in the NHS commissioning recommendations.</p>"
+  ],
+  "tags": [
+    "diabetes",
+    "core",
+    "opportunities"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_filter": [
+    "0601060X0 # Glucose and ketone blood testing reagents",
+    "0601060D0 # Glucose blood testing reagents",
+    "~0601060D0EVAAA0 # Glucofix Tech Sensor testing strips (A. Menarini Diagnostics Ltd)",
+    "~0601060D0CUACA0 # GlucoRx HCT Glucose testing strips (GlucoRx Ltd)",
+    "~0601060X0BBAAA0 # KEYA Smart testing strips (Inside-Biometrics Ltd)",
+    "~0601060D0EKAAA0 # 4SURE testing strips (Nipro Diagnostics (UK) Ltd)",
+    "~0601060D0EHAAA0 # CareSens PRO testing strips (Spirit Healthcare Ltd)",
+    "~0601060D0ENAAA0 # Contour Plus testing strips (Ascensia Diabetes Care UK Ltd)",
+    "~0601060D0EUAAA0 # On Call Extra testing strips (Connect2Pharma Ltd)",
+    "~0601060D0CUAAA0 # GlucoRx Q testing strips (GlucoRx Ltd)",
+    "~0601060D0EDAAA0 # Finetest Lite testing strips (Neon Diagnostics Ltd)",
+    "~0601060D0EJAAA0 # True Metrix testing strips (Trividia Health UK Ltd)",
+    "~0601060D0CIAAA0 # WaveSense JAZZ testing strips (AgaMatrix Europe Ltd)",
+    "~0601060D0CIABA0 # WaveSense JAZZ Duo testing strips (AgaMatrix Europe Ltd)",
+    "~0601060D0EWAAA0 # instants",
+    "~0601060D0CUABA0 # GlucoRx Nexus testing strips (GlucoRx Ltd) ALSO PLACEHOLDER FOR AgaMatrix Agile Test Strips LAUNCH JULY 2023 AND CareSens S test strips LAUNCH JUNE 2023"
+  ],
+  "denominator_type": "bnf_items",
+  "denominator_bnf_codes_filter": [
+    "0601060X0 # Glucose and ketone blood testing reagents",
+    "0601060D0 # Glucose blood testing reagents"
+  ],
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-10",
+  "next_review": "2025-09-10",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code"
+}
