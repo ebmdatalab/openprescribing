@@ -4,8 +4,7 @@
   "description": "Percentage adrenaline not prescribed by brand",
   "numerator_short": "Adrenaline not prescribed by brand",
   "denominator_short": "Adrenaline items",
-  "why_it_matters": [TBC
-    
+  "why_it_matters": ["This is still be be completed"
   ],
   "tags": [
     "core",
