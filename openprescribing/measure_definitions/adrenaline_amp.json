@@ -1,7 +1,7 @@
 {
   "name": "Percentage of adrenaline auto-injectors not prescribed by brand",
   "title": "Percentage of adrenaline auto-injectors not prescribed by brand",
-  "description": "Percentage adrenaline auto-injectors not prescribed by brand",
+  "description": "The percentage adrenaline auto-injectors that are not prescribed by brand",
   "numerator_short": "Adrenaline auto-injectors not prescribed by brand",
   "denominator_short": "All adrenaline auto-injectors",
   "why_it_matters": ["Adrenaline auto-injectors should be presccribed by brand. This is to ensure patients receive the auto-injector device that they have been trained to use as injection technique is brand specific."
