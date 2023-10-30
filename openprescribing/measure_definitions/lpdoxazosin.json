@@ -43,7 +43,7 @@
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "christopher.wood@phc.ox.ac.uk",
-  "date_reviewed": "2023-30-10",
+  "date_reviewed": "2023-10-30",
   "next_review": "2025-09-12",
   "measure_complexity": "low",
   "measure_type": "bnf_code",
