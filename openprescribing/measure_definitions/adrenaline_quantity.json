@@ -25,7 +25,7 @@
   "denominator_where": "bnf_code LIKE '0304030C0%BF' --Adrenaline auto-injectors (brands and generic)",
   "no_analyse_url": true,
   "authored_by": "victoria.speed@phc.ox.ac.uk",
-  "checked_by": "@phc.ox.ac.uk",
+  "checked_by": "someone@phc.ox.ac.uk",
   "date_reviewed": "2023-09-12",
   "next_review": "2025-09-12",
   "measure_complexity": "low",
