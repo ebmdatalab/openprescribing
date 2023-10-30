@@ -20,8 +20,10 @@
     "considered prolonged-release doxazosin suitable for inclusion in this guidance.</p></i>",
     "NHS England recommend that GPs</a>:",
     "<ul>",
-    "<li>Do not initiate.</li>",
-    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Do not initiate in primary care.</li>",
+    "<li>Deprescribe in patients currently prescribed this item.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>"    
     "</ul>"
   ],
   "tags": [
@@ -41,7 +43,7 @@
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "christopher.wood@phc.ox.ac.uk",
-  "date_reviewed": "2023-09-12",
+  "date_reviewed": "2023-30-10",
   "next_review": "2025-09-12",
   "measure_complexity": "low",
   "measure_type": "bnf_code",
