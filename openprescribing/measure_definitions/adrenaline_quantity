@@ -1,8 +1,8 @@
 {
-  "name": "Prescribing of two adrenaline auto-injectors",
-  "title": "Prescribing of two adrenaline auto-injectors",
-  "description": "The proportion of adrenaline auto-injectors prescriptions that are prescribed to issue two syringes?",
-  "numerator_short": "Adrenaline auto-injector two packs",
+  "name": "Prescribing of two or more adrenaline auto-injectors",
+  "title": "Prescribing of two or more adrenaline auto-injectors",
+  "description": "The proportion of adrenaline auto-injectors prescriptions that are for two or more syringes?",
+  "numerator_short": "Adrenaline auto-injector pack size <2",
   "denominator_short": "All adrenaline auto-injectors",
   "why_it_matters": [
     "to be confirmed."
@@ -11,7 +11,6 @@
     "core",
     "safety"
   ],
-
   "url": null,
   "is_percentage": true,
   "is_cost_based": false,
@@ -23,8 +22,8 @@
   "denominator_type": "custom",
   "denominator_columns": "SUM(items) AS denominator",
   "denominator_from": "{hscic}.raw_prescribing_normalised",
-  "denominator_where": "bnf_code LIKE '0304030C0%AB' --Adrenaline auto-injectors (brands and generic)",
-  "no_analyse_url": true,
+  "denominator_where": "bnf_code LIKE '0304030C0%BF' --Adrenaline auto-injectors (brands and generic)",
+  "no_analyse_url": true
   ], 
 "authored_by": "victoria.speed@phc.ox.ac.uk",
   "checked_by": "@phc.ox.ac.uk",
