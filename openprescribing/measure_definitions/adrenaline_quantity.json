@@ -1,11 +1,11 @@
 {
-  "name": "Prescribing of two or more adrenaline auto-injectors",
-  "title": "Prescribing of two or more adrenaline auto-injectors",
-  "description": "The proportion of adrenaline auto-injectors prescriptions that are for two or more syringes?",
-  "numerator_short": "Adrenaline auto-injector pack size <2",
+  "name": "Prescribing of adrenaline auto-injector duo packs",
+  "title": "Prescribing of adrenaline auto-injectors duo packs",
+  "description": "The percentage of single adrenaline auto-injectors items as a proportion of all adrenaline auto-injector pens.",
+  "numerator_short": "Percentage of adrenaline auto-injector single pack",
   "denominator_short": "All adrenaline auto-injectors",
   "why_it_matters": [
-    "to be confirmed."
+    "It is recommended that patients at risk of anaphylaxis have two adrenaline autoinjectors available to them at all times. This is in case a second dose is needed whilst waiting for the emergency services. Patients do not have to be dispensed 'duo packs' but this may help to ensure that they have two adrenaline auto-injectors ready."
   ],
   "tags": [
     "core",
@@ -26,8 +26,8 @@
   "no_analyse_url": true,
   "authored_by": "victoria.speed@phc.ox.ac.uk",
   "checked_by": "someone@phc.ox.ac.uk",
-  "date_reviewed": "2023-09-12",
-  "next_review": "2025-09-12",
+  "date_reviewed": "2023-10-30",
+  "next_review": "2025-10-30",
   "measure_complexity": "low",
   "measure_type": "bnf_code",
   "radar_exclude": false
