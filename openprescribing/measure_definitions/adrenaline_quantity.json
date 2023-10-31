@@ -1,7 +1,7 @@
 {
   "name": "Prescribing of more than one adrenaline auto-injector",
   "title": "Prescribing of more than one adrenaline auto-injector",
-  "description": "The percentage of prescriptions for one adrenaline auto-injector as a proportion of all prescriptions for adrenaline auto-injector.",
+  "description": "The percentage of prescriptions for a single adrenaline auto-injector as a proportion of all prescriptions for adrenaline auto-injector.",
   "numerator_short": "Number of prescriptions for a single adrenaline auto-injector",
   "denominator_short": "All adrenaline auto-injectors",
   "why_it_matters": [
