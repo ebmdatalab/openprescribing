@@ -24,7 +24,7 @@
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
     "0304030C0 # Adrenaline auto-injector (brand and generic)"
-  ]
+  ],
   "authored_by": "victoria.speed@phc.ox.ac.uk",
   "checked_by": "someone@phc.ox.ac.uk",
   "date_reviewed": "TBC",
