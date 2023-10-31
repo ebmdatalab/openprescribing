@@ -19,17 +19,14 @@
   "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
-    "0304030C0AABFBF # VMP Adrenaline (base) 150micrograms/0.15ml (1 in 1,000) solution for injection pre-filled disposable devices",
-    "0304030C0AAA2A2 # VMP Adrenaline (base) 150micrograms/0.3ml (1 in 2,000) solution for injection pre-filled disposable devices",
-    "0304030C0AAA3A3 # VMP Adrenaline (base) 300micrograms/0.3ml (1 in 1,000) solution for injection pre-filled disposable devices",
-    "0304030C0AABGBG # VMP Adrenaline (base) 500micrograms/0.5ml (1 in 1,000) solution for injection pre-filled disposable devices"
+    "0304030C0AA # Adrenaline auto-injector (Systemic) (generic)"
   ],
-  "denominator_type": "custom",
-  "denominator_columns": "SUM(items) AS denominator",
-  "denominator_from": "{hscic}.raw_prescribing_normalised",
-  "denominator_where": "bnf_code LIKE '0304030C0%' --Adrenaline auto-injectors (brands and generic)",
+  "denominator_type": "bnf_items",
+  "denominator_bnf_codes_filter": [
+    "0304030C0 # Adrenaline auto-injector (brand and generic)"
+  ]
   "authored_by": "victoria.speed@phc.ox.ac.uk",
-  "checked_by": "TBC",
+  "checked_by": "someone@phc.ox.ac.uk",
   "date_reviewed": "TBC",
   "next_review": "TBC",
   "measure_complexity": "low",
