@@ -5,9 +5,9 @@
   "numerator_short": "Number of prescriptions for a single adrenaline auto-injector",
   "denominator_short": "All adrenaline auto-injectors",
   "why_it_matters": [
-    "It is recommended that patients at risk of anaphylaxis have two adrenaline auto-injectors available to them at all times (https://www.gov.uk/drug-safety-update/adrenaline-auto-injectors-reminder-for-prescribers-to-support-safe-and-effective-use). 
-    This is in case a second dose is needed whilst waiting for the emergency services. Patients do not have to be dispensed two auto-injectors, as there will all be exceptions such as when one pen is lost, or one has expired but the other is still in date. 
-    By dispensing more than one auto-injector at a time may help to ensure that they have two adrenaline auto-injectors ready."
+    "<a href='https://www.gov.uk/drug-safety-update/adrenaline-auto-injectors-reminder-for-prescribers-to-support-safe-and-effective-use' target='_Blank'>The MHRA remind patients at risk of anaphlaxis to to carry two in-date adrenaline auto-injectors with them at all times and to replace them before they expire</a>",
+    "This is in case a second dose is needed whilst waiting for the emergency services. Patients do not have to be dispensed two auto-injectors, as there will all be exceptions such as when one pen is lost, or one has expired but the other is still in date.", 
+    "By dispensing more than one auto-injector at a time may help to ensure that they have two adrenaline auto-injectors ready."
   ],
   "tags": [
     "core",
