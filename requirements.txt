@@ -164,7 +164,7 @@ googleapis-common-protos==1.61.0
     #   grpcio-status
 graphviz==0.20.1
     # via -r requirements.in
-grpcio==1.59.0
+grpcio==1.59.2
     # via
     #   google-api-core
     #   google-cloud-bigquery
