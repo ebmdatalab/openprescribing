@@ -72,7 +72,7 @@ django==3.2.22
     #   django-extensions
     #   django-import-export
     #   djangorestframework
-django-anymail[mailgun]==10.1
+django-anymail[mailgun]==10.2
     # via -r requirements.in
 django-cors-headers==3.14.0
     # via -r requirements.in
