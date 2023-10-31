@@ -19,7 +19,7 @@
   "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
-    "0304030C0AA # Adrenaline auto-injector (Systemic) (generic)"
+    "0304030C0AA # Adrenaline auto-injector (generic)"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
