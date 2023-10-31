@@ -9,9 +9,9 @@
     "This is to ensure patients receive the auto-injector device that they have been trained to use as injection technique is brand specific."
   ],
   "tags": [
-    "standard",
-    "safety",
-    "generic prescribing"
+    "core",
+    "generic",
+    "safety"
   ],
   "url": null,
   "is_percentage": true,
