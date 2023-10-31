@@ -3,7 +3,6 @@ import fnmatch
 import glob
 import json
 import os
-import random
 import re
 import shlex
 import textwrap
@@ -440,22 +439,17 @@ def run_all(year, month, under_test=False):
         year=year, month=month, task_name="fetch_and_import", status=TaskLog.SUCCESSFUL
     )
 
-    activity = random.choice(
-        ["put the kettle on", "have a glass of wine", "get up and stretch"]
-    )
+    msg = textwrap.dedent(
+        f"""\
+        Importing data for {year}_{month} complete!'
 
-    msg = """
-Importing data for {}_{} complete!'
+        You should now:
 
-You should now:
-
-* tweet about it
-* run `sudo systemctl restart app.openprescribing.*.service`
-* {}
-
-(Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)
-    """.strip().format(
-        year, month, activity
+        * ask tech-support to run `sudo systemctl restart app.openprescribing.*.service` to pick up the new data
+        * check that nothing looks horribly wrong with the data (https://openprescribing.net/national/england/ gives a good overview)
+        * ask tech-support to send email notifications as described in https://github.com/ebmdatalab/sysadmin/issues/174
+        * send a tweet as described in https://github.com/ebmdatalab/openprescribing/wiki/Clinical-Informatician-Process-for-Updating-Data
+        """
     )
 
     if not under_test:
