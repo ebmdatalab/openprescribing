@@ -444,18 +444,18 @@ def run_all(year, month, under_test=False):
         ["put the kettle on", "have a glass of wine", "get up and stretch"]
     )
 
-    msg = """
-Importing data for {}_{} complete!'
+    msg = textwrap.dedent(
+        f"""\
+        Importing data for {year}_{month} complete!'
 
-You should now:
+        You should now:
 
-* tweet about it
-* run `sudo systemctl restart app.openprescribing.*.service`
-* {}
+        * tweet about it
+        * run `sudo systemctl restart app.openprescribing.*.service`
+        * {activity}
 
-(Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)
-    """.strip().format(
-        year, month, activity
+        (Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)
+        """
     )
 
     if not under_test:
