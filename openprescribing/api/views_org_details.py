@@ -97,8 +97,6 @@ def _get_practice_stats_entries(keys, org_type, orgs):
                 value = matrix[index]
                 if value != 0:
                     has_value = True
-                if name == "nothing":
-                    value = 1
                 if isinstance(value, float):
                     value = round(value, 2)
                 if name.startswith("star_pu."):
@@ -107,6 +105,10 @@ def _get_practice_stats_entries(keys, org_type, orgs):
                     entry[name] = value
             if star_pu:
                 entry["star_pu"] = star_pu
+            # The special "nothing" key always takes the value 1
+            if "nothing" in keys:
+                entry["nothing"] = 1
+                has_value = True
             if has_value:
                 yield entry
 
@@ -115,6 +117,7 @@ def _get_query_and_params(keys):
     params = []
     for key in keys:
         if key == "nothing":
+            # "nothing" is a special key which always has the value 1
             pass
         elif key in STATS_COLUMN_WHITELIST or key.startswith("star_pu."):
             params.append(key)
@@ -129,16 +132,4 @@ def _get_query_and_params(keys):
         # If no keys are supplied we treat this as an implicit "select all"
         where = "1=1"
     query = "SELECT name, value FROM practice_statistic WHERE {}".format(where)
-    # The special "nothing" key always evaluates to 1, but to match the
-    # previous API we should only return these "nothing" entries where there
-    # exist statistics for that organsation and date. So we use the
-    # total_list_size matrix, and only return entries where that has a non-zero
-    # value
-    if "nothing" in keys:
-        query += """
-            UNION ALL
-            SELECT "nothing" AS name, value
-            FROM practice_statistic
-            WHERE name="total_list_size"
-            """
     return query, params
