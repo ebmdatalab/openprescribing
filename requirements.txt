@@ -212,7 +212,7 @@ mccabe==0.7.0
     # via flake8
 mock==5.1.0
     # via -r requirements.in
-networkx==3.2
+networkx==3.1
     # via -r requirements.in
 numpy==1.24.4
     # via
@@ -343,7 +343,7 @@ scipy==1.10.1
     # via -r requirements.in
 seaborn==0.13.0
     # via -r requirements.in
-selenium==4.9.1
+selenium==4.15.1
     # via -r requirements.in
 six==1.16.0
     # via
@@ -361,7 +361,9 @@ sqlparse==0.4.4
     #   django
     #   django-debug-toolbar
 tablib[html,ods,xls,xlsx,yaml]==3.1.0
-    # via django-import-export
+    # via
+    #   django-import-export
+    #   tablib
 titlecase==0.12.0
     # via -r requirements.in
 tomli==2.0.1
@@ -386,6 +388,7 @@ urllib3[socks]==1.26.13
     #   django-anymail
     #   requests
     #   selenium
+    #   urllib3
 watchdog==3.0.0
     # via when-changed
 wheel==0.41.3
