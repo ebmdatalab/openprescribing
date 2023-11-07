@@ -27,8 +27,7 @@
     "bnf_code LIKE '0304030C0%A3' OR  ##Adrenaline auto-injector (brand or generic) 300 micrograms in 0.3ml",
     "bnf_code LIKE '0304030C0%BF' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.15ml",
     "bnf_code LIKE '0304030C0%A2' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.3ml",
-    "bnf_code LIKE '0304030C0%BG' OR ##Adrenaline auto-injector (brand or generic) 500 micrograms in 0.5ml"
-    ")",
+    "bnf_code LIKE '0304030C0%BG')##Adrenaline auto-injector (brand or generic) 500 micrograms in 0.5ml",
   ],
   "denominator_type": "custom",
   "denominator_columns": "SUM(items) AS denominator",
@@ -38,8 +37,7 @@
     "bnf_code LIKE '0304030C0%A3' OR  ##Adrenaline auto-injector (brand or generic) 300 micrograms in 0.3ml",
     "bnf_code LIKE '0304030C0%BF' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.15ml",
     "bnf_code LIKE '0304030C0%A2' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.3ml",
-    "bnf_code LIKE '0304030C0%BG' OR ##Adrenaline auto-injector (brand or generic) 500 micrograms in 0.5ml"
-    ")",
+    "bnf_code LIKE '0304030C0%BG') ##Adrenaline auto-injector (brand or generic) 500 micrograms in 0.5ml",
   ],
   "no_analyse_url": true,
   "authored_by": "victoria.speed@phc.ox.ac.uk",
