@@ -19,10 +19,10 @@
   "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
-    "0304030C0AAA3A3 OR", ## Adrenaline auto-injector (generic) 300 micrograms in 0.3ml
-    "0304030C0AABFBF OR", ## Adrenaline auto-injector (generic) 150 micrograms in 0.15ml
-    "0304030C0AAA2A2 OR", ## Adrenaline auto-injector (generic) 150 micrograms in 0.3ml
-    "0304030C0AABGBG"
+    "0304030C0AAA3A3 # Adrenaline auto-injector (generic) 300 micrograms in 0.3ml",
+    "0304030C0AABFBF # Adrenaline auto-injector (generic) 150 micrograms in 0.15ml",
+    "0304030C0AAA2A2 # Adrenaline auto-injector (generic) 150 micrograms in 0.3ml",
+    "0304030C0AABGBG # Adrenaline auto-injector (generic) 500 micrograms in 0.5ml"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
