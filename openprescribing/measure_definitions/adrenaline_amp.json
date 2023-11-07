@@ -19,11 +19,11 @@
   "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
-    "0304030C0AA # Adrenaline auto-injector (generic)"
+    "0304030C0AAA3A3 # Adrenaline auto-injector (generic)"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
-    "0304030C0 # Adrenaline auto-injector (brand and generic)"
+    "0304030C0%A3 # Adrenaline auto-injector"
   ],
   "authored_by": "victoria.speed@phc.ox.ac.uk",
   "checked_by": "someone@phc.ox.ac.uk",
