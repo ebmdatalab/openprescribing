@@ -24,20 +24,20 @@
     "quantity_per_item=1",
     "AND",
     "(",
-    "bnf_code LIKE '0304030C0%A3' OR  ##Adrenaline auto-injector (brand or generic) 300 micrograms in 0.3ml",
-    "bnf_code LIKE '0304030C0%BF' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.15ml",
-    "bnf_code LIKE '0304030C0%A2' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.3ml",
-    "bnf_code LIKE '0304030C0%BG')##Adrenaline auto-injector (brand or generic) 500 micrograms in 0.5ml"
+    "bnf_code LIKE '0304030C0%A3' OR  ##Adrenaline auto-injector (brand or generic) 300 micrograms in 0.3ml \n",
+    "bnf_code LIKE '0304030C0%BF' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.15ml \n",
+    "bnf_code LIKE '0304030C0%A2' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.3ml \n",
+    "bnf_code LIKE '0304030C0%BG')##Adrenaline auto-injector (brand or generic) 500 micrograms in 0.5ml \n"
   ],
   "denominator_type": "custom",
   "denominator_columns": "SUM(items) AS denominator",
   "denominator_from": "{hscic}.raw_prescribing_normalised",
   "denominator_where": [
   "(",
-    "bnf_code LIKE '0304030C0%A3' OR  ##Adrenaline auto-injector (brand or generic) 300 micrograms in 0.3ml",
-    "bnf_code LIKE '0304030C0%BF' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.15ml",
-    "bnf_code LIKE '0304030C0%A2' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.3ml",
-    "bnf_code LIKE '0304030C0%BG')##Adrenaline auto-injector (brand or generic) 500 micrograms in 0.5ml"
+    "bnf_code LIKE '0304030C0%A3' OR  ##Adrenaline auto-injector (brand or generic) 300 micrograms in 0.3ml \n",
+    "bnf_code LIKE '0304030C0%BF' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.15ml \n",
+    "bnf_code LIKE '0304030C0%A2' OR ##Adrenaline auto-injector (brand or generic) 150 micrograms in 0.3ml \n",
+    "bnf_code LIKE '0304030C0%BG')##Adrenaline auto-injector (brand or generic) 500 micrograms in 0.5ml \n"
   ],
   "no_analyse_url": true,
   "authored_by": "victoria.speed@phc.ox.ac.uk",
