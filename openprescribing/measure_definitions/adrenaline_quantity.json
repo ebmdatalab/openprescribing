@@ -21,7 +21,7 @@
   "numerator_columns": "SUM(items) AS numerator",
   "numerator_from": "{hscic}.raw_prescribing_normalised",
   "numerator_where": [
-    "quantity_per_item>2",
+    "quantity_per_item=1",
     "AND",
     "(",
     "bnf_code LIKE '0304030C0%A3' OR  ##Adrenaline auto-injector (brand or generic) 300 micrograms in 0.3ml \n",
