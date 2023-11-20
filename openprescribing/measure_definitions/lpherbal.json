@@ -11,6 +11,7 @@
     "<p><i>Under a traditional herbal registration (THR) there is no requirement to prove scientifically that a product works; the registration is based on longstanding use of the product as a traditional medicine.</p>",
     "<p>Due to the lack of scientific evidence required to register these products with the MHRA, the joint clinical working group felt that they were suitable for inclusion in this guidance.</p>",
     "<p>In addition to herbal treatments with a THR, other natural products without robust evidence of clinical effectiveness should not be prescribed at NHS expense and fall within these recommendations. ",
+    "These products do not have a THR, are not recognised as supplements in the NHS Drug Tariff and do not appear as medicines in the BNF. ",
     "These include:",
     "<ul>",
     "<li>natural oils, eg eucalyptus and almond</li>",
@@ -24,7 +25,7 @@
     "<li>Do not initiate.</li>",
     "<li>Deprescribe in patients currently prescribed this medicine.</li>",
     "</ul></p>",
-    "<p><b>Please note: this measure is under review, and does not currently include natural oil preparations.</b>"
+    "<p><b>Please note: this measure does not currently include natural oil preparations.</b>"
   ],
   "tags": [
     "cost",
@@ -56,8 +57,8 @@
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
-  "date_reviewed": "2023-09-19",
-  "next_review": "2024-09-19",
+  "date_reviewed": "2023-11-20",
+  "next_review": "2024-11-20",
   "measure_complexity": "medium",
   "measure_type": "dmd",
   "radar_exclude": false
