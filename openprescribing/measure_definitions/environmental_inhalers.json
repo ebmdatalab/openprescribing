@@ -2,8 +2,8 @@
   "name": "Environmental impact of inhalers - prescribing of non-salbutamol Metered Dose Inhalers (MDIs)",
   "title": "",
   "description": "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol",
-  "numerator_short": "MDI inhalers (quantity)",
-  "denominator_short": "All inhalers (quantity)",
+  "numerator_short": "MDI inhalers (items)",
+  "denominator_short": "All inhalers (items)",
   "why_it_matters": [
     "The NHS has <a href='https://www.england.nhs.uk/greenernhs/a-net-zero-nhs/' target='_Blank'> committed to reducing its carbon footprint by 80% by 2028 to 2032</a>, ",
     "including a shift to lower carbon inhalers. Dry powder inhalers (DPIs) and other newer types of inhalers like soft ",
@@ -24,7 +24,7 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "bnf_quantity",
+  "numerator_type": "bnf_items",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.dmd_objs_with_form_route",
@@ -34,7 +34,7 @@
     "03 #Respiratory",
     "~0301011R0 #Salbutamol"
   ],
-  "denominator_type": "bnf_quantity",
+  "denominator_type": "bnf_items",
   "denominator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.dmd_objs_with_form_route",
