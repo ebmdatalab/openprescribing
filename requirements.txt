@@ -237,7 +237,7 @@ packaging==23.2
     #   google-cloud-bigquery
     #   gunicorn
     #   matplotlib
-pandas==2.0.3
+pandas==2.1.3
     # via
     #   -r requirements.in
     #   db-dtypes
