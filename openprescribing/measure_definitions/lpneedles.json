@@ -42,16 +42,14 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing p LEFT JOIN {measures}.vw__median_price_per_unit r ON p.month=r.date AND p.bnf_code=r.bnf_code ",
   "numerator_where": [
-     "p.bnf_code IN (SELECT bnf_code FROM dmd.vmp WHERE LOWER(nm) LIKE '%insulin needles%' AND bnf_code IS NOT NULL -- find vmp products with vmp name containing insulin needles \n",
-    "UNION DISTINCT ",
-    "SELECT amp.bnf_code FROM dmd.amp AS amp INNER JOIN dmd.vmp ON vmp.id = amp.vmp  WHERE LOWER(vmp.nm) LIKE '%insulin needles%' AND amp.bnf_code IS NOT NULL) -- find amp products with vmp name containing insulin needles \n",
-    "AND r.median_price_per_unit >= 0.05 --this selects products with median price of >= 5 pence per needles same as >= 5 pound per 100 needles  "
+    "LOWER(p.bnf_name) LIKE '%insulin needles%' -- find products with bnf_name containing insulin needles \n",
+    "AND r.median_price_per_unit >= 0.05 --this selects products with median price of >= 5 pence per needles same as >= 5 pound per 100 needles"
   ],
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "christopher.wood@phc.ox.ac.uk",
-  "date_reviewed": "2023-09-18",
-  "next_review": "2025-09-18",
+  "checked_by": "@phc.ox.ac.uk",
+  "date_reviewed": "2023-11-23",
+  "next_review": "2025-011-23",
   "measure_complexity": "medium",
   "measure_type": "custom",
   "radar_exclude": false
