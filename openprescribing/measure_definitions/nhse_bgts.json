@@ -39,7 +39,8 @@
     "~0601060D0EJAAA0 # True Metrix testing strips (Trividia Health UK Ltd)",
     "~0601060D0CIAAA0 # WaveSense JAZZ testing strips (AgaMatrix Europe Ltd)",
     "~0601060D0CIABA0 # WaveSense JAZZ Duo testing strips (AgaMatrix Europe Ltd)",
-    "~0601060D0CUABA0 # GlucoRx Nexus testing strips (GlucoRx Ltd) ALSO PLACEHOLDER FOR AgaMatrix Agile Test Strips LAUNCH JULY 2023 AND CareSens S test strips LAUNCH JUNE 2023"
+    "~0601060D0CUABA0 # GlucoRx Nexus testing strips (GlucoRx Ltd)",
+    "~0601060D0FCAAA0 # CareSens S testing strips (Spirit Healthcare Ltd) ALSO PLACEHOLDER FOR AgaMatrix Agile Test Strips LAUNCH DEC 2023"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
