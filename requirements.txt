@@ -40,7 +40,7 @@ coverage==7.3.2
     # via -r requirements.in
 crispy-bootstrap3==2022.1
     # via -r requirements.in
-cryptography==41.0.6
+cryptography==41.0.7
     # via
     #   django-anymail
     #   paramiko
@@ -54,7 +54,7 @@ cycler==0.12.1
     # via matplotlib
 db-dtypes==1.1.1
     # via pandas-gbq
-defusedxml==0.6.0
+defusedxml==0.7.1
     # via odfpy
 diff-match-patch==20230430
     # via django-import-export
@@ -104,9 +104,9 @@ fabric3==1.14.post1
     # via -r requirements.in
 flake8==6.1.0
     # via -r requirements.in
-fonttools==4.45.0
+fonttools==4.45.1
     # via matplotlib
-google-api-core[grpc]==2.11.0
+google-api-core[grpc]==2.14.0
     # via
     #   google-api-python-client
     #   google-cloud-bigquery
@@ -177,7 +177,7 @@ httplib2==0.22.0
     # via
     #   google-api-python-client
     #   google-auth-httplib2
-idna==3.4
+idna==3.6
     # via
     #   requests
     #   trio
@@ -206,7 +206,7 @@ mock==5.1.0
     # via -r requirements.in
 networkx==3.2.1
     # via -r requirements.in
-numpy==1.24.4
+numpy==1.26.2
     # via
     #   -r requirements.in
     #   contourpy
@@ -295,7 +295,7 @@ pyquery==2.0.0
     # via -r requirements.in
 pysocks==1.7.1
     # via urllib3
-pysqlite3-binary==0.5.2.post1
+pysqlite3-binary==0.5.2.post2
     # via -r requirements.in
 python-dateutil==2.8.2
     # via
