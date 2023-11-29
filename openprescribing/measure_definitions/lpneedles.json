@@ -36,7 +36,7 @@
   "is_percentage": false,
   "is_cost_based": true,
   "low_is_good": true,
-  "numerator_type": "actual_cost",
+  "numerator_type": "bnf_cost",
   "numerator_bnf_codes_query": [ 
     "SELECT DISTINCT r.bnf_code FROM {measures}.vw__median_price_per_unit r ", 
     "LEFT JOIN {hscic}.normalised_prescribing p ",
