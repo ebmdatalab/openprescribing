@@ -28,5 +28,5 @@ pyflakes==3.1.0
     # via flake8
 tomli==2.0.1
     # via black
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via black
