@@ -398,4 +398,9 @@ urlpatterns = [
     path(
         r"<ccg_code>/", views.measures_for_one_ccg, name="measures_for_one_ccg_tracking"
     ),
+    path(
+        "labs/sicbl-change-detection/",
+        TemplateView.as_view(template_name="labs/sicbl-change-detection.html"),
+        name="sicbl_change_detection",
+    ),
 ]
