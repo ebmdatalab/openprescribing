@@ -57,3 +57,20 @@ class TestAPIOrgLocationViews(TestCase):
         coord = content["features"][0]["geometry"]["coordinates"]
         self.assertEqual(coord[0], 1.0)
         self.assertEqual(coord[1], 51.5)
+
+    def test_api_view_org_location_pcn_by_code(self):
+        url = "%s/org_location?org_type=pcn&q=PCN0001&format=json" % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content["features"]), 1)
+        props = content["features"][0]["properties"]
+        self.assertEqual(props["name"], "Transformational Sustainability")
+
+    def test_api_view_org_location_pcn_by_ccg_code(self):
+        url = "%s/org_location?org_type=pcn&q=03V&format=json" % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        pcn_codes = {feature["properties"]["code"] for feature in content["features"]}
+        self.assertEqual(pcn_codes, {"PCN0001", "PCN0002"})
