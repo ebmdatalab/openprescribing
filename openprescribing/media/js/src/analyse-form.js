@@ -328,8 +328,8 @@ var queryForm = {
       placeholder: 'add names or codes',
             // allowClear: true,
       escapeMarkup: function(markup) {
- return markup;
-},
+       return markup;
+      },
       minimumInputLength: 3,
       templateResult: function(result) {
         if (result.loading) return result.text;
@@ -395,6 +395,10 @@ var queryForm = {
     // Support selecting all practices in a CCG by supplying the CCG code
     if (orgType === 'practice') {
       orgType = 'CCG,practice';
+    }
+    // Support selecting all PCNs in a CCG by supplying the CCG code
+    if (orgType === 'pcn') {
+      orgType = 'ccg,pcn';
     }
     return orgType;
   },

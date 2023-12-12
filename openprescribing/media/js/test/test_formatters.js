@@ -200,11 +200,11 @@ describe('Formatters', function () {
 
     describe('#_getStringForIds', function() {
         it('should join multiple ids with plusses', function() {
-            var str = formatters._getStringForIds([{id: 2}, {id: 3}], true);
+            var str = formatters._getStringForIds([{id: 2}, {id: 3}]);
             expect(str).to.equal('2 + 3');
         });
-        it('should prepend "practices in" when second arg is true', function() {
-            var str = formatters._getStringForIds([{id: '03V'}], true);
+        it('should prepend "practices in" when second arg is "practice"', function() {
+            var str = formatters._getStringForIds([{id: '03V'}], "practice");
             expect(str).to.equal('practices in 03V');
         });
         it('should elide long lists to max length', function() {

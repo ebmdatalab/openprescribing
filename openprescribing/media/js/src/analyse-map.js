@@ -207,8 +207,8 @@ return x[1];
 
   getBoundsUrl: function(options) {
     var boundsUrl = config.apiHost + '/api/1.0/org_location/?format=json&';
-    if (options.org === 'practice') {
-      boundsUrl += 'org_type=practice&q=';
+    if ( ! utils.shouldCompareWithAllOrgs(options)) {
+      boundsUrl += 'org_type=' + options.org + '&q=';
       _.each(options.orgIds, function(d) {
         if (('ccg' in d) && (d.ccg)) {
           boundsUrl += d.ccg + ',';
