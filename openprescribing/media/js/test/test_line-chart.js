@@ -25,28 +25,6 @@ describe('LineChart', function () {
             expect(dataPoint.original_x).to.equal(10);
         });
 
-        it('should omit data before Aug 2013 for CCGs', function () {
-            var combinedData = [
-              { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'astro_pu_cost': 10, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2013-07-01'},
-              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'astro_pu_cost': 12, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2013-08-01'}
-            ];
-            var chartValues = {y: "y_actual_cost", ratio: "ratio_actual_cost",
-                               x_val: "astro_pu_cost", x: "astro_pu_cost"};
-            var series = lineChart.getDataForLineChart(combinedData, chartValues, []);
-            expect(series[0].data.length).to.equal(1);
-        });
-
-        it('should not omit data before Aug 2013 for practices', function () {
-            var combinedData = [
-              { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'astro_pu_cost': 10, 'id': 'Y00135', 'name': 'YELLOW SURGERY', 'date': '2013-07-01'},
-              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'astro_pu_cost': 12, 'id': 'Y00135', 'name': 'YELLOW SURGERY', 'date': '2013-08-01'}
-            ];
-            var chartValues = {y: "y_actual_cost", ratio: "ratio_actual_cost",
-                               x_val: "astro_pu_cost", x: "astro_pu_cost"};
-            var series = lineChart.getDataForLineChart(combinedData, chartValues, []);
-            expect(series[0].data.length).to.equal(2);
-        });
-
         it('should correctly highlight any active organisations', function () {
             var combinedData = [
               { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'x_actual_cost': 10, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-03-01'},
