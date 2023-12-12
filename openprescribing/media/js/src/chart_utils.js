@@ -23,6 +23,16 @@ var utils = {
     }
   },
 
+  // For the given selection, should the chart include all other orgs of the
+  // same type nationally for comparison, or just those selected?
+  shouldCompareWithAllOrgs: function(options) {
+    if (options.org === 'practice') {
+      return false;
+    } else {
+      return true;
+    }
+  },
+
   // Often we have a `type` field on the org which could be used to answer this
   // question – but not always: there's some kind of race condition that means
   // sometimes we don't. So instead we use the ID length, which is obviously
@@ -44,7 +54,7 @@ var utils = {
       numeratorUrl += '&code=' + this.idsToString(num_ids);
     }
     var org_ids = options.orgIds;
-    if ((org_ids.length > 0) && (options.org === 'practice')) {
+    if ((org_ids.length > 0) && ! this.shouldCompareWithAllOrgs(options)) {
       numeratorUrl += '&org=';
       _.each(org_ids, function(d, i) {
         if (('ccg' in d) && (d.ccg)) {
@@ -71,7 +81,7 @@ var utils = {
       denominatorUrl += '&org_type=' + options.org.toLowerCase();
       denominatorUrl += '&keys=' + options.denom;
     }
-    if ((org_ids.length > 0) && (options.org === 'practice')) {
+    if ((org_ids.length > 0) && ! this.shouldCompareWithAllOrgs(options)) {
       denominatorUrl += '&org=';
       _.each(org_ids, function(d, i) {
         if (('ccg' in d) && (d.ccg)) {
