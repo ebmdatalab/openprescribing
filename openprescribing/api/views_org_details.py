@@ -47,7 +47,10 @@ def _get_orgs(org_type, org_codes):
     elif org_type == "pcn":
         orgs = PCN.objects.order_by("code").only("code", "name")
         if org_codes:
-            orgs = orgs.filter(code__in=org_codes)
+            orgs = orgs.filter(
+                Q(code__in=org_codes) | Q(practice__ccg_id__in=org_codes)
+            )
+            orgs = orgs.distinct("code")
     elif org_type == "stp":
         orgs = STP.objects.order_by("code").only("code", "name")
         if org_codes:
