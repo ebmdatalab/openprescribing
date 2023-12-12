@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var humanize = require('humanize');
+var utils = require('./chart_utils');
 
 var ORG_TYPES = {
   'practice': {
@@ -64,7 +65,7 @@ var formatters = {
     } else {
       if (org === 'practice' && orgIds.length > 0) {
         str = this._getStringForIds(orgIds, true);
-        if (_.any(_.map(orgIds, function(d) { return d.id.length > 3; }))) {
+        if ( ! _.all(orgIds, utils.orgIsSICBL)) {
           str += ' <br/>and other practices in Sub-ICB Location';
         }
       } else {
@@ -241,7 +242,7 @@ var formatters = {
     var str = '';
     _.each(ids, function(e, i) {
       var id = (e.display_id) ? e.display_id : e.id;
-      if ((is_practices) && (e.id.length === 3)) {
+      if (is_practices && utils.orgIsSICBL(e)) {
         str += 'practices in ';
       }
       str += (e.name) ? e.name : id;

@@ -23,6 +23,15 @@ var utils = {
     }
   },
 
+  // Often we have a `type` field on the org which could be used to answer this
+  // question – but not always: there's some kind of race condition that means
+  // sometimes we don't. So instead we use the ID length, which is obviously
+  // terrible but, as this assumption is used in multiple other places in the
+  // Python code, I don't think we're making anything much worse.
+  orgIsSICBL: function(org) {
+    return org.id.length === 3 || org.id.length === 5;
+  },
+
   constructQueryURLs: function(options) {
     var numeratorUrl = config.apiHost + '/api/1.0';
     if (options.org && options.org !== 'all') {
