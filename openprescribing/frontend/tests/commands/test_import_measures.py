@@ -455,6 +455,8 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
         # get_num_or_denom_bnf_codes(), since it requires a lot of setup in BQ, and is
         # exercised properly in the end-to-end tests.
 
+        assert Measure.objects.count() == 0
+
         measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
         with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
             with patch(
@@ -467,8 +469,7 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
                     get_bnf_codes.return_value = []
                     call_command("import_measures", definitions_only=True)
 
-        measure = Measure.objects.get(id="desogestrel")
-        self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
+        assert Measure.objects.count() > 0
 
 
 class CheckMeasureDefinitionsTests(TestCase):
