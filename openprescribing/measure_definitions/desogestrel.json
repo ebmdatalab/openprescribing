@@ -10,20 +10,16 @@
   "numerator_short": "Branded desogestrel quantity",
   "denominator_short": "Total desogestrel quantity",
   "why_it_matters": [
-    "Desogestrel is available as both generic tablets and as a number of brands. ",
-    "For a time some of these brands were cheaper than the generic tablets, so CCGs started to use them. ",
-    "However the price of the generic has now fallen and is the cheapest option to prescribe."
-  ],
-  "tags": [
-    "core",
-    "cost",
-    "generic",
-    "reproductive"
-  ],
+    "~~Desogestrel is available as both generic tablets and as a number of brands.~~ ",
+    "~~For a time some of these brands were cheaper than the generic tablets, so CCGs started to use them. ~~",
+    "~~However the price of the generic has now fallen and is the cheapest option to prescribe.~~</p>",
+    "<p>As of December 2023 this measure has been retired, due to changes in the desogestrel market.  We will be deleting links to this measure shortly."
+    ],
   "url": null,
   "is_percentage": true,
   "is_cost_based": true,
   "low_is_good": true,
+  "include_in_alerts": false,
   "numerator_type": "bnf_quantity",
   "numerator_bnf_codes_filter": [
     "0703021Q0B # Desogestrel (all brands)"
