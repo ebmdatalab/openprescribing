@@ -54,7 +54,6 @@ def _get_pcns(org_codes, centroids):
         results = results.filter(
             Q(code__in=org_codes) | Q(practice__ccg_id__in=org_codes)
         )
-        results = results.distinct("code")
     return results.values("name", "code", geometry=Union("practice__boundary"))
 
 
