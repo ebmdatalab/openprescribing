@@ -328,8 +328,8 @@ var queryForm = {
       placeholder: 'add names or codes',
             // allowClear: true,
       escapeMarkup: function(markup) {
- return markup;
-},
+       return markup;
+      },
       minimumInputLength: 3,
       templateResult: function(result) {
         if (result.loading) return result.text;
