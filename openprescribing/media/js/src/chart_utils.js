@@ -28,6 +28,8 @@ var utils = {
   shouldCompareWithAllOrgs: function(options) {
     if (options.org === 'practice') {
       return false;
+    } else if (options.org === 'pcn' && _.some(options.orgIds, utils.orgIsSICBL)) {
+      return false;
     } else {
       return true;
     }

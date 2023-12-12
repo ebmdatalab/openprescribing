@@ -396,6 +396,10 @@ var queryForm = {
     if (orgType === 'practice') {
       orgType = 'CCG,practice';
     }
+    // Support selecting all PCNs in a CCG by supplying the CCG code
+    if (orgType === 'pcn') {
+      orgType = 'ccg,pcn';
+    }
     return orgType;
   },
 
