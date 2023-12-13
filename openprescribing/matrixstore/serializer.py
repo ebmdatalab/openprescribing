@@ -1,73 +1,11 @@
 import pickle
 import struct
-import warnings
 
 import lz4.frame
-import pyarrow
-from scipy.sparse import csc_matrix
-
-# When we get the time to work on this we can just get rid of pyarrow
-# altogether. The new pickle protocol (pickle 5) allows for zero-copy
-# deserialisation and I've benchmarked this as being faster than pyarrow even
-# with crude proof-of-concept code. See:
-# https://gist.github.com/evansd/3707bc002938784632855f2c95c96be8
-warnings.filterwarnings(
-    "ignore", message="'pyarrow.SerializationContext' is deprecated", module="."
-)
-warnings.filterwarnings(
-    "ignore", message="'pyarrow.serialize' is deprecated", module="."
-)
-warnings.filterwarnings(
-    "ignore", message="'pyarrow.deserialize' is deprecated", module="."
-)
-
 
 # The magic intial bytes which tell us that a given binary chunk is LZ4
 # compressed data
 LZ4_MAGIC_NUMBER = struct.pack("<I", 0x184D2204)
-
-# PyArrow serialized matrices always start with this value and our custom serialization
-# format will never do (the initial bytes are a count which is guaranteed non-zero) so
-# we can use this as format marker
-FOUR_ZERO_BYTES = struct.pack("<I", 0)
-
-
-context = pyarrow.SerializationContext()
-
-
-def serialize_csc(matrix):
-    """
-    Decompose a matrix in Compressed Sparse Column format into more basic data
-    types (tuples and numpy arrays) which PyArrow knows how to serialize
-    """
-    return ((matrix.data, matrix.indices, matrix.indptr), matrix.shape)
-
-
-def deserialize_csc(args):
-    """
-    Reconstruct a Compressed Sparse Column matrix from its decomposed parts
-    """
-    # We construct a `csc_matrix` instance by directly assigning its members,
-    # rather than using `__init__` which runs additional checks that
-    # significantly slow down deserialization. Because we know these values
-    # came from properly constructed matrices we can skip these checks
-    (data, indices, indptr), shape = args
-    matrix = csc_matrix.__new__(csc_matrix)
-    matrix.data = data
-    matrix.indices = indices
-    matrix.indptr = indptr
-    matrix._shape = shape
-    return matrix
-
-
-# Register a custom PyArrow serialization context which knows how to handle
-# Compressed Sparse Column (csc) matrices
-context.register_type(
-    csc_matrix,
-    "csc",
-    custom_serializer=serialize_csc,
-    custom_deserializer=deserialize_csc,
-)
 
 
 def serialize(obj):
@@ -121,15 +59,11 @@ def serialize_compressed(obj):
 
 def deserialize(data):
     """
-    Deserialize binary data, whether compressed or uncompressed and whether serialized
-    using PyArrow or our own custom format
+    Deserialize binary data, whether compressed or uncompressed
     """
-    if memoryview(data)[:4] == LZ4_MAGIC_NUMBER:
+    if data.startswith(LZ4_MAGIC_NUMBER):
         data = lz4.frame.decompress(data, return_bytearray=True)
-    if memoryview(data)[:4] == FOUR_ZERO_BYTES:
-        return context.deserialize(data)
-    else:
-        return deserialize_uncompressed(data)
+    return deserialize_uncompressed(data)
 
 
 def serialize_buffers(buffers):
