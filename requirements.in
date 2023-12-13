@@ -35,7 +35,6 @@ pandas-gbq
 pandas
 premailer
 psycopg2-binary
-pyarrow
 pysqlite3-binary
 python-dateutil
 pytz

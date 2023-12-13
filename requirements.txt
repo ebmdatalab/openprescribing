@@ -270,7 +270,6 @@ psycopg2-binary==2.9.9
     # via -r requirements.in
 pyarrow==11.0.0
     # via
-    #   -r requirements.in
     #   db-dtypes
     #   pandas-gbq
 pyasn1==0.5.1
