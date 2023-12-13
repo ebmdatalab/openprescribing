@@ -5,7 +5,9 @@
 #    pip-compile
 #
 asgiref==3.7.2
-    # via django
+    # via
+    #   django
+    #   django-cors-headers
 attrs==23.1.0
     # via
     #   outcome
@@ -74,7 +76,7 @@ django==3.2.23
     #   djangorestframework
 django-anymail[mailgun]==10.2
     # via -r requirements.in
-django-cors-headers==3.14.0
+django-cors-headers==4.3.1
     # via -r requirements.in
 django-crispy-forms==2.0
     # via
