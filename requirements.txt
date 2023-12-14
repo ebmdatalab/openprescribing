@@ -110,7 +110,6 @@ fonttools==4.45.1
     # via matplotlib
 google-api-core[grpc]==2.14.0
     # via
-    #   google-api-core
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
@@ -135,7 +134,7 @@ google-auth-oauthlib==1.2.0
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-cloud-bigquery==3.13.0
+google-cloud-bigquery==3.14.1
     # via
     #   -r requirements.in
     #   pandas-gbq
@@ -166,7 +165,6 @@ graphviz==0.20.1
 grpcio==1.59.3
     # via
     #   google-api-core
-    #   google-cloud-bigquery
     #   grpcio-status
 grpcio-status==1.59.3
     # via google-api-core
@@ -255,13 +253,10 @@ pip-tools==7.3.0
 premailer==3.10.0
     # via -r requirements.in
 proto-plus==1.22.3
-    # via
-    #   google-cloud-bigquery
-    #   google-cloud-bigquery-storage
+    # via google-cloud-bigquery-storage
 protobuf==4.25.1
     # via
     #   google-api-core
-    #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
     #   googleapis-common-protos
     #   grpcio-status
