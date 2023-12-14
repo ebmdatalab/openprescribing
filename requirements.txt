@@ -14,7 +14,7 @@ attrs==23.1.0
     #   trio
 backports-csv==1.0.7
     # via -r requirements.in
-bcrypt==4.0.1
+bcrypt==4.1.1
     # via paramiko
 beautifulsoup4==4.12.2
     # via -r requirements.in
@@ -38,7 +38,7 @@ click==8.1.7
     # via pip-tools
 contourpy==1.2.0
     # via matplotlib
-coverage==7.3.2
+coverage==7.3.3
     # via -r requirements.in
 crispy-bootstrap3==2022.1
     # via -r requirements.in
@@ -54,7 +54,7 @@ cssutils==2.9.0
     # via premailer
 cycler==0.12.1
     # via matplotlib
-db-dtypes==1.1.1
+db-dtypes==1.2.0
     # via pandas-gbq
 defusedxml==0.7.1
     # via odfpy
@@ -92,7 +92,7 @@ django-dotenv==1.4.2
     # via -r requirements.in
 django-extensions==3.2.3
     # via -r requirements.in
-django-import-export==3.3.3
+django-import-export==3.3.4
     # via -r requirements.in
 djangorestframework==3.14.0
     # via
@@ -106,11 +106,10 @@ fabric3==1.14.post1
     # via -r requirements.in
 flake8==6.1.0
     # via -r requirements.in
-fonttools==4.45.1
+fonttools==4.46.0
     # via matplotlib
-google-api-core[grpc]==2.14.0
+google-api-core[grpc]==2.15.0
     # via
-    #   google-api-core
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
@@ -119,7 +118,7 @@ google-api-core[grpc]==2.14.0
     #   pandas-gbq
 google-api-python-client==2.111.0
     # via -r requirements.in
-google-auth==2.23.4
+google-auth==2.25.2
     # via
     #   google-api-core
     #   google-api-python-client
@@ -135,7 +134,7 @@ google-auth-oauthlib==1.2.0
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-cloud-bigquery==3.13.0
+google-cloud-bigquery==3.14.1
     # via
     #   -r requirements.in
     #   pandas-gbq
@@ -143,7 +142,7 @@ google-cloud-bigquery-storage==2.24.0
     # via
     #   -r requirements.in
     #   pandas-gbq
-google-cloud-core==2.3.3
+google-cloud-core==2.4.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
@@ -157,18 +156,17 @@ google-resumable-media==2.7.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-googleapis-common-protos==1.61.0
+googleapis-common-protos==1.62.0
     # via
     #   google-api-core
     #   grpcio-status
 graphviz==0.20.1
     # via -r requirements.in
-grpcio==1.59.3
+grpcio==1.60.0
     # via
     #   google-api-core
-    #   google-cloud-bigquery
     #   grpcio-status
-grpcio-status==1.59.3
+grpcio-status==1.60.0
     # via google-api-core
 gunicorn==21.2.0
     # via -r requirements.in
@@ -238,7 +236,7 @@ packaging==23.2
     #   gunicorn
     #   matplotlib
     #   pandas-gbq
-pandas==2.1.3
+pandas==2.1.4
     # via
     #   -r requirements.in
     #   db-dtypes
@@ -254,21 +252,18 @@ pip-tools==7.3.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
-proto-plus==1.22.3
-    # via
-    #   google-cloud-bigquery
-    #   google-cloud-bigquery-storage
+proto-plus==1.23.0
+    # via google-cloud-bigquery-storage
 protobuf==4.25.1
     # via
     #   google-api-core
-    #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
     #   googleapis-common-protos
     #   grpcio-status
     #   proto-plus
 psycopg2-binary==2.9.9
     # via -r requirements.in
-pyarrow==11.0.0
+pyarrow==14.0.1
     # via
     #   db-dtypes
     #   pandas-gbq
@@ -356,12 +351,10 @@ sqlparse==0.4.4
     #   django
     #   django-debug-toolbar
 tablib[html,ods,xls,xlsx,yaml]==3.5.0
-    # via
-    #   django-import-export
-    #   tablib
+    # via django-import-export
 titlecase==0.12.0
     # via -r requirements.in
-trio==0.23.1
+trio==0.23.2
     # via
     #   selenium
     #   trio-websocket
@@ -371,20 +364,20 @@ tzdata==2023.3
     # via pandas
 uritemplate==4.1.1
     # via google-api-python-client
-urllib3[socks]==1.26.13
+urllib3[socks]==2.1.0
     # via
     #   django-anymail
     #   requests
     #   selenium
 watchdog==3.0.0
     # via when-changed
-wheel==0.41.3
+wheel==0.42.0
     # via pip-tools
 when-changed==0.3.0
     # via -r requirements.in
 wsproto==1.2.0
     # via trio-websocket
-xlrd==1.2.0
+xlrd==2.0.1
     # via
     #   -r requirements.in
     #   tablib
