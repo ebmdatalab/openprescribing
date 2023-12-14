@@ -42,7 +42,8 @@ raven
 requests-futures
 requests[security]
 scipy
-titlecase
+# Changes to the capitalisation rules in later versions break our tests
+titlecase==0.12.0
 xlrd
 
 # test requirements
