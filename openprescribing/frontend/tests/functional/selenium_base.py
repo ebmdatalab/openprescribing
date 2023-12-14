@@ -9,6 +9,8 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.options import ArgOptions
+from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -65,28 +67,28 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             "BROWSER"
         ].split(":")
         local_identifier = os.environ["BROWSERSTACK_LOCAL_IDENTIFIER"]
-        caps = {
-            "browserName": browser,
-            "browserVersion": browser_version,
-        }
-        caps["bstack:options"] = {
-            "os": browserstack_os,
-            "osVersion": browserstack_os_version,
-            "resolution": "1600x1200",
-            "local": "true",
-            "localIdentifier": local_identifier,
-            "projectName": os.environ["BROWSERSTACK_PROJECT_NAME"],
-            "buildName": os.environ["BROWSERSTACK_BUILD_NAME"],
-        }
+        options = ArgOptions()
+        options.set_capability("browserName", browser)
+        options.set_capability("browserVersion", browser_version)
+        options.set_capability(
+            "bstack:options",
+            {
+                "os": browserstack_os,
+                "osVersion": browserstack_os_version,
+                "resolution": "1600x1200",
+                "local": "true",
+                "localIdentifier": local_identifier,
+                "projectName": os.environ["BROWSERSTACK_PROJECT_NAME"],
+                "buildName": os.environ["BROWSERSTACK_BUILD_NAME"],
+            },
+        )
         username = os.environ["BROWSERSTACK_USERNAME"]
         access_key = os.environ["BROWSERSTACK_ACCESS_KEY"]
         hub_url = "https://%s:%s@hub-cloud.browserstack.com/wd/hub" % (
             username,
             access_key,
         )
-        return webdriver.Remote(
-            desired_capabilities=caps, command_executor="%s" % hub_url
-        )
+        return webdriver.Remote(options=options, command_executor="%s" % hub_url)
 
     @classmethod
     def use_xvfb(cls):
@@ -117,7 +119,9 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         os.environ["TMPDIR"] = str(tmpdir)
         try:
             return webdriver.Firefox(
-                log_path="%s/logs/webdriver.log" % settings.REPO_ROOT
+                service=FirefoxService(
+                    log_path="%s/logs/webdriver.log" % settings.REPO_ROOT
+                )
             )
         finally:
             if orig_tmp is not None:
