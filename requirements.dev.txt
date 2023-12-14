@@ -22,7 +22,7 @@ frozenlist==1.4.0
     #   aiosignal
 idna==3.6
     # via yarl
-isort==5.12.0
+isort==5.13.2
     # via -r requirements.dev.in
 mccabe==0.7.0
     # via flake8
