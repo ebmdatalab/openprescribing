@@ -29,7 +29,7 @@
        "ieee_divide(total_actual_cost, NULLIF(total_items, 0)) >= 100"
     ],
     "numerator_bnf_codes_query": [
-      "SELECT DISTINCT bnf_code",
+      "SELECT DISTINCT bnf_code ",
       "FROM ( ",
       "SELECT bnf_code, bnf_name, SUM(actual_cost) AS total_actual_cost, SUM(items) AS total_items ",
       "FROM {hscic}.normalised_prescribing ",
