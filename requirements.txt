@@ -106,7 +106,7 @@ fabric3==1.14.post1
     # via -r requirements.in
 flake8==6.1.0
     # via -r requirements.in
-fonttools==4.46.0
+fonttools==4.47.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
@@ -351,7 +351,9 @@ sqlparse==0.4.4
     #   django
     #   django-debug-toolbar
 tablib[html,ods,xls,xlsx,yaml]==3.5.0
-    # via django-import-export
+    # via
+    #   django-import-export
+    #   tablib
 titlecase==0.12.0
     # via -r requirements.in
 trio==0.23.2
