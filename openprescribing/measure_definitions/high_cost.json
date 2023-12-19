@@ -22,12 +22,12 @@
     "numerator_columns": [
       "SUM(actual_cost) AS numerator"
     ],
-    "numerator_from": "{measures}.vw__price_per_unit",
+    "numerator_from": "{measures}.vw__price_per_item",
     "numerator_where": "1 = 1",
     "numerator_bnf_codes_query": [
       "SELECT DISTINCT pr.bnf_code",
       "FROM {hscic}.presentation pr",
-      "JOIN {measures}.vw__price_per_unit ppi",
+      "JOIN {measures}.vw__price_per_item ppi",
       "ON pr.bnf_code = ppi.bnf_code"
     ],
     "denominator_type": "bnf_cost",
