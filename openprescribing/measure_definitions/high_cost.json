@@ -19,14 +19,8 @@
     "is_cost_based": false,
     "low_is_good": true,
     "numerator_type": "custom",
-    "numerator_columns": [
-      "SUM(actual_cost) AS numerator"
-    ],
-    "numerator_from": "{hscic}.normalised_prescribing",
-    "numerator_where": [
-       "WHERE ieee_divide(actual_cost, items) >= 100"
-    ],
-    "numerator_is_list_of_bnf_codes": false,
+    "numerator_columns": "SUM(actual_cost) AS numerator",
+    "numerator_from": "{measures}.vw__price_per_unit ",
     "denominator_type": "bnf_cost",
     "authored_by": "",
     "checked_by": "",
