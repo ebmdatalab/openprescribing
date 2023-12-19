@@ -1,0 +1,48 @@
+{
+    "name": "percentage of things costing over a hundred quid",
+    "title": "percentage of things costing over a hundred quid",
+    "description": [
+      "percentage of things costing over a hundred quid"
+    ],
+    "numerator_short": "spend on things over £100",
+    "denominator_short": "total spend",
+    "why_it_matters": [
+      "Expensive things are expensive"
+    ],
+    "tags": [
+      "core",
+      "safety",
+      "greenernhs"
+    ],
+    "url": null,
+    "is_percentage": true,
+    "is_cost_based": false,
+    "low_is_good": true,
+    "numerator_type": "custom",
+    "numerator_columns": "SUM(actual_cost) AS numerator",
+    "numerator_from": [
+        "(SELECT bnf_code, bnf_name, SUM(actual_cost) AS total_actual_cost, SUM(items) AS total_items ",
+        "{hscic}.normalised_prescribing ",
+        "GROUP BY bnf_code, bnf_name)"
+    ],
+    "numerator_where": [
+       "ieee_divide(total_actual_cost, NULLIF(total_items, 0)) >= 100"
+    ],
+    "numerator_bnf_codes_query": [
+      "SELECT DISTINCT p.bnf_code",
+      "FROM ( ",
+      "SELECT bnf_code, bnf_name, SUM(actual_cost) AS total_actual_cost, SUM(items) AS total_items ",
+      "FROM {hscic}.normalised_prescribing ",
+      "GROUP BY bnf_code, bnf_name",
+      ")",
+      "WHERE ieee_divide(total_actual_cost, NULLIF(total_items, 0)) >= 100 "
+    ],
+    "denominator_type": "bnf_cost",
+    "authored_by": "",
+    "checked_by": "",
+    "date_reviewed": "",
+    "next_review": "",
+    "measure_complexity": "medium",
+    "measure_type": "custom",
+    "radar_exclude": false
+  }
