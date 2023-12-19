@@ -31,7 +31,7 @@
       "ON pr.bnf_code = ppi.bnf_code"
     ],
     "denominator_type": "bnf_cost",
-    "denominator_where": "1:1",    
+    "denominator_where": "1 = 1",    
     "authored_by": "",
     "checked_by": "",
     "date_reviewed": "",
