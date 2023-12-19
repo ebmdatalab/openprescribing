@@ -18,7 +18,11 @@
     "is_percentage": true,
     "is_cost_based": false,
     "low_is_good": true,
-    "numerator_type": "bnf_cost",
+    "numerator_type": "custom",
+    "numerator_columns": [
+      "SUM(actual_cost) AS numerator"
+    ],
+    "numerator_from": "{hscic}.normalised_prescribing",
     "numerator_where": [
        "WHERE ieee_divide(actual_cost, items) >= 100"
     ],
