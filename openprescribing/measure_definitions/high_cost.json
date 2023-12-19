@@ -22,6 +22,7 @@
     "numerator_where": [
        "WHERE ieee_divide(actual_cost, items) >= 100"
     ],
+    "numerator_is_list_of_bnf_codes": false,
     "denominator_type": "bnf_cost",
     "authored_by": "",
     "checked_by": "",
