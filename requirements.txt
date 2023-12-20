@@ -78,7 +78,7 @@ django-anymail[mailgun]==10.2
     # via -r requirements.in
 django-cors-headers==4.3.1
     # via -r requirements.in
-django-crispy-forms==2.0
+django-crispy-forms==2.1
     # via
     #   -r requirements.in
     #   crispy-bootstrap3
@@ -350,7 +350,9 @@ sqlparse==0.4.4
     #   django
     #   django-debug-toolbar
 tablib[html,ods,xls,xlsx,yaml]==3.5.0
-    # via django-import-export
+    # via
+    #   django-import-export
+    #   tablib
 titlecase==0.12.0
     # via -r requirements.in
 trio==0.23.2
