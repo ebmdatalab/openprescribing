@@ -1293,7 +1293,9 @@ def custom_500(request):
             "The database took too long to respond.  If you were running an"
             "analysis with multiple codes, try again with fewer."
         )
-    if request.is_ajax() or "application/json" in request.META.get("HTTP_ACCEPT", ""):
+    if (request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest") or (
+        "application/json" in request.META.get("HTTP_ACCEPT", "")
+    ):
         return HttpResponse(reason, status=500)
     else:
         return render(request, "500.html", {"reason": reason}, status=500)
