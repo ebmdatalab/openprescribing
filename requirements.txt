@@ -186,7 +186,7 @@ jinja2==3.1.2
     # via -r requirements.in
 kiwisolver==1.4.5
     # via matplotlib
-lxml==4.9.3
+lxml==4.9.4
     # via
     #   -r requirements.in
     #   premailer
@@ -351,7 +351,9 @@ sqlparse==0.4.4
     #   django
     #   django-debug-toolbar
 tablib[html,ods,xls,xlsx,yaml]==3.5.0
-    # via django-import-export
+    # via
+    #   django-import-export
+    #   tablib
 titlecase==0.12.0
     # via -r requirements.in
 trio==0.23.2
