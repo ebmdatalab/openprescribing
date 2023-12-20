@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   db-test:
-    image: mdillon/postgis:latest
+    image: postgis/postgis:16-3.4
     env_file: environment-docker
   test:
     image: ghcr.io/ebmdatalab/openprescribing-py311-test:latest
@@ -61,7 +61,7 @@ services:
       - db-test
 
   db-dev:
-    image: mdillon/postgis:latest
+    image: postgis/postgis:16-3.4
     env_file: environment-docker
   dev:
     image: ghcr.io/ebmdatalab/openprescribing-py311-test:latest
