@@ -92,7 +92,7 @@ django-dotenv==1.4.2
     # via -r requirements.in
 django-extensions==3.2.3
     # via -r requirements.in
-django-import-export==3.3.4
+django-import-export==3.3.5
     # via -r requirements.in
 djangorestframework==3.14.0
     # via
