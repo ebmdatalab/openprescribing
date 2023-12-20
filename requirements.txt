@@ -263,7 +263,7 @@ protobuf==4.25.1
     #   proto-plus
 psycopg2-binary==2.9.9
     # via -r requirements.in
-pyarrow==14.0.1
+pyarrow==14.0.2
     # via
     #   db-dtypes
     #   pandas-gbq
