@@ -24,6 +24,6 @@ RUN ls -l /npm/
 # software, for symlinking back in as part of our docker-compose run
 # command. This allows us to do all the install stuff in the image,
 # rather than at runtime.
-RUN cd /npm && npm install -g browserify && npm install -g jshint && npm install
+RUN cd /npm && npm install -g browserify@17.0.0 && npm install -g jshint@2.13.6 && npm install
 # Install phantomjs
 RUN curl -sL https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 > /tmp/phantomjs.tar.bz && tar -jxf /tmp/phantomjs.tar.bz -C /usr/local && ln -s /usr/local/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin && rm /tmp/phantomjs.tar.bz
