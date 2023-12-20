@@ -29,7 +29,7 @@ class InvalidMultiParameter(APIException):
 def measure_global(request, format=None):
     measures = utils.param_to_list(request.query_params.get("measure", None))
     tags = utils.param_to_list(request.query_params.get("tags", None))
-    qs = MeasureGlobal.objects.select_related("measure")
+    qs = MeasureGlobal.objects.prefetch_related("measure")
     if measures:
         qs = qs.filter(measure_id__in=measures)
     if tags:
