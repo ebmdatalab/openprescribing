@@ -14,7 +14,6 @@ django-anymail[mailgun]
 django-cors-headers
 django-crispy-forms
 django-dotenv
-django-import-export
 # Django 4.2 is the current LTS release. If you update this remember to update
 # the constraints in .github/dependabot.yml
 django>=4.2,<4.3
