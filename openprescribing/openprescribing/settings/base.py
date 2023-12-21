@@ -214,7 +214,6 @@ CONTRIB_APPS = (
     "crispy_forms",
     "crispy_bootstrap3",
     "raven.contrib.django.raven_compat",
-    "import_export",
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
