@@ -11,13 +11,13 @@ def notify_slack(message, is_error=False):
         return
 
     webhook_url = settings.SLACK_TECHNOISE_POST_KEY
-    datateam_webhook_url = settings.SLACK_DATATEAM_POST_KEY
+    team_webhook_url = settings.SLACK_TEAM_POST_KEY
     slack_data = {"text": message}
 
     response = requests.post(webhook_url, json=slack_data)
     if is_error:
-        # Also post error messages to #team-data
-        response = requests.post(datateam_webhook_url, json=slack_data)
+        # Also post error messages to relevant team channel
+        response = requests.post(team_webhook_url, json=slack_data)
 
     if response.status_code != 200:
         raise ValueError(
