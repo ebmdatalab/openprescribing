@@ -5,7 +5,7 @@
   "numerator_short": "Cost of selected items (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "NICE guideline <a href='https://www.nice.org.uk/guidance/ng238/chapter/Recommendations#lipid-lowering-treatments-that-should-not-be-used-or-not-used-routinely' target='_blank'>NG238 (cardiovascular disease: risk assessment and reduction, including lipid modification)</a> recommends that, ",
+    "NICE guideline <a href='https://www.nice.org.uk/guidance/ng238/chapter/Recommendations#lipid-lowering-treatments-that-should-not-be-used-or-not-used-routinely' target='_blank'>NG238 (cardiovascular disease: risk assessment and reduction, including lipid modification)</a> recommends that ",
     "fibrates, nicotinic acid, bile acid sequestrants, and omega-3 fatty acid compounds (excluding icosapent ethyl) should not be routinely offered to patients for the primary or secondary prevention of cardiovascular disease (CVD). ",
     "In particular,  NICE state that there is no evidence that omega 3 fatty acid compounds help to prevent CVD (with the exception of icosapent ethyl).",
     "This guidance does not apply to people with familial hypercholesterolaemia, which is covered by <a href='https://www.nice.org.uk/guidance/cg71' target='_blank'> separate NICE guidance</a>."
