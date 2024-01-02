@@ -170,7 +170,7 @@ def _get_bnf_codes_and_sort_field_for_measure(measure):
     # historical reasons) we need to pass them through a translation
     # dictionary.
     match = re.match(
-        "SUM\((items|quantity|actual_cost)\) AS numerator", measure.numerator_columns
+        r"SUM\((items|quantity|actual_cost)\) AS numerator", measure.numerator_columns
     )
 
     if match:

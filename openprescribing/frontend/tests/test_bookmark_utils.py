@@ -146,7 +146,7 @@ def each_cusum_test(test_cases):
         assert sum([x % 4 for x in directions]) == 0, alignment_msg
         data = [
             round(int(x) / 100.0, 2) if x.strip() else None
-            for x in re.findall("(   |\d+ {0,2}) ?", test_cases[i + 1])
+            for x in re.findall(r"(   |\d+ {0,2}) ?", test_cases[i + 1])
         ]
         expected = test_cases[i + 2].rstrip()
         deltawords = test_cases[i + 3].rstrip()

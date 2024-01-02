@@ -9,7 +9,7 @@ def stp_redirect_middleware(get_response):
         path = request.get_full_path()
 
         # Redirect STP URLs with 9-character ONS codes
-        match = re.search("/stp/(E\d{8})", path)
+        match = re.search(r"/stp/(E\d{8})", path)
         if match:
             ons_code = match.groups()[0]
             stp = get_object_or_404(STP, ons_code=ons_code)

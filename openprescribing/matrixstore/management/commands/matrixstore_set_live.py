@@ -62,7 +62,7 @@ def get_most_recent_file(date):
     candidates = [
         p
         for p in os.listdir(settings.MATRIXSTORE_BUILD_DIR)
-        if re.match("matrixstore_\d{4}-\d{2}_.+\.sqlite", p)
+        if re.match(r"matrixstore_\d{4}-\d{2}_.+\.sqlite", p)
     ]
     if date:
         date = date.replace("_", "-")
