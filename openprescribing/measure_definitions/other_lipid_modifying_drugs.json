@@ -1,5 +1,5 @@
 {
-  "name": "Prescribing of bile acid sequestrants, fibrates, nicotinic acid, and omega 3 fatty acid compounds",
+  "name": "Bile acid sequestrants, fibrates, nicotinic acid, and omega 3 fatty acids",
   "title": "Total cost of prescriptions for bile acid sequestrants, fibrates, nicotinic acid, and omega 3 fatty acid compounds per 1000 registered patients",
   "description": "Total cost of prescriptions for bile acid sequestrants, fibrates, nicotinic acid, and omega 3 fatty acid compounds per 1000 registered patients",
   "numerator_short": "Cost of selected items (£)",
@@ -37,7 +37,7 @@
   ],
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
   "date_reviewed": "2024-01-02",
   "next_review": "2026-01-02",
   "measure_complexity": "low",
