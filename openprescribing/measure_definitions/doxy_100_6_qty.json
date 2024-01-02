@@ -1,0 +1,43 @@
+{
+    "name": "Antibiotic stewardship: courses for doxycycline 100mg greater than 6 capsules/dispersible tablets",
+    "title": "Antibiotic stewardship: courses for doxycycline 100mg greater than 6 capsules/dispersible tablets",
+    "description": "Proportion of prescription items of doxycycline 100mg capsules with quantity greater than 6 capsules/dispersible tablets",
+    "numerator_short": "Doxycycline capsules/dispersible tablets 100mg items for greater than 6 caps/tabs",
+    "denominator_short": "Doxycycline capsules/dispersible tablets 100mg items",
+    "why_it_matters": [
+      "<a href='https://academic.oup.com/jac/article/73/suppl_2/ii2/4841822' target='_Blank'>The most common indication for the prescribing of doxycycline in primary care</a> ",
+      "is the treatment of respiratory-tract infections. <a href='https://www.nice.org.uk/guidance/conditions-and-diseases/infections/antimicrobial-stewardship/products?Status=Published' target='_Blank'>NICE guidance</a> ",
+      "recommends five-day courses when antibiotics are indicated for sinusitis, sore throat, COPD infective exacerbation, cough (acute), pneumonia (community-acquired) and otitis media.",
+      "For doxycycline this would be 200mg on the first day, then 100mg once a day for 4 days (5-day course in total) requiring a total of 6 capsules/dispersible tablets. ", 
+      "Where greater than 5 days treatment is prescribed for these indications, this increases both the unnecessary exposure to antibiotics, as well as cost. ",
+      "There are some indications which require higher doses/longer durations of doxycycline, e.g. treatment of infected leg ulcers.</p>",
+      "<p><a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#14-reducing-course-length-of-antimicrobial-prescribing' target='_Blank'>NHS England National Medicines Optimisation Opportunities for 2023/24</a>",
+      "identify use of the shortest effective antibiotic courses as an area for improvement."
+    ],
+    "tags": [
+      "antimicrobial",
+      "core",
+      "infections",
+      "nice",
+      "opportunities"
+    ],
+    "url": null,
+    "is_percentage": true,
+    "is_cost_based": false,
+    "low_is_good": true,
+    "numerator_type": "custom",
+    "numerator_columns": "SUM(items) AS numerator",
+    "numerator_from": "{hscic}.raw_prescribing_normalised",
+    "numerator_where": "(bnf_code LIKE '0501030I0%AB' or bnf_code LIKE '0501030Z0%AB') AND quantity_per_item > 6 --Doxycycline 100mg capsules or Doxycycline 100mg dispersible tablets (brands and generic)",
+    "denominator_type": "custom",
+    "denominator_columns": "SUM(items) AS denominator",
+    "denominator_from": "{hscic}.raw_prescribing_normalised",
+    "denominator_where": "(bnf_code LIKE '0501030I0%AB' or bnf_code LIKE '0501030Z0%AB') --Doxycycline 100mg capsules or Doxycycline 100mg dispersible tablets (brands and generic)",
+    "no_analyse_url": true,
+    "authored_by": "christopher.wood@phc.ox.ac.uk",
+    "checked_by": "richard.croker@phc.ox.ac.uk",
+    "date_reviewed": "2023-09-11",
+    "next_review": "2025-09-11",
+    "measure_complexity": "low"
+  }
+  

@@ -1,11 +1,33 @@
 {
-  "name": "NHS England Low Priority Treatment - lutein and antioxidants",
+  "name": "Items which should not routinely be prescribed in primary care - lutein and antioxidants",
   "title": "Lutein and antioxidant cost per 1000 patients",
   "description": "Cost of lutein and antioxidant per 1000 patients",
   "numerator_short": "Lutein and antioxidant  cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Lutein and antioxidants (e.g. zinc, and vitamins A, C and E) are supplements taken for Age Related Macular Degeneration but there is no evidence they work."
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#lutein-and-antioxidants-updated-2023' target='_Blank'>",
+    "NHS England guidance states</a>:</p>",
+    "<i><p>The supplements lutein and antioxidants (e.g. vitamin A, C, E and zinc) are sometimes recommended for age-related macular degeneration (AMD). A variety of supplements are available to purchase ",
+    "in health food stores and other outlets where they are promoted to assist with ‘eye health’.</p>",
+    "<p>Two Cochrane reviews have been conducted on this topic:",
+    "<ol>",
+    "<li><a href='https://www.cochrane.org/CD000253/EYES_antioxidant-vitamin-and-mineral-supplements-prevent-development-age-related-macular-degeneration-amd' target='_blank'>Antioxidant vitamin and mineral supplements for preventing ",
+    "age-related macular degeneration</a>. The authors conclude: 'There is accumulating evidence that taking vitamin E or beta-carotene supplements will not prevent ",
+    "or delay the onset of AMD. There is no evidence with respect to other antioxidant supplements, such as vitamin C, lutein and zeaxanthin, or any of the commonly marketed multivitamin combinations'.</li>",
+    "<li><a href='https://www.cochrane.org/CD000254/EYES_antioxidant-vitamin-and-mineral-supplements-slow-down-progression-age-related-macular-degeneration' target='_blank'>Antioxidant vitamin and mineral supplements for slowing the ",
+    "progression of age-related macular degeneration</a>. The authors conclude: 'People with AMD may experience delay in progression of the disease ",
+    "with antioxidant vitamin and mineral supplementation. This finding is drawn from one large trial conducted in a relatively well-nourished American population. The generalisability of these findings to ",
+    "other populations is not known'.</li>",
+    "</ol>",
+    "<p>PrescQIPP CIC has issued a <a href='https://www.prescqipp.info/our-resources/bulletins/bulletin-206-antioxidant-vitamins-for-amd/' target='_Blank'>bulletin</a> that did not find evidence to support prescribing of lutein and antioxidants routinely on the NHS.</p>",
+    "<p>NICE guidance on AMD includes a recommendation for research on the effectiveness and cost-effectiveness of lutein and antioxidants, which is currently a gap in the research.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>",
+    "</ul>"
   ],
   "tags": [
     "cost",
@@ -52,8 +74,9 @@
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "christopher.wood@phc.ox.ac.uk",
-  "date_reviewed": "2023-05-15",
-  "next_review": "2024-05-15",
+  "date_reviewed": "2023-09-12",
+  "next_review": "2024-09-12",
   "measure_complexity": "medium",
-  "measure_type": "bnf_code"
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }

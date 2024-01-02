@@ -1,7 +1,7 @@
 import api.view_utils as utils
 from api.geojson_serializer import as_geojson_stream
 from django.contrib.gis.db.models.aggregates import Union
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import HttpResponse
 from frontend.models import PCN, PCT, STP, Practice, RegionalTeam
 from rest_framework.decorators import api_view
@@ -51,7 +51,9 @@ def _get_ccgs(org_codes, centroids):
 def _get_pcns(org_codes, centroids):
     results = PCN.objects.active()
     if org_codes:
-        results = results.filter(code__in=org_codes)
+        results = results.filter(
+            Q(code__in=org_codes) | Q(practice__ccg_id__in=org_codes)
+        )
     return results.values("name", "code", geometry=Union("practice__boundary"))
 
 

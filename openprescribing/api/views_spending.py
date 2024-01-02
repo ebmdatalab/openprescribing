@@ -425,6 +425,12 @@ def spending_by_org(request, format=None, org_type=None):
                 status=400,
             )
 
+    if org_type == "pcn":
+        extra_ids = Practice.objects.filter(ccg_id__in=org_ids).values_list(
+            "pcn", flat=True
+        )
+        org_ids = set(org_ids).union(extra_ids)
+
     if org_type == "practice":
         orgs = Practice.objects.all()
     elif org_type == "ccg":

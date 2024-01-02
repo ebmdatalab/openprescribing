@@ -14,10 +14,9 @@ django-anymail[mailgun]
 django-cors-headers
 django-crispy-forms
 django-dotenv
-django-import-export
-# Django 3.2 is the current LTS release. If you update this remember to update
+# Django 4.2 is the current LTS release. If you update this remember to update
 # the constraints in .github/dependabot.yml
-django>=3.2,<3.3
+django>=4.2,<4.3
 djangorestframework
 djangorestframework-csv
 google-api-python-client
@@ -35,7 +34,6 @@ pandas-gbq
 pandas
 premailer
 psycopg2-binary
-pyarrow
 pysqlite3-binary
 python-dateutil
 pytz
@@ -43,7 +41,8 @@ raven
 requests-futures
 requests[security]
 scipy
-titlecase
+# Changes to the capitalisation rules in later versions break our tests
+titlecase==0.12.0
 xlrd
 
 # test requirements

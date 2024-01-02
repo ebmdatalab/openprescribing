@@ -47,22 +47,18 @@
     "name": "Greener NHS",
     "description": "These measures support work to reduce the impact of medicines on overall environmental impact of the NHS. More resources for reviewing prescribing are available at <a href=\"https://www.greenerpractice.co.uk\">Greener Practice </a>"
   },
-    "iif": {
-    "name": "NHS England Investment and Impact Fund",
-    "description": "The <a href=\"https://www.england.nhs.uk/wp-content/uploads/2022/03/B1357-investment-and-impact-fund-2022-23-updated-guidance-march-2022.pdf\">Investment and Impact Fund</a> is an NHS England scheme that rewards Primary Care Networks (PCNs) for delivering objectives in the NHS Long Term Plan. These measures are all included in the IIF and PCNs can use them to review the success of any interventions they make."
-  },
   "infections": {
     "name": "Infections",
     "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings."
   },
   "lowpriority": {
-    "name": "NHS England Low Priority",
+    "name": "NHS England - items which should not routinely be prescribed in primary care",
     "description": [
       "This is a list of products",
       "considered a low priority for NHS Funding",
-      "<a href=\"https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/\">by NHS England</a>. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
+      "<a href=\"https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/\">by NHS England</a>. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://www.bennett.ox.ac.uk/qipp-planning-how-to/\">How-to guide</a>."
     ]
-  },
+   },
     "mentalhealth": {
     "name": "Mental Health",
     "description": "These measures are for treatments commonly used for treating mental health conditions."
@@ -78,6 +74,10 @@
   "opioids": {
     "name": "Opioids",
     "description": "Opioids are painkillers and their use has been increasing in England <a href=\"https://www.thelancet.com/pdfs/journals/lanpsy/PIIS2215-0366(18)30471-1.pdf\"> (see paper)</a>. Although opioids provide effective analgesia for acute pain and in palliative care, there is little evidence of benefit for long-term opioids in most patients with persistent non-cancer pain, in terms of pain, quality of life or functioning, and they can have serious side-effects. These measures relate to the use of opioids and can be used to openly audit prescribing. More resources for reviewing prescribing are available at the <a href=\"https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware\">Opioids Aware project</a>."
+  },
+  "opportunities": {
+    "name": "National medicines optimisation opportunities",
+    "description": "These measures show areas related to the NHS England <a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/' target='_Blank'>national medicines optimisation opportunities for 2023-2024</a>."
   },
   "pain": {
     "name": "Pain",

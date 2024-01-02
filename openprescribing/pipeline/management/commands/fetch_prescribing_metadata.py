@@ -26,7 +26,7 @@ class Command(BaseCommand):
         filename_fragment = {"addresses": "ADDR%20BNFT", "chemicals": "CHEM%20SUBS"}[
             kwargs["dataset"]
         ]
-        pattern = "T(\d{4})(\d{2})" + filename_fragment + ".CSV"
+        pattern = r"T(\d{4})(\d{2})" + filename_fragment + ".CSV"
 
         urls = [
             record["contentUrl"]

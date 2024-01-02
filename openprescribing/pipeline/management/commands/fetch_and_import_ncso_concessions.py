@@ -69,6 +69,14 @@ PUBLISH_DATE_RE = re.compile(
     re.VERBOSE | re.IGNORECASE,
 )
 
+UNPARSEABLE_URLS = {
+    # Contains an announcement of a withdrawal and no tables
+    "https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023"
+}
+
+# Singleton to use for withdrawn concessions
+WITHDRAWN = object()
+
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
@@ -113,6 +121,8 @@ def parse_concessions_from_archive():  # pragma: no cover
 
 
 def parse_concessions_from_html(html, url=None):
+    if url in UNPARSEABLE_URLS:
+        return
     doc = bs4.BeautifulSoup(html, "html.parser")
     # Find the publication date
     publish_date = get_single_item(
@@ -131,6 +141,7 @@ def parse_concessions_from_html(html, url=None):
         if (td.text or "").strip().lower() == "pack size"
     )
     rows = rows_from_table(table)
+    rows = filter_rows(rows)
     headers = next(rows)
     assert [s.lower() for s in headers][:3] == [
         "drug",
@@ -138,12 +149,6 @@ def parse_concessions_from_html(html, url=None):
         "price concession",
     ]
     for row in rows:
-        # Sometimes all-blank rows are used as spacers
-        if all(v == "" for v in row):
-            continue
-        # Sometimes colspans are used to inject section headings
-        if len(row) < 3:
-            continue
         # After a section heading we usually see the column headings repeated again
         if row == headers:
             continue
@@ -154,7 +159,7 @@ def parse_concessions_from_html(html, url=None):
             "drug": row[0],
             "pack_size": row[1],
             "price_pence": parse_price(row[2]),
-            "supplied_vmpp_id": int(row[3]) if len(row) == 4 else None,
+            "supplied_vmpp_id": int(row[3]) if len(row) == 4 and row[3] else None,
         }
 
 
@@ -167,6 +172,17 @@ def get_single_item(iterator):
 def parse_date(date_str):
     # Parses dates like "1 January 2020"
     return datetime.datetime.strptime(date_str, "%d %B %Y").date()
+
+
+def filter_rows(rows):
+    for row in rows:
+        # Sometimes all-blank rows are used as spacers
+        if all(v == "" for v in row):
+            continue
+        # Sometimes colspans are used to inject section headings
+        if len(row) < 3:
+            continue
+        yield row
 
 
 def rows_from_table(table):
@@ -342,6 +358,19 @@ def add_manual_corrections(items):
                     "price_pence": 448,
                 }
             )
+    for item in items:
+        if (
+            item["date"] == datetime.date(2023, 8, 1)
+            and item["vmpp_id"] == 7649311000001108
+        ):
+            item.update(
+                {
+                    "url": "https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023",
+                    "publish_date": datetime.date(2023, 8, 31),
+                    "price_pence": WITHDRAWN,
+                }
+            )
+
     return items
 
 
@@ -352,7 +381,13 @@ def insert_or_update(items):
     inserted = []
     with transaction.atomic():
         for item in items:
-            if item["vmpp_id"] is not None:
+            if item["price_pence"] is WITHDRAWN:
+                assert item["vmpp_id"] is not None
+                NCSOConcession.objects.filter(
+                    date=item["date"], vmpp_id=item["vmpp_id"]
+                ).delete()
+                created = False
+            elif item["vmpp_id"] is not None:
                 _, created = NCSOConcession.objects.update_or_create(
                     date=item["date"],
                     vmpp_id=item["vmpp_id"],
@@ -414,7 +449,7 @@ def format_message(inserted):
             msg += (
                 f"\n"
                 f"Name: {item['drug']} {item['pack_size']}\n"
-                f"VMPP: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
+                f"VMPP: {vmpp_url(item['supplied_vmpp_id'])}\n"
                 f"From: {item['url']}\n"
             )
 
@@ -428,9 +463,16 @@ def format_message(inserted):
             msg += (
                 f"\n"
                 f"Name: {item['drug']} {item['pack_size']}\n"
-                f"Supplied VMPP: https://openprescribing.net/dmd/vmpp/{item['supplied_vmpp_id']}/\n"
-                f"Matched VMPP: https://openprescribing.net/dmd/vmpp/{item['vmpp_id']}/\n"
+                f"Supplied VMPP: {vmpp_url(item['supplied_vmpp_id'])}\n"
+                f"Matched VMPP: {vmpp_url(item['vmpp_id'])}\n"
                 f"From: {item['url']}\n"
             )
 
     return msg
+
+
+def vmpp_url(vmpp_id):
+    if vmpp_id:
+        return f"https://openprescribing.net/dmd/vmpp/{vmpp_id}/"
+    else:
+        return "None supplied"

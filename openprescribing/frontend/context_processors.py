@@ -30,7 +30,13 @@ def debug(request):
 
 def google_tracking_id(request):
     tracking_id = None
-    if hasattr(settings, "GOOGLE_TRACKING_ID"):
+    container_id = None
+    if "PhantomJS" in request.META.get("HTTP_USER_AGENT", ""):
+        # Google's JavaScript breaks the ancient JS engine in PhantomJS which we use for
+        # taking screenshots of charts (plus I'm not sure we want analytics to be
+        # running in this case anyway)
+        pass
+    elif hasattr(settings, "GOOGLE_TRACKING_ID"):
         tracking_id = settings.GOOGLE_TRACKING_ID
         container_id = getattr(settings, "GOOGLE_OPTIMIZE_CONTAINER_ID", "")
     else:

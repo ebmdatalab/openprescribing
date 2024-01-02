@@ -29,7 +29,7 @@ class InvalidMultiParameter(APIException):
 def measure_global(request, format=None):
     measures = utils.param_to_list(request.query_params.get("measure", None))
     tags = utils.param_to_list(request.query_params.get("tags", None))
-    qs = MeasureGlobal.objects.select_related("measure")
+    qs = MeasureGlobal.objects.prefetch_related("measure")
     if measures:
         qs = qs.filter(measure_id__in=measures)
     if tags:
@@ -170,7 +170,7 @@ def _get_bnf_codes_and_sort_field_for_measure(measure):
     # historical reasons) we need to pass them through a translation
     # dictionary.
     match = re.match(
-        "SUM\((items|quantity|actual_cost)\) AS numerator", measure.numerator_columns
+        r"SUM\((items|quantity|actual_cost)\) AS numerator", measure.numerator_columns
     )
 
     if match:

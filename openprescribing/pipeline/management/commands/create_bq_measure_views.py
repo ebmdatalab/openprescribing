@@ -52,7 +52,6 @@ class Command(BaseCommand):
             "practice_data_all_low_priority",
             "vw__median_price_per_unit",
             "vw__opioids_total_dmd",
-            "vw__opioids_total_ome",
         ]:
             self.recreate_table(client, table_name)
 

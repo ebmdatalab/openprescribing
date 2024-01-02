@@ -1,17 +1,27 @@
 {
-  "name": "NHS England Low Priority Treatment - perindopril arginine",
-  "title": [
-    "Perindopril arginine cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of perindopril arginine per 1000 patients"
-  ],
+  "name": "Items which should not routinely be prescribed in primary care - perindopril arginine",
+  "title":" Perindopril arginine cost per 1000 patients",
+  "description": "Cost of perindopril arginine per 1000 patients",
   "numerator_short": "Perindopril arginine cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Perindopril arginine is an ACE inhibitor used in heart failure, hypertension, diabetic nephropathy ",
-    "and prophylaxis of cardiovascular events. A different salt (perindopril erbumine) is considerably cheaper, and the arginine form ",
-    "does not provide any additional clinical benefit."
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#perindopril-arginine-2017' target='_blank'>",
+    "NHS England guidance states</a>:</p>",
+    "<p><i>Perindopril is an ACE inhibitor used in heart failure, hypertension, diabetic nephropathy, and prophylaxis of cardiovascular events. ",
+    "The perindopril arginine salt version is more stable in extremes of climate than the perindopril erbumine salt, which gives it a longer shelf-life. ",
+    "However, perindopril arginine is significantly more expensive than perindopril erbumine and a ",
+    "<a href='https://www.prescqipp.info/our-resources/bulletins/bulletin-209-perindopril-arginine/'  target='_blank'>",
+    "PrescQIPP CIC review of the topic found no clinical advantage for the arginine salt.</a></p>",
+    "<p>NICE guidance on hypertension in adults recommends that prescribing costs are minimised.</p>",
+    "<p>Due to the significant extra costs of the arginine salt and the availability of the erbumine salt, the joint clinical working group ",
+    "considered perindopril arginine suitable for inclusion in this guidance.</i></p>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>",
+    "</ul>"
   ],
   "tags": [
     "cardiovascular",
@@ -24,9 +34,26 @@
   "is_cost_based": true,
   "low_is_good": true,
   "numerator_type": "bnf_cost",
-  "numerator_bnf_codes_filter": [
-    "0205051Y0 # Perindopril Arginine",
-    "0205051Z0 # Perindopril Arginine with Diuretic"
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT v.bnf_code FROM dmd.vmp v",
+    "INNER JOIN dmd.vpi i ON i.vmp = v.id",
+    "INNER JOIN dmd.ing g ON g.id = i.ing",
+    "WHERE g.id=442509000 --ING code for perindopril arginine \n",
+    "AND v.bnf_code IS NOT NULL AND v.bnf_code !='NA'",
+    "UNION DISTINCT",
+    "SELECT DISTINCT a.bnf_code FROM dmd.amp a",
+    "INNER JOIN dmd.vmp v ON a.vmp = v.id",
+    "INNER JOIN dmd.vpi i ON i.vmp = v.id",
+    "INNER JOIN dmd.ing g ON g.id = i.ing",
+    "WHERE g.id=442509000 --ING code for perindopril arginine\n",
+    "AND (a.bnf_code IS NOT NULL AND a.bnf_code !='NA')"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-12",
+  "next_review": "2025-09-12",
+  "measure_complexity": "low",
+  "measure_type": "dmd",
+  "radar_exclude": false
 }

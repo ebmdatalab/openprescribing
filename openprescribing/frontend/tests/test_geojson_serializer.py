@@ -19,4 +19,8 @@ class GeoJSONSerializerTest(TestCase):
         stream = as_geojson_stream(queryset.values(*fields), geometry_field=geo_field)
         expected = json.loads(expected_json)
         actual = json.loads("".join(stream))
+        # The core serializer now includes an ID field by default which we don't intend
+        # to match
+        for feature in expected["features"]:
+            feature.pop("id", None)
         self.assertEqual(expected, actual)

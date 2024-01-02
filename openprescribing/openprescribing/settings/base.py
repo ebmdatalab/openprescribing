@@ -175,7 +175,6 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "corsheaders.middleware.CorsPostCsrfMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -215,7 +214,6 @@ CONTRIB_APPS = (
     "crispy_forms",
     "crispy_bootstrap3",
     "raven.contrib.django.raven_compat",
-    "import_export",
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -345,6 +343,7 @@ GRAB_HOST = "https://openprescribing.net"
 # Webhook URLs for posting to different channels can be configured at
 # https://api.slack.com/apps/A6B85C8KC/incoming-webhooks
 SLACK_TECHNOISE_POST_KEY = utils.get_env_setting("SLACK_TECHNOISE_POST_KEY", default="")
+SLACK_DATATEAM_POST_KEY = utils.get_env_setting("SLACK_DATATEAM_POST_KEY", default="")
 SLACK_SENDING_ACTIVE = True
 
 

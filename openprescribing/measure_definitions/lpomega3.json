@@ -1,16 +1,37 @@
 {
-  "name": "NHS England Low Priority Treatment - omega-3 fatty acid compounds",
-  "title": [
-    "Omega-3 fatty acid compounds cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of omega-3 fatty acid compounds per 1000 patients"
-  ],
+  "name": "Items which should not routinely be prescribed in primary care - omega-3 fatty acid compounds (excluding icosapent ethyl [Vazkepa®])",
+  "title": "Omega-3 fatty acid compounds cost per 1000 patients",
+  "description": "Cost of omega-3 fatty acid compounds per 1000 patients",
   "numerator_short": "Omega-3 cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Omega-3 fatty acid compounds are licensed to treat elevated triglycerides, but evidence of benefit is weak. ",
-    "<a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations'> NICE recommend that they are not prescribed for primary prevention of cardiovascular disease</a>. "
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#omega-3-fatty-acid-compounds-excluding-icosapent-ethyl-vazkepa-updated-2023' target='_Blank'>",
+    "NHS England guidance states</a>:</p>",
+    "<p><i>Omega-3 fatty acid compounds are essential fatty acids that can be obtained from the diet. They are licensed for adjunct to diet and statin in Type IIb or III hypertriglyceridaemia; ",
+    "adjunct to diet in Type IV hypertriglyceridaemia; adjunct in secondary prevention in those who have had a myocardial infarction in the preceding 3 months.</p>",
+    "<p>The <a href='https://www.england.nhs.uk/aac/publication/summary-of-national-guidance-for-lipid-management/' target='_Blank'>",
+    "summary of national guidance for lipid management</a> outlines the clinical pathway for primary and secondary prevention of cardiovascular disease (CVD). It states that omega-3 fatty acids should not ",
+    "be offered alone or in combination with a statin for the prevention of CVD. This pathway should be followed for lipid management.</p>",
+    "<p>NICE recommends that only one omega-3 fatty acid compound is recommended in specific clinical circumstances - <a href='https://www.nice.org.uk/guidance/TA805' target='_Blank'>icosapent ethyl [Vazkepa®]</a>, ",
+    "and that all other omega-3 fatty acid compounds are not suitable for prescribing:<p>",
+    "<ul>",
+    "<li>Do not offer or advise people to use omega-3 fatty acid capsules or omega-3 fatty acid supplemented foods to prevent another myocardial infarction. ",
+    "If people choose to take omega-3 fatty acid capsules or eat omega-3 fatty acid supplemented foods, be aware that there is no evidence of harm.</li>",
+    "<li>Do not offer omega-3 fatty acid compounds for the prevention of cardiovascular disease to any of the following: people who are being treated for primary prevention, ",
+    "people who are being treated for secondary prevention, people with chronic kidney disease, people with type 1 diabetes, people with type 2 diabetes.</li>",
+    "<li>Do not offer the combination of a bile acid sequestrant (anion exchange resin), fibrate, nicotinic acid or omega-3 fatty acid compound with a statin for the primary or secondary prevention of CVD.</li>",
+    "<li>Do not offer omega-3 fatty acids to adults with non-alcoholic fatty liver disease because there is not enough evidence to recommend their use.</li>",
+    "<li>Initiation of omega-3-acid ethyl esters supplements is not routinely recommended for patients who have had a myocardial infarction (MI) more than 3 months earlier.</li>",
+    "<li>Do not use omega-3 fatty acids to manage sleep problems in children and young people with autism.</li>",
+    "<li>People with familial hypercholesterolemia (FH) should not routinely be recommended to take omega-3 fatty acid supplements.</li>",
+    "<li>Do not offer omega-3 or omega-6 fatty acid compounds to treat multiple sclerosis (MS). Explain that there is no evidence that they affect relapse frequency or progression of MS.</li>",
+    "</ul>",
+    "<p>The joint clinical working group agreed with NICE recommendations and considered omega-3 fatty acid compounds suitable for inclusion in this guidance.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "</ul>"
   ],
   "tags": [
     "cardiovascular",
@@ -28,5 +49,12 @@
     "0212000AB # Omega-3-Acid Ethyl Esters",
     "0212000V0 # Omega-3 Marine Triglycerides"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-18",
+  "next_review": "2025-09-18",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }

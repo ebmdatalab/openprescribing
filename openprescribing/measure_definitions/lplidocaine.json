@@ -1,17 +1,28 @@
 {
-  "name": "NHS England Low Priority Treatment - lidocaine plasters",
-  "title": [
-    "lidocaine plasters cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of lidocaine plasters per 1000 patients"
-  ],
+  "name": "Items which should not routinely be prescribed in primary care - lidocaine plasters",
+  "title": "lidocaine plasters cost per 1000 patients",
+  "description": "Cost of lidocaine plasters per 1000 patients",
   "numerator_short": "Lidocaine plasters cost (£)",
   "denominator_short": "1000 patients",
   "why_it_matters": [
-    "Lidocaine plasters as licensed for treatment of post herpetic neuralgia, which is a complication of shingles. ",
-    "However there is limited evidence to the benefit, and they are ",
-    "<a href='https://www.nice.org.uk/guidance/cg173/chapter/1-Recommendations'>not included in the recommendations for neuralgia in NICE guidance</a>. "
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#lidocaine-plasters-updated-2023' target='_blank'>",
+    "NHS England guidance states</a>:</p>",
+    "<p><i>Lidocaine plasters are licensed for symptomatic relief of neuropathic pain associated with previous herpes zoster infection (PHN) in adults.",
+    "<p>NICE guidance on chronic pain does not recommend lidocaine plasters for treating neuropathic pain.</p>",
+    "<p>The joint clinical working group also considered a <a href='https://www.prescqipp.info/-lidocaine-plasters/send/54-lidocaine-plasters/852-bulletin-51-lidocaine-plasters' target='_blank'>PrescQIPP CIC review</a>, ",
+    "and during the consultation more evidence was provided and an up to date evidence summary was deemed necessary and prepared by the ",
+    "<a href='https://www.england.nhs.uk/publication/items-which-should-not-be-routinely-prescribed-in-primary-care-evidence-reviews/' target='_blank'>",
+    "Specialist Pharmacy Service</a> to inform the joint clinical working group’s recommendations. Based on this review, lidocaine plasters can be prescribed only for patients who are intolerant of first-line ",
+    "systemic therapies for PHN or where these therapies have been ineffective.</p>",
+    "<p>Lidocaine plasters are not an alternative to an opioid-based medicine when concerned about dependence and withdrawal.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>",
+    "<li>Prescribe only if for a named indication in this guidance.</li>",
+    "</ul>"
   ],
   "tags": [
     "cost",
@@ -26,7 +37,14 @@
   "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
-    "1502010J0%EL # Lido_Medic Plastr 5% (brands and generic)"
+    "1502010J0%EL # Lidocaine 5% medicated plasters (brands and generic)"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-18",
+  "next_review": "2025-09-18",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
