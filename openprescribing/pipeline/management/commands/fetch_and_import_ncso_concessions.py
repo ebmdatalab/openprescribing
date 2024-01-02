@@ -141,6 +141,7 @@ def parse_concessions_from_html(html, url=None):
         if (td.text or "").strip().lower() == "pack size"
     )
     rows = rows_from_table(table)
+    rows = filter_rows(rows)
     headers = next(rows)
     assert [s.lower() for s in headers][:3] == [
         "drug",
@@ -148,12 +149,6 @@ def parse_concessions_from_html(html, url=None):
         "price concession",
     ]
     for row in rows:
-        # Sometimes all-blank rows are used as spacers
-        if all(v == "" for v in row):
-            continue
-        # Sometimes colspans are used to inject section headings
-        if len(row) < 3:
-            continue
         # After a section heading we usually see the column headings repeated again
         if row == headers:
             continue
@@ -177,6 +172,17 @@ def get_single_item(iterator):
 def parse_date(date_str):
     # Parses dates like "1 January 2020"
     return datetime.datetime.strptime(date_str, "%d %B %Y").date()
+
+
+def filter_rows(rows):
+    for row in rows:
+        # Sometimes all-blank rows are used as spacers
+        if all(v == "" for v in row):
+            continue
+        # Sometimes colspans are used to inject section headings
+        if len(row) < 3:
+            continue
+        yield row
 
 
 def rows_from_table(table):
