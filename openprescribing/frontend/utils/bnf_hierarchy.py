@@ -66,7 +66,7 @@ def get_subsection_prefixes(prefix):
 
 
 def _prune_paths(paths, all_paths):
-    """Given two lists of paths (`paths` and `all_paths`) from the root of a tree to its
+    r"""Given two lists of paths (`paths` and `all_paths`) from the root of a tree to its
     leaves (where every path in `paths` is in `all_paths`) return a new list of
     paths from the root of the tree to either a leaf or a branch (`pruned_paths`) such
     that:
