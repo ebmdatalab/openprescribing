@@ -233,7 +233,7 @@ pandas-gbq==0.20.0
     # via -r requirements.in
 paramiko==2.12.0
     # via fabric3
-pillow==10.1.0
+pillow==10.2.0
     # via matplotlib
 pip-tools==7.3.0
     # via -r requirements.in
