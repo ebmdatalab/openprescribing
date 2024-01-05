@@ -33,12 +33,12 @@
   "numerator_columns": [
     "SUM(ome_dose) AS numerator"
   ],
-  "numerator_from": "{measures}.vw__opioids_total_dmd_test_bs",
+  "numerator_from": "{measures}.vw__opioids_total_dmd_bs_test",
   "numerator_where": "1 = 1",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT pr.bnf_code",
     "FROM {hscic}.presentation pr",
-    "JOIN {measures}.vw__opioids_total_dmd_test_bs op",
+    "JOIN {measures}.vw__opioids_total_dmd_bs_test op",
     "ON pr.bnf_code = op.bnf_code"
   ],
   "denominator_type": "list_size",
