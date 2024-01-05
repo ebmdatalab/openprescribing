@@ -8,7 +8,7 @@ black==23.12.1
     # via -r requirements.dev.in
 click==8.1.7
     # via black
-flake8==6.1.0
+flake8==7.0.0
     # via -r requirements.dev.in
 isort==5.13.2
     # via -r requirements.dev.in
@@ -24,5 +24,5 @@ platformdirs==4.1.0
     # via black
 pycodestyle==2.11.1
     # via flake8
-pyflakes==3.1.0
+pyflakes==3.2.0
     # via flake8

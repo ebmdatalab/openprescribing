@@ -97,7 +97,7 @@ et-xmlfile==1.1.0
     # via openpyxl
 fabric3==1.14.post1
     # via -r requirements.in
-flake8==6.1.0
+flake8==7.0.0
     # via -r requirements.in
 fonttools==4.47.0
     # via matplotlib
@@ -266,7 +266,7 @@ pycparser==2.21
     # via cffi
 pydata-google-auth==1.8.2
     # via pandas-gbq
-pyflakes==3.1.0
+pyflakes==3.2.0
     # via flake8
 pynacl==1.5.0
     # via paramiko
