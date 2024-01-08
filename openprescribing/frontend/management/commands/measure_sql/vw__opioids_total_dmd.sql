@@ -22,7 +22,7 @@ WITH simp_form AS (
 ,norm_vpi AS (
     SELECT 
     vmp, #vmp code
-    ing, #ing code
+    CASE WHEN vpi.basis_strnt = 2 THEN vpi.bs_subid ELSE ing END AS ing, #ing code  - when base substance rather than the salt (e.g. tapentadol) is used for calculations, this is the ING code that is returned
     strnt_nmrtr_val,#numerator strength value
     strnt_nmrtr_uom,#numerator unit of measurement
     unit_num.descr as num_unit, #numerator unit 
