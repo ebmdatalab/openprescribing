@@ -1,7 +1,7 @@
 {
   "name": "Percentage of available insulins prescribed as biosimilar",
   "title": "",
-  "description": "Percentage of available insulins prescribed as biosimilar"
+  "description": "Percentage of available insulins prescribed as biosimilar",
   "numerator_short": "Biosimilar insulin items",
   "denominator_short": "Insulin items",
   "why_it_matters": [
