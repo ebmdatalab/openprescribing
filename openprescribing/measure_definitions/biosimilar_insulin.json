@@ -1,0 +1,30 @@
+{
+  "name": "Percentage of available insulins prescribed as biosimilar",
+  "title": "",
+  "description": "Percentage of available insulins prescribed as biosimilar"
+  "numerator_short": "Biosimilar insulin items",
+  "denominator_short": "Insulin items",
+  "why_it_matters": [
+    "tbc"
+  ],
+  "tags": [
+    "diabetes"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_filter": [
+    "0601012V0BD% # Abasaglar",
+    "0601012V0BE% # Semglee",
+    "0601011L0BE% # Admelog",
+    "0601011A0BD% # Trurapi"
+  ],
+  "denominator_type": "bnf_items",
+  "denominator_bnf_codes_filter": [
+    "0601012V0% # Insulin glargine",
+    "0601011L0% # Insulin lispro",
+    "0601011A0% # Insulin aspart"
+  ]
+}
