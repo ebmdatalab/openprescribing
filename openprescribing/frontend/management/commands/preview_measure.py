@@ -49,7 +49,7 @@ def import_preview_measure(github_url):
 def get_id_and_json_url(github_url):
     match = re.match(
         r"^"
-        r"https://github\.com/ebmdatalab/openprescribing/blob/"
+        r"https://github\.com/(ebmdatalab|bennettoxford)/openprescribing/blob/"
         r"(?P<git_ref>[^/\.]+)"
         r"/openprescribing/measures/definitions/"
         r"(?P<measure_id>[^/\.]+)"
