@@ -99,7 +99,7 @@ fabric3==1.14.post1
     # via -r requirements.in
 flake8==6.1.0
     # via -r requirements.in
-fonttools==4.47.0
+fonttools==4.47.2
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
