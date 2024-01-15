@@ -396,7 +396,7 @@ class MakeHtml:
         for i, row in enumerate(rows):
             if df.iloc[i][MakeHtml.selective_title(MakeHtml.LOW_NUMBER_CLASS)]:
                 row.classes.add(MakeHtml.LOW_NUMBER_CLASS)
-            row.classes.add(f"row_{i+1}")
+            row.classes.add(f"row_{i + 1}")
         return html.tostring(html_table).decode("utf-8")
 
     @staticmethod
@@ -731,7 +731,7 @@ class DatasetBuild:
         """
         sql = f"""
         SELECT
-        DISTINCT {'ons_' if entity_type=='stp' else ''}code as `code`,
+        DISTINCT {'ons_' if entity_type == 'stp' else ''}code as `code`,
         name
         FROM
         ebmdatalab.hscic.{entity_type}s
