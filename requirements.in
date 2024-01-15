@@ -56,7 +56,7 @@ mock
 django-debug-toolbar
 django-debug-toolbar-template-timings
 django-extensions
-fabric3
+fab-classic
 flake8
 graphviz
 pip-tools

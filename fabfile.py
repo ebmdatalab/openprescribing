@@ -316,3 +316,16 @@ def call_management_command(command_name, environment, *args, **kwargs):
     with cd(env.path):
         with prefix("source .venv/bin/activate"):
             print(run(cmd))
+
+
+def notify_restart():
+    with prefix("source .venv/bin/activate"):
+        run("python deploy/notify_restart.py")
+
+
+@task
+def restart(environment):
+    setup_env_from_environment(environment)
+    with cd(env.path):
+        graceful_reload()
+        notify_restart()
