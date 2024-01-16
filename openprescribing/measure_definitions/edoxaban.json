@@ -70,7 +70,7 @@
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
     "~0208020AAAA # Edoxaban (generic)",
-    "~0208020Z0AA # Apixaban (generic)",
+    "~0208020Z0AA # Apixaban (generic)"
   ],
  "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
