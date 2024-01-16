@@ -7,8 +7,7 @@
   "why_it_matters": [
     "In January 2024 the NHS in England <a href='https://www.england.nhs.uk/long-read/commissioning-recommendations-for-national-procurement-for-doacs/' target='_Blank'>",
     "released updated commissioning regulations for DOACs, which state:</a></p>",
-    "<ul>",
-    "<li>For patients commencing treatment for AF: subject to the criteria specified in the relevant NICE technology appraisal guidance, clinicians should use ",
+    "<p><i>For patients commencing treatment for AF: subject to the criteria specified in the relevant NICE technology appraisal guidance, clinicians should use ",
     "the best value DOAC that is clinically appropriate for the patient. ",
     "Table 1 provides the available DOACs ranked from highest to lowest best value according to the November 2023 Drug Tariff and confidential framework prices.",
     "If the highest ranked best value DOAC (generic apixaban) is contraindicated or not clinically appropriate for the specific patient then, subject to the criteria ",
@@ -23,7 +22,8 @@
     "</thead>",
     "<tbody>",
     "  <tr>",
-    "    <td>1 (Best value)</td>",
+    "    <b>",
+    "    <td>1 (Best value)     </td>",
     "    <td>generic apixaban</td>",
     "    <td>Best value twice a day treatment</td>",
     "  </tr>",
@@ -32,6 +32,7 @@
     "    <td>Edoxaban (Lixiana®)</td>",
     "    <td>Best value once a day treatment</td>",
     "  </tr>",
+    "  </b>",
     "  <tr>",
     "    <td>3</td>",
     "    <td>Rivaroxaban (Xarelto®)</td>",
@@ -54,7 +55,7 @@
     "The <a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#9-identifying-patients-with-atrial-fibrillation-and-using-best-value-direct-acting-oral-anticoagulants' target='_Blank'>",
     "NHS England National Medicines Optimisation Opportunities for 2023/24</a> identify using best value direct-acting oral anticoagulants as an area for improvement.</p>",
     "<p><b>Please note:</b> OpenPrescribing.net measures also have a consistent way of visualising measures, where 'lower is better' ",
-    "and therefore in this case we show the proportion of DOACs which are NOT prescribed as edoxaban." 
+    "and therefore in this case we show the proportion of DOACs which are NOT prescribed as edoxaban or apixaban." 
   ],
   "tags": [
     "cardiovascular",
@@ -68,8 +69,8 @@
   "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
-    "0208020Y0 # Rivaroxaban",
-    "0208020X0 # Dabigatran etexilate"
+    "~0208020AAAA # Edoxaban (generic)",
+    "~0208020Z0AA # Apixaban (generic)",
   ],
  "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
