@@ -24,7 +24,7 @@
   "numerator_type": "bnf_quantity",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
-    "FROM {measures}.dmd_objs_with_form_route",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
     "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "numerator_bnf_codes_filter": [
@@ -34,7 +34,7 @@
   "denominator_type": "bnf_quantity",
   "denominator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
-    "FROM {measures}.dmd_objs_with_form_route",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
     "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "denominator_bnf_codes_filter": [
