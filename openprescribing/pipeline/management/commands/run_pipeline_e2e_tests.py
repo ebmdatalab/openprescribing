@@ -3,9 +3,9 @@ import os
 import shutil
 from distutils.dir_util import copy_tree
 
-from django.apps import apps
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError, call_command
+from dmd.management.commands.import_dmd import Command as ImportDmdCommand
 from frontend import bq_schemas as schemas
 from frontend.models import MeasureGlobal, MeasureValue, TariffPrice
 from gcutils.bigquery import DATASETS
@@ -93,12 +93,10 @@ def run_end_to_end():
         client.create_table("ccg_data_" + measure_id, measures_schema)
         client.create_table("global_data_" + measure_id, measures_schema)
 
-    # Although there are no model instances, we call upload_model to create the
+    # Although there are no model instances, we call upload_to_bq to create the
     # dm+d tables in BQ that are required by certain measure views.
-    client = BQClient("dmd")
-    client.upload_model(TariffPrice)
-    for model in apps.get_app_config("dmd").get_models():
-        client.upload_model(model)
+    ImportDmdCommand().upload_to_bq()
+    BQClient("dmd").upload_model(TariffPrice)
 
     copy_tree(os.path.join(e2e_path, "data-1"), os.path.join(e2e_path, "data"))
 
