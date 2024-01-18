@@ -1,8 +1,3 @@
--- This SQL is checked in to the git repo at measure_sql/dmd_objs_with_form_route.sql.
--- Do not make changes directly in BQ!  Instead, change the version in the repo and run
---
---     ./manage.py create_bq_measure_views
---
 -- This SQL return all dm+d objects with BNF codes, and links each object against its
 -- VMP's form_route.
 

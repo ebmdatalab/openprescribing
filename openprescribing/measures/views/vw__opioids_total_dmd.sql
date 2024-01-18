@@ -1,8 +1,3 @@
--- This SQL is checked in to the git repo at measure_sql/vw__opioids_total_dmd.sql.
--- Do not make changes directly in BQ!  Instead, change the version in the repo and run
---
---     ./manage.py create_bq_measure_views
-
 WITH simp_form AS (
   SELECT DISTINCT 
     vmp, #vmp code

@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from textwrap import dedent
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -69,6 +70,16 @@ def recreate_table(client, path):
     table_name = path.stem
     logger.info("recreate_table: %s", table_name)
     sql = path.read_text()
+
+    relpath = path.relative_to(Path(settings.APPS_ROOT))
+    preamble = f"""\
+    -- This SQL is checked in to the git repo at {relpath}.
+    -- Do not make changes directly in BQ! Instead, change the version in the repo and run
+    --
+    --     ./manage.py create_bq_measure_views
+    --
+    """
+    sql = dedent(preamble) + sql
 
     try:
         client.create_table_with_view(table_name, sql, False)
