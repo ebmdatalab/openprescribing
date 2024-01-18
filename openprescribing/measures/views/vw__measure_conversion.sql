@@ -9,5 +9,5 @@ CASE
       WHEN cd = 258774008 THEN 1000  -- convert microlitre to millilitre
       WHEN cd = 258773002 THEN 1     -- millilitre base value
       ELSE null END AS dnmtr_unit_conversion
-FROM dmd.unitofmeasure
+FROM {project}.{dmd}.unitofmeasure
 ORDER BY descr

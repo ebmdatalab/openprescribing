@@ -36,9 +36,9 @@
    "ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(v.bnf_code,0,9),SUBSTR(v.bnf_code,-2)) --joins both brand and generics to vmp table \n",
    "INNER JOIN {dmd}.vpi i -- joins vmp to vpi table to get ingredient strengths \n",
    "ON v.id = i.vmp \n",
-   "INNER JOIN measures.vw__measure_conversion n -- joins unit conversion view to numerator unit of measure \n",
+   "INNER JOIN {measures}.vw__measure_conversion n -- joins unit conversion view to numerator unit of measure \n",
    "ON i.strnt_nmrtr_uom = n.cd \n",
-   "LEFT JOIN measures.vw__measure_conversion d -- joins unit conversion view to denominator unit of measure (LEFT join as not all products have a denominator UOM) \n",
+   "LEFT JOIN {measures}.vw__measure_conversion d -- joins unit conversion view to denominator unit of measure (LEFT join as not all products have a denominator UOM) \n",
    "ON i.strnt_dnmtr_uom = d.cd"
   ],
   "numerator_where": [
