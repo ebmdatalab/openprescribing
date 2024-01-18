@@ -153,6 +153,12 @@ class BQClientTest(TestCase):
 
         self.assertEqual(list(t1.get_rows()), [])
 
+        # Test Table.insert_rows_from_csv without schema
+        t5 = client.get_table("t5")
+        t5.insert_rows_from_csv("gcutils/tests/test_table.csv")
+
+        self.assertEqual(sorted(t5.get_rows()), rows)
+
     def upload_to_storage(self, local_path, storage_path):
         client = StorageClient()
         bucket = client.bucket()

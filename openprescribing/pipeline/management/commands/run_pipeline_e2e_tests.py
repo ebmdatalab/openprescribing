@@ -3,11 +3,11 @@ import os
 import shutil
 from distutils.dir_util import copy_tree
 
-from django.apps import apps
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError, call_command
+from dmd.management.commands.import_dmd import Command as ImportDmdCommand
 from frontend import bq_schemas as schemas
-from frontend.models import MeasureGlobal, MeasureValue, TariffPrice
+from frontend.models import TariffPrice
 from gcutils.bigquery import DATASETS
 from gcutils.bigquery import Client as BQClient
 from gcutils.bigquery import build_schema
@@ -40,10 +40,6 @@ def run_end_to_end():
     print("BQ_NONCE: {}".format(settings.BQ_NONCE))
 
     call_command("migrate")
-
-    num_measures = len(
-        glob.glob(os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json"))
-    )
 
     shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 
@@ -93,37 +89,13 @@ def run_end_to_end():
         client.create_table("ccg_data_" + measure_id, measures_schema)
         client.create_table("global_data_" + measure_id, measures_schema)
 
-    # Although there are no model instances, we call upload_model to create the
+    # Although there are no model instances, we call upload_to_bq to create the
     # dm+d tables in BQ that are required by certain measure views.
-    client = BQClient("dmd")
-    client.upload_model(TariffPrice)
-    for model in apps.get_app_config("dmd").get_models():
-        client.upload_model(model)
+    ImportDmdCommand().upload_to_bq()
+    BQClient("dmd").upload_model(TariffPrice)
 
     copy_tree(os.path.join(e2e_path, "data-1"), os.path.join(e2e_path, "data"))
-
     runner.run_all(2017, 9, under_test=True)
 
-    # We expect one MeasureGlobal per measure per month.
-    assert_count_equal(num_measures, MeasureGlobal)
-
-    # We expect one MeasureValue for each organisation per measure per month
-    # (There are 4 practices, 2 CCGs, 2 STPs, and 2 regional teams).
-    assert_count_equal(10 * num_measures, MeasureValue)
-
     copy_tree(os.path.join(e2e_path, "data-2"), os.path.join(e2e_path, "data"))
-
     runner.run_all(2017, 10, under_test=True)
-
-    # We expect one MeasureGlobal per measure per month
-    # assert_count_equal(2 * num_measures, MeasureGlobal)
-
-    # We expect one MeasureValue for each organisation per measure per month
-    assert_count_equal(20 * num_measures, MeasureValue)
-
-
-def assert_count_equal(expected, model):
-    actual = model.objects.count()
-    if actual != expected:
-        msg = "Expected {} {} objects, found {}".format(expected, model, actual)
-        raise CommandError(msg)

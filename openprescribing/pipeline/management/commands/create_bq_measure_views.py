@@ -1,10 +1,12 @@
 import logging
-import os
+from pathlib import Path
+from textwrap import dedent
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V1, RAW_PRESCRIBING_SCHEMA_V2
-from gcutils.bigquery import Client, build_schema
+from frontend.management.commands.import_measures import upload_supplementary_tables
+from gcutils.bigquery import Client
 from google.cloud.exceptions import Conflict
 
 logger = logging.getLogger(__name__)
@@ -14,65 +16,75 @@ class Command(BaseCommand):
     help = "Creates or updates all BQ views that measures depend on"
 
     def handle(self, *args, **kwargs):
-        client = Client("hscic")
+        create_prescribing_tables()
+        upload_supplementary_tables()
+        create_measure_tables()
 
-        try:
-            client.create_storage_backed_table(
-                "raw_prescribing_v1",
-                RAW_PRESCRIBING_SCHEMA_V1,
-                "hscic/prescribing_v1/20*Detailed_Prescribing_Information.csv",
-            )
-        except Conflict:
-            pass
 
-        try:
-            client.create_storage_backed_table(
-                "raw_prescribing_v2",
-                RAW_PRESCRIBING_SCHEMA_V2,
-                # This pattern may change once the data is published via the
-                # new Open Data Portal.
-                "hscic/prescribing_v2/20*.csv",
-            )
-        except Conflict:
-            pass
+def create_prescribing_tables():
+    """Create tables that contain prescribing data queried by all measures"""
 
-        for table_name in [
-            "all_prescribing",
-            "normalised_prescribing",
-            "normalised_prescribing_standard",
-            "raw_prescribing_normalised",
-        ]:
-            self.recreate_table(client, table_name)
+    client = Client("hscic")
 
-        client = Client("measures")
-
-        for table_name in [
-            "dmd_objs_with_form_route",
-            "dmd_objs_hospital_only",
-            "practice_data_all_low_priority",
-            "vw__median_price_per_unit",
-            "vw__opioids_total_dmd",
-        ]:
-            self.recreate_table(client, table_name)
-
-        # cmpa_products is a table that has been created and managed by Rich.
-        schema = build_schema(
-            ("bnf_code", "STRING"), ("bnf_name", "STRING"), ("type", "STRING")
+    try:
+        client.create_storage_backed_table(
+            "raw_prescribing_v1",
+            RAW_PRESCRIBING_SCHEMA_V1,
+            "hscic/prescribing_v1/20*Detailed_Prescribing_Information.csv",
         )
-        client.get_or_create_table("cmpa_products", schema)
+    except Conflict:
+        pass
 
-    def recreate_table(self, client, table_name):
-        logger.info("recreate_table: %s", table_name)
-        base_path = os.path.join(
-            settings.APPS_ROOT, "frontend", "management", "commands", "measure_sql"
+    try:
+        client.create_storage_backed_table(
+            "raw_prescribing_v2",
+            RAW_PRESCRIBING_SCHEMA_V2,
+            # This pattern may change once the data is published via the
+            # new Open Data Portal.
+            "hscic/prescribing_v2/20*.csv",
         )
+    except Conflict:
+        pass
 
-        path = os.path.join(base_path, table_name + ".sql")
-        with open(path, "r") as sql_file:
-            sql = sql_file.read()
+    base_path = Path().joinpath(
+        settings.APPS_ROOT, "frontend", "management", "commands", "measure_sql"
+    )
+    for table_name in [
+        "all_prescribing",
+        "normalised_prescribing",
+        "normalised_prescribing_standard",
+        "raw_prescribing_normalised",
+    ]:
+        recreate_table(client, base_path / f"{table_name}.sql")
 
-        try:
-            client.create_table_with_view(table_name, sql, False)
-        except Conflict:
-            client.delete_table(table_name)
-            client.create_table_with_view(table_name, sql, False)
+
+def create_measure_tables():
+    """Create tables that contain views on prescribing data for specific measures"""
+
+    client = Client("measures")
+    for path in (Path(settings.APPS_ROOT) / "measures" / "views").glob("vw__*.sql"):
+        recreate_table(client, path)
+
+
+def recreate_table(client, path):
+    """Create or recreate a table based on SQL in file with given name"""
+
+    table_name = path.stem
+    logger.info("recreate_table: %s", table_name)
+    sql = path.read_text()
+
+    relpath = path.relative_to(Path(settings.APPS_ROOT))
+    preamble = f"""\
+    -- This SQL is checked in to the git repo at {relpath}.
+    -- Do not make changes directly in BQ! Instead, change the version in the repo and run
+    --
+    --     ./manage.py create_bq_measure_views
+    --
+    """
+    sql = dedent(preamble) + sql
+
+    try:
+        client.create_table_with_view(table_name, sql, False)
+    except Conflict:
+        client.delete_table(table_name)
+        client.create_table_with_view(table_name, sql, False)

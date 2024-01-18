@@ -1,8 +1,3 @@
--- This SQL is checked in to the git repo at measure_sql/dmd_objs_hospital_only.sql.
--- Do not make changes directly in BQ!  Instead, change the version in the repo and run
---
---     ./manage.py create_bq_measure_views
---
 -- This SQL finds all AMPs which are hospital only, and all VMPs which have at
 -- least one hospital only AMP.
 

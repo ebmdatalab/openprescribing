@@ -40,9 +40,9 @@
   "numerator_columns": "SUM(actual_cost) AS numerator",
   "numerator_from": "{hscic}.normalised_prescribing p LEFT JOIN {measures}.vw__median_price_per_unit r ON p.month=r.date AND p.bnf_code=r.bnf_code ",
   "numerator_where": [
-     "p.bnf_code IN (SELECT bnf_code FROM dmd.vmp WHERE LOWER(nm) LIKE '%insulin needles%' AND bnf_code IS NOT NULL -- find vmp products with vmp name containing insulin needles \n",
+     "p.bnf_code IN (SELECT bnf_code FROM {dmd}.vmp WHERE LOWER(nm) LIKE '%insulin needles%' AND bnf_code IS NOT NULL -- find vmp products with vmp name containing insulin needles \n",
     "UNION DISTINCT ",
-    "SELECT amp.bnf_code FROM dmd.amp AS amp INNER JOIN dmd.vmp ON vmp.id = amp.vmp  WHERE LOWER(vmp.nm) LIKE '%insulin needles%' AND amp.bnf_code IS NOT NULL) -- find amp products with vmp name containing insulin needles \n",
+    "SELECT amp.bnf_code FROM {dmd}.amp AS amp INNER JOIN {dmd}.vmp ON vmp.id = amp.vmp  WHERE LOWER(vmp.nm) LIKE '%insulin needles%' AND amp.bnf_code IS NOT NULL) -- find amp products with vmp name containing insulin needles \n",
     "AND r.median_price_per_unit >= 0.05 --this selects products with median price of >= 5 pound a box "
   ],
   "numerator_bnf_codes_query": [

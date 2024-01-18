@@ -441,7 +441,7 @@ TRUD_PASSWORD = utils.get_env_setting("TRUD_PASSWORD", default="")
 CHECK_NUMBERS_BASE_PATH = "/tmp/numbers-checker/"
 
 # Path of directory containing measure definitions.
-MEASURE_DEFINITIONS_PATH = join(APPS_ROOT, "measure_definitions")
+MEASURE_DEFINITIONS_PATH = join(APPS_ROOT, "measures", "definitions")
 
 # When building the matrixstore, should we check whether data is in BQ before
 # downloading it?

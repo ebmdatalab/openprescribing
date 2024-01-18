@@ -457,7 +457,7 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
 
         assert Measure.objects.count() == 0
 
-        measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
+        measure_defs_path = os.path.join(settings.APPS_ROOT, "measures", "definitions")
         with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
             with patch(
                 "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
@@ -508,7 +508,7 @@ class CheckMeasureDefinitionsTests(TestCase):
 
 class LoadMeasureDefsTests(TestCase):
     def test_order(self):
-        measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
+        measure_defs_path = os.path.join(settings.APPS_ROOT, "measures", "definitions")
         with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
             measure_defs = load_measure_defs()
         measure_ids = [measure_def["id"] for measure_def in measure_defs]
@@ -536,7 +536,7 @@ class LowPriorityOmnibusTest(TestCase):
 
     def test_low_priority_omnibus_divisor(self):
         measure_path = os.path.join(
-            settings.APPS_ROOT, "measure_definitions", "lpzomnibus.json"
+            settings.APPS_ROOT, "measures", "definitions", "lpzomnibus.json"
         )
         with open(measure_path, "r") as f:
             denominator_columns = "\n".join(json.load(f)["denominator_columns"])
@@ -554,15 +554,16 @@ class LowPriorityOmnibusTest(TestCase):
     def get_low_priority_tables(self):
         sql_path = os.path.join(
             settings.APPS_ROOT,
-            "frontend/management/commands/measure_sql",
-            "practice_data_all_low_priority.sql",
+            "measures",
+            "views",
+            "vw__practice_data_all_low_priority.sql",
         )
         with open(sql_path, "r") as f:
             all_low_priority_sql = f.read()
         return re.findall(r"\{measures\}\.practice_data_(\w+)", all_low_priority_sql)
 
     def get_low_priority_measures(self):
-        files = os.listdir(os.path.join(settings.APPS_ROOT, "measure_definitions"))
+        files = os.listdir(os.path.join(settings.APPS_ROOT, "measures", "definitions"))
         return [
             name[: -len(".json")]
             for name in files
