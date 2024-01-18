@@ -17,6 +17,7 @@ import re
 import tempfile
 from contextlib import contextmanager
 from datetime import datetime
+from pathlib import Path
 from urllib.parse import urlencode
 
 from common import utils
@@ -78,6 +79,7 @@ class Command(BaseCommand):
             raise BadRequest("\n".join(errors))
 
     def build_measures(self, measure_defs, start_date, end_date, verbose, options):
+        upload_supplementary_tables()
         # This is an optimisation that only makes sense when we're updating the
         # entire table, any of these supplied options mean we're doing
         # something else
@@ -979,3 +981,11 @@ def conditional_constraint_and_index_reconstructor(enabled):
     else:
         with utils.constraint_and_index_reconstructor("frontend_measurevalue"):
             yield
+
+
+def upload_supplementary_tables():
+    client = Client("measures")
+
+    for path in (Path(settings.APPS_ROOT) / "measures" / "tables").glob("*.csv"):
+        t = client.get_table(path.stem)
+        t.insert_rows_from_csv(path)

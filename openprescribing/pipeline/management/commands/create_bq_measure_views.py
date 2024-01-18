@@ -5,6 +5,7 @@ from textwrap import dedent
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V1, RAW_PRESCRIBING_SCHEMA_V2
+from frontend.management.commands.import_measures import upload_supplementary_tables
 from gcutils.bigquery import Client
 from google.cloud.exceptions import Conflict
 
@@ -16,6 +17,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         create_prescribing_tables()
+        upload_supplementary_tables()
         create_measure_tables()
 
 
