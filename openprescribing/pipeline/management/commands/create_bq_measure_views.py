@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA_V1, RAW_PRESCRIBING_SCHEMA_V2
-from gcutils.bigquery import Client, build_schema
+from gcutils.bigquery import Client
 from google.cloud.exceptions import Conflict
 
 logger = logging.getLogger(__name__)
@@ -54,12 +54,6 @@ class Command(BaseCommand):
             "vw__opioids_total_dmd",
         ]:
             self.recreate_table(client, table_name)
-
-        # cmpa_products is a table that has been created and managed by Rich.
-        schema = build_schema(
-            ("bnf_code", "STRING"), ("bnf_name", "STRING"), ("type", "STRING")
-        )
-        client.get_or_create_table("cmpa_products", schema)
 
     def recreate_table(self, client, table_name):
         logger.info("recreate_table: %s", table_name)
