@@ -27,7 +27,7 @@ SLACK_SENDING_ACTIVE = True
 BQ_DEFAULT_TABLE_EXPIRATION_MS = 24 * 60 * 60 * 1000  # 24 hours
 
 # We want to use the real measure definitions, not the test ones!
-MEASURE_DEFINITIONS_PATH = os.path.join(APPS_ROOT, "measure_definitions")
+MEASURE_DEFINITIONS_PATH = os.path.join(APPS_ROOT, "measures", "definitions")
 
 # When building the matrixstore, should we check whether data is in BQ before
 # downloading it?  Usually we want to, but because only two months of data are

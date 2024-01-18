@@ -49,7 +49,7 @@ def get_id_and_json_url(github_url):
         r"^"
         r"https://github\.com/ebmdatalab/openprescribing/blob/"
         r"(?P<git_ref>[^/\.]+)"
-        r"/openprescribing/measure_definitions/"
+        r"/openprescribing/measures/definitions/"
         r"(?P<measure_id>[^/\.]+)"
         r"\.json"
         r"$",
@@ -59,7 +59,7 @@ def get_id_and_json_url(github_url):
         raise BadRequest(
             "Expecting a URL in the format:\n"
             "https://github.com/ebmdatalab/openprescribing/blob/<GIT_REF>/"
-            "openprescribing/measure_definitions/<MEASURE_ID>.json\n"
+            "openprescribing/measures/definitions/<MEASURE_ID>.json\n"
             "\n"
             "You can get this URL by finding the measure file in your branch on "
             "Github:\n"
@@ -72,7 +72,7 @@ def get_id_and_json_url(github_url):
     measure_id = match.group("measure_id")
     json_url = (
         f"https://raw.githubusercontent.com/ebmdatalab/openprescribing/"
-        f"{git_ref}/openprescribing/measure_definitions/{measure_id}.json"
+        f"{git_ref}/openprescribing/measures/definitions/{measure_id}.json"
     )
     return measure_id, json_url
 

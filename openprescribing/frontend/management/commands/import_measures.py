@@ -1,5 +1,5 @@
 """Calculate and store measures based on definitions in
-`measure_definitions/` folder.
+`measures/definitions/` folder.
 
 We use BigQuery to compute measures. This is considerably cheaper than
 the alternative, which is looping over thousands of practices

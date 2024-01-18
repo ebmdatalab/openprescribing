@@ -507,7 +507,7 @@ class TestFrontendViews(TestCase):
 
 
 @override_settings(
-    MEASURE_DEFINITIONS_PATH=os.path.join(settings.APPS_ROOT, "measure_definitions")
+    MEASURE_DEFINITIONS_PATH=os.path.join(settings.APPS_ROOT, "measures", "definitions")
 )
 class TestMeasureDefinitionViews(TestCase):
     """
