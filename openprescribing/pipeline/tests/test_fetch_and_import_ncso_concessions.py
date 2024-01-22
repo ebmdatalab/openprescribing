@@ -10,116 +10,118 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 from frontend.models import NCSOConcession
-from dmd.models import VMPP
 
 
 class TestFetchAndImportNCSOConcesions(TestCase):
     fixtures = ["for_ncso_concessions"]
 
-    def test_parse_concessions_from_rss(self):
+    def test_parse_concessions(self):
         base_path = Path(settings.APPS_ROOT) / "pipeline/test-data/pages"
-        feed_content = (base_path / "psnc_rss.xml").read_text()
-        items = list(fetch_ncso.parse_concessions_from_rss(feed_content))
-        expected = [
-            {
-                "url": "https://mailchi.mp/psnc/march-2023-price-concessions-3rd-update-s6dzuhohv9",
-                "date": datetime.date(2023, 3, 1),
-                "publish_date": datetime.date(2023, 3, 30),
-                "drug": "Bicalutamide 150mg tablets",
-                "pack_size": "28",
-                "price_pence": 396,
-                "supplied_vmpp_id": 1206011000001108,
-            },
-            {
-                "url": "https://mailchi.mp/psnc/march-2023-price-concessions-3rd-update-s6dzuhohv9",
-                "date": datetime.date(2023, 3, 1),
-                "publish_date": datetime.date(2023, 3, 30),
-                "drug": "Cefalexin 250mg tablets",
-                "pack_size": "28",
-                "price_pence": 286,
-                "supplied_vmpp_id": 1053311000001104,
-            },
-            {
-                "url": "https://mailchi.mp/psnc/march-2023-price-concessions-3rd-update-s6dzuhohv9",
-                "date": datetime.date(2023, 3, 1),
-                "publish_date": datetime.date(2023, 3, 30),
-                "drug": "Cinacalcet 30mg tablets",
-                "pack_size": "28",
-                "price_pence": 1195,
-                "supplied_vmpp_id": 8952011000001108,
-            },
-            {
-                "url": "https://mailchi.mp/psnc/march-2023-price-concessions-2nd-update-9lxheenfl0",
-                "date": datetime.date(2023, 3, 1),
-                "publish_date": datetime.date(2023, 3, 22),
-                "drug": "Tranexamic acid 500mg tablets",
-                "pack_size": "60",
-                "price_pence": 710,
-                "supplied_vmpp_id": 1311711000001109,
-            },
-            {
-                "url": "https://mailchi.mp/psnc/march-2023-price-concessions-2nd-update-9lxheenfl0",
-                "date": datetime.date(2023, 3, 1),
-                "publish_date": datetime.date(2023, 3, 22),
-                "drug": "Zolmitriptan 2.5mg tablets",
-                "pack_size": "6",
-                "price_pence": 1375,
-                "supplied_vmpp_id": 1167111000001109,
-            },
-        ]
-        self.assertEqual(items, expected)
-
-    def test_parse_concessions_from_html_skips_known_unparseable(self):
-        results = fetch_ncso.parse_concessions_from_html(
-            "<broken-html>",
-            url="https://mailchi.mp/cpe/atomoxetine-18mg-capsules-updated-reimbursement-price-for-august-2023",
-        )
-        self.assertEqual(list(results), [])
-
-    def test_match_concession_vmpp_ids_when_correct(self):
-        # The happy case: the supplied VMPP ID, name and pack size all match our data so
-        # we accept it as is
-        concession = {
-            "drug": "Amiloride 5mg tablets",
-            "pack_size": "28",
-            "supplied_vmpp_id": 1191111000001100,
-        }
-        vmpp_id_to_name = {
-            1191111000001100: "Amiloride 5mg tablets 28 tablet",
-        }
-        expected = {
-            "drug": "Amiloride 5mg tablets",
-            "pack_size": "28",
-            "supplied_vmpp_id": 1191111000001100,
-            "vmpp_id": 1191111000001100,
-            "vmpp_name": "Amiloride 5mg tablets 28 tablet",
-            "supplied_vmpp_name": "Amiloride 5mg tablets 28 tablet",
-        }
+        page_content = (base_path / "price_concessions.html").read_text()
+        items = list(fetch_ncso.parse_concessions(page_content))
+        self.assertEqual(len(items), 46)
         self.assertEqual(
-            fetch_ncso.match_concession_vmpp_ids([concession], vmpp_id_to_name),
-            [expected],
+            items[:3] + items[-3:],
+            [
+                {
+                    "date": datetime.date(2024, 1, 1),
+                    "drug": "Amiloride 5mg tablets",
+                    "pack_size": "28",
+                    "price_pence": 1554,
+                },
+                {
+                    "date": datetime.date(2024, 1, 1),
+                    "drug": "Baclofen 5mg/5ml oral solution sugar free",
+                    "pack_size": "300",
+                    "price_pence": 397,
+                },
+                {
+                    "date": datetime.date(2024, 1, 1),
+                    "drug": "Betamethasone valerate 0.1% cream",
+                    "pack_size": "100",
+                    "price_pence": 405,
+                },
+                {
+                    "date": datetime.date(2024, 1, 1),
+                    "drug": "Zonisamide 50mg capsules",
+                    "pack_size": "56",
+                    "price_pence": 1352,
+                },
+                {
+                    "date": datetime.date(2024, 1, 1),
+                    "drug": "Zopiclone 3.75mg tablets",
+                    "pack_size": "28",
+                    "price_pence": 143,
+                },
+                {
+                    "date": datetime.date(2024, 1, 1),
+                    "drug": "Zopiclone 7.5mg tablets",
+                    "pack_size": "28",
+                    "price_pence": 156,
+                },
+            ],
         )
 
-    def test_match_concession_vmpp_ids_when_incorrect(self):
-        # Here the pack size associated with the supplied VMPP doesn't match our data,
-        # but there's a different VMPP which unambiguously matches, so we use that
-        # insted.
+    def test_parse_concessions_archive(self):
+        base_path = Path(settings.APPS_ROOT) / "pipeline/test-data/pages"
+        page_content = (base_path / "price_concessions_archive.html").read_text()
+        items = list(fetch_ncso.parse_concessions(page_content))
+        self.assertEqual(len(items), 460)
+        self.assertEqual(
+            items[:3] + items[-3:],
+            [
+                {
+                    "date": datetime.date(2023, 12, 1),
+                    "drug": "Acamprosate 333mg gastro-resistant tablets",
+                    "pack_size": "168",
+                    "price_pence": 2276,
+                },
+                {
+                    "date": datetime.date(2023, 12, 1),
+                    "drug": "Aciclovir 800mg tablets",
+                    "pack_size": "35",
+                    "price_pence": 360,
+                },
+                {
+                    "date": datetime.date(2023, 12, 1),
+                    "drug": "Amiloride 5mg tablets",
+                    "pack_size": "28",
+                    "price_pence": 1570,
+                },
+                {
+                    "date": datetime.date(2019, 11, 1),
+                    "drug": "Tizanidine 2mg tablets",
+                    "pack_size": "120",
+                    "price_pence": 1283,
+                },
+                {
+                    "date": datetime.date(2019, 11, 1),
+                    "drug": "Trihexyphenidyl 2mg tablets",
+                    "pack_size": "84",
+                    "price_pence": 1350,
+                },
+                {
+                    "date": datetime.date(2019, 11, 1),
+                    "drug": "Venlafaxine 75mg tablets",
+                    "pack_size": "56",
+                    "price_pence": 496,
+                },
+            ],
+        )
+
+    def test_match_concession_vmpp_ids_unambiguous_match(self):
+        # The happy case: there's a single VMPP which matches the name and pack-size
         concession = {
             "drug": "Amiloride 5mg tablets",
-            "pack_size": "100",
-            "supplied_vmpp_id": 1191111000001100,
+            "pack_size": "28",
         }
         vmpp_id_to_name = {
             1191111000001100: "Amiloride 5mg tablets 28 tablet",
-            1092811000001107: "Amiloride 5mg tablets 100 tablet",
         }
         expected = {
             "drug": "Amiloride 5mg tablets",
-            "pack_size": "100",
-            "supplied_vmpp_id": 1191111000001100,
-            "vmpp_id": 1092811000001107,
-            "vmpp_name": "Amiloride 5mg tablets 100 tablet",
-            "supplied_vmpp_name": "Amiloride 5mg tablets 28 tablet",
+            "pack_size": "28",
+            "vmpp_id": 1191111000001100,
         }
         self.assertEqual(
             fetch_ncso.match_concession_vmpp_ids([concession], vmpp_id_to_name),
@@ -127,12 +129,11 @@ class TestFetchAndImportNCSOConcesions(TestCase):
         )
 
     def test_match_concession_vmpp_ids_when_ambiguous(self):
-        # Here the supplied VMPP doesn't match our data and, although we have VMPPs that
-        # do match, we don't have a single unambiguous match so we refuse to match any.
+        # Although we have VMPPs that match, we don't have a single unambiguous match so
+        # we refuse to match any.
         concession = {
             "drug": "Bevacizumab 1.25mg/0.05ml solution for injection vials",
             "pack_size": "1",
-            "supplied_vmpp_id": 1000000000000000,
         }
         vmpp_id_to_name = {
             19680811000001105: "Bevacizumab 1.25mg/0.05ml solution for injection vials 1 ml",
@@ -141,10 +142,7 @@ class TestFetchAndImportNCSOConcesions(TestCase):
         expected = {
             "drug": "Bevacizumab 1.25mg/0.05ml solution for injection vials",
             "pack_size": "1",
-            "supplied_vmpp_id": 1000000000000000,
             "vmpp_id": None,
-            "vmpp_name": None,
-            "supplied_vmpp_name": None,
         }
         self.assertEqual(
             fetch_ncso.match_concession_vmpp_ids([concession], vmpp_id_to_name),
@@ -155,7 +153,6 @@ class TestFetchAndImportNCSOConcesions(TestCase):
         concession = {
             "drug": "Amilorde 5mg tablets",  # typo is deliberate
             "pack_size": "28",
-            "supplied_vmpp_id": 1000000000000000,
         }
         vmpp_id_to_name = {
             1191111000001100: "Amiloride 5mg tablets 28 tablet",
@@ -171,10 +168,25 @@ class TestFetchAndImportNCSOConcesions(TestCase):
         expected = {
             "drug": "Amilorde 5mg tablets",
             "pack_size": "28",
-            "supplied_vmpp_id": 1000000000000000,
             "vmpp_id": 1191111000001100,
-            "vmpp_name": "Amiloride 5mg tablets 28 tablet",
-            "supplied_vmpp_name": None,
+        }
+        self.assertEqual(
+            fetch_ncso.match_concession_vmpp_ids([concession], vmpp_id_to_name),
+            [expected],
+        )
+
+    def test_match_concession_vmpp_ids_using_manual_correction(self):
+        concession = {
+            "drug": "Co-amoxiclav 500/125 tablets",
+            "pack_size": "21",
+        }
+        vmpp_id_to_name = {
+            1247311000001103: "Co-amoxiclav 500mg/125mg tablets 21 tablet",
+        }
+        expected = {
+            "drug": "Co-amoxiclav 500/125 tablets",
+            "pack_size": "21",
+            "vmpp_id": 1247311000001103,
         }
         self.assertEqual(
             fetch_ncso.match_concession_vmpp_ids([concession], vmpp_id_to_name),
@@ -188,36 +200,21 @@ class TestFetchAndImportNCSOConcesions(TestCase):
                 "drug": "Amiloride 5mg tablets",
                 "pack_size": "28",
                 "price_pence": 925,
-                "supplied_vmpp_id": 1191111000001100,
                 "vmpp_id": 1191111000001100,
-                "vmpp_name": "Amiloride 5mg tablets 28 tablet",
-                "supplied_vmpp_name": "Amiloride 5mg tablets 28 tablet",
-                "publish_date": datetime.date(2023, 3, 30),
-                "url": "https://example.com",
             },
             {
                 "date": datetime.date(2023, 3, 1),
                 "drug": "Duloxetine 40mg gastro-resistant capsules",
                 "pack_size": "56",
                 "price_pence": 396,
-                "supplied_vmpp_id": 9039011000001105,
                 "vmpp_id": 8049011000001108,
-                "vmpp_name": "Duloxetine 40mg gastro-resistant capsules 56 capsule",
-                "supplied_vmpp_name": "Duloxetine 60mg gastro-resistant capsules 28 capsule",
-                "publish_date": datetime.date(2023, 3, 30),
-                "url": "https://example.com",
             },
             {
                 "date": datetime.date(2023, 3, 1),
                 "drug": "Bicalutamide 150mg tablets",
                 "pack_size": "28",
                 "price_pence": 450,
-                "supplied_vmpp_id": 1206011000001108,
                 "vmpp_id": None,
-                "vmpp_name": None,
-                "supplied_vmpp_name": None,
-                "publish_date": datetime.date(2023, 3, 30),
-                "url": "https://example.com",
             },
         ]
 
@@ -232,7 +229,7 @@ class TestFetchAndImportNCSOConcesions(TestCase):
 
         with ContextStack(mock.patch.object) as patch:
             patch(fetch_ncso, "requests")
-            patch(fetch_ncso, "parse_concessions_from_rss")
+            patch(fetch_ncso, "parse_concessions")
             patch(fetch_ncso, "match_concession_vmpp_ids", return_value=matched)
 
             Client = patch(fetch_ncso, "Client")
@@ -264,94 +261,38 @@ class TestFetchAndImportNCSOConcesions(TestCase):
             msg, "Fetched 0 concessions. Found no new concessions to import."
         )
 
-    def test_fetch_and_import_ncso_concessions_with_corrections(self):
-        matched = [
-            {
-                "date": datetime.date(2023, 4, 1),
-                "drug": "Amiloride 5mg tablets",
-                "pack_size": "28",
-                "price_pence": 925,
-                "supplied_vmpp_id": 1191111000001100,
-                "vmpp_id": 1191111000001100,
-                "vmpp_name": "Amiloride 5mg tablets 28 tablet",
-                "supplied_vmpp_name": "Amiloride 5mg tablets 28 tablet",
-                "publish_date": datetime.date(2023, 4, 30),
-                "url": "https://example.com",
-            },
-        ]
-
-        # We need a VMPP object corresponding to the correction we're going to insert,
-        # but we don't want to have to create the whole graph of related objects so we
-        # just copy an existing fixture and give it a new name and ID
-        vmpp = VMPP.objects.get(id=1191111000001100)
-        vmpp.id = 1240211000001107
-        vmpp.nm = "Chlorphenamine 2mg/5ml oral solution 150 ml"
-        vmpp.save()
-
-        with ContextStack(mock.patch.object) as patch:
-            patch(fetch_ncso, "requests")
-            patch(fetch_ncso, "parse_concessions_from_rss")
-            patch(fetch_ncso, "match_concession_vmpp_ids", return_value=matched)
-
-            Client = patch(fetch_ncso, "Client")
-            notify_slack = patch(fetch_ncso, "notify_slack")
-
-            call_command("fetch_and_import_ncso_concessions")
-
-            self.assertEqual(NCSOConcession, Client().upload_model.call_args[0][0])
-            self.assertIn(
-                "Fetched 2 concessions. Imported 2 new concessions.",
-                notify_slack.call_args[0][0],
-            )
-
-        # Check that the explicitly supplied concession and the manual correction now
-        # exist in the database
-        self.assertTrue(
-            NCSOConcession.objects.filter(vmpp_id=1191111000001100).exists()
-        )
-        self.assertTrue(
-            NCSOConcession.objects.filter(vmpp_id=1240211000001107).exists()
-        )
-
     def test_regularise_name(self):
         self.assertEqual(
             fetch_ncso.regularise_name(" * Some Drug Name 500 mg"), "some drug name 500"
         )
 
-    def test_insert_or_update_withdrawn_concession(self):
-        vmpp_id = 8049011000001108
-        date = datetime.date(2023, 3, 1)
-
-        # Create existing concession which we expect to be deleted
-        NCSOConcession.objects.create(
-            vmpp_id=vmpp_id,
-            date=date,
-            drug="Duloxetine 40mg gastro-resistant capsules",
-            pack_size="56",
-            price_pence=350,
-        )
-
-        items = [
-            {
-                "date": date,
-                "vmpp_id": vmpp_id,
-                # Mark concession as withdrawn
-                "price_pence": fetch_ncso.WITHDRAWN,
-                "drug": "Duloxetine 40mg gastro-resistant capsules",
-                "pack_size": "56",
-                "vmpp_name": "Duloxetine 40mg gastro-resistant capsules 56 capsule",
-                "supplied_vmpp_id": vmpp_id,
-                "supplied_vmpp_name": "Duloxetine 60mg gastro-resistant capsules 28 capsule",
-                "publish_date": datetime.date(2023, 3, 30),
-                "url": "https://example.com",
-            },
+    def test_parse_price(self):
+        cases = [
+            ("£12.34", 1234),
+            ("12.34", 1234),
+            ("12.3", 1230),
+            ("12.03", 1203),
+            ("12", 1200),
+            ("£12", 1200),
+            # Correct weird one-off typo
+            ("11..35", 1135),
         ]
+        for price_str, value in cases:
+            with self.subTest(price_str=price_str, value=value):
+                self.assertEqual(fetch_ncso.parse_price(price_str), value)
 
-        fetch_ncso.insert_or_update(items)
-
-        self.assertFalse(
-            NCSOConcession.objects.filter(vmpp_id=vmpp_id, date=date).exists()
-        )
+    def test_parse_price_reject_invalid(self):
+        cases = [
+            "£.35",
+            ".35",
+            "1.350",
+            "12..34",
+            "12,34",
+        ]
+        for price_str in cases:
+            with self.subTest(price_str=price_str):
+                with self.assertRaises(AssertionError):
+                    fetch_ncso.parse_price(price_str)
 
 
 class ContextStack(contextlib.ExitStack):
