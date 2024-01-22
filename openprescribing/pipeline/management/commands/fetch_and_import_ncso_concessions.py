@@ -157,8 +157,14 @@ def parse_price(price_str):
     # approach but I want to be maximally conservative to begin with.
     if price_str == "11..35":
         price_str = "£11.35"
-    match = re.fullmatch(r"£(\d+)\.(\d\d)", price_str)
-    return int(match[1]) * 100 + int(match[2])
+    # We need to accept a variety of formats here: £1.50, 1.50, 1.5, 11
+    match = re.fullmatch(r"£?(\d+)(\.(\d)(\d)?)?", price_str)
+    assert match, price_str
+    return (
+        int(match[1]) * 100
+        + int(match[3] if match[3] is not None else 0) * 10
+        + int(match[4] if match[4] is not None else 0)
+    )
 
 
 def match_concession_vmpp_ids(items, vmpp_id_to_name):

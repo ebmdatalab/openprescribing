@@ -248,6 +248,34 @@ class TestFetchAndImportNCSOConcesions(TestCase):
             fetch_ncso.regularise_name(" * Some Drug Name 500 mg"), "some drug name 500"
         )
 
+    def test_parse_price(self):
+        cases = [
+            ("£12.34", 1234),
+            ("12.34", 1234),
+            ("12.3", 1230),
+            ("12.03", 1203),
+            ("12", 1200),
+            ("£12", 1200),
+            # Correct weird one-off typo
+            ("11..35", 1135),
+        ]
+        for price_str, value in cases:
+            with self.subTest(price_str=price_str, value=value):
+                self.assertEqual(fetch_ncso.parse_price(price_str), value)
+
+    def test_parse_price_reject_invalid(self):
+        cases = [
+            "£.35",
+            ".35",
+            "1.350",
+            "12..34",
+            "12,34",
+        ]
+        for price_str in cases:
+            with self.subTest(price_str=price_str):
+                with self.assertRaises(AssertionError):
+                    fetch_ncso.parse_price(price_str)
+
 
 class ContextStack(contextlib.ExitStack):
     """
