@@ -221,7 +221,7 @@ packaging==23.2
     #   gunicorn
     #   matplotlib
     #   pandas-gbq
-pandas==2.1.4
+pandas==2.2.0
     # via
     #   -r requirements.in
     #   db-dtypes
