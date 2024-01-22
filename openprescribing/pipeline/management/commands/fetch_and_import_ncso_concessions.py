@@ -210,6 +210,10 @@ def regularise_name(name):
     if name is None:
         return
 
+    # replace "smart" quotes
+    name = name.replace("‘", "'")
+    name = name.replace("’", "'")
+
     # dm+d uses "microgram" or "micrograms", usually with these rules
     name = name.replace("mcg ", "microgram ")
     name = name.replace("mcg/", "micrograms/")
@@ -233,6 +237,7 @@ def regularise_name(name):
     name = name.replace("Oral Susp SF", "oral suspension sugar free")
     name = name.replace("gastro- resistant", "gastro-resistant")
     name = name.replace("/ml", "/1ml")
+    name = re.sub(r"\bcaps\b", "capsules", name)
 
     # Strip leading asterisks which are sometimes used to indicate the presence of
     # additional notes
@@ -251,6 +256,9 @@ def regularise_name(name):
     # rather than arbitrarily picking one. See:
     # https://github.com/ebmdatalab/openprescribing/issues/3979
     name = re.sub(r"(\d+) [^\d]+$", r"\1", name)
+
+    # Strip trailing asterisk
+    name = re.sub(r"\s*\*\s*(\d+)$", r" \1", name)
 
     return name
 
