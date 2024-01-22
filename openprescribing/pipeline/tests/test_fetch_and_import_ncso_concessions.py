@@ -175,6 +175,24 @@ class TestFetchAndImportNCSOConcesions(TestCase):
             [expected],
         )
 
+    def test_match_concession_vmpp_ids_using_manual_correction(self):
+        concession = {
+            "drug": "Co-amoxiclav 500/125 tablets",
+            "pack_size": "21",
+        }
+        vmpp_id_to_name = {
+            1247311000001103: "Co-amoxiclav 500mg/125mg tablets 21 tablet",
+        }
+        expected = {
+            "drug": "Co-amoxiclav 500/125 tablets",
+            "pack_size": "21",
+            "vmpp_id": 1247311000001103,
+        }
+        self.assertEqual(
+            fetch_ncso.match_concession_vmpp_ids([concession], vmpp_id_to_name),
+            [expected],
+        )
+
     def test_fetch_and_import_ncso_concessions(self):
         matched = [
             {

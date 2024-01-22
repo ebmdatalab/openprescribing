@@ -49,6 +49,12 @@ HEADING_DATE_RE = re.compile(
 )
 
 
+NAME_FIXES = {
+    "co-amoxiclav 500/125 tablets 21": "co-amoxiclav 500mg/125mg tablets 21",
+    "co-amoxiclav 250/125 tablets 21": "co-amoxiclav 250mg/125mg tablets 21",
+}
+
+
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # Fetch and parse the concession data
@@ -178,6 +184,8 @@ def match_concession_vmpp_ids(items, vmpp_id_to_name):
 
     for item in items:
         supplied_name = regularise_name(f"{item['drug']} {item['pack_size']}")
+        # Apply known fixes
+        supplied_name = NAME_FIXES.get(supplied_name, supplied_name)
         matched_vmpp_ids = regular_name_to_vmpp_ids[supplied_name]
         # If there's an unambiguous match then we assume that is the correct VMPP
         if len(matched_vmpp_ids) == 1:
