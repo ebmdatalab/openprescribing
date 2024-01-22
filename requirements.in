@@ -25,6 +25,7 @@ google-cloud-storage
 google-cloud-bigquery-storage  # this speeds up access to BQ
 gunicorn
 html2text
+html5lib
 lxml
 lz4
 networkx
