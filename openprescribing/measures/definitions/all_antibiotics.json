@@ -5,7 +5,7 @@
   ],
   "description": [
     "Number of prescription items for all oral antibacterial drugs (BNF 5.1, ",
-    "excluding antituberculosis drugs and antileprotic drugs) per item-based STAR-PU."
+    "excluding antituberculosis drugs and antileprotic drugs) per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU."
   ],
   "numerator_short": "Oral antibacterial items",
   "denominator_short": "STAR-PUs",
