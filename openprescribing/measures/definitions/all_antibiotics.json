@@ -1,0 +1,46 @@
+{
+  "name": "Antibiotic stewardship: volume of antibiotic prescribing",
+  "title": [
+    "Antibiotic stewardship: volume of antibiotic prescribing"
+  ],
+  "description": [
+    "Number of prescription items for all oral antibacterial drugs (BNF 5.1, ",
+    "excluding antituberculosis drugs and antileprotic drugs) per item-based STAR-PU."
+  ],
+  "numerator_short": "Oral antibacterial items",
+  "denominator_short": "STAR-PUs",
+  "why_it_matters": [
+    "Antimicrobial resistance poses a significant threat to public health, ",
+    "especially because antimicrobials underpin routine medical practice. </a>",
+    "It is important that we don't overuse antibiotics. This measure shows how many are being prescribed locally."
+  ],
+  "tags": [
+    "antimicrobial",
+    "core",
+    "infections",
+    "nice"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE form_route LIKE '%.oral'"
+  ],
+  "numerator_bnf_codes_filter": [
+    "0501 #Antibacterial drugs",
+    "~050109 #Exclude antituberculosis drugs",
+    "~050110 #Exclude antileprotic drugs"
+  ],
+  "denominator_type": "star_pu_antibiotics",
+  "no_analyse_url": true,
+  "authored_by": "christopher.wood@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "",
+  "next_review": "",
+  "measure_complexity": "low",
+  "radar_exclude": false
+}
