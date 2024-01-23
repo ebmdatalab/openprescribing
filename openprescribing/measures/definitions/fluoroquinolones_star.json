@@ -1,12 +1,12 @@
 {
-  "name": "Antibiotic stewardship: fluroquinolones items per STAR-PU",
-  "title": "Antibiotic stewardship: fluroquinolones items per STAR-PU",
-  "description": "Number of prescription items for fluroquinolones per item-based STAR-PU",
+  "name": "Antibiotic stewardship: fluoroquinolone items per STAR-PU",
+  "title": "Antibiotic stewardship: fluoroquinolone items per STAR-PU",
+  "description": "Number of prescription items for fluoroquinolone per item-based STAR-PU",
   "numerator_short": "Fluroquinolone items",
   "denominator_short": "STAR-PUs",
   "why_it_matters": [
     "The <a href='https://www.gov.uk/drug-safety-update/fluoroquinolone-antibiotics-must-now-only-be-prescribed-when-other-commonly-recommended-antibiotics-are-inappropriate'>MHRA advise</a> ",
-    "that due to the risk of disabling and potentially long-lasting or irreversible side effects, systemic fluroquinolones ",
+    "that due to the risk of disabling and potentially long-lasting or irreversible side effects, systemic fluoroquinolone ",
     "must only be used in situations when other antibiotics, that are commonly recommended for the infection, are inappropriate."
   ],
   "tags": [
