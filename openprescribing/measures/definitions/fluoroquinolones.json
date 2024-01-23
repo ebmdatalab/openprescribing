@@ -8,7 +8,7 @@
   "numerator_short": "Fluroquinolone items",
   "denominator_short": "Antibiotic items",
   "why_it_matters": [
-    "The (MHRA advise)[https://www.gov.uk/drug-safety-update/fluoroquinolone-antibiotics-must-now-only-be-prescribed-when-other-commonly-recommended-antibiotics-are-inappropriate] ",
+    "The <a href='https://www.gov.uk/drug-safety-update/fluoroquinolone-antibiotics-must-now-only-be-prescribed-when-other-commonly-recommended-antibiotics-are-inappropriate'>MHRA advise</a> ",
     "that due to the risk of disabling and potentially long-lasting or irreversible side effects, systemic fluroquinolones ",
     "must only be used in situations when other antibiotics, that are commonly recommended for the infection, are inappropriate."
   ],
