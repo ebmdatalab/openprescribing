@@ -1,15 +1,15 @@
 {
-  "name": "Antibiotic stewardship: volume of fluroquinolones prescribing",
-  "title": "Antibiotic stewardship: volume of fluroquinolones prescribing",
+  "name": "Antibiotic stewardship: volume of fluoroquinolones prescribing",
+  "title": "Antibiotic stewardship: volume of fluoroquinolones prescribing",
   "description": [
-    "Number of prescription items for fluroquinolones as a percentage ",
+    "Number of prescription items for fluoroquinolones as a percentage ",
     "of total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs)."
   ],
-  "numerator_short": "Fluroquinolone items",
+  "numerator_short": "Fluoroquinolones items",
   "denominator_short": "Antibiotic items",
   "why_it_matters": [
     "The <a href='https://www.gov.uk/drug-safety-update/fluoroquinolone-antibiotics-must-now-only-be-prescribed-when-other-commonly-recommended-antibiotics-are-inappropriate'>MHRA advise</a> ",
-    "that due to the risk of disabling and potentially long-lasting or irreversible side effects, systemic fluroquinolones ",
+    "that due to the risk of disabling and potentially long-lasting or irreversible side effects, systemic fluoroquinolones ",
     "must only be used in situations when other antibiotics, that are commonly recommended for the infection, are inappropriate."
   ],
   "tags": [
