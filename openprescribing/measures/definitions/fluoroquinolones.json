@@ -3,13 +3,12 @@
   "title": "Antibiotic stewardship: volume of fluroquinolones prescribing",
   "description": [
     "Number of prescription items for fluroquinolones as a percentage ",
-    "of total prescription items for cephalosporins, macrolides, metronidazole, tinidazole & ornidazole, ",
-    "penicillins, quinolones, sulphonamides & trimethoprim, tetracyclines and drugs for urinary-tract infections."
+    "of total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs)."
   ],
   "numerator_short": "Fluroquinolone items",
   "denominator_short": "Antibiotic items",
   "why_it_matters": [
-    "The [MHRA advise](https://www.gov.uk/drug-safety-update/fluoroquinolone-antibiotics-must-now-only-be-prescribed-when-other-commonly-recommended-antibiotics-are-inappropriate) ",
+    "The (MHRA advise)[https://www.gov.uk/drug-safety-update/fluoroquinolone-antibiotics-must-now-only-be-prescribed-when-other-commonly-recommended-antibiotics-are-inappropriate] ",
     "that due to the risk of disabling and potentially long-lasting or irreversible side effects, systemic fluroquinolones ",
     "must only be used in situations when other antibiotics, that are commonly recommended for the infection, are inappropriate."
   ],
@@ -24,27 +23,33 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
+
   "numerator_type": "bnf_items",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE form_route LIKE '%.oral'"
+  ],
   "numerator_bnf_codes_filter": [
     "050112 # Quinolones"
   ],
   "denominator_type": "bnf_items",
+  "denominator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE form_route LIKE '%.oral'"
+  ],
   "denominator_bnf_codes_filter": [
-    "050101 # Penicillins",
-    "0501021 # Cephalosporins",
-    "050103 # Tetracyclines",
-    "050105 # Macrolides",
-    "050108 # Sulfonamides And Trimethoprim",
-    "050111 # Metronidazole, Tinidazole & Ornidazole",
-    "050112 # Quinolones",
-    "050113 # Urinary-Tract Infections"
+    "0501 #Antibacterial drugs",
+    "~050109 #Antituberculosis drugs",
+    "~050110 #Antileprotic drugs"
   ],
   "no_analyse_url": true,
   "authored_by": "christopher.wood@phc.ox.ac.uk",
   "checked_by": "",
   "date_reviewed": "",
   "next_review": "",
-  "measure_complexity": "low",
+  "measure_complexity": "moderate",
   "radar_exclude": false
 }
   
