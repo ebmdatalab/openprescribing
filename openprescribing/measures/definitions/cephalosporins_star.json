@@ -1,7 +1,7 @@
 {
-  "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones (KTT9) prescribing volume",
+  "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones prescribing volume",
   "title": [
-    "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones (KTT9):",
+    "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones:",
     "Number of prescription items for co-amoxiclav,",
     "cephalosporins and quinolones per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU"
   ],
@@ -12,7 +12,7 @@
   "denominator_short": "STAR-PUs",
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
-    "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Evidence-context'> It is important that they are used sparingly, to avoid drug-resistant bacteria developing.</a> ",
+    "It is important that they are used sparingly, to avoid drug-resistant bacteria developing. ",
     "This measure looks at the volume of these prescribed, versus the list size adjusted for need."
   ],
   "tags": [
@@ -26,6 +26,11 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE form_route LIKE '%.oral'"
+  ],
   "numerator_bnf_codes_filter": [
     "0501013K0 # Co-Amoxiclav",
     "0501021 # Cephalosporins",
