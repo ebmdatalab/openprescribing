@@ -315,7 +315,7 @@ scipy==1.12.0
     # via -r requirements.in
 seaborn==0.13.1
     # via -r requirements.in
-selenium==4.16.0
+selenium==4.17.2
     # via -r requirements.in
 six==1.16.0
     # via
@@ -340,6 +340,8 @@ trio==0.24.0
     #   trio-websocket
 trio-websocket==0.11.1
     # via selenium
+typing-extensions==4.9.0
+    # via selenium
 tzdata==2023.4
     # via pandas
 uritemplate==4.1.1
@@ -349,6 +351,7 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
+    #   urllib3
 watchdog==3.0.0
     # via when-changed
 webencodings==0.5.1
