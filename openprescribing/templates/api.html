@@ -38,9 +38,9 @@
 
 <p>Queries the last five years of data and returns spending and items by Sub-ICB Location by month.</p>
 
-<p>Spending by Sub-ICB Location on a chemical: <code><a href="/api/1.0/spending_by_sicbl/?code=0212000AA">/api/1.0/spending_by_sicbl/?code=0212000AA</a></code></p>
+<p>Spending by Sub-ICB Location on a chemical: <code><a href="/api/1.0/spending_by_org/?org_type=sicbl&code=0212000AA">/api/1.0/spending_by_org/?org_type=sicbl&code=0212000AA</a></code></p>
 
-<p>You can request individual Sub-ICB Locations by code: <code><a href="/api/1.0/spending_by_sicbl/?code=0212000AA&org=15N">/api/1.0/spending_by_sicbl/?code=0212000AA&org=15N</a></code></p>
+<p>You can request individual Sub-ICB Locations by code: <code><a href="/api/1.0/spending_by_org/?org_type=sicbl&code=0212000AA&org=15N">/api/1.0/spending_by_org/?org_type=sicbl&code=0212000AA&org=15N</a></code></p>
 
 <h3>Spending by practice</h3>
 
@@ -48,15 +48,27 @@
 
 <p>You must specify either an organisation, or a date.</p>
 
-<p>Spending by all practices on a BNF section: <code><a href="/api/1.0/spending_by_practice/?code=0212&date=2023-09-01">/api/1.0/spending_by_practice/?code=0212&date=2023-09-01</a></code></p>
+<p>Spending by all practices on a BNF section: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212&date=2023-09-01">/api/1.0/spending_by_org/?org_type=practice&code=0212&date=2023-09-01</a></code></p>
 
-<p>Spending by all practices on a chemical: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&date=2023-09-01">/api/1.0/spending_by_practice/?code=0212000AA&date=2023-09-01</a></code></p>
+<p>Spending by all practices on a chemical: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&date=2023-09-01">/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&date=2023-09-01</a></code></p>
 
-<p>Spending by all practices on a presentation: <code><a href="/api/1.0/spending_by_practice/?code=0212000AAAAAAAA&date=2023-09-01">/api/1.0/spending_by_practice/?code=0212000AAAAAAAA&date=2023-09-01</a></code></p>
+<p>Spending by all practices on a presentation: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212000AAAAAAAA&date=2023-09-01">/api/1.0/spending_by_org/?org_type=practice&code=0212000AAAAAAAA&date=2023-09-01</a></code></p>
 
-<p>You can request individual practices by code: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&org=H81068">/api/1.0/spending_by_practice/?code=0212000AA&org=H81068</a></code></p>
+<p>You can request individual practices by code: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&org=H81068">/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&org=H81068</a></code></p>
 
-<p>You can also request a Sub-ICB Location code to see spending by all <em>practices in that Sub-ICB Location</em>: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&org=15N">/api/1.0/spending_by_practice/?code=0212000AA&org=15N</a></code></p>
+<p>You can also request a Sub-ICB Location code to see spending by all <em>practices in that Sub-ICB Location</em>: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&org=15N">/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&org=15N</a></code></p>
+
+<h3>Spending by PCN, ICB and Regional Team</h3>
+
+<p>
+  You can use the above queries with all the other organisation types supported
+  by OpenPrescribing by changine the <code>org_type</code> parameter:
+</p>
+<ul>
+  <li><code>?org_type=pcn</code> for PCNs</li>
+  <li><code>?org_type=icb</code> for ICBs</li>
+  <li><code>?org_type=regional_team</code> for Regional Teams</li>
+</ul>
 
 <hr/>
 
