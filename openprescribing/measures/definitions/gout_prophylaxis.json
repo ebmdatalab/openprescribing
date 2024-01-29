@@ -1,0 +1,31 @@
+{
+  "name": "Gout prophylaxis",
+  "title": [
+    "Ratio of acute gout flair treatment (colchicine) versus gout prophylaxis medication"
+  ],
+  "description": [
+    "Ratio of acute gout flair treatment (colchicine) versus gout prophylaxis medication"
+  ],
+  "numerator_short": "Colchicine items",
+  "denominator_short": "Gout prophylaxis items",
+  "why_it_matters": [
+    "To be written "
+  ],
+  "tags": [
+    "core",
+    "generic",
+    "nice"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_filter": [
+    "1001040G0 # Colchicine"
+  ],
+  "denominator_type": "bnf_items",
+  "denominator_bnf_codes_filter": [
+    "100104 # Gout and cytotoxic induced hyperuicaemia"
+  ]
+}
