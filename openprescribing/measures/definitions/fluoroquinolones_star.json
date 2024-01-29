@@ -30,17 +30,7 @@
   "numerator_bnf_codes_filter": [
     "050112 # Quinolones"
   ],
-  "denominator_type": "bnf_items",
-  "denominator_bnf_codes_query": [
-    "SELECT DISTINCT(bnf_code)",
-    "FROM {measures}.vw__dmd_objs_with_form_route",
-    "WHERE form_route LIKE '%.oral'"
-  ],
-  "denominator_bnf_codes_filter": [
-    "0501 #Antibacterial drugs",
-    "~050109 #Antituberculosis drugs",
-    "~050110 #Antileprotic drugs"
-  ],
+  "denominator_type": "star_pu_antibiotics",
   "no_analyse_url": true,
   "authored_by": "christopher.wood@phc.ox.ac.uk",
   "checked_by": "",
