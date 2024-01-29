@@ -2,16 +2,15 @@
   "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones",
   "title": [
     "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones:",
-    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the",
-    "total number of prescription items for selected antibacterial drugs (sub-set of BNF 5.1)"
+    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the ",
+    "total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs)"
   ],
   "description": [
     "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage ",
-    "of total prescription items for cephalosporins, macrolides, metronidazole tinidazole & ornidazole, ",
-    "penicillins, quinolones, sulphonamides & trimethoprim, tetracyclines and drugs for urinary-tract infections."
+    "of total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs)."
   ],
   "numerator_short": "Selected items",
-  "denominator_short": "Other selected items",
+  "denominator_short": "All oral antibiotics",
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
     "It is important that they are used sparingly, to avoid drug-resistant bacteria developing. ",
@@ -28,20 +27,25 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE form_route LIKE '%.oral'"
+  ],
   "numerator_bnf_codes_filter": [
     "0501013K0 # Co-Amoxiclav",
     "0501021 # Cephalosporins",
     "050112 # Quinolones"
   ],
   "denominator_type": "bnf_items",
+  "denominator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE form_route LIKE '%.oral'"
+  ],
   "denominator_bnf_codes_filter": [
-    "050101 # Penicillins",
-    "0501021 # Cephalosporins",
-    "050103 # Tetracyclines",
-    "050105 # Macrolides",
-    "050108 # Sulfonamides And Trimethoprim",
-    "050111 # Metronidazole, Tinidazole & Ornidazole",
-    "050112 # Quinolones",
-    "050113 # Urinary-Tract Infections"
+    "0501 #Antibacterial drugs",
+    "~050109 #Exclude antituberculosis drugs",
+    "~050110 #Exclude antileprotic drugs"
   ]
 }
