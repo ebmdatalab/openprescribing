@@ -49,6 +49,10 @@ PRESENTATIONS_TO_IGNORE = SetWithCacheKey(
         "1308010Z0AAABAB",  # Ingenol Mebutate_Gel
         # These are sometimes recorded by dose, and sometimes by pack (of 8) see #937
         "0407020A0AABPBP",  # Fentanyl 400micrograms/dose nasal spray
+        # These have two pack sizes, which don't appear to be separated in BA data
+        "0302000U0AAABAB",  # Ciclesonide 160micrograms/dose inhaler CFC free
+        # These are inconsistently recorded as doses or packs by NHSBSA
+        "0604011G0AABTBT",  # Estradiol 1.53mg/dose transdermal spray
         # These are sometimes recorded as bottles, sometimes in litres
         "0902021S0AAAXAX",  # Sodium chloride 0.9% infusion 1litre polyethylene bottles
     ]
