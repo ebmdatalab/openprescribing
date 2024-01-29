@@ -1,9 +1,9 @@
 {
-  "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones (KTT9)",
+  "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones",
   "title": [
-    "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones (KTT9):",
+    "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones:",
     "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the",
-    "total number of prescription items for selectedvantibacterial drugs (sub-set of BNF 5.1)"
+    "total number of prescription items for selected antibacterial drugs (sub-set of BNF 5.1)"
   ],
   "description": [
     "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage ",
@@ -14,7 +14,7 @@
   "denominator_short": "Other selected items",
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
-    "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Evidence-context'> It is important that they are used sparingly, to avoid drug-resistant bacteria developing.</a> ",
+    "It is important that they are used sparingly, to avoid drug-resistant bacteria developing. ",
     "This measure looks at the quantity of these prescribed, versus the broad class of similar antibiotics."
   ],
   "tags": [
