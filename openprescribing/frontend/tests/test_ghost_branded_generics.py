@@ -3,8 +3,6 @@ from frontend import ghost_branded_generics as gbg
 
 
 class TestPresentationsToIgnore(TestCase):
-    print(gbg.PRESENTATIONS_TO_IGNORE)
-
     def test_missing_commas(self):
         for presentation in gbg.PRESENTATIONS_TO_IGNORE:
             self.assertGreater(
