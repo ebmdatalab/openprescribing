@@ -1,9 +1,9 @@
 {
-  "name": "Antibiotic stewardship: fluoroquinolone items per registered patient",
-  "title": "Antibiotic stewardship: fluoroquinolone items per registered patient",
-  "description": "Number of prescription items for fluoroquinolones per registered patient",
+  "name": "Antibiotic stewardship: fluoroquinolone items per 1000 patients",
+  "title": "Antibiotic stewardship: fluoroquinolone items per 1000 patients",
+  "description": "Number of prescription items for fluoroquinolones per 1000 patients",
   "numerator_short": "Fluroquinolone items",
-  "denominator_short": "Registered patients",
+  "denominator_short": "1000 patients",
   "why_it_matters": [
     "The <a href='https://www.gov.uk/drug-safety-update/fluoroquinolone-antibiotics-must-now-only-be-prescribed-when-other-commonly-recommended-antibiotics-are-inappropriate'>MHRA advise</a> ",
     "that due to the risk of disabling and potentially long-lasting or irreversible side effects, systemic fluoroquinolones ",
@@ -17,7 +17,7 @@
     "opportunities"
   ],
   "url": null,
-  "is_percentage": true,
+  "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
 
