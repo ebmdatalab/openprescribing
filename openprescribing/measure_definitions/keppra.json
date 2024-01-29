@@ -1,0 +1,29 @@
+{
+  "name": "RETIRED - Levetiracetam prescribed as Keppra",
+  "title": [
+    "RETIRED - Levetiracetam prescribed as Keppra."
+  ],
+  "description": [
+    "RETIRED - Levetiracetam prescribed as Keppras."
+  ],
+  "numerator_short": "",
+  "denominator_short": "",
+  "why_it_matters": [
+    "Oi!  No!  This is retired."
+  ],
+  "tags": [
+    "main"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "bnf_quantity",
+  "numerator_bnf_codes_filter": [
+    "000000000000000 # RETIRED"
+  ],
+  "denominator_type": "bnf_quantity",
+  "denominator_bnf_codes_filter": [
+    "000000000000000 # RETIRED"
+  ]
+}
