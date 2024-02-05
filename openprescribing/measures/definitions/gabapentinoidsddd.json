@@ -1,0 +1,59 @@
+{
+  "name": "Prescribing of gabapentin and pregabalin (DDD)",
+  "title": "Prescribing of gabapentin and pregabalin (combined Defined Daily Dose (DDD) per 1000 patients",
+  "description": "Total DDD of pregabalin + gabapentin per 1000 patients",
+  "why_it_matters": [
+    "Gabapentin and pregabalin are increasingly used in neuropathic and other types of pain, and use is ",
+    "rising rapidly in the NHS. There are also concerns about the ",
+    "<a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/385791/PHE-NHS_England_pregabalin_and_gabapentin_advice_Dec_2014.pdf'>",
+    "potential for abuse</a> and consequently both medicines have been reclassified legally  <a href='https://www.england.nhs.uk/wp-content/uploads/2019/03/pregabalin-and-gabapentin-guidance-v1.pdf'> (more information here)</a>. There appears to be no robust evidence for dose conversion between gabapentin and pregabalin. ",
+     "We have therefore chosen to use the <a href='https://www.who.int/medicines/regulation/medicines-safety/toolkit_ddd/en/'>",
+    "Defined Daily Dose</a> (DDD) for this measure.  This is a similar dose ratio that <a href='https://www.ncbi.nlm.nih.gov/pubmed/20113408'>",
+    "Toth described</a> in his paper on the substitution of gabapentin with pregabalin. ",
+    "<br><br><strong>Please note that this is an experimental measure.</strong> We would be grateful for any feedback at ",
+    "<a href='mailto:bennett@phc.ox.ac.uk'>bennett@phc.ox.ac.uk</a>."
+  ],
+  "numerator_short": "Gabapentin total DDD prescribed + pregabalin total DDD prescribed",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": [
+    "core",
+    "pain",
+    "safety"
+  ],
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM((p.quantity * i.strnt_nmrtr_val * COALESCE(n.nmtr_unit_conversion,1) / -- calculate the total unit of drug, and convert if neccesary to miligrams). Uses COALESCE to default to 1 if conversion not available \n",
+    "COALESCE(d.nmtr_unit_conversion * i.strnt_dnmtr_val,1) / --divides unit dose if multiple, and converts to mililitre if necessary. Uses COALESCE to default to 1 if conversion or denominator strength not available \n",
+    "CASE WHEN p.bnf_code LIKE '0408010AE%' THEN 300 ELSE 1800 END)) AS numerator -- divide number of miligram by 300 (pregabalin) or 1800 (gabapentin) to get DDD"
+  ],
+ "numerator_from": [
+   "{hscic}.normalised_prescribing p", 
+   "INNER JOIN {dmd}.vmp v --this joins data table to dm+d vmp table \n",
+   "ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(v.bnf_code,0,9),SUBSTR(v.bnf_code,-2)) --joins both brand and generics to vmp table \n",
+   "INNER JOIN {dmd}.vpi i -- joins vmp to vpi table to get ingredient strengths \n",
+   "ON v.id = i.vmp \n",
+   "INNER JOIN {measures}.vw__measure_conversion n -- joins unit conversion view to numerator unit of measure \n",
+   "ON i.strnt_nmrtr_uom = n.cd \n",
+   "LEFT JOIN {measures}.vw__measure_conversion d -- joins unit conversion view to denominator unit of measure (LEFT join as not all products have a denominator UOM) \n",
+   "ON i.strnt_dnmtr_uom = d.cd"
+  ],
+  "numerator_where": [
+    "(p.bnf_code LIKE '0408010AE%' --Pregabalin \n",
+    "OR p.bnf_code LIKE '0408010G0%') --Gabapentin \n",
+    "AND i.ing IN ( \n",
+    "415160008, --Pregabalin ing_code \n",
+    "386845007)  --Gabapentin ing_code"
+  ],
+  "denominator_type": "list_size",
+   "date_reviewed":"12/06/2023",
+  "next_review": "12/06/2024",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by":"andrew.brown@phc.ox.ac.uk",
+  "measure_complexity":"medium",
+  "measure_type": "dmd"
+}
+

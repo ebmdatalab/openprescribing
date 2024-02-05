@@ -1,9 +1,9 @@
 """Production settings and globals."""
 
-
 import logging
 import os
 import time
+from pathlib import Path
 
 from common import utils
 
@@ -92,7 +92,6 @@ LOGGING = {
             "level": "WARNING",
             "propagate": True,
         },
-        "frontend": {"level": "WARN", "handlers": ["gunicorn"], "propagate": True},
         "frontend.signals.handlers": {
             "level": "DEBUG",
             "handlers": ["signals"],
@@ -100,6 +99,15 @@ LOGGING = {
         },
     },
 }
+
+
+# Log everything produced by our apps at INFO or above
+for app in LOCAL_APPS:
+    LOGGING["loggers"][app] = {
+        "level": "INFO",
+        "handlers": ["gunicorn"],
+        "propagate": True,
+    }
 
 # Base directory for pipeline metadata
 PIPELINE_METADATA_DIR = os.path.join(APPS_ROOT, "pipeline", "metadata")
@@ -118,3 +126,6 @@ MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, "matrixstore_import
 MATRIXSTORE_BUILD_DIR = "/mnt/database/matrixstore"
 # This is expected to be a symlink to a file in MATRIXSTORE_BUILD_DIR
 MATRIXSTORE_LIVE_FILE = os.path.join(MATRIXSTORE_BUILD_DIR, "matrixstore_live.sqlite")
+
+# This is where we put outliers data
+OUTLIERS_DATA_DIR = Path(os.path.join(PIPELINE_DATA_BASEDIR, "outliers"))

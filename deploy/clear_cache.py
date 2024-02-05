@@ -13,8 +13,7 @@ def list_cloudflare_zones():
     url = "https://api.cloudflare.com/client/v4/zones"
     headers = {
         "Content-Type": "application/json",
-        "X-Auth-Key": os.environ["CF_API_KEY"],
-        "X-Auth-Email": os.environ["CF_API_EMAIL"],
+        "Authorization": f"Bearer {os.environ['CF_API_KEY']}",
     }
     result = json.loads(requests.get(url, headers=headers).text)
     zones = [{"name": x["name"], "id": x["id"]} for x in result["result"]]
@@ -25,8 +24,7 @@ def clear_cloudflare():
     url = "https://api.cloudflare.com/client/v4/zones/%s"
     headers = {
         "Content-Type": "application/json",
-        "X-Auth-Key": os.environ["CF_API_KEY"],
-        "X-Auth-Email": os.environ["CF_API_EMAIL"],
+        "Authorization": f"Bearer {os.environ['CF_API_KEY']}",
     }
     data = {"purge_everything": True}
     result = json.loads(

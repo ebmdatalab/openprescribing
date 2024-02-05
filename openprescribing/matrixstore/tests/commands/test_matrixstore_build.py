@@ -14,7 +14,6 @@ the fast process and checks that the resulting SQL dump is identical to that
 produced by the full end-to-end process.
 """
 
-
 import json
 import numbers
 import os

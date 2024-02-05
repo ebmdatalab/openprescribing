@@ -10,7 +10,7 @@
 
 <h1>FAQs</h1>
 
-<p>We strongly recommend reading NHS Digital's <a href="https://digital.nhs.uk/practice-level-prescribing-summary">introduction to prescribing data</a>, including their excellent <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) and <a href="http://content.digital.nhs.uk/media/10686/Download-glossary-of-terms-for-GP-prescribing---presentation-level/pdf/PLP_Presentation_Level_Glossary_April_2015.pdf">glossary of terms</a> (PDF).</p>
+<p>We strongly recommend reading NHS Digital's <a href="https://digital.nhs.uk/data-and-information/areas-of-interest/prescribing/practice-level-prescribing-in-england-a-summary">Practice Level Prescribing in England: a summary</a>, including their excellent <a href="https://digital.nhs.uk/data-and-information/areas-of-interest/prescribing/practice-level-prescribing-in-england-a-summary/practice-level-prescribing-data-more-information">More information section</a>, which describes which practices and professionals are included in the data and how prescription data are collected and <a href="https://digital.nhs.uk/data-and-information/areas-of-interest/prescribing/practice-level-prescribing-in-england-a-summary/practice-level-prescribing-glossary-of-terms">glossary of terms</a>.</p>
 
 <p>Is your question not listed below? Send us a message <a href="mailto:{{ FEEDBACK_MAILTO }}">here</a> and we'll get back to you</p>
 
@@ -19,6 +19,7 @@
 <p><a href="#extractdownload">How do I download an extract of the data?</a></p>
 <p><a href="#cite">How do I cite OpenPrescribing?</a></p>
 <p><a href="#timeperiod">What time period does the dataset cover?</a></p>
+<p><a href="#compare">Why do OpenPrescribing figures not always match with other prescribing data analysis platforms?</a></p>
 
 <h2>Prescribing data</h2>
 <p><a href="#datasource">Where do you get the data from?</a></p>
@@ -28,6 +29,8 @@
 <p><a href="#actualcost">What is actual cost?</a></p>
 <p><a href="#bnfchange">How do you deal with BNF code changes?</a></p>
 <p><a href="#ccgchange">How do you determine ICB membership when GP practices have moved ICBs or ICBs have merged?</a></p>
+<p><a href="#fp34">Do items claimed on FP34 forms show on OpenPrescribing?</a></p>
+<p><a href="#ssps">How do items dispensed under a Serious Shortage Protocol (SSP) appear in OpenPrescribing?</a></p>
 
 <h2>Analyse</h2>
 <p><a href="#analysetutorial">How do I use the analyse page?</a></p>
@@ -69,6 +72,9 @@
 <h3 id="timeperiod">What time period does the dataset cover?</h3>
 <p>We have data from the past 5 years on OpenPrescribing.net, and from 1998 in the <a href="https://openprescribing.net/long_term_trends/">Long Term Trends section</a>.</p>
 
+<h3 id="compare">Why do OpenPrescribing figures not always match with other prescribing data analysis platforms?</h3>
+<p>At OpenPrescribing we anticipate that our results will not always be exactly the same as those displayed on alternative data analysis platforms. There are two common reasons for this. Firstly, different platforms may use different underlying datasets. At OpenPrescribing we use two openly available datasets: the <a href="https://www.nhsbsa.nhs.uk/prescription-data/prescribing-data/english-prescribing-data-epd">English Prescribing dataset (EPD)</a> and the <a href="https://www.nhsbsa.nhs.uk/prescription-data/dispensing-data/prescription-cost-analysis-pca-data"> Prescription Cost Analysis (PCA)</a>. Secondly, different platforms will make different choices in their analytic code for preparing the data and displaying it to users.</p>
+<p>All our code used in data preparation, analysis and visualisation is openly available on the Bennett Institute <a href="https://github.com/ebmdatalab/openprescribing"> Github</a> for inspection and re-use by anyone. You can also click on the "<i>view technical details for this measure</i>" link in each measure to show exactly what code we are using to create it.</p>
 <h2>Prescribing Dataset</h2>
 
 <h3 id="datasource">Where do you get the data from?</h3>
@@ -86,9 +92,8 @@
   weeks’ worth of treatment while others will be much smaller.
 </p>
 <p>
-  For more detail see the NHS Digital
-  <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a>
-  (PDF)
+  For more detail see the NHS Digital Practice level prescribing 
+  <a https://digital.nhs.uk/data-and-information/areas-of-interest/prescribing/practice-level-prescribing-in-england-a-summary/practice-level-prescribing-glossary-of-terms#items">glossary of terms</a>
 </p>
 
 <h3 id="prescquantity">What does quantity mean?</h3>
@@ -121,9 +126,8 @@
   strengths and formulations.
 </p>
 <p>
-  For more detail see the NHS Digital
-  <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a>
-  (PDF)
+  For more detail see the NHS Digital Practice level prescribing 
+  <a href="https://digital.nhs.uk/data-and-information/areas-of-interest/prescribing/practice-level-prescribing-in-england-a-summary/practice-level-prescribing-glossary-of-terms#quantity">glossary of terms</a>
 </p>
 
 <h3 id="actualcost">What is actual cost?</h3>
@@ -138,9 +142,8 @@
   container allowance.
 </p>
 <p>
-  For more detail see the NHS Digital
-  <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a>
-  (PDF)
+  For more detail see the NHS Digital Practice level prescribing 
+  <a href="https://digital.nhs.uk/data-and-information/areas-of-interest/prescribing/practice-level-prescribing-in-england-a-summary/practice-level-prescribing-glossary-of-terms#actual-cost">glossary of terms</a>
 </p>
 
 <h3 id="bnfchange">How do you deal with BNF code changes?</h3>
@@ -149,10 +152,21 @@
 <p>We have done this by mapping the old codes to the new codes, by using a map the NHS Business Services Authority provided us in a personal communication (after correcting for obvious typos etc.). You can read how we did this on <a href="https://github.com/ebmdatalab/openprescribing/pull/380/commits/7f968027263c62318403584e4ad5e0b96869bb7e">github</a>.</p>
 <p>You can read more about BNF codes and how they are structured <a href="https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/">here</a>.</p>
 
-<h3 id="ccgchange">"How do you determine ICB membership when GP practices have moved ICB or ICB have merged?</h3>
+<h3 id="ccgchange">How do you determine ICB membership when GP practices have moved ICB or ICB have merged?</h3>
 <p>We use the current Integrated Care Board (ICB) membership of a practice in our analyses. If a GP Practice moved ICB, the data from before the move will be included in the data for their current ICB. Their former ICB will not include that practice's data. This means that when you look at our prescribing measures, you will be looking at the past prescribing of the current GP practices in that ICB.</p>
 <p>When ICBs merge, we create a new dashboard for the newly formed ICB and remove the old ICB dashboards. We use the prescribing data for the current practices in the new ICB in our measures. Any data for practices in the old ICBs that closed prior to the merger will be included in the new ICB's data</p>
 <p>Data from our analyse and trends pages also use current practice membership of a ICB when aggregating the data by ICB</p>
+
+<h3 id="fp34">Do items claimed on FP34 forms show on OpenPrescribing?</h3>
+<p>Medicines claimed under an "FP34" form by GP practices fall into two categories:</p>
+<ul>
+  <li><b>High Volume Vaccines (influenza, typhoid, hepatitis A, hepatitis B , pneumococcal, meningococcal vaccines). </b>These vaccines are purchased by the practices, and are claimed for on <a href="https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/prescribing-and-dispensing/high-volume-vaccine-forms-fp34dpd-appendix-forms"> FP34D (for dispensing practices) and FP34PD (for other practices) appendices</a>.  No FP10 is required to claim these items.</li>
+  <li><b>Other items (for example injections and local anaesthetics. </b>These items are often "personally adminstered" by GP practices, and although the payment for the <i>administration</i> is claimed for via the FP34 form by the practice, a separate FP10 for item will need to be submitted as well.</li>
+</ul>
+<p>Medicines administered to patients under both categories appear in OpenPrescribing data.  For example <a href="https://openprescribing.net/chemical/1404000H0/"> here is data on influenza vaccines</a>, which are usually claimed on FP34D/PD.</p>
+
+<h3 id="ssps">How do items dispensed under a Serious Shortage Protocol (SSP) appear in OpenPrescribing?</h3>
+<p>The BSA <a href="https://opendata.nhsbsa.net/dataset/65050ec0-5abd-48ce-989d-defc08ed837e/issues/2">have confirmed</a> that the prescribing dataset we use shows entries for items dispensed under an SSP, but does not include information on the item originally prescribed.</p>
 
 <h2>Analyse</h2>
 <h3 id="analysetutorial">How do I use the analyse page?</h3>
@@ -174,7 +188,7 @@
 <h2>Dashboards</h2>
 
 <h3 id="measureinterpret">How should I interpret the measures?</h3>
-<p>We recommend reading NHS Digitals's <a href="https://digital.nhs.uk/practice-level-prescribing-summary">introduction to prescribing data</a>, including their <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) and <a href="http://content.digital.nhs.uk/media/10686/Download-glossary-of-terms-for-GP-prescribing---presentation-level/pdf/PLP_Presentation_Level_Glossary_April_2015.pdf">glossary of terms</a> (PDF).</p>
+<p>We recommend reading NHS Digitals's <a href="https://digital.nhs.uk/practice-level-prescribing-summary">Practice Level Prescribing in England: a summary</a>, including the <a href="https://digital.nhs.uk/data-and-information/areas-of-interest/prescribing/practice-level-prescribing-in-england-a-summary/practice-level-prescribing-data-more-information">more information section</a> and <a href="https://digital.nhs.uk/data-and-information/areas-of-interest/prescribing/practice-level-prescribing-in-england-a-summary/practice-level-prescribing-glossary-of-terms">glossary of terms</a>.</p>
 
 <p>Just because a practice or NHS organisation is an outlier for high or low use of a particular treatment, that doesn't necessarily mean they are good or bad prescribers. These are <em>measures</em> rather than <em>indicators</em>, and they need to be interpreted judiciously.</p>
 

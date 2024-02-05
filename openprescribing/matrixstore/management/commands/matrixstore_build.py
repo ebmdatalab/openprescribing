@@ -2,6 +2,7 @@
 Runs the complete process to build a SQLite file with prescribing data in
 MatrixStore format and writes that file into `MATRIXSTORE_BUILD_DIR`
 """
+
 import logging
 import os
 import sqlite3

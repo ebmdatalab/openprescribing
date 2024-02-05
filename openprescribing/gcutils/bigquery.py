@@ -319,17 +319,20 @@ class Table(object):
                 self.client.create_dataset()
                 self.run_job("query", args, options, default_options)
 
-    def insert_rows_from_csv(self, csv_path, schema, **options):
+    def insert_rows_from_csv(self, csv_path, schema=None, **options):
         default_options = {
             "source_format": "text/csv",
             "write_disposition": "WRITE_TRUNCATE",
-            "schema": schema,
         }
 
-        # When we send a schema with a load_table_from_file job, our copy
-        # of the table metadata doesn't get updated, so we need to do this
-        # ourselves.
-        self.gcbq_table.schema = schema
+        if schema is None:
+            default_options["autodetect"] = True
+        else:
+            default_options["schema"] = schema
+            # When we send a schema with a load_table_from_file job, our copy
+            # of the table metadata doesn't get updated, so we need to do this
+            # ourselves.
+            self.gcbq_table.schema = schema
 
         with open(csv_path, "rb") as f:
             args = [f, self.gcbq_table_ref]

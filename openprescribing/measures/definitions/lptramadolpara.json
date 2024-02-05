@@ -1,0 +1,53 @@
+{
+  "name": "Items which should not routinely be prescribed in primary care - paracetamol and tramadol combination",
+  "title": "Paracetamol and tramadol combination cost per 1000 patients",
+  "description": "Cost of paracetamol and tramadol combination per 1000 patients",
+  "numerator_short": "Paracetamol and tramadol combination cost (£)",
+  "denominator_short": "1000 patients",
+  "why_it_matters": [
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#paracetamol-and-tramadol-combination-product-updated-2023' target='_blank'>",
+    "NHS England guidance states</a>:</p>",
+    "<i><p>Although the combination product has reduced in price since this guidance was first published in 2017, there is no further evidence that indicates significant advantages over individual products.</p>",
+    "<p>A PrescQIPP CIC <a href='https://www.prescqipp.info/-tramacet/send/59-tramacet/946-bulletin-62-tramacet' target='_blank'>bulletin</a> did not identify any significant advantages over individual products; ",
+    "however, it recognised that some people may prefer to take one product instead of two. While the strengths of tramadol (37.5mg) and paracetamol (325mg) in the combination product are lower than ",
+    "those in commonly available individual preparations of tramadol (50mg) and paracetamol (500mg), the <a href='https://www.prescqipp.info/-tramacet/send/59-tramacet/946-bulletin-62-tramacet' target='_blank'>",
+    "PrescQIPP CIC review</a> found no evidence that the combination product is more effective or safer than the individual preparations.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>",
+    "</ul>"
+  ],
+  "tags": [
+    "cost",
+    "lowpriority",
+    "pain"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "bnf_cost",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT v.bnf_code FROM {dmd}.vmp v",
+    "INNER JOIN {dmd}.vtm t ON t.id = v.vtm",
+    "WHERE t.id=777074005 --VTM for paracetamol and tramadol \n",
+    "AND v.bnf_code IS NOT NULL",
+    "UNION ALL",
+    "SELECT DISTINCT a.bnf_code FROM {dmd}.amp a",
+    "INNER JOIN {dmd}.vmp v ON a.vmp = v.id",
+    "INNER JOIN {dmd}.vtm t ON t.id = v.vtm",
+    "WHERE t.id=777074005",
+    "AND a.bnf_code IS NOT NULL"
+    ],
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-12",
+  "next_review": "2025-09-12",
+  "measure_complexity": "low",
+  "measure_type": "dmd",
+  "radar_exclude": false
+}

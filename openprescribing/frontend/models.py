@@ -30,7 +30,11 @@ class Section(models.Model):
     bnf_chapter = models.IntegerField()
     bnf_section = models.IntegerField(null=True, blank=True)
     bnf_para = models.IntegerField(null=True, blank=True)
+    bnf_subpara = models.IntegerField(null=True, blank=True)
     is_current = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["bnf_id"]
 
     def __str__(self):
         return self.name
@@ -39,29 +43,13 @@ class Section(models.Model):
         self.number_str = self.get_number_str(self.bnf_id)
         super(Section, self).save(*args, **kwargs)
 
-    def get_number_str(self, id):
-        s1 = self.strip_zeros(id[:2])
-        s2 = self.strip_zeros(id[2:4])
-        s3 = self.strip_zeros(id[4:6])
-        s4 = self.strip_zeros(id[6:8])
-        number = str(s1)
-        if s2:
-            number += ".%s" % s2
-        if s3:
-            number += ".%s" % s3
-        if s4:
-            number += ".%s" % s4
-        return number
-
-    def strip_zeros(self, str):
-        if not str or str == "0" or str == "00":
-            return None
-        if len(str) > 1 and str[0] == "0":
-            str = str[1:]
-        return int(str)
-
-    class Meta:
-        ordering = ["bnf_id"]
+    @staticmethod
+    def get_number_str(id):
+        return ".".join(
+            part.lstrip("0").zfill(1)
+            for part in [id[:2], id[2:4], id[4:6], id[6:7]]
+            if part
+        )
 
 
 class RegionalTeamManager(models.Manager):

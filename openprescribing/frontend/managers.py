@@ -47,10 +47,10 @@ class MeasureValueQuerySet(models.QuerySet):
             raise ValueError("Unknown org_type: {}".format(org_type))
 
     def for_orgs(self, org_type, org_ids):
-        qs = self.select_related("measure")
+        qs = self.prefetch_related("measure")
 
         if org_ids:
-            qs = qs.select_related(org_type)
+            qs = qs.prefetch_related(org_type)
 
             org_type_key = org_type + "_id"
             org_Q = Q()

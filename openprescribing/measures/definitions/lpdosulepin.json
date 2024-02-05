@@ -1,0 +1,46 @@
+{
+  "name": "Items which should not routinely be prescribed in primary care - dosulepin",
+  "title": "Dosulepin cost per 1000 patients",
+  "description": "Cost of dosulepin per 1000 patients",
+  "numerator_short": "Dosulepin cost (£)",
+  "denominator_short": "1000 patients",
+  "why_it_matters": [
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#dosulepin-2017' target='_blank'>",
+    "NHS England guidance states</a>:</p>",
+    "<p><i>Dosulepin, formerly known as dothiepin, is a tricyclic antidepressant. NICE guidance on depression in adults has a ‘do not do’ recommendation: ",
+    "Do not switch to, or start, dosulepin because evidence supporting its tolerability relative to other antidepressants is outweighed by the increased ",
+    "cardiac risk and toxicity in overdose.</p>",
+    "<p>Due to the significant safety concerns advised by NICE, the joint clinical working group considered dosulepin suitable for inclusion in this guidance.</p></i>",
+    "NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>",
+    "<li>Prescribe only if the decision has been made after a multidisciplinary team discussion.",
+    "</ul>"
+  ],
+  "tags": [
+    "cost",
+    "lowpriority",
+    "mentalhealth",
+    "nice",
+    "safety"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "bnf_cost",
+  "numerator_bnf_codes_filter": [
+    "0403010J0 # Dosulepin"
+  ],
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-12",
+  "next_review": "2025-09-12",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
+}

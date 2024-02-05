@@ -1,0 +1,29 @@
+<table class="table">
+        <thead>
+                <tr>
+                        <th>Chemical</th>
+                        <th>Chemical items</th>
+                        <th>Subparagraph</th>
+                        <th>Subparagraph items</th>
+                        <th>Ratio</th>
+                        <th>Mean</th>
+                        <th>Std</th>
+                        <th>Z-score</th>
+                        <th></th>
+                </tr>
+        </thead>
+        <tbody>
+                {% for outlier in outliers %}
+                <tr>
+                        <td><a href="{{ outlier.analyse_url }}">{{ outlier.chemical_name }}</a></td>
+                        <td>{{ outlier.chemical_items }}</td>
+                        <td>{{ outlier.subparagraph_name }}</td>
+                        <td>{{ outlier.subparagraph_items }}</td>
+                        <td>{{ outlier.ratio|floatformat:2 }}</td>
+                        <td>{{ outlier.mean|floatformat:2 }}</td>
+                        <td>{{ outlier.std|floatformat:2 }}</td>
+                        <td>{{ outlier.zscore|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+        </tbody>
+</table>

@@ -1028,11 +1028,9 @@ def spending_for_one_entity(request, entity_code, entity_type):
         raise Http404("No data available")
     end_date = max(row["month"] for row in monthly_totals)
     last_prescribing_date = monthly_totals[-1]["last_prescribing_date"]
-    one_year_ago = current_month.replace(year=current_month.year - 1)
-    rolling_annual_total = sum(
-        row["additional_cost"] for row in monthly_totals if row["month"] > one_year_ago
-    )
-    financial_ytd_total = _financial_ytd_total(monthly_totals)
+    last_12_months = monthly_totals[-12:]
+    rolling_annual_total = sum(row["additional_cost"] for row in last_12_months)
+    financial_ytd_total = _financial_ytd_total(last_12_months)
     breakdown_date = request.GET.get("breakdown_date")
     breakdown_date = parse_date(breakdown_date) if breakdown_date else end_date
     breakdown = ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
@@ -1295,7 +1293,9 @@ def custom_500(request):
             "The database took too long to respond.  If you were running an"
             "analysis with multiple codes, try again with fewer."
         )
-    if request.is_ajax() or "application/json" in request.META.get("HTTP_ACCEPT", ""):
+    if (request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest") or (
+        "application/json" in request.META.get("HTTP_ACCEPT", "")
+    ):
         return HttpResponse(reason, status=500)
     else:
         return render(request, "500.html", {"reason": reason}, status=500)

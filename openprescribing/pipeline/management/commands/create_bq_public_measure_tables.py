@@ -1,6 +1,5 @@
 """Update measure tables in BQ public dataset."""
 
-
 import os
 
 from django.conf import settings

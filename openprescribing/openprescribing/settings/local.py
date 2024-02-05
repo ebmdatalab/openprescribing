@@ -1,7 +1,7 @@
 """Development settings and globals."""
 
-
 import os
+from pathlib import Path
 
 from common import utils
 
@@ -129,6 +129,9 @@ MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, "matrixstore_import
 MATRIXSTORE_BUILD_DIR = os.path.join(PIPELINE_DATA_BASEDIR, "matrixstore_build")
 # This is expected to be a symlink to a file in MATRIXSTORE_BUILD_DIR
 MATRIXSTORE_LIVE_FILE = os.path.join(MATRIXSTORE_BUILD_DIR, "matrixstore_live.sqlite")
+
+# This is where we put outliers data
+OUTLIERS_DATA_DIR = Path(os.path.join(PIPELINE_DATA_BASEDIR, "outliers"))
 
 # Don't send messages to Slack
 SLACK_SENDING_ACTIVE = False

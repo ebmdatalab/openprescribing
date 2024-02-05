@@ -8,7 +8,7 @@
 
 <h1>API</h1>
 
-<p>You can use our RESTful API to download spending data and other useful information. While we are in beta, no registration is required, but please be aware this may change.</p>
+<p>You can use our RESTful API to download spending data and other useful information. Currently no registration is required, but please be aware this may change.</p>
 
 <p>You can retrieve data as CSV (compatible with Excel) by appending <code>&format=csv</code> to the URL, or as JSON by appending <code>&format=json</code>.</p>
 
@@ -22,7 +22,7 @@
 
 <p>Methods to calculate prescribing spending.</p>
 
-<p>Retrieve total spending and items by Sub-ICB Location or practice on a particular chemical, presentation or BNF section. (Spending is calculated using the <strong>actual_cost</strong> field in the HSCIC data, items using the <strong>total_items</strong> field.)</p>
+<p>Retrieve total spending and items by Sub-ICB Location or practice on a particular chemical, presentation or BNF section. (Spending is calculated using the <strong>actual_cost</strong> field in the NHS Business Service Authority's data, items using the <strong>total_items</strong> field.)</p>
 
 
 
@@ -38,9 +38,9 @@
 
 <p>Queries the last five years of data and returns spending and items by Sub-ICB Location by month.</p>
 
-<p>Spending by Sub-ICB Location on a chemical: <code><a href="/api/1.0/spending_by_sicbl/?code=0212000AA">/api/1.0/spending_by_sicbl/?code=0212000AA</a></code></p>
+<p>Spending by Sub-ICB Location on a chemical: <code><a href="/api/1.0/spending_by_org/?org_type=sicbl&code=0212000AA">/api/1.0/spending_by_org/?org_type=sicbl&code=0212000AA</a></code></p>
 
-<p>You can request individual Sub-ICB Locations by code: <code><a href="/api/1.0/spending_by_sicbl/?code=0212000AA&org=03V">/api/1.0/spending_by_sicbl/?code=0212000AA&org=03V</a></code></p>
+<p>You can request individual Sub-ICB Locations by code: <code><a href="/api/1.0/spending_by_org/?org_type=sicbl&code=0212000AA&org=15N">/api/1.0/spending_by_org/?org_type=sicbl&code=0212000AA&org=15N</a></code></p>
 
 <h3>Spending by practice</h3>
 
@@ -48,15 +48,27 @@
 
 <p>You must specify either an organisation, or a date.</p>
 
-<p>Spending by all practices on a BNF section: <code><a href="/api/1.0/spending_by_practice/?code=0212&date=2015-04-01">/api/1.0/spending_by_practice/?code=0212&date=2015-04-01</a></code></p>
+<p>Spending by all practices on a BNF section: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212&date=2023-09-01">/api/1.0/spending_by_org/?org_type=practice&code=0212&date=2023-09-01</a></code></p>
 
-<p>Spending by all practices on a chemical: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&date=2015-04-01">/api/1.0/spending_by_practice/?code=0212000AA&date=2015-04-01</a></code></p>
+<p>Spending by all practices on a chemical: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&date=2023-09-01">/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&date=2023-09-01</a></code></p>
 
-<p>Spending by all practices on a presentation: <code><a href="/api/1.0/spending_by_practice/?code=0212000AAAAAAAA&date=2015-04-01">/api/1.0/spending_by_practice/?code=0212000AAAAAAAA&date=2015-04-01</a></code></p>
+<p>Spending by all practices on a presentation: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212000AAAAAAAA&date=2023-09-01">/api/1.0/spending_by_org/?org_type=practice&code=0212000AAAAAAAA&date=2023-09-01</a></code></p>
 
-<p>You can request individual practices by code: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&org=H81068">/api/1.0/spending_by_practice/?code=0212000AA&org=H81068</a></code></p>
+<p>You can request individual practices by code: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&org=H81068">/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&org=H81068</a></code></p>
 
-<p>You can also request a Sub-ICB Location code to see spending by all <em>practices in that Sub-ICB Location</em>: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&org=99P">/api/1.0/spending_by_practice/?code=0212000AA&org=99P</a></code></p>
+<p>You can also request a Sub-ICB Location code to see spending by all <em>practices in that Sub-ICB Location</em>: <code><a href="/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&org=15N">/api/1.0/spending_by_org/?org_type=practice&code=0212000AA&org=15N</a></code></p>
+
+<h3>Spending by PCN, ICB and Regional Team</h3>
+
+<p>
+  You can use the above queries with all the other organisation types supported
+  by OpenPrescribing by changine the <code>org_type</code> parameter:
+</p>
+<ul>
+  <li><code>?org_type=pcn</code> for PCNs</li>
+  <li><code>?org_type=icb</code> for ICBs</li>
+  <li><code>?org_type=regional_team</code> for Regional Teams</li>
+</ul>
 
 <hr/>
 
@@ -86,7 +98,7 @@
 
 <p>All practices matching a code or name: <code><a href="/api/1.0/org_code/?q=Gloucester&org_type=practice">/api/1.0/org_code?q=Gloucester&org_type=practice</a></code></p>
 
-<p>All organisations exactly matching a code or name: <code><a href="/api/1.0/org_code/?exact=true&q=99H">/api/1.0/org_code/?exact=true&q=99H</a></code></p>
+<p>All organisations exactly matching a code or name: <code><a href="/api/1.0/org_code/?exact=true&q=15N">/api/1.0/org_code/?exact=true&q=99H</a></code></p>
 
 <h3>List size and ASTRO-PUs by Sub-ICB Location or practice</h3>
 
@@ -94,9 +106,9 @@
 
 <p>Total list size for all Sub-ICB Locations: <code><a href="/api/1.0/org_details/?org_type=ccg&keys=total_list_size">/api/1.0/org_details/?org_type=ccg&keys=total_list_size</a></code></p>
 
-<p>Total list size for all practices by practice code, or Sub-ICB Location code: <code><a href="/api/1.0/org_details/?org_type=practice&org=99H&keys=total_list_size">/api/1.0/org_details/?org_type=practice&org=99H&keys=total_list_size</a></code></p>
+<p>Total list size for all practices by practice code, or Sub-ICB Location code: <code><a href="/api/1.0/org_details/?org_type=practice&org=15N&keys=total_list_size">/api/1.0/org_details/?org_type=practice&org=15N&keys=total_list_size</a></code></p>
 
-<p>ASTRO-PU cost and items for practices by practice code, or Sub-ICB Location code: <code><a href="/api/1.0/org_details/?org_type=practice&org=99H&keys=astro_pu_items,astro_pu_cost">/api/1.0/org_details/?org_type=practice&org=99H&keys=astro_pu_items,astro_pu_cost</a></code></p>
+<p>ASTRO-PU cost and items for practices by practice code, or Sub-ICB Location code: <code><a href="/api/1.0/org_details/?org_type=practice&org=15N&keys=astro_pu_items,astro_pu_cost">/api/1.0/org_details/?org_type=practice&org=15N&keys=astro_pu_items,astro_pu_cost</a></code></p>
 
 
 <h3>Sub-ICB Location boundaries</h3>
@@ -105,7 +117,7 @@
 
 <p>Boundaries of all Sub-ICB Locations: <code><a href="/api/1.0/org_location/?org_type=ccg">/api/1.0/org_location/?org_type=ccg</a></code></p>
 
-<p>Boundaries of an individual Sub-ICB Location: <code><a href="/api/1.0/org_location/?org_type=ccg&q=99H">/api/1.0/org_location/?org_type=ccg&q=99H</a></code></p>
+<p>Boundaries of an individual Sub-ICB Location: <code><a href="/api/1.0/org_location/?org_type=ccg&q=15N">/api/1.0/org_location/?org_type=ccg&q=15N</a></code></p>
 
 <p>Location (approximate) of a practice, or practices in a Sub-ICB Location, by code: <code><a href="/api/1.0/org_location/?q=99H,P87003">/api/1.0/org_location/?q=99H,P87003</a></code></p>
 

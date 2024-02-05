@@ -7,6 +7,7 @@ of luck.
 Below is a dirt-simple implementation of a GeoJSON serializer which accepts
 dictionaries with arbitrary keys.
 """
+
 import json
 
 from django.contrib.gis.gdal import CoordTransform, SpatialReference

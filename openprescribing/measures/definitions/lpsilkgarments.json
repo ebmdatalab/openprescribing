@@ -1,0 +1,48 @@
+{
+  "name": "Items which should not routinely be prescribed in primary care - silk garments",
+  "title":"Silk garments cost per 1000 patients",
+  "description":"Silk garments per 1000 patients",
+  "numerator_short": "Silk garments (£)",
+  "denominator_short": "1000 patients",
+  "why_it_matters": [
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#silk-garments-2019' target='_blank'>",
+    "NHS England guidance states</a>:</p>",
+    "<i><p>Silk garments are typically prescribed for eczema or dermatitis.</p>",
+    "<p>These products are knitted, medical grade silk clothing that can be used as an adjunct to normal treatment for severe eczema and allergic skin conditions.</p>",
+    "<p>Four brands of knitted silk garments are currently listed as an appliance in part IX A in the <a href='https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff' target='_blank'>",
+    "NHS Drug Tariff</a> and are relatively expensive. ",
+    "The<a href='https://www.prescqipp.info/media/1659/b160-silk-and-antimicrobial-garments-20.pdf' target='_blank'> PrescQIPP document on silk garments</a> states that the evidence relating to their use ",
+    "is weak and is of low quality.</p>",
+    "<p>In addition, due to limited evidence supporting the efficacy of silk clothing for the relief of eczema, the NIHR HTA programme commissioned the",
+    "<a href='https://www.nottingham.ac.uk/research/groups/cebd/projects/clothes/index.aspx' target='_blank'>CLOTHES trial</a>, to examine whether adding silk garments to standard eczema care reduced eczema ",
+    "severity in children with moderate to severe eczema, compared to use of standard eczema treatment alone. The trial concluded that using silk garments for the management of eczema ",
+    "is unlikely to be cost-effective for the NHS.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "</ul>"
+  ],
+  "tags": [
+    "cost",
+    "efficacy",
+    "lowpriority"
+
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "bnf_cost",
+  "numerator_bnf_codes_filter": [
+    "2020 # Silk Garments"
+  ],
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
+  "date_reviewed": "2023-08-29",
+  "next_review": "2025-08-29",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
+}
