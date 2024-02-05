@@ -542,7 +542,7 @@ class Command(BaseCommand):
                 )
 
                 join_exprs.append(
-                    "dmd.{} T{} ON {}.{} = T{}.{}".format(
+                    "{{dmd}}.{} T{} ON {}.{} = T{}.{}".format(
                         foreign_table_name,
                         t_alias_ix,
                         cls.obj_type,
@@ -579,7 +579,7 @@ class Command(BaseCommand):
                     )
 
                     join_exprs.append(
-                        "dmd.{} U{} ON T{}.{} = U{}.cd".format(
+                        "{{dmd}}.{} U{} ON T{}.{} = U{}.cd".format(
                             foreign_table_name,
                             u_alias_ix,
                             t_alias_ix,
@@ -598,7 +598,7 @@ class Command(BaseCommand):
                     )
 
             join_exprs.append(
-                "dmd.{} T{} ON {}.id = T{}.{}".format(
+                "{{dmd}}.{} T{} ON {}.id = T{}.{}".format(
                     relname, t_alias_ix, cls.obj_type, t_alias_ix, cls.obj_type
                 )
             )
@@ -615,7 +615,7 @@ class Command(BaseCommand):
             "SELECT "
             + ", ".join(select_exprs)
             + " FROM "
-            + "dmd."
+            + "{{dmd}}."
             + cls.obj_type
             + " LEFT OUTER JOIN "
             + " LEFT OUTER JOIN ".join(join_exprs)

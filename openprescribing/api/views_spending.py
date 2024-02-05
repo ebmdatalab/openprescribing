@@ -411,6 +411,11 @@ def spending_by_org(request, format=None, org_type=None):
     # make the whole API case-insensitive)
     if org_type == "CCG":
         org_type = "ccg"
+    # Accept the public org type names
+    elif org_type == "sicbl":
+        org_type = "ccg"
+    elif org_type == "icb":
+        org_type = "stp"
 
     # Some special case handling for practices
     if org_type == "practice":
@@ -424,6 +429,12 @@ def spending_by_org(request, format=None, org_type=None):
                 "parameter, e.g. date=2015-04-01",
                 status=400,
             )
+
+    if org_type == "pcn":
+        extra_ids = Practice.objects.filter(ccg_id__in=org_ids).values_list(
+            "pcn", flat=True
+        )
+        org_ids = set(org_ids).union(extra_ids)
 
     if org_type == "practice":
         orgs = Practice.objects.all()

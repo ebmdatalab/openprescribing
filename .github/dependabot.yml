@@ -5,6 +5,7 @@ updates:
   schedule:
     interval: daily
   rebase-strategy: "disabled"
+  open-pull-requests-limit: 99
   allow:
   - dependency-type: direct
   - dependency-type: indirect
@@ -14,8 +15,8 @@ updates:
   - dependency-name: titlecase
     versions:
     - "> 0.12.0"
-  # Version 3.2 is the latest Django LTS version, we want patch updates to that
-  # but no major version updates until we reach the next LTS which is 4.2
+  # Version 4.2 is the latest Django LTS version, we want patch updates to that
+  # but no major version updates until we manually upgrade to the next LTS
   - dependency-name: django
     versions:
-    - ">= 3.3, <4.2"
+    - ">= 4.3"

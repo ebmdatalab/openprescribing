@@ -33,5 +33,5 @@ class TestGenerateFilename(SimpleTestCase):
         os.utime(filename, (last_modified, last_modified))
         new_filename = generate_filename(filename)
         self.assertRegex(
-            new_filename, "matrixstore_2018-10_2018-12-06--15-05_[a-f0-9]{16}\.sqlite"
+            new_filename, r"matrixstore_2018-10_2018-12-06--15-05_[a-f0-9]{16}\.sqlite"
         )

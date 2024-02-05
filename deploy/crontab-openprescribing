@@ -1,9 +1,9 @@
 # min hour day/month month day/week
 
-00 01 * * * hello /webapps/openprescribing/deploy/run_pipeline_e2e_tests.sh
 00 02 * * * hello /webapps/openprescribing/deploy/fetch_and_import_ncso_concessions.sh
 00 03 * * * hello /webapps/openprescribing/deploy/fetch_drug_tariff.sh
 30 03 * * * hello /webapps/openprescribing/deploy/fetch_and_import_dmd.sh
 00 04 * * * hello /webapps/openprescribing/deploy/clean_up_bq_test_data.sh
 00 05 * * * hello /webapps/openprescribing/deploy/diskcache_garbage_collect.sh
 30 05 * * * hello /webapps/openprescribing/deploy/clearsessions.sh
+12 06 * * 1 hello /webapps/openprescribing/deploy/maillog_garbage_collect.sh

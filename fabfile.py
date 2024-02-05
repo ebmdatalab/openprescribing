@@ -83,7 +83,7 @@ def npm_install():
     installed = run("if [[ -n $(which npm) ]]; then echo 1; fi")
     if not installed:
         sudo(
-            "curl -sL https://deb.nodesource.com/setup_6.x |"
+            "curl -sL https://deb.nodesource.com/setup_20.x |"
             "bash - && apt-get install -y  "
             "nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1;",
             user=env.local_user,
@@ -316,3 +316,16 @@ def call_management_command(command_name, environment, *args, **kwargs):
     with cd(env.path):
         with prefix("source .venv/bin/activate"):
             print(run(cmd))
+
+
+def notify_restart():
+    with prefix("source .venv/bin/activate"):
+        run("python deploy/notify_restart.py")
+
+
+@task
+def restart(environment):
+    setup_env_from_environment(environment)
+    with cd(env.path):
+        graceful_reload()
+        notify_restart()

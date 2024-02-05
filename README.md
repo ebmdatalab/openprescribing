@@ -82,7 +82,7 @@ PostGIS extensions, and create a superuser for the database.
 
 Copy `environment-sample` to `environment`, and set the `DB_*` environment variables.
 
-Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
+Set the `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
 
 You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
 

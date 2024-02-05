@@ -1,0 +1,42 @@
+{
+  "name": "Antibiotic stewardship: prescribing of trimethoprim vs nitrofurantoin",
+  "title": [
+    "Antibiotic stewardship: trimethoprim as a percentage of prescribing of nitrofurantoin and trimethoprim"
+  ],
+  "description": [
+    "Trimethoprim as a percentage of prescribing of nitrofurantoin and trimethoprim"
+  ],
+  "numerator_short": "Trimethoprim items",
+  "denominator_short": "Total trimethoprim and nitrofurantoin items",
+  "why_it_matters": [
+    "Resistance to trimethoprim is increasing, and therefore NICE ",
+    "guidelines recommend that <a href='https://www.nice.org.uk/guidance/ng109'> ",
+    "nitrofurantoin is used first for empirical treatment of urinary tract infections</a> ",
+    "unless there is a low risk of trimethoprim resistance.",
+    "<p> You can read our paper on the implementation of this guidance in the <a href='https://doi.org/10.1093/jac/dky509'>Journal of Antimicrobial Chemotherapy</a>.</p>"
+    
+  ],
+  "tags": [
+    "antimicrobial",
+    "infections"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_filter": [
+    "0501080W0 # Trimethoprim"
+  ],
+  "denominator_type": "bnf_items",
+  "denominator_bnf_codes_filter": [
+    "0501130R0 # Nitrofurantoin",
+    "0501080W0 # Trimethoprim"
+  ],
+  "authored_by": "christopher.wood@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-04",
+  "next_review": "2025-09-04",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code"
+}

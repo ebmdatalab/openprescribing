@@ -1,4 +1,5 @@
 """Common settings and globals."""
+
 import sys
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
@@ -175,7 +176,6 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "corsheaders.middleware.CorsPostCsrfMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -208,14 +208,13 @@ DJANGO_APPS = (
 )
 
 # Apps specific for this project go here.
-LOCAL_APPS = ("frontend", "dmd", "pipeline", "gcutils", "matrixstore")
+LOCAL_APPS = ("frontend", "dmd", "pipeline", "gcutils", "matrixstore", "outliers")
 
 CONTRIB_APPS = (
     "anymail",
     "crispy_forms",
     "crispy_bootstrap3",
     "raven.contrib.django.raven_compat",
-    "import_export",
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -345,6 +344,7 @@ GRAB_HOST = "https://openprescribing.net"
 # Webhook URLs for posting to different channels can be configured at
 # https://api.slack.com/apps/A6B85C8KC/incoming-webhooks
 SLACK_TECHNOISE_POST_KEY = utils.get_env_setting("SLACK_TECHNOISE_POST_KEY", default="")
+SLACK_TEAM_POST_KEY = utils.get_env_setting("SLACK_TEAM_POST_KEY", default="")
 SLACK_SENDING_ACTIVE = True
 
 
@@ -442,7 +442,7 @@ TRUD_PASSWORD = utils.get_env_setting("TRUD_PASSWORD", default="")
 CHECK_NUMBERS_BASE_PATH = "/tmp/numbers-checker/"
 
 # Path of directory containing measure definitions.
-MEASURE_DEFINITIONS_PATH = join(APPS_ROOT, "measure_definitions")
+MEASURE_DEFINITIONS_PATH = join(APPS_ROOT, "measures", "definitions")
 
 # When building the matrixstore, should we check whether data is in BQ before
 # downloading it?

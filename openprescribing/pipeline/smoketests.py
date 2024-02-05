@@ -112,7 +112,6 @@ class TestSmokeTestSpendingByCCG(SmokeTestBase):
 
 
 class TestSmokeTestMeasures(SmokeTestBase):
-
     """
     Smoke tests for all 13 KTTs, for the period July-Sept 2015.
     Cross-reference against data from the BSA site.

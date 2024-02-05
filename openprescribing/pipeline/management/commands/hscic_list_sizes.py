@@ -1,6 +1,6 @@
 import datetime
 import os
-import subprocess
+import zipfile
 
 import requests
 from django.conf import settings
@@ -21,8 +21,6 @@ class Command(BaseCommand):
         parser.add_argument("month", type=int)
 
     def handle(self, *args, **kwargs):
-        self.verbose = kwargs["verbosity"] > 1
-
         date = datetime.date(kwargs["year"], kwargs["month"], 1)
         datestamp = date.strftime("%Y_%m")
 
@@ -35,31 +33,20 @@ class Command(BaseCommand):
         if rsp.status_code != 200:
             raise CommandError("Could not find any data for %s" % datestamp)
 
-        filename = "gp-reg-pat-prac-quin-age.csv"
+        filename = "gp-reg-pat-prac-quin-age.zip"
         tree = html.fromstring(rsp.content)
-        source_url = tree.xpath("//a[contains(@href, '{}')]/@href".format(filename))[0]
+        source_url = tree.xpath(f"//a[contains(@href, '{filename}')]/@href")[0]
 
-        target_dir = os.path.join(
+        dir_path = os.path.join(
             settings.PIPELINE_DATA_BASEDIR, "patient_list_size", datestamp
         )
+        zip_path = os.path.join(dir_path, filename)
+        mkdir_p(dir_path)
 
-        target_file = os.path.join(target_dir, "patient_list_size_new.csv")
+        rsp = requests.get(source_url)
 
-        mkdir_p(target_dir)
+        with open(zip_path, "wb") as f:
+            f.write(rsp.content)
 
-        if self.verbose:
-            print("Getting data for {}".format(datestamp))
-
-        self.curl_and_return(source_url, target_file)
-
-        if self.verbose:
-            print("Done")
-
-    def curl_and_return(self, url, target_file):
-        """
-        Call curl, raise exception on error
-        """
-        cmd = "curl {} -o {}".format(url, target_file)
-        if self.verbose:
-            print("Runing %s" % cmd)
-        subprocess.check_call(cmd.split())
+        with zipfile.ZipFile(zip_path) as zf:
+            zf.extract("gp-reg-pat-prac-quin-age.csv", dir_path)

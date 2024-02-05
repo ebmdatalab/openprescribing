@@ -1,6 +1,7 @@
 """
 Fetches Drug Tariff from NHSBSA website, and saves to CSV
 """
+
 import calendar
 import csv
 import datetime
@@ -55,7 +56,7 @@ class Command(BaseCommand):
                 # We have seen the last token in `words` be "19_0".  The year is
                 # reported to us via Slack, so if we pull out some nonsense here we
                 # *should* notice.
-                year = re.match("\d+", year).group()
+                year = re.match(r"\d+", year).group()
                 if len(year) == 2:
                     year = "20" + year
 

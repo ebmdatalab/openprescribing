@@ -35,6 +35,9 @@ class Command(BaseCommand):
                 p_id = row["BNF Paragraph Code"]
                 if p_id not in sections:
                     sections[p_id] = {"id": p_id, "name": row["BNF Paragraph"]}
+                sp_id = row["BNF Subparagraph Code"]
+                if sp_id not in sections:
+                    sections[sp_id] = {"id": sp_id, "name": row["BNF Subparagraph"]}
 
                 chemical_name = row["BNF Chemical Substance"].strip()
                 chemical_code = row["BNF Chemical Substance Code"].strip()
@@ -78,16 +81,18 @@ class Command(BaseCommand):
                 bnf_chapter = id[:2]
                 bnf_section = id[2:4]
                 bnf_para = id[4:6]
-                bnf_subpara = id[6:8]
+                bnf_subpara = id[6:7]
                 bnf_section = self.convert_bnf_id_section(bnf_section)
                 bnf_para = self.convert_bnf_id_section(bnf_para)
-                if self.is_valid_section(id, name, bnf_para, bnf_subpara):
+                bnf_subpara = self.convert_bnf_id_section(bnf_subpara)
+                if self.is_valid_section(id, name, bnf_para):
                     try:
                         sec = Section.objects.get(bnf_id=id)
                         sec.name = name
                         sec.bnf_chapter = bnf_chapter
                         sec.bnf_section = bnf_section
                         sec.bnf_para = bnf_para
+                        sec.bnf_subpara = bnf_subpara
                         sec.save()
                     except ObjectDoesNotExist:
                         sec = Section.objects.create(
@@ -96,6 +101,7 @@ class Command(BaseCommand):
                             bnf_chapter=bnf_chapter,
                             bnf_section=bnf_section,
                             bnf_para=bnf_para,
+                            bnf_subpara=bnf_subpara,
                         )
 
     def convert_bnf_id_section(self, id):
@@ -104,15 +110,10 @@ class Command(BaseCommand):
         else:
             return int(id)
 
-    def is_valid_section(self, id, name, bnf_para, bnf_subpara):
+    def is_valid_section(self, id, name, bnf_para):
         """
         Check for duplicate or dummy sections.
         """
-        if (
-            name.lower().startswith("dummy")
-            or id[-2:] == "00"
-            or bnf_para == "0"
-            or bnf_subpara == "0"
-        ):
+        if name.lower().startswith("dummy") or id[-2:] == "00" or bnf_para == "0":
             return False
         return True

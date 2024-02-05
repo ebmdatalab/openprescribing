@@ -31,8 +31,8 @@ class CommandsTestCase(TestCase):
             practice_id="N84014", date=last_list_size_date
         )
         self.assertEqual(p.total_list_size, 40)
-        self.assertEqual(p.astro_pu_cost, 199.419458446917)
-        self.assertEqual(p.astro_pu_items, 780.191218783541)
+        self.assertAlmostEqual(p.astro_pu_cost, 199.419458446917)
+        self.assertAlmostEqual(p.astro_pu_items, 780.191218783541)
         self.assertEqual("%.3f" % p.star_pu["oral_antibacterials_item"], "27.135")
         self.assertEqual("%.3f" % p.star_pu["cox-2_inhibitors_cost"], "13.050")
         self.assertEqual("%.3f" % p.star_pu["antidepressants_adq"], "887.100")

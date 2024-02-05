@@ -111,9 +111,11 @@ class MakeHtml:
             data frame with column definitons added
         """
         return df.rename(
-            columns=lambda x: MakeHtml.make_abbr(x, MakeHtml.DEFINITIONS[x])
-            if x in MakeHtml.DEFINITIONS
-            else x
+            columns=lambda x: (
+                MakeHtml.make_abbr(x, MakeHtml.DEFINITIONS[x])
+                if x in MakeHtml.DEFINITIONS
+                else x
+            )
         )
 
     @staticmethod
@@ -396,7 +398,7 @@ class MakeHtml:
         for i, row in enumerate(rows):
             if df.iloc[i][MakeHtml.selective_title(MakeHtml.LOW_NUMBER_CLASS)]:
                 row.classes.add(MakeHtml.LOW_NUMBER_CLASS)
-            row.classes.add(f"row_{i+1}")
+            row.classes.add(f"row_{i + 1}")
         return html.tostring(html_table).decode("utf-8")
 
     @staticmethod
@@ -519,8 +521,8 @@ class DatasetBuild:
         numerator_column: str = "chemical",
         denominator_column: str = "subpara",
     ) -> None:
-        assert (
-            type(to_date) == date and type(from_date) == date
+        assert isinstance(to_date, date) and isinstance(
+            from_date, date
         ), "date args must be dates"
         assert to_date > from_date, "to date must be after from date"
         self.from_date = from_date
@@ -705,7 +707,7 @@ class DatasetBuild:
             print(f"Error getting BQ data for {entity}")
             traceback.print_stack()
         try:
-            if type(res.iloc[0]["array"]) != np.ndarray:
+            if not isinstance(res.iloc[0]["array"], np.ndarray):
                 res["array"] = res["array"].apply(
                     lambda x: np.fromstring(x[1:-1], sep=",")
                 )
@@ -731,7 +733,7 @@ class DatasetBuild:
         """
         sql = f"""
         SELECT
-        DISTINCT {'ons_' if entity_type=='stp' else ''}code as `code`,
+        DISTINCT {'ons_' if entity_type == 'stp' else ''}code as `code`,
         name
         FROM
         ebmdatalab.hscic.{entity_type}s

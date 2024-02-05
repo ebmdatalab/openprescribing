@@ -10,6 +10,7 @@ Provides a basic caching decorator with a few special features:
       their arguments. If the logic of the function changes then the `version`
       argument can be incremented.
 """
+
 import functools
 
 from django.core.cache import cache as default_cache

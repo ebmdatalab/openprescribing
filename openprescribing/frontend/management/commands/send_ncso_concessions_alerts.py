@@ -2,7 +2,6 @@
 Send alerts about about NCSO concessions.
 """
 
-
 import datetime
 import logging
 

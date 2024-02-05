@@ -1,0 +1,60 @@
+{
+  "name": "Antibiotic stewardship: Injectable preparations for the treatment of infection",
+  "title": [
+    "Antibiotic stewardship: Injectable preparations for the treatment of infection"
+  ],
+  "description": [
+    "Number of prescription items for all injectable medicines in BNF Chapter 5 (infections) excluding colistimethate sodium per 1000 patients"
+  ],
+  "numerator_short": "Items",
+  "denominator_short": "1000 Patients",
+  "why_it_matters": [
+    "<p>It is important that we don't overuse antibiotics.  As antimicrobials underpin routine medical practice, ",
+    "antimicrobial resistance poses a significant threat to public health.",
+    "This measure shows the use of injectable preparations listed in the infections chapter of the British National Formulary, including ",
+    "antibiotics, antivirals and antifungals.  We have excluded <a href='https://openprescribing.net/dmd/vmp/324311004/'>colistimethate ",
+    "sodium</a>, as the injection is more commonly inhaled for the treatment of infections in people with cystic fibrosis.</p>",
+    "<p>The prescribing of injectable preparations may vary substantially throughout the country depending on the availability of local ",
+    "services such as Antibiotic Outpatient Parenteral Therapy (OPAT), where patients receive injectable antibiotics in their own home.  ",
+    "Nevertheless it is important to audit and review the appropriateness of all treatments to support good antimicrobial stewardship.</p>",
+    "<p><strong>Please note that this is an experimental measure. We would be grateful for any feedback at <a href='mailto:bennett@phc.ox.ac.uk?Subject=Injectable%20Antibiotics%20Measure'>bennett@phc.ox.ac.uk</a></strong>.</p>"
+  ],
+  "tags": [
+    "antimicrobial",
+    "core",
+    "infections"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE (form_route LIKE '%intravenous%' OR form_route LIKE '%injection%' OR form_route LIKE '%subcutaneous%')"
+  ],
+  "numerator_bnf_codes_filter": [
+    "05 # Infections",
+    "~0501070I0 # colistimethate sodium"
+  ],
+  "denominator_type": "list_size",
+  "authored_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "date_reviewed": [
+    "2020-03-24"
+  ],
+  "next_review": [
+    "2021-03-24"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/antibiotics-non-oral-routes-notebook/blob/master/notebooks/injections.ipynb"
+  ],
+  "measure_complexity": [
+    "low"
+  ]
+}

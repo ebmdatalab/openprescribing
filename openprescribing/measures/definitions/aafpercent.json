@@ -1,0 +1,48 @@
+{
+	"name": "Prescribing of Amino Acid Formula (AAF) and Extensively Hydrolysed Formula (EHF))",
+	"title": "Amino acid formula (AAF) as proportion of AAF and extensively hydrolysed formula (EHF)",
+	"description": "Prescribing of amino acid formula (AAF) products as proportion of AAF and extensively hydrolysed formula (EHF)",
+	"numerator_short": "AAF quantity (grams)",
+	"denominator_short": "AAF and EHF quantity (grams)",
+	"why_it_matters": [
+		"These products are prescribed for a number of allergy indications, and are most commonly prescribed for Cow's Milk Protein Allergy ",
+		"(CMPA).  Amino acid formula (AAF) products are almost three times more expensive than EHF and it is believed that only a small ",
+		"proportion of infants ",
+		"(<a href='https://doi.org/10.1016/j.jaip.2017.09.003'>thought to be around 10%</a>) ",
+		"need to be started on AAF for CMPA in primary care."
+	],
+	"tags": [
+		"nutrition",
+		"core"
+	],
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": false,
+	"low_is_good": true,
+	"numerator_type": "bnf_quantity",
+	"numerator_bnf_codes_filter": [
+		"0913107A0 # Powder amino acid formula (0913107)",
+		"0913131A0 # Powder amino acid formula (0913131)",
+		"0913131B0 # Powder amino acid semi solid  (0913131)",
+		"0913355A0 # Powder discontinued amino acid formula (0913355)",
+		"0913361A0 # Powder discontinued amino acid formula (0913361)"
+	],
+	"denominator_type": "bnf_quantity",
+	"denominator_bnf_codes_filter": [
+		"0913107A0 # Powder amino acid formula (0913107)",
+		"0913131A0 # Powder amino acid formula (0913131)",
+		"0913131B0 # Powder amino acid semi solid  (0913131)",
+		"0913355A0 # Powder discontinued amino acid formula (0913355)",
+		"0913361A0 # Powder discontinued amino acid formula (0913361)",
+		"0913101A0 # Powder extensively hydrolysed formula (0913101)",
+		"0913132A0 # Powder extensively hydrolysed formula (0913132)",
+		"0913351A0 # Powder discontinued extensively hydrolysed formula (0913351)"
+	],
+	"authored_by": "richard.croker@phc.ox.ac.uk",
+	"checked_by": "andrew.brown@phc.ox.ac.uk",
+	"date_reviewed": "2023-03-27",
+	"next_review": "2024-03-27",
+	"measure_notebook_url": "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/New%20Measure%20-%20Cow's%20Milk%20Protein%20Allergy.ipynb",
+	"measure_complexity": "low",
+	"measure_type": "bnf_code"
+}

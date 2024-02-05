@@ -1,6 +1,5 @@
 """Update tables in BQ public dataset."""
 
-
 import glob
 import os
 

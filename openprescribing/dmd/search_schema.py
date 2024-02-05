@@ -60,7 +60,7 @@ schema = {
             "bnf_code",
             "qtyval",
             "qty_uom",
-            "combpack"
+            "combpack",
             # "dtinfo",
         ]
     },
@@ -73,7 +73,7 @@ schema = {
             "legal_cat",
             "subp",
             "disc",
-            "discdt"
+            "discdt",
             # "pack_info",
             # "prescrib_info",
             # "price_info",

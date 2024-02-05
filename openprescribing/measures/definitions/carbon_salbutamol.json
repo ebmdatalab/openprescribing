@@ -1,0 +1,69 @@
+{
+  "name": "Environmental impact of inhalers - average carbon footprint per salbutamol inhaler",
+  "title": "",
+  "description": "Mean carbon impact (kg CO<sub>2</sub>e) per salbutamol inhaler prescribed",
+  "numerator_short": "Carbon impact (kg CO<sub>2</sub>e)",
+  "denominator_short": "Salbutamol inhalers",
+  "why_it_matters": [
+    "The NHS has <a href='https://www.england.nhs.uk/greenernhs/a-net-zero-nhs/'> ",
+    "committed to reducing its carbon footprint by 80% by 2028 to 2032</a>, including a shift to lower carbon inhalers.</p>",
+    "<p>Salbutamol metered dose inhalers (MDIs) are the single biggest source of carbon emissions from NHS medicines prescribing.</p>",
+    "<p>The <a href='https://www.england.nhs.uk/long-read/national-medicines-optimisation-opportunities-2023-24/#11-improving-respiratory-outcomes-while-reducing-the-carbon-emissions-from-inhalers' target='_Blank'>",
+    "NHS England National Medicines Optimisation Opportunities for 2023/24</a> identify reducing carbon emissions from inhalers as an area for improvement.</p>",
+    "<p>Data on carbon emissions per salbutamol inhaler can be viewed in the ",
+    "<a href='https://docs.google.com/spreadsheets/d/1eyk2iqNM_4sobDzevZWWcRR00O2tmJO5HwdFZLjhfa4' target='_Blank'>",
+    "table here</a>.</p>"
+  ],
+  "tags": [
+    "core",
+    "greenernhs",
+    "opportunities",
+    "respiratory"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(",
+    "CASE WHEN bnf_code = '0301011R0AAAPAP' THEN quantity * 25.24 --Salbutamol 100micrograms/dose inhaler CFC free \n",
+    "WHEN bnf_code = '0301011R0AAAAAA' THEN quantity * 25.24 --Salbutamol 100micrograms/dose inhaler derived from CFC free version \n",
+    "WHEN bnf_code = '0301011R0AABUBU' THEN quantity * 11.79 --Salbutamol CFC free breath actuated inhaler 100 micrograms \n",
+    "WHEN bnf_code = '0301011R0AAAQAQ' THEN quantity * 0.58 --Salbutamol 200micrograms/dose dry powder inhaler derived from Ventolin Accuhaler \n",
+    "WHEN bnf_code = '0301011R0AABZBZ' THEN quantity * 0.62 --Salbutamol 100micrograms/dose dry powder inhaler derived from Easyhaler Salbutamol \n",
+    "WHEN bnf_code = '0301011R0AACBCB' THEN quantity * 3.75 --Salbutamol 100microg/dose dry pdr inhalation cart with dev derived from Salbulin Novolizer \n",
+    "WHEN bnf_code = '0301011R0AACCCC' THEN quantity * 3.75 --Salbutamol 100micrograms/dose dry pdr inhalation cartridge derived from Salbulin Novolizer \n",
+    "WHEN bnf_code = '0301011R0BEAHAQ' THEN quantity * 0.58 --Ventolin 200micrograms/dose Accuhaler \n",
+    "WHEN bnf_code = '0301011R0BEAIAP' THEN quantity * 28.26 --Ventolin 100micrograms/dose Evohaler \n", 
+    "WHEN bnf_code = '0301011R0BIAFAP' THEN quantity * 11.95 --Salamol 100micrograms/dose inhaler CFC free (Teva) \n",
+    "WHEN bnf_code = '0301011R0BIAHAP' THEN quantity * 11.95 --Salamol 100micrograms/dose inhaler CFC free (Arrow) \n",
+    "WHEN bnf_code = '0301011R0BIAGBU' THEN quantity * 12.08 --Salamol 100micrograms/dose Easi-Breathe inhaler \n",
+    "WHEN bnf_code = '0301011R0BMAAAP' THEN quantity * 9.72 --Airomir 100micrograms/dose inhaler \n",
+    "WHEN bnf_code = '0301011R0BMABBU' THEN quantity * 9.72 --Airomir Autohaler \n",
+    "WHEN bnf_code = '0301011R0BWAABZ' THEN quantity * 0.62 --Easyhaler Salbutamol sulfate 100micrograms/dose dry pdr inh \n",
+    "WHEN bnf_code = '0301011R0BWABAQ' THEN quantity * 0.62 --Easyhaler Salbutamol sulfate 200micrograms/dose dry pdr inh \n",
+    "WHEN bnf_code = '0301011R0BXAACB' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder \n",
+    "WHEN bnf_code = '0301011R0BXABCC' THEN quantity * 3.75 --Salbulin Novolizer 100micrograms/dose inhalation powder refill \n",
+    "ELSE 0 end) AS numerator"
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing",
+  "numerator_where": [
+    "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC','0301011R0AAAAAA','0301011R0AABZBZ','0301011R0AACBCB','0301011R0AACCCC')"
+  ],
+  "denominator_type": "custom",
+  "denominator_columns": [
+    "SUM(quantity) AS denominator"
+  ],
+  "denominator_from": "{hscic}.normalised_prescribing",
+  "denominator_where": [
+     "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC','0301011R0AAAAAA','0301011R0AABZBZ','0301011R0AACBCB','0301011R0AACCCC')"
+  ],
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-12",
+  "next_review": "2024-09-12",
+  "measure_complexity": "high",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
+}

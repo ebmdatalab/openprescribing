@@ -1,0 +1,43 @@
+{
+  "name": "Items which should not routinely be prescribed in primary care - minocycline",
+  "title": "Minocycline cost per 1000 patients",
+  "description": "Minocycline per 1000 patients",
+  "numerator_short": "Minocycline cost (£)",
+  "denominator_short": "1000 patients",
+  "why_it_matters": [
+    "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#minocycline-for-acne-2019' target='_Blank'>",
+    "NHS England guidance states</a></p>",
+    "<p><i>Minocycline is a tetracycline antibiotic that can be used for many indications. In primary care it is mainly used for acne. There are various safety risks associated with its use.</p>",
+    "<p>NICE guidance on acne vulgaris management advises: 'Minocycline is not recommended for use in acne as it is associated with ",
+    "an increased risk of adverse effects such as drug-induced lupus, skin pigmentation and hepatitis.'</p>",
+    "<p>A PrescQIPP CIC review found no evidence to support the use of one tetracycline over another in terms of efficacy for the treatment of acne vulgaris, and alternative once daily products are available.</p></i>",
+    "<p>NHS England recommend that GPs:",
+    "<ul>",
+    "<li>Do not initiate.</li>",
+    "<li>Deprescribe in patients currently prescribed this medicine.</li>",
+    "</ul>"
+  ],
+  "tags": [
+    "antimicrobial",
+    "cost",
+    "lowpriority",
+    "nice",
+    "safety"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "bnf_cost",
+  "numerator_bnf_codes_filter": [
+    "0501030P0 # Minocycline Hydrochloride"
+  ],
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2023-09-18",
+  "next_review": "2025-09-18",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
+}

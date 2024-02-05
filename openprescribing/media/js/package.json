@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --require test/setup.js",
-    "build-js": "nodejs build.js production",
-    "watch-js": "nodejs build.js",
+    "build-js": "node build.js production",
+    "watch-js": "node build.js",
     "build-css": "lessc ../css/index.less > ../../static/css/index.css",
     "build-config": "browserify src/config.js --standalone config -t envify | uglifyjs > ../../static/js/config.min.js",
     "build-clipboardjs": "cp node_modules/clipboard/dist/clipboard.min.js ../../static/js/",
@@ -38,7 +38,6 @@
     }
   },
   "eslintConfig": {
-    "extends": "eslint-config-google",
     "env": {
       "node": true,
       "commonjs": true,
@@ -78,7 +77,6 @@
     "chai": "^2.3.0",
     "envify": "^3.4.1",
     "eslint": "^4.13.1",
-    "eslint-config-google": "latest",
     "jsdom": "^11.2.0",
     "less": "^2.5.1",
     "mocha": "^2.2.5",

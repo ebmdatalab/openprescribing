@@ -11,6 +11,7 @@ price is; the BSA's internal version doesn't always match the published
 version. So we attempt to infer the correct price by looking at all prescribing
 of that drug and finding the median price.
 """
+
 import hashlib
 
 import numpy
@@ -34,7 +35,7 @@ class SetWithCacheKey(set):
 
     cache_key = None
 
-    def __new__(cls, *items):
+    def __new__(cls, items):
         instance = set.__new__(cls, items)
         hashobj = hashlib.md5(str(sorted(items)).encode("utf8"))
         instance.cache_key = hashobj.digest()
@@ -42,14 +43,20 @@ class SetWithCacheKey(set):
 
 
 PRESENTATIONS_TO_IGNORE = SetWithCacheKey(
-    # These can be prescribed fractionally, but BSA round quantity down,
-    # making quantity unreliable. See #1764
-    "1106000L0AAAAAA"  # latanoprost
-    "1308010Z0AAABAB"  # Ingenol Mebutate_Gel
-    # These are sometimes recorded by dose, and sometimes by pack (of 8) see #937
-    "0407020A0AABPBP"  # Fentanyl 400micrograms/dose nasal spray
-    # These are sometimes recorded as bottles, sometimes in litres
-    "0902021S0AAAXAX"  # Sodium chloride 0.9% infusion 1litre polyethylene bottles
+    [
+        # These can be prescribed fractionally, but BSA round quantity down,
+        # making quantity unreliable. See #1764
+        "1106000L0AAAAAA",  # latanoprost
+        "1308010Z0AAABAB",  # Ingenol Mebutate_Gel
+        # These are sometimes recorded by dose, and sometimes by pack (of 8) see #937
+        "0407020A0AABPBP",  # Fentanyl 400micrograms/dose nasal spray
+        # These have two pack sizes, which don't appear to be separated in BA data
+        "0302000U0AAABAB",  # Ciclesonide 160micrograms/dose inhaler CFC free
+        # These are inconsistently recorded as doses or packs by NHSBSA
+        "0604011G0AABTBT",  # Estradiol 1.53mg/dose transdermal spray
+        # These are sometimes recorded as bottles, sometimes in litres
+        "0902021S0AAAXAX",  # Sodium chloride 0.9% infusion 1litre polyethylene bottles
+    ]
 )
 
 

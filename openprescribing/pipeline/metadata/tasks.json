@@ -179,7 +179,7 @@
     "import_patient_list_size": {
         "type": "import",
         "source_id": "patient_list_size",
-        "command": "import_list_sizes --filename patient_list_size_new.csv",
+        "command": "import_list_sizes --filename gp-reg-pat-prac-quin-age.csv",
         "dependencies": [
             "fetch_patient_list_size",
             "import_hscic_practices",

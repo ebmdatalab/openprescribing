@@ -1,0 +1,47 @@
+{
+  "name": "Prescribing of pregabalin (total mg)",
+  "title": "pregabalin mg per 1000 patients",
+  "description": "Prescribing of pregabalin (total mg) per 1000 patients",
+  "why_it_matters": [
+    "Pregabalin is increasingly used in neuropathic and other types of pain. There are <a href='https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/385791/PHE-NHS_England_pregabalin_and_gabapentin_advice_Dec_2014.pdf'>concerns about the potential for abuse</a>. ",
+    "This measure shows the total amount in milligrams of pregabalin prescribed."
+  ],
+  "numerator_short": "Total pregabalin prescribed (in milligrams)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": [
+    "core",
+    "pain",
+    "safety"
+  ],
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM((p.quantity * i.strnt_nmrtr_val * COALESCE(n.nmtr_unit_conversion,1)) / -- calculate the total unit of drug, and convert if neccesary to miligrams). Uses COALESCE to default to 1 if conversion not available \n",
+    "COALESCE(d.nmtr_unit_conversion * i.strnt_dnmtr_val,1)) AS numerator  --divides unit dose if multiple, and converts to mililitre if necessary. Uses COALESCE to default to 1 if conversion or denominator strength not available \n"
+  ],
+  "numerator_from": [
+   "{hscic}.normalised_prescribing p", 
+   "INNER JOIN {dmd}.vmp v --this joins data table to dm+d vmp table \n",
+   "ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(v.bnf_code,0,9),SUBSTR(v.bnf_code,-2)) --joins both brand and generics to vmp table \n",
+   "INNER JOIN {dmd}.vpi i -- joins vmp to vpi table to get ingredient strengths \n",
+   "ON v.id = i.vmp \n",
+   "INNER JOIN {measures}.vw__measure_conversion n -- joins unit conversion view to numerator unit of measure \n",
+   "ON i.strnt_nmrtr_uom = n.cd \n",
+   "LEFT JOIN {measures}.vw__measure_conversion d -- joins unit conversion view to denominator unit of measure (LEFT join as not all products have a denominator UOM) \n",
+   "ON i.strnt_dnmtr_uom = d.cd"
+  ],
+  "numerator_where": [
+  "p.bnf_code LIKE '0408010AE%' --Pregabalin  \n",
+  "AND i.ing = 415160008 --Pregabalin"
+  ],
+  "denominator_type": "list_size",
+  "date_reviewed":"12/06/2023",
+  "next_review": "12/06/2024",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by":"andrew.brown@phc.ox.ac.uk",
+  "measure_complexity":"medium",
+  "measure_type": "dmd"
+}

@@ -7,6 +7,7 @@ Invoke with:
 Currently set up to profile the total spending code, but easy to adapt to
 profile other functions (e.g. PPU savings - see commented out code)
 """
+
 import datetime
 import time
 from cProfile import Profile

@@ -621,6 +621,12 @@ function getOrgSelection(orgType, orgs) {
       return false;
     }
   }
+  // Special handling for PCNs where we're selecting PCNs by specifying their
+  // SICBL. In this case we want to show the total over all displayed orgs.
+  if (orgType === 'pcn' && ! utils.shouldCompareWithAllOrgs({org: orgType, orgIds: orgs})) {
+    // A selection of "false" means "select everything"
+    return false;
+  }
   var selectedOrgs= {};
   for(var i = 0; i < orgs.length; i++) {
     selectedOrgs[orgs[i].id] = true;
