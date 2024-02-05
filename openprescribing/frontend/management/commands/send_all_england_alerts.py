@@ -2,7 +2,6 @@
 Send alerts about all of NHS England
 """
 
-
 import logging
 
 from common.alert_utils import EmailErrorDeferrer

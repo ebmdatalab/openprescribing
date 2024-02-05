@@ -323,9 +323,9 @@ def advanced_search_view(request, obj_type):
             analyse_url = results["analyse_url"]
             if request.GET.get("format") == "csv":
                 response = HttpResponse(content_type="text/csv")
-                response[
-                    "Content-Disposition"
-                ] = 'attachment; filename="openprescribing-dmd-search.csv"'
+                response["Content-Disposition"] = (
+                    'attachment; filename="openprescribing-dmd-search.csv"'
+                )
                 writer = csv.writer(response)
                 writer.writerow([f"{obj_type}_id", "name", "bnf_code", "invalid"])
                 writer.writerows(

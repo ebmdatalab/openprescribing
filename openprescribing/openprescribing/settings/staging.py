@@ -1,6 +1,5 @@
 """Production settings and globals."""
 
-
 import os
 
 from common import utils
