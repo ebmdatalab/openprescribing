@@ -14,6 +14,7 @@ and these will have distinct generic codes but they may well be interchangeable
 for most purposes. We maintain a manually curated spreadsheet which lists these
 kind of substitution (see FORMULATION_SWAPS_FILE).
 """
+
 import csv
 import hashlib
 import os.path

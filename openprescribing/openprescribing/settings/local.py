@@ -1,6 +1,5 @@
 """Development settings and globals."""
 
-
 import os
 from pathlib import Path
 

@@ -6,6 +6,7 @@ the filename). If a date is supplied it restricts its search to files whose
 timestamp (in the filename) matches that date.  If a filename is supplied it
 will use that file.
 """
+
 import os
 import re
 

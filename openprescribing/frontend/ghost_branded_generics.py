@@ -11,6 +11,7 @@ price is; the BSA's internal version doesn't always match the published
 version. So we attempt to infer the correct price by looking at all prescribing
 of that drug and finding the median price.
 """
+
 import hashlib
 
 import numpy

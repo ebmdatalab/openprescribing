@@ -111,9 +111,11 @@ class MakeHtml:
             data frame with column definitons added
         """
         return df.rename(
-            columns=lambda x: MakeHtml.make_abbr(x, MakeHtml.DEFINITIONS[x])
-            if x in MakeHtml.DEFINITIONS
-            else x
+            columns=lambda x: (
+                MakeHtml.make_abbr(x, MakeHtml.DEFINITIONS[x])
+                if x in MakeHtml.DEFINITIONS
+                else x
+            )
         )
 
     @staticmethod

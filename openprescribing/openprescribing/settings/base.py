@@ -1,4 +1,5 @@
 """Common settings and globals."""
+
 import sys
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
