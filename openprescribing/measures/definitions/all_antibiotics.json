@@ -38,9 +38,9 @@
   "denominator_type": "star_pu_antibiotics",
   "no_analyse_url": true,
   "authored_by": "christopher.wood@phc.ox.ac.uk",
-  "checked_by": "",
-  "date_reviewed": "",
-  "next_review": "",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
+  "date_reviewed": "05/02/2024",
+  "next_review": "05/02/2026",
   "measure_complexity": "low",
   "radar_exclude": false
 }
