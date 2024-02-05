@@ -186,7 +186,7 @@ lxml==5.1.0
     #   pyquery
 lz4==4.3.3
     # via -r requirements.in
-markupsafe==2.1.4
+markupsafe==2.1.5
     # via jinja2
 matplotlib==3.8.2
     # via
