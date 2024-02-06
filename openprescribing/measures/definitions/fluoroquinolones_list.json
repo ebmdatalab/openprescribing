@@ -26,7 +26,7 @@
     "FROM {measures}.vw__dmd_objs_with_form_route",
     "WHERE form_route LIKE '%.oral'",
     "OR form_route LIKE '%.intravenous'",
-    "OR form_route LIKE '%.inhalation'",
+    "OR form_route LIKE '%.inhalation'"
   ],
   "numerator_bnf_codes_filter": [
     "050112 # Quinolones"
