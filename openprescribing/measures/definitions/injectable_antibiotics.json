@@ -56,5 +56,6 @@
   ],
   "measure_complexity": [
     "low"
-  ]
+  ],
+  "radar_exclude": true
 }
