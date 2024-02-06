@@ -1,11 +1,7 @@
 {
   "name": "Antibiotic stewardship: Injectable preparations for the treatment of infection",
-  "title": [
-    "Antibiotic stewardship: Injectable preparations for the treatment of infection"
-  ],
-  "description": [
-    "Number of prescription items for all injectable medicines in BNF Chapter 5 (infections) excluding colistimethate sodium per 1000 patients"
-  ],
+  "title": "Antibiotic stewardship: Injectable preparations for the treatment of infection",
+  "description": "Number of prescription items for all injectable medicines in BNF Chapter 5 (infections) excluding colistimethate sodium per 1000 patients",
   "numerator_short": "Items",
   "denominator_short": "1000 Patients",
   "why_it_matters": [
@@ -19,31 +15,29 @@
     "Nevertheless it is important to audit and review the appropriateness of all treatments to support good antimicrobial stewardship.</p>",
     "<p><strong>Please note that this is an experimental measure. We would be grateful for any feedback at <a href='mailto:bennett@phc.ox.ac.uk?Subject=Injectable%20Antibiotics%20Measure'>bennett@phc.ox.ac.uk</a></strong>.</p>"
   ],
-  "tags": [
+  "tags":
     "antimicrobial",
     "core",
-    "infections"
-  ],
+    "infections",
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": null,
   "numerator_type": "bnf_items",
-  "numerator_bnf_codes_query": [
+  "numerator_bnf_codes_query":
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.vw__dmd_objs_with_form_route",
-    "WHERE (form_route LIKE '%intravenous%' OR form_route LIKE '%injection%' OR form_route LIKE '%subcutaneous%')"
-  ],
-  "numerator_bnf_codes_filter": [
+    "WHERE (form_route LIKE '%intravenous%' OR form_route LIKE '%injection%' OR form_route LIKE '%subcutaneous%')",
+  "numerator_bnf_codes_filter":
     "05 # Infections",
-    "~0501070I0 # colistimethate sodium"
-  ],
+    "~0501070I0 # colistimethate sodium",
   "denominator_type": "list_size",
   "authored_by": "brian.mackenna@phc.ox.ac.uk",
   "checked_by": "richard.croker@phc.ox.ac.uk",
   "date_reviewed": "2020-03-24",
   "next_review": "2021-03-24",
   "measure_complexity": "low",
+  "measure_type": "bnf_code",
   "measure_notebook_url": "https://github.com/ebmdatalab/antibiotics-non-oral-routes-notebook/blob/master/notebooks/injections.ipynb",
   "radar_exclude": true
 }
