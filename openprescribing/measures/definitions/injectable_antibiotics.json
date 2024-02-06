@@ -39,23 +39,11 @@
     "~0501070I0 # colistimethate sodium"
   ],
   "denominator_type": "list_size",
-  "authored_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2020-03-24"
-  ],
-  "next_review": [
-    "2021-03-24"
-  ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/antibiotics-non-oral-routes-notebook/blob/master/notebooks/injections.ipynb"
-  ],
-  "measure_complexity": [
-    "low"
-  ],
+  "authored_by": "brian.mackenna@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2020-03-24",
+  "next_review": "2021-03-24",
+  "measure_complexity": "low",
+  "measure_notebook_url": "https://github.com/ebmdatalab/antibiotics-non-oral-routes-notebook/blob/master/notebooks/injections.ipynb",
   "radar_exclude": true
 }
