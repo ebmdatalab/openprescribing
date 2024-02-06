@@ -15,22 +15,25 @@
     "Nevertheless it is important to audit and review the appropriateness of all treatments to support good antimicrobial stewardship.</p>",
     "<p><strong>Please note that this is an experimental measure. We would be grateful for any feedback at <a href='mailto:bennett@phc.ox.ac.uk?Subject=Injectable%20Antibiotics%20Measure'>bennett@phc.ox.ac.uk</a></strong>.</p>"
   ],
-  "tags":
+  "tags": [
     "antimicrobial",
     "core",
-    "infections",
+    "infections"
+  ],
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": null,
   "numerator_type": "bnf_items",
-  "numerator_bnf_codes_query":
+  "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.vw__dmd_objs_with_form_route",
-    "WHERE (form_route LIKE '%intravenous%' OR form_route LIKE '%injection%' OR form_route LIKE '%subcutaneous%')",
-  "numerator_bnf_codes_filter":
+    "WHERE (form_route LIKE '%intravenous%' OR form_route LIKE '%injection%' OR form_route LIKE '%subcutaneous%')"
+  ],
+  "numerator_bnf_codes_filter": [
     "05 # Infections",
-    "~0501070I0 # colistimethate sodium",
+    "~0501070I0 # colistimethate sodium"
+  ],
   "denominator_type": "list_size",
   "authored_by": "brian.mackenna@phc.ox.ac.uk",
   "checked_by": "richard.croker@phc.ox.ac.uk",
