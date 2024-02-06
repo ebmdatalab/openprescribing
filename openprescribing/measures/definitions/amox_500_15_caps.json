@@ -32,7 +32,7 @@
   "denominator_columns": "SUM(items) AS denominator",
   "denominator_from": "{hscic}.raw_prescribing_normalised",
   "denominator_where": "bnf_code LIKE '0501013B0%AB' --Amoxicillin 500mg capsules (brands and generic)",
-  "no_analyse_url": true,
+  "no_analyse_url": false,
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "christopher.wood@phc.ox.ac.uk",
   "date_reviewed": "2023-09-12",
