@@ -1,7 +1,7 @@
 {
   "name": "Antibiotic stewardship: fluoroquinolone items per 1000 patients",
   "title": "Antibiotic stewardship: fluoroquinolone items per 1000 patients",
-  "description": "Number of prescription items for fluoroquinolones per 1000 patients",
+  "description": "Number of prescription items for systemic fluoroquinolones per 1000 patients",
   "numerator_short": "Fluroquinolone items",
   "denominator_short": "1000 patients",
   "why_it_matters": [
@@ -24,7 +24,9 @@
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT(bnf_code)",
     "FROM {measures}.vw__dmd_objs_with_form_route",
-    "WHERE form_route LIKE '%.oral'"
+    "WHERE form_route LIKE '%.oral'",
+    "OR form_route LIKE '%.intravenous'",
+    "OR form_route LIKE '%.inhalation'",
   ],
   "numerator_bnf_codes_filter": [
     "050112 # Quinolones"
@@ -34,7 +36,7 @@
   "checked_by": "",
   "date_reviewed": "",
   "next_review": "",
-  "measure_complexity": "moderate",
+  "measure_complexity": "low",
   "radar_exclude": false
 }
   
