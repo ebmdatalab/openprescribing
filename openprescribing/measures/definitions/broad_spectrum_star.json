@@ -37,7 +37,7 @@
     "050112 # Quinolones"
   ],
   "denominator_type": "star_pu_antibiotics",
-  "no_analyse_url": true,
+  "no_analyse_url": false,
   "authored_by": "christopher.wood@phc.ox.ac.uk",
   "checked_by": "andrew.brown@phc.ox.ac.uk",
   "date_reviewed": "05/02/2024",
