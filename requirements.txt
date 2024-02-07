@@ -125,7 +125,7 @@ google-auth-oauthlib==1.2.0
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-cloud-bigquery==3.17.1
+google-cloud-bigquery==3.17.2
     # via
     #   -r requirements.in
     #   pandas-gbq
@@ -351,7 +351,6 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
-    #   urllib3
 watchdog==3.0.0
     # via when-changed
 webencodings==0.5.1
