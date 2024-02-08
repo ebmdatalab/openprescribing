@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from frontend.models import (
@@ -5,6 +6,7 @@ from frontend.models import (
     Chemical,
     EmailMessage,
     MailLog,
+    Measure,
     Practice,
     Presentation,
     RegionalTeam,
@@ -222,3 +224,13 @@ class RegionalTeamTest(TestCase):
         # instances of each team and we want to ensure that this doesn't happen
         self.assertEqual(len(active_teams), len(all_teams) - 1)
         self.assertNotIn(empty_team, active_teams)
+
+
+class MeasureTest(TestCase):
+    def test_manager(self):
+        m1 = Measure.objects.create(id="some_measure", tags=[])
+        m2 = Measure.objects.create(
+            id=f"{settings.MEASURE_PREVIEW_PREFIX}_some_measure", tags=[]
+        )
+        assert Measure.objects.non_preview().get() == m1
+        assert Measure.objects.preview().get() == m2

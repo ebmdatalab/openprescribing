@@ -4,6 +4,7 @@ import uuid
 
 from anymail.signals import EventType
 from common.utils import nhs_titlecase
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import ArrayField
@@ -594,6 +595,15 @@ class Prescription(models.Model):
 
 
 class Measure(models.Model):
+    class Manager(models.Manager):
+        def preview(self):
+            return self.filter(id__startswith=settings.MEASURE_PREVIEW_PREFIX)
+
+        def non_preview(self):
+            return self.exclude(id__startswith=settings.MEASURE_PREVIEW_PREFIX)
+
+    objects = Manager()
+
     # Some of these fields are documented in
     # https://github.com/ebmdatalab/openprescribing/wiki/Measure-definitions
 

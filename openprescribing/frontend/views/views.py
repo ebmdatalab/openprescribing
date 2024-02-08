@@ -438,11 +438,11 @@ def all_measures(request):
     query = {}
     if tag_filter["tags"]:
         query["tags__overlap"] = tag_filter["tags"]
-    measures = Measure.objects.filter(**query).order_by("name")
-    if not request.GET.get("show_previews"):
-        measures = measures.exclude(id__startswith=settings.MEASURE_PREVIEW_PREFIX)
+    if request.GET.get("show_previews"):
+        measures = Measure.objects.preview()
     else:
-        measures = measures.filter(id__startswith=settings.MEASURE_PREVIEW_PREFIX)
+        measures = Measure.objects.non_preview()
+    measures = measures.filter(**query).order_by("name")
     context = {"tag_filter": tag_filter, "measures": measures}
     return render(request, "all_measures.html", context)
 
@@ -1426,7 +1426,7 @@ def _home_page_context_for_entity(request, entity):
         extreme_measure = Measure.objects.get(pk=extreme_measurevalue["measure_id"])
     else:
         extreme_measure = None
-    measures_count = Measure.objects.count()
+    measures_count = Measure.objects.non_preview().count()
 
     specific_measures = [
         {"measure": "lpzomnibus", "chartContainerId": "#lpzomnibus-container"}
