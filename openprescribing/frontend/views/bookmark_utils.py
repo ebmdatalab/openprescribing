@@ -751,7 +751,7 @@ def make_org_email(org_bookmark, stats, tag=None):
         ),
         "has_stats": _hasStats(stats),
         "domain": settings.GRAB_HOST,
-        "measures_count": Measure.objects.count(),
+        "measures_count": Measure.objects.non_preview().count(),
         "getting_worse_image": getting_worse_img,
         "still_bad_image": still_bad_img,
         "interesting_image": interesting_img,
