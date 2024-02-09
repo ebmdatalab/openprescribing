@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-
 import logging
+import sys
 
 from common.alert_utils import EmailErrorDeferrer
 from django.core.management.base import BaseCommand, CommandError
