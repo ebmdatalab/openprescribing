@@ -211,6 +211,8 @@ class Command(BaseCommand):
                 "Sent org bookmark alert to %s about %s" % (msg.to, org_bookmark.id)
             )
         except bookmark_utils.BadAlertImageError as e:
+            self.log_info("Failed to send {org_bookmark!r}")
+            self.error_count += 1
             self.log_exception(e)
 
     def send_search_bookmark_email(self, search_bookmark, now_month):
@@ -224,6 +226,8 @@ class Command(BaseCommand):
                 % (recipient_id, search_bookmark.id)
             )
         except bookmark_utils.BadAlertImageError as e:
+            self.log_info("Failed to send {search_bookmark!r}")
+            self.error_count += 1
             self.log_exception(e)
 
     def send_all_england_alerts(self, options):
@@ -262,6 +266,7 @@ class Command(BaseCommand):
             .current_at.strftime("%Y-%m-%d")
             .lower()
         )
+        self.error_count = 0
         self.send_all_england_alerts(options)
         with EmailErrorDeferrer(int(options["max_errors"])) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
@@ -273,6 +278,9 @@ class Command(BaseCommand):
                 error_deferrer.try_email(
                     self.send_search_bookmark_email, search_bookmark, now_month
                 )
+        if self.error_count > 0:
+            self.log_info(f"Failed to send {self.error_count} emails")
+            sys.exit(1)
 
     def log_info(self, msg):
         logger.info(msg)
