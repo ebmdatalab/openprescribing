@@ -15,6 +15,7 @@ SCHEMA = build_schema(
     ("unit_of_measure_identifier", "STRING"),
     ("unit_of_measure_name", "STRING"),
     ("total_quanity_in_vmp_unit", "FLOAT"),
+    ("indicative_cost", "FLOAT"),
 )
 
 
@@ -98,9 +99,7 @@ class Command(BaseCommand):
 
     def iter_dataset_urls(self, session):
         """Extract CSV file URLs from the dataset page."""
-        datasets_url = (
-            "https://opendata.nhsbsa.net/dataset/secondary-care-medicines-data"
-        )
+        datasets_url = "https://opendata.nhsbsa.net/dataset/secondary-care-medicines-data-indicative-price"
 
         # scrape available datasets
         r = session.get(datasets_url)
@@ -116,14 +115,12 @@ class Command(BaseCommand):
         """
         Extract a "month" from each URL given.
 
-        URLs are expected to end in the format `/SCMD_<year><month>.csv`, from
+        URLs are expected to end in the format `/SCMD_<something>_<year><month>.csv`, from
         that we get the year and month, converting them to the format
         <year>-<month>.
         """
         for url in urls:
-            _, _, filename = url.rpartition("/")
-            filename, _, _ = filename.partition(".")
-            _, _, year_and_month = filename.partition("_")
+            year_and_month = url.split("_")[-1].split(".")[0]
 
             # Split up dates with hyphens and add a day to match what we put
             # into BigQuery.
