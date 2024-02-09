@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-
 import logging
+import sys
 
 from common.alert_utils import EmailErrorDeferrer
 from django.core.management.base import BaseCommand, CommandError
@@ -133,7 +132,7 @@ class Command(BaseCommand):
                     stp_id=options["stp"],
                 )
             ]
-            logger.info("Created a single test org bookmark")
+            self.log_info("Created a single test org bookmark")
         elif options["recipient_email"] or options["recipient_email_file"]:
             recipients = []
             if options["recipient_email_file"]:
@@ -143,14 +142,14 @@ class Command(BaseCommand):
                 recipients = [options["recipient_email"]]
             query = query & Q(user__email__in=recipients)
             bookmarks = OrgBookmark.objects.filter(query)
-            logger.info("Found %s matching org bookmarks" % bookmarks.count())
+            self.log_info("Found %s matching org bookmarks" % bookmarks.count())
         else:
             bookmarks = OrgBookmark.objects.filter(query)
             if options["skip_email_file"]:
                 with open(options["skip_email_file"], "r") as f:
                     skip = [x.strip() for x in f]
                 bookmarks = bookmarks.exclude(user__email__in=skip)
-            logger.info("Found %s matching org bookmarks" % bookmarks.count())
+            self.log_info("Found %s matching org bookmarks" % bookmarks.count())
         return bookmarks
 
     def get_search_bookmarks(self, now_month, **options):
@@ -165,14 +164,14 @@ class Command(BaseCommand):
                     user=dummy_user, url=options["url"], name=options["search_name"]
                 )
             ]
-            logger.info("Created a single test search bookmark")
+            self.log_info("Created a single test search bookmark")
         elif not options["recipient_email"]:
             bookmarks = SearchBookmark.objects.filter(query)
-            logger.info("Found %s matching search bookmarks" % bookmarks.count())
+            self.log_info("Found %s matching search bookmarks" % bookmarks.count())
         else:
             query = query & Q(user__email=options["recipient_email"])
             bookmarks = SearchBookmark.objects.filter(query)
-            logger.info("Found %s matching search bookmarks" % bookmarks.count())
+            self.log_info("Found %s matching search bookmarks" % bookmarks.count())
         return bookmarks
 
     def validate_options(self, **options):
@@ -200,7 +199,7 @@ class Command(BaseCommand):
         else:
             assert False
         if getattr(org, "close_date", None):
-            logger.info("Skipping sending alert for closed org %s", org.pk)
+            self.log_info("Skipping sending alert for closed org %s", org.pk)
             return
         stats = bookmark_utils.InterestingMeasureFinder(org).context_for_org_email()
 
@@ -208,11 +207,13 @@ class Command(BaseCommand):
             msg = bookmark_utils.make_org_email(org_bookmark, stats, tag=now_month)
             msg = EmailMessage.objects.create_from_message(msg)
             msg.send()
-            logger.info(
+            self.log_info(
                 "Sent org bookmark alert to %s about %s" % (msg.to, org_bookmark.id)
             )
         except bookmark_utils.BadAlertImageError as e:
-            logger.exception(e)
+            self.log_info("Failed to send {org_bookmark!r}")
+            self.error_count += 1
+            self.log_exception(e)
 
     def send_search_bookmark_email(self, search_bookmark, now_month):
         try:
@@ -220,12 +221,14 @@ class Command(BaseCommand):
             msg = bookmark_utils.make_search_email(search_bookmark, tag=now_month)
             msg = EmailMessage.objects.create_from_message(msg)
             msg.send()
-            logger.info(
+            self.log_info(
                 "Sent search bookmark alert to %s about %s"
                 % (recipient_id, search_bookmark.id)
             )
         except bookmark_utils.BadAlertImageError as e:
-            logger.exception(e)
+            self.log_info("Failed to send {search_bookmark!r}")
+            self.error_count += 1
+            self.log_exception(e)
 
     def send_all_england_alerts(self, options):
         # The `send_all_england_alerts` command doesn't respect the same set of
@@ -247,18 +250,14 @@ class Command(BaseCommand):
         # We do understand this one, so keep a record of its value
         recipient_email = set_options.pop("recipient_email", None)
         if not set_options:
-            message = "Sending All England alerts"
-            logger.info(message)
-            print(message)
+            self.log_info("Sending All England alerts")
             send_all_england_alerts(recipient_email)
         else:
-            message = (
+            self.log_info(
                 "Not sending All England alerts as found unhandled option: {}".format(
                     ", ".join(set_options.keys())
                 )
             )
-            logger.info(message)
-            print(message)
 
     def handle(self, *args, **options):
         self.validate_options(**options)
@@ -267,6 +266,7 @@ class Command(BaseCommand):
             .current_at.strftime("%Y-%m-%d")
             .lower()
         )
+        self.error_count = 0
         self.send_all_england_alerts(options)
         with EmailErrorDeferrer(int(options["max_errors"])) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
@@ -278,3 +278,14 @@ class Command(BaseCommand):
                 error_deferrer.try_email(
                     self.send_search_bookmark_email, search_bookmark, now_month
                 )
+        if self.error_count > 0:
+            self.log_info(f"Failed to send {self.error_count} emails")
+            sys.exit(1)
+
+    def log_info(self, msg):
+        logger.info(msg)
+        self.stdout.write(msg)
+
+    def log_exception(self, exc):
+        logger.exception(exc)
+        self.stderr.write(str(exc))

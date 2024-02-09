@@ -299,7 +299,7 @@ class InterestingMeasureFinder(object):
                 measure_df, measure.is_percentage
             )
             if len(non_jagged) == period:
-                comparator = non_jagged[-1]
+                comparator = non_jagged.iloc[-1]
                 if invert_percentile_for_comparison:
                     comparator = 100 - comparator
                 worst.append((measure, comparator))

@@ -138,12 +138,16 @@ class FailingEmailTestCase(TestCase):
         self.assertEqual(EmailMessage.objects.count(), 3)
         self.assertEqual(len(mail.outbox), 2)
 
-    def test_bad_alert_image_error_not_sent_and_not_raised(self, attach_image, finder):
+    def test_bad_alert_image_error_not_sent_and_exits_with_error(
+        self, attach_image, finder
+    ):
         attach_image.side_effect = BadAlertImageError
         measure = MagicMock()
         measure.id = "measureid"
         test_context = _makeContext(worst=[measure])
-        call_mocked_command(test_context, finder, max_errors="0")
+        with self.assertRaises(SystemExit) as exc:
+            call_mocked_command(test_context, finder, max_errors="0")
+        self.assertNotEqual(exc.exception.code, 0)
         self.assertEqual(len(mail.outbox), 0)
 
     def test_max_errors(self, attach_image, finder):
