@@ -198,7 +198,7 @@ mock==5.1.0
     # via -r requirements.in
 networkx==3.2.1
     # via -r requirements.in
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   -r requirements.in
     #   contourpy
