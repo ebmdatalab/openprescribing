@@ -4,6 +4,7 @@
   "description": "Proportion of commonly used antibiotics for urinary-tract infections prescribed for more than 3 days",
   "numerator_short": "Antibiotic items for more than 3 days",
   "denominator_short": "Antibiotic items",
+  "y_label": "Percentage of antibiotics commonly used for UTIs prescribed as more than a 3 day quantity",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/ng109/resources/visual-summary-pdf-6544021069'>NICE guidance on prescribing for lower urinary-tract infections</a> ",
     "recommends a three day course of antibiotics for most women. ",
@@ -56,8 +57,10 @@
   ],
   "no_analyse_url": true,
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "christopher.wood@phc.ox.ac.uk",
-  "date_reviewed": "2023-05-15",
-  "next_review": "2024-05-15",
-  "measure_complexity": "low"
+  "checked_by": "",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": "false"
 }

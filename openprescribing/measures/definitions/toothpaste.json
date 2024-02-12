@@ -1,13 +1,10 @@
 {
   "name": "Toothpaste Prescribing",
-  "title": [
-    "Toothpaste prescribing cost per 1000 patients"
-  ],
-  "description": [
-    "Toothpaste prescribing cost per 1000 patients"
-  ],
+  "title": "Toothpaste prescribing cost per 1000 patients",
+  "description": "Toothpaste prescribing cost per 1000 patients",
   "numerator_short": "Toothpaste cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Cost (£) per 1000 patients",
   "why_it_matters": [
     "OpenPrescribing currently has data on GP prescriptions and does not have information on NHS dentists' prescribing.",
     "Dentists are best placed to assess, prescribe and monitor dental problems, and it is recommended that they should",
@@ -29,22 +26,13 @@
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_query": "SELECT DISTINCT(bnf_code) FROM {measures}.vw__dmd_objs_with_form_route WHERE form_route = 'paste.dental'",
   "denominator_type": "list_size",
-  "authored_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2019-09-30"
-  ],
-  "next_review": [
-    "2020-09-30"
-  ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Toothpaste/Toothpaste.ipynb"
-  ],
-  "measure_complexity": [
-    "low"
-  ]
+  "authored_by": "brian.mackenna@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
+  "measure_complexity": "low",
+  "measure_type": "dmd",
+  "radar_exclude": "false",
+  "measure_notebook_url": "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Toothpaste/Toothpaste.ipynb"
+
 }

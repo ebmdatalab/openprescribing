@@ -1,17 +1,14 @@
 {
   "name": "Vitamin B complex per 1000 patients",
-  "title": [
-    "Vitamin B complex prescribing per 1000 patients"
-  ],
-  "description": [
-    "Prescribing of vitamin B complex (normal and strong tablets) per 1000 registered patients"
-  ],
+  "title":"Vitamin B complex prescribing per 1000 patients",
+  "description": "Prescribing of vitamin B complex (normal and strong tablets) per 1000 registered patients",
   "numerator_short": "Vitamin B complex items",
   "denominator_short": "1000 patients",
+  "y_label": "Items per 1000 patients",
   "why_it_matters": [
     "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol disorders. ",
-    "A recent position statment from the Regional Medicines Optimisation Committee (RMOC) ",
-    "<a href='https://www.sps.nhs.uk/wp-content/uploads/2019/12/RMOC-position-statement-oral-vitamin-B-supplementation-in-alcoholism-v1.0-1.pdf'>",
+    "A 2019 position statment from the Regional Medicines Optimisation Committee (RMOC) ",
+    "<a href='https://web.archive.org/web/20220830200316/https://www.sps.nhs.uk/wp-content/uploads/2019/12/RMOC-position-statement-oral-vitamin-B-supplementation-in-alcoholism-v1.0-1.pdf'>",
     "states that:</a></p>",
     "<ul>",
     "<li>Due to a lack of evidence on their efficacy and safety, vitamin B complex preparations (vitamin B compound and ",
@@ -40,26 +37,13 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
-  "numerator_bnf_codes_filter": [
-    "0906027G0 # Vit B Compound"
-  ],
+  "numerator_bnf_codes_filter": "0906027G0 # Vit B Compound",
   "denominator_type": "list_size",
-  "authored_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2020-01-15"
-  ],
-  "next_review": [
-    ""
-  ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Vitamin%20B/New%20Measure%20-%20Vitamin%20B%20per%201000%20patients.ipynb"
-  ],
-  "measure_complexity": [
-    "low"
-  ]
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": "false"
 }

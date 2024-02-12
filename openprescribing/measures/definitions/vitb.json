@@ -1,20 +1,15 @@
 {
   "name": "Vitamin B vs thiamine",
-  "title": [
-    "vitamin B complex ",
-    "as a percentage of prescribing of vitamin B and thiamine tablets"
-  ],
-  "description": [
-    "Prescribing of vitamin B complex (normal and strong tablets)",
-    "as a percentage of prescribing of vitamin B and thiamine tablets"
-  ],
+  "title": "vitamin B complex as a percentage of prescribing of vitamin B and thiamine tablets",
+  "description": "Prescribing of vitamin B complex (normal and strong tablets) as a percentage of prescribing of vitamin B and thiamine tablets",
   "numerator_short": "Vitamin B complex items",
   "denominator_short": "Vitamin B complex and thiamine items",
+  "y_label": "Percentage of vitamin B complex and thiamine items prescribed as vitamin B complex",
   "why_it_matters": [
     "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol ",
-    "disorders. However, the latest position statment from the Regional Medicines Optimisation Committee (RMOC) ",
-    "<a href='https://www.sps.nhs.uk/wp-content/uploads/2019/12/RMOC-position-statement-oral-vitamin-B-supplementation-in-alcoholism-v1.0-1.pdf'>",
-    "provides the following guidance:</a></p>",
+    "disorders. However, a 2019 position statment from the Regional Medicines Optimisation Committee (RMOC) ",
+    "<a href='https://web.archive.org/web/20220830200316/https://www.sps.nhs.uk/wp-content/uploads/2019/12/RMOC-position-statement-oral-vitamin-B-supplementation-in-alcoholism-v1.0-1.pdf'>",
+    "provided the following guidance:</a></p>",
     "<ul>",
     "<li>Do not initiate vitamin B compound or vitamin B compound strong tablets for any of the following indications: ",
     "<ul>",
@@ -60,19 +55,11 @@
     "0906026M0%AF # Thiamine HCl_Tab 50mg",
     "0906026M0%AG # Thiamine HCl_tab 100mg"
   ],
-  "authored_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2020-02-03"
-  ],
-  "next_review": [
-    "2022-02-03"
-  ],
-  "measure_complexity": [
-    "low"
-  ]
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": "false"
 }
