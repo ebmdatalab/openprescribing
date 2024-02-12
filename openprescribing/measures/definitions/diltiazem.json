@@ -1,16 +1,12 @@
 {
   "name": "Diltiazem preparations (>60mg) prescribed generically",
-  "title": [
-    "diltiazem preparations (whether generic or by brand)"
-  ],
-  "description": [
-    "Total items of generic diltiazem modified-release preparations,",
-    "as a proportion of total items of all dilitiazem modified-release items (>60mg)"
-  ],
+  "title": "diltiazem preparations (whether generic or by brand)",
+  "description": "Total items of generic diltiazem modified-release preparations, as a proportion of total items of all dilitiazem modified-release items (>60mg)",
   "numerator_short": "Generic diltiazem items",
   "denominator_short": "Dilitazem items",
+  "y_label": "Percentage of MR diltiazem items (>60mg) prescribed generically",
   "why_it_matters": [
-    "<a href='https://bnf.nice.org.uk/drug/diltiazem-hydrochloride.html#prescribingAndDispensingInformations'>The BNF states</a>: ",
+    "<a href='https://bnf.nice.org.uk/drugs/diltiazem-hydrochloride/#prescribing-and-dispensing-information'>The BNF states</a>: ",
     "Different versions of modified-release preparations containing more than 60 mg diltiazem hydrochloride may not have the same clinical effect. ",
     "To avoid confusion between these different formulations of diltiazem, prescribers should specify the brand to be dispensed.",
     "You can read more in our detailed paper on <a href='https://doi.org/10.2196/17003'> unsafe prescribing of diltiazem</a>."
@@ -26,51 +22,33 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "bnf_items",
+
+  "numerator_bnf_codes_query": [
+  "SELECT DISTINCT(bnf_code)",
+  "FROM {measures}.vw__dmd_objs_with_form_route",
+  "WHERE form_route LIKE '%modified-release.oral'"
+  ],
   "numerator_bnf_codes_filter": [
-    "0206020C0AAABAB # Diltiazem HCl_Tab 120mg C/R (generic)",
-    "0206020C0AAACAC # Diltiazem HCl_Tab 90mg M/R (generic)",
-    "0206020C0AAADAD # Diltiazem HCl_Tab 120mg S/R (generic)",
-    "0206020C0AAAEAE # Diltiazem HCl_Cap 300mg M/R (generic)",
-    "0206020C0AAAFAF # Diltiazem HCl_Cap 90mg C/R (generic)",
-    "0206020C0AAAGAG # Diltiazem HCl_Cap 180mg C/R (generic)",
-    "0206020C0AAAHAH # Diltiazem HCl_Cap 300mg C/R (generic)",
-    "0206020C0AAAIAI # Diltiazem HCl_Cap 120mg C/R (generic)",
-    "0206020C0AAAKAK # Diltiazem HCl_Cap 90mg S/R (generic)",
-    "0206020C0AAALAL # Diltiazem HCl_Cap 120mg S/R (generic)",
-    "0206020C0AAAMAM # Diltiazem HCl_Cap 240mg C/R (generic)",
-    "0206020C0AAANAN # Diltiazem HCl_Cap 180mg S/R (generic)",
-    "0206020C0AAAPAP # Diltiazem HCl_Cap 240mg S/R (generic)",
-    "0206020C0AAASAS # Diltiazem HCl_Tab 120mg M/R (generic)",
-    "0206020C0AAATAT # Diltiazem HCl_Cap 90mg M/R (generic)",
-    "0206020C0AAAUAU # Diltiazem HCl_Cap 120mg M/R (generic)",
-    "0206020C0AAAVAV # Diltiazem HCl_Cap 180mg M/R (generic)",
-    "0206020C0AAAWAW # Diltiazem HCl_Cap 240mg M/R (generic)",
-    "0206020C0AAAXAX # Diltiazem HCl_Cap 200mg M/R (generic)",
-    "0206020C0AAAYAY # Diltiazem HCl_Cap 240mg M/ @gn (generic)",
-    "0206020C0AABABA # Diltiazem HCl_Cap 360mg M/R (generic)"
+    "0206020C0AA # Diltiazem (generic)",
+    "~0206020C0AAAAAA # Diltiazem 60mg modified-release tablets",
+    "~0206020C0AAAJAJ # Diltiazem 60mg modified-release capsules"
   ],
   "denominator_type": "bnf_items",
+  "denominator_bnf_codes_query": [
+  "SELECT DISTINCT(bnf_code)",
+  "FROM {measures}.vw__dmd_objs_with_form_route",
+  "WHERE form_route LIKE '%modified-release.oral'"
+  ],
   "denominator_bnf_codes_filter": [
-    "0206020C0%AB # Diltiazem HCl_Tab 120mg C/R (brand and generic)",
-    "0206020C0%AC # Diltiazem HCl_Tab 90mg M/R (brand and generic)",
-    "0206020C0%AD # Diltiazem HCl_Tab 120mg S/R (brand and generic)",
-    "0206020C0%AE # Diltiazem HCl_Cap 300mg M/R (brand and generic)",
-    "0206020C0%AF # Diltiazem HCl_Cap 90mg C/R (brand and generic)",
-    "0206020C0%AG # Diltiazem HCl_Cap 180mg C/R (brand and generic)",
-    "0206020C0%AH # Diltiazem HCl_Cap 300mg C/R (brand and generic)",
-    "0206020C0%AI # Diltiazem HCl_Cap 120mg C/R (brand and generic)",
-    "0206020C0%AK # Diltiazem HCl_Cap 90mg S/R (brand and generic)",
-    "0206020C0%AL # Diltiazem HCl_Cap 120mg S/R (brand and generic)",
-    "0206020C0%AM # Diltiazem HCl_Cap 240mg C/R (brand and generic)",
-    "0206020C0%AN # Diltiazem HCl_Cap 180mg S/R (brand and generic)",
-    "0206020C0%AP # Diltiazem HCl_Cap 240mg S/R (brand and generic)",
-    "0206020C0%AS # Diltiazem HCl_Tab 120mg M/R (brand and generic)",
-    "0206020C0%AT # Diltiazem HCl_Cap 90mg M/R (brand and generic)",
-    "0206020C0%AU # Diltiazem HCl_Cap 120mg M/R (brand and generic)",
-    "0206020C0%AV # Diltiazem HCl_Cap 180mg M/R (brand and generic)",
-    "0206020C0%AW # Diltiazem HCl_Cap 240mg M/R (brand and generic)",
-    "0206020C0%AX # Diltiazem HCl_Cap 200mg M/R (brand and generic)",
-    "0206020C0%AY # Diltiazem HCl_Cap 240mg M/R @gn (brand and generic)",
-    "0206020C0%BA # Diltiazem HCl_Cap 360mg M/R (brand and generic)"
-  ]
+    "0206020C0 # Diltiazem",
+    "~0206020C0%AA # Diltiazem 60mg modified-release tablets (brand and generic)",
+    "~0206020C0%AJ # Diltiazem 60mg modified-release capsules (brand and generic)"
+  ],
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
