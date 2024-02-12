@@ -33,9 +33,9 @@
   ],
   "denominator_type": "list_size",
   "authored_by": "christopher.wood@phc.ox.ac.uk",
-  "checked_by": "",
-  "date_reviewed": "",
-  "next_review": "",
+  "checked_by": "victoria.speed@phc.ox.ac.uk",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
   "measure_complexity": "low",
   "radar_exclude": false
 }
