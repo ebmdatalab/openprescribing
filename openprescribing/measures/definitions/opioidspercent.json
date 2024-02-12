@@ -4,6 +4,7 @@
   "description": "Opioid items with likely daily dose of ≥120mg morphine equivalence compared with prescribing of all items of these opioids",
   "numerator_short": "High dose opioid items",
   "denominator_short": "All opioid items",
+  "y_label": "Percentage of regular opioid items prescribed as high strength",
   "why_it_matters": [
     "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware' target='_Blank'> Opioids Aware</a> project seeks to ",
     "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",

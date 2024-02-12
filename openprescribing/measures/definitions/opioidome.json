@@ -4,6 +4,7 @@
   "description": "Total opioid prescribing (as oral morphine equivalence) per 1000 patients",
   "numerator_short": "Total opioids prescribed (in OME mg)",
   "denominator_short": "1000 patients",
+  "y_label": "Oral morphine equivalent (mg) per 1000 patients",
   "why_it_matters": [
     "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware' target='_Blank'> Opioids Aware</a> project seeks to ",
     "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
