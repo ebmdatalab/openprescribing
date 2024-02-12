@@ -1,21 +1,22 @@
 {
   "name": "Methotrexate 10 mg tablets ",
-  "title": [
-    "methotrexate 10mg tablets ",
-    "as a percentage of prescribing of all methotrexate tablets"
-  ],
-  "description": [
-    "Prescribing of methotrexate 10mg tablets ",
-    "as a percentage of prescribing of all methotrexate tablets"
-  ],
+  "title": "methotrexate 10mg tablets as a percentage of prescribing of all methotrexate tablets",
+  "description": "Prescribing of methotrexate 10mg tablets as a percentage of prescribing of all methotrexate tablets",
   "numerator_short": "Items for 10mg methotrexate tablets",
   "denominator_short": "Items for 2.5mg and 10mg methotrexate tablets",
+  "y_label": "Items for 10mg methotrexate tablets per Items for 2.5mg and 10mg methotrexate tablets",
   "why_it_matters": [
-    "<a href='https://bnf.nice.org.uk/drug/methotrexate.html#importantSafetyInformations'>The BNF states: </a>",
-    "To avoid error with low-dose methotrexate, it is recommended that: ",
-    "the patient is carefully advised of the dose and frequency and the reason for taking methotrexate ",
-    "and any other prescribed medicine (e.g.folic acid); only one strength of methotrexate tablet ",
-    "(usually 2.5 mg) is prescribed and dispensed. You can read more in our paper on <a href='https://doi.org/10.3399/bjgp20X710993'> trends and variation in unsafe prescribing of methotrexate</a>."
+    "<a href='https://bnf.nice.org.uk/drugs/methotrexate/#important-safety-information'>The BNF states: </a>",
+    "<i>Note that the dose is a <b>weekly dose</b>.To avoid error with low-dose methotrexate, it is recommended that: ",
+    "<ul>",
+    "<li>the patient is carefully advised of the <b>dose</b> and <b>frequency</b> and the reason for taking methotrexate and any other prescribed medicine (e.g.folic acid);</li>",
+    "<li>Prescribe only if no other item or intervention is clinically appropriate.</li>",
+    "<li>Prescribe only if no other item or intervention is available.</li>",
+    "<li>the prescription and the dispensing label clearly show the dose and frequency of methotrexate administration;</li>",
+    "<li>the patient or their carer is warned to report immediately the onset of any feature of blood disorders (e.g. sore throat, bruising, and mouth ulcers), ",
+    "liver toxicity (e.g. nausea, vomiting, abdominal discomfort, and dark urine), and respiratory effects (e.g. shortness of breath)</li>.",
+    "</ul></i></p>",
+   "<p>You can read more in our paper on <a href='https://doi.org/10.3399/bjgp20X710993'> trends and variation in unsafe prescribing of methotrexate</a>."
   ],
   "tags": [
     "core",
@@ -33,5 +34,12 @@
   "denominator_bnf_codes_filter": [
     "1001030U0%AB # Methotrexate_Tab 10mg",
     "1001030U0%AC # Methotrexate_Tab 2.5mg"
-  ]
+  ],
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": "false"
 }
