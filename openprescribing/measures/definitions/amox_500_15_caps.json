@@ -4,6 +4,7 @@
   "description": "Proportion of prescription items of amoxicillin 500mg capsules with quantity greater than 15 capsules",
   "numerator_short": "amoxicillin capsules 500mg items for greater than 15 caps",
   "denominator_short": "amoxicillin capsules 500mg items",
+  "y_label": "Percentage of amoxicillin 500mg capsule items with quantity >15",
   "why_it_matters": [
     "<a href='https://academic.oup.com/jac/article/73/suppl_2/ii2/4841822' target='_Blank'>The most common indication for the prescribing of amoxicillin in primary care</a> ",
     "is the treatment of respiratory-tract infections. NICE guidance recommends for example that, where amoxicillin is used for cough, the dose is ",

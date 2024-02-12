@@ -4,6 +4,7 @@
 	"description": "Prescribing of amino acid formula (AAF) products as proportion of AAF and extensively hydrolysed formula (EHF)",
 	"numerator_short": "AAF quantity (grams)",
 	"denominator_short": "AAF and EHF quantity (grams)",
+	"y_label": "Percentage of CMPA products (EHF + AAF) prescribed as AAF",
 	"why_it_matters": [
 		"These products are prescribed for a number of allergy indications, and are most commonly prescribed for Cow's Milk Protein Allergy ",
 		"(CMPA).  Amino acid formula (AAF) products are almost three times more expensive than EHF and it is believed that only a small ",
@@ -40,8 +41,8 @@
 	],
 	"authored_by": "richard.croker@phc.ox.ac.uk",
 	"checked_by": "andrew.brown@phc.ox.ac.uk",
-	"date_reviewed": "2023-03-27",
-	"next_review": "2024-03-27",
+	"date_reviewed": "2024-02-12",
+	"next_review": "2026-02-12",
 	"measure_notebook_url": "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/New%20Measure%20-%20Cow's%20Milk%20Protein%20Allergy.ipynb",
 	"measure_complexity": "low",
 	"measure_type": "bnf_code"

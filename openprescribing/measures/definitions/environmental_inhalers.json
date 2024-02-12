@@ -4,6 +4,7 @@
   "description": "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol",
   "numerator_short": "MDI inhalers (items)",
   "denominator_short": "All inhalers (items)",
+  "y_label": "Percentage of non-salbutamol inhalers prescribed as MDI",
   "why_it_matters": [
     "The NHS has <a href='https://www.england.nhs.uk/greenernhs/a-net-zero-nhs/' target='_Blank'> committed to reducing its carbon footprint by 80% by 2028 to 2032</a>, ",
     "including a shift to lower carbon inhalers. Dry powder inhalers (DPIs) and other newer types of inhalers like soft ",

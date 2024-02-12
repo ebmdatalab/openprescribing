@@ -4,6 +4,7 @@
     "description": "Proportion of prescription items of doxycycline 100mg capsules with quantity greater than 6 capsules/dispersible tablets",
     "numerator_short": "Doxycycline capsules/dispersible tablets 100mg items for greater than 6 caps/tabs",
     "denominator_short": "Doxycycline capsules/dispersible tablets 100mg items",
+    "y_label": "Percentage of doxycycline 100mg items with quantity >6",
     "why_it_matters": [
       "<a href='https://academic.oup.com/jac/article/73/suppl_2/ii2/4841822' target='_Blank'>The most common indication for the prescribing of doxycycline in primary care</a> ",
       "is the treatment of respiratory-tract infections. <a href='https://www.nice.org.uk/guidance/conditions-and-diseases/infections/antimicrobial-stewardship/products?Status=Published' target='_Blank'>NICE guidance</a> ",

@@ -4,6 +4,7 @@
   "description": "Percentage DOACs items not prescribed as edoxaban or generic apixaban",
   "numerator_short": "DOAC items not prescribed as edoxaban or generic apixaban",
   "denominator_short": "DOACs items",
+  "y_label": "Percentage DOACs not prescribed as edoxaban or generic apixaban",
   "why_it_matters": [
     "In January 2024 the NHS in England released <a href='https://www.england.nhs.uk/long-read/commissioning-recommendations-for-national-procurement-for-doacs/' target='_Blank'>",
     "updated commissioning regulations for DOACs,</a> which state:</p>",
