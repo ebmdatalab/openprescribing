@@ -4,6 +4,7 @@
   "description": "Cost of travel vaccines per 1000 patients",
   "numerator_short": "Travel vaccines cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Travel vaccines cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#travel-vaccines-vaccines-administered-exclusively-for-the-purposes-of-travel-2017' ",
     "target='_blank'>",

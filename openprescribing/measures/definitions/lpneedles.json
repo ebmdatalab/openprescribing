@@ -4,6 +4,7 @@
   "description": "Cost of higher cost (≥£5 per 100 needles) insulin pen needles per 1000 patients",
   "numerator_short": "Higher cost pen needles cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Higher cost pen needles cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#needles-for-pre-filled-and-reusable-insulin-pens-2019' target='_blank'>",
     "NHS England guidance states</a>:</p>",

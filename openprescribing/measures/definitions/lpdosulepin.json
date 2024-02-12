@@ -4,6 +4,7 @@
   "description": "Cost of dosulepin per 1000 patients",
   "numerator_short": "Dosulepin cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Dosulepin cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#dosulepin-2017' target='_blank'>",
     "NHS England guidance states</a>:</p>",

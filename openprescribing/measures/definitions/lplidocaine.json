@@ -4,6 +4,7 @@
   "description": "Cost of lidocaine plasters per 1000 patients",
   "numerator_short": "Lidocaine plasters cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Lidocaine plasters cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#lidocaine-plasters-updated-2023' target='_blank'>",
     "NHS England guidance states</a>:</p>",

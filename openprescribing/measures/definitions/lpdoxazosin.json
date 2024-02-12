@@ -4,6 +4,7 @@
   "description": "Cost of doxazosin modified release per 1000 patients",
   "numerator_short": "Doxazosin modified release cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Doxazosin modified release cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/",
     "#doxazosin-prolonged-release-also-known-as-doxazosin-modified-release-2017' target='_blank'>",

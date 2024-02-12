@@ -4,6 +4,7 @@
   "description": "Minocycline per 1000 patients",
   "numerator_short": "Minocycline cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Minocycline cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#minocycline-for-acne-2019' target='_Blank'>",
     "NHS England guidance states</a></p>",

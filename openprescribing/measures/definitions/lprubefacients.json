@@ -4,6 +4,7 @@
   "description":"Cost of rubefacients per 1000 patients",
   "numerator_short": "Rubefacients cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Rubefacients cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/",
     "#rubefacients-benzydamine-mucopolysaccharide-and-cooling-products-excluding-topical-nsaids-and-capsaicin-updated-2023' target='_blank'>",

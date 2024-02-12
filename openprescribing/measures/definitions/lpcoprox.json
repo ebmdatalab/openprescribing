@@ -4,6 +4,7 @@
   "description": "Cost of co-proxamol per 1000 patients",
   "numerator_short": "Co-proxamol cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Co-proxamol cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#co-proxamol-updated-2023' target='_blank'>",
     "NHS England guidance states</a>:</p>",

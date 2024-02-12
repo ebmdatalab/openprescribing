@@ -4,6 +4,7 @@
   "description": "Cost of oxycodone and naloxone combination per 1000 patients",
   "numerator_short": "Oxycodone and naloxone combination cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Oxycodone and naloxone combination cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#oxycodone-and-naloxone-combination-product-2017' target='_Blank'>",
     "NHS England guidance states</a>:</p>",
