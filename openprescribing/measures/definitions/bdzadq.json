@@ -46,7 +46,7 @@
     "p.bnf_code NOT LIKE '0401020K0%BQ'     --Diazepam_Soln 2.5mg/1.25ml Rectal Tube"
   ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
   "date_reviewed": "2024-02-12",
   "next_review": "2025-02-12",
   "measure_complexity": "medium",
