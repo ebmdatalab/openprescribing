@@ -4,6 +4,7 @@
   "description": "Mean carbon impact (kg CO<sub>2</sub>e) per salbutamol inhaler prescribed",
   "numerator_short": "Carbon impact (kg CO<sub>2</sub>e)",
   "denominator_short": "Salbutamol inhalers",
+  "y_label": "kgCO2e per salbutamol inhaler",
   "why_it_matters": [
     "The NHS has <a href='https://www.england.nhs.uk/greenernhs/a-net-zero-nhs/'> ",
     "committed to reducing its carbon footprint by 80% by 2028 to 2032</a>, including a shift to lower carbon inhalers.</p>",
@@ -48,17 +49,11 @@
     "ELSE 0 end) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing",
-  "numerator_where": [
-    "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC','0301011R0AAAAAA','0301011R0AABZBZ','0301011R0AACBCB','0301011R0AACCCC')"
-  ],
+  "numerator_where": "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC','0301011R0AAAAAA','0301011R0AABZBZ','0301011R0AACBCB','0301011R0AACCCC')",
   "denominator_type": "custom",
-  "denominator_columns": [
-    "SUM(quantity) AS denominator"
-  ],
+  "denominator_columns": "SUM(quantity) AS denominator",
   "denominator_from": "{hscic}.normalised_prescribing",
-  "denominator_where": [
-     "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC','0301011R0AAAAAA','0301011R0AABZBZ','0301011R0AACBCB','0301011R0AACCCC')"
-  ],
+  "denominator_where": "bnf_code IN ('0301011R0AAAPAP','0301011R0AABUBU','0301011R0AAAQAQ','0301011R0BEAHAQ','0301011R0BEAIAP','0301011R0BIAFAP','0301011R0BIAHAP','0301011R0BIAGBU','0301011R0BMAAAP','0301011R0BMABBU','0301011R0BWAABZ','0301011R0BWABAQ','0301011R0BXAACB','0301011R0BXABCC','0301011R0AAAAAA','0301011R0AABZBZ','0301011R0AACBCB','0301011R0AACCCC')",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "andrew.brown@phc.ox.ac.uk",
   "date_reviewed": "2023-09-12",

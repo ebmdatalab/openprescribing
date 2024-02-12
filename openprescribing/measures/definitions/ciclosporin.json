@@ -1,18 +1,13 @@
 {
   "name": "Ciclosporin and tacrolimus oral preparations prescribed generically",
-  "title": [
-    "ciclosporin and tacrolimus preparations (whether branded or generic)"
-  ],
-  "description": [
-    "Total items of generic ciclosporin and tacrolimus preparations (0802020G0AA and 0802020T0AA),",
-    "as a proportion of total items of all ciclosporin and tacrolimus items",
-    "(0802020G0 and 0802020T0)."
-  ],
+  "title": "ciclosporin and tacrolimus preparations (whether branded or generic)",
+  "description": "Total items of generic ciclosporin and tacrolimus preparations as a proportion of total items of all ciclosporin and tacrolimus items",
   "numerator_short": "Generic ciclosporin and tacrolimus items",
   "denominator_short": "Ciclosporin and tacrolimus items",
+  "y_label": "Percentage of ciclosporin and tacrolimus items prescribed generically",
   "why_it_matters": [
-    "It is recommended for both <a href='https://bnf.nice.org.uk/drug/ciclosporin.html#prescribingAndDispensingInformations'> ciclosporin </a>",
-    "and  <a href='https://bnf.nice.org.uk/drug/tacrolimus.html#importantSafetyInformations'> tacrolimus </a>",
+    "It is recommended for both <a href='https://bnf.nice.org.uk/drug/ciclosporin.html#important-safety-information'> ciclosporin </a>",
+    "and  <a href='https://bnf.nice.org.uk/drug/tacrolimus.html#important-safety-information'> tacrolimus </a>",
     "that patients are prescribed and dispensed by brand name, to reduce the problems of patients switching formulations.",
     "You can read more in our detailed paper on <a href='https://doi.org/10.2196/17003'> unsafe prescribing of tacrolimus and ciclosporin</a>."
   ],
@@ -34,5 +29,12 @@
   "denominator_bnf_codes_filter": [
     "0802020G0 # Ciclosporin (Systemic) (brand and generic)",
     "0802020T0 # Tacrolimus (Systemic) (brand and generic)"
-  ]
+  ],
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }

@@ -1,13 +1,10 @@
 {
   "name": "Prescribing of gluten free products",
-  "title": [
-    "Gluten-free products: cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of gluten-free products per 1000 patients"
-  ],
+  "title": "Gluten-free products: cost per 1000 patients",
+  "description": "Cost of gluten-free products per 1000 patients",
   "numerator_short": "Gluten-free products cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Cost (£) per 1000 patients",
   "why_it_matters": [
     "Gluten-free products are available on prescription for patients who have a biopsy-confirmed diagnosis of coeliac disease. ",
     "These products are also now available to purchase, e.g. from supermarkets, and many NHS areas are considering stopping or ",
@@ -37,5 +34,6 @@
   "date_reviewed": "2023-03-27",
   "next_review": "2024-03-27",
   "measure_complexity": "low",
-  "measure_type": "bnf_code"
+  "measure_type": "bnf_code",
+  "radar_exclude": "false"
 }

@@ -1,17 +1,12 @@
 {
   "name": "Topical treatment of fungal nail infections",
-  "title": [
-    " topical treatment of fungal nail infections",
-    "per 1000 patients"
-  ],
-  "description": [
-    "Items prescribed for topical treatment of fungal nail infections ",
-    "per 1000 patients"
-  ],
+  "title": "topical treatment of fungal nail infections per 1000 patients",
+  "description": "Items prescribed for topical treatment of fungal nail infections per 1000 patients",
   "numerator_short": "Topical antifungal items",
   "denominator_short": "1000 patients",
+  "y_label": "Items per 1000 patients",
   "why_it_matters": [
-    "These treatments have <a href='http://www.bad.org.uk/for-the-public/patient-information-leaflets/fungal-infections-of-the-nails'>a ",
+    "These treatments have <a href='https://www.bad.org.uk/pils/fungal-nail-infections/'>a ",
     "low cure rate</a>, and treatment is required for three to six months.",
     "Consideration should be given as to whether this is an effective treatment."
   ],
@@ -29,5 +24,12 @@
     "1310020A0 # Amorolfine Hydrochloride",
     "1310020T0%AA # Tioconazole_Medic Nail Lacquer 283mg/ml (branded and generic)"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": "false"
 }

@@ -1,14 +1,10 @@
 {
-  "name": "Long-acting insulin analogues (KTT12)",
-  "title": [
-    "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues"
-  ],
-  "description": [
-    "Number of prescription items for long-acting human analogue insulins as a percentage of the total number ",
-    "of prescription items for all long-acting and intermediate acting insulins excluding biphasic insulins."
-  ],
+  "name": "Prescribing of long-acting insulin analogues",
+  "title": "Type 2 diabetes mellitus - Long-acting insulin analogues",
+  "description":"Number of prescription items for long-acting human analogue insulins as a percentage of prescription items for all long-acting and intermediate acting insulins (excluding biphasic insulins).",
   "numerator_short": "Selected items",
   "denominator_short": "Selected items",
+  "y_label": "Percentage of items for long and intermediate acting insulins prescribed as long acting insulin",
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/ng28/chapter/1-Recommendations'>NICE recommend that</a> for patients with type 2 ",
     "diabetes requiring insulin, 'neutral protamine Hagedorn' (NPH) insulin is the preferred starting therapy with insulin, and ",

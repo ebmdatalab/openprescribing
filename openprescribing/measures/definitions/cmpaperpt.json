@@ -4,6 +4,7 @@
   "description": "Cost of milk formulas for Cow's Milk Protein Allergy (CMPA) per listed patients aged 0-4",
   "numerator_short": "AAF cost (£)",
   "denominator_short": "Listed patients aged 0-4",
+  "y_label": "Cost (£) per patient aged 0-4y",
   "why_it_matters": [
     "Prescribing for Cow's Milk Protein Allergy is increasing. Milk formulas are expensive, and should be reviewed ",
     "regularly to ensure that they are still required, particularly when Amino Acid Formula (AAF) products are used."
@@ -33,9 +34,9 @@
   "denominator_from": "{hscic}.practice_statistics ",
   "denominator_where": "1 = 1",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "andrew.brown@phc.ox.ac.uk",
-  "date_reviewed": "2023-03-27",
-  "next_review": "2024-03-27",
+  "checked_by": "",
+  "date_reviewed": "2024-02-12",
+  "next_review": "2026-02-12",
   "measure_notebook_url": "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/New%20Measure%20-%20Cow's%20Milk%20Protein%20Allergy.ipynb",
   "measure_complexity": "low",
   "measure_type": "bnf_code"

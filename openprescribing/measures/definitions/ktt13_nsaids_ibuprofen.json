@@ -1,21 +1,16 @@
 {
-  "name": "Non-preferred NSAIDs and COX-2 inhibitors (KTT13)",
-  "title": [
-    "KTT13: NSAIDs (including COX-2 inhibitors) - percentage items excluding naproxen and ibuprofen"
-  ],
-  "description": [
-    "Number of prescription items for all NSAIDs excluding ibuprofen and naproxen",
-    "as a percentage of the total number of prescription items",
-    "for all NSAIDs."
-  ],
+  "name": "Non-preferred NSAIDs and COX-2 inhibitors",
+  "title": "NSAIDs (including COX-2 inhibitors) - percentage items excluding naproxen and ibuprofen",
+  "description": "Number of prescription items for all NSAIDs excluding ibuprofen and naproxen as a percentage of the total items for all NSAIDs",
   "numerator_short": "NSAID items (excl naproxen and ibuprofen)",
   "denominator_short": "NSAID items",
+  "y_label": "Percentage of all NSAID items which aren't naproxen and ibuprofen",
   "why_it_matters": [
     "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, including COX-2 inhibitors and some ",
     "'traditional' NSAIDS, for their effects on the stomach, kidneys and the risk of blood clots.  ",
-    "<a href='https://www.nice.org.uk/advice/ktt13/resources/nonsteroidal-antiinflammatory-drugs-58757951055301'>NICE recommends that ",
-    "as ibuprofen and naproxen are two of the drugs with a lower level of risk,</a> doctors should prescribe these to patients ",
-    "before trying the others."
+    "<a href='https://cks.nice.org.uk/topics/nsaids-prescribing-issues/'>NICE CKD recommends that</a>",
+    " in patients with ischaemic heart disease, cerebrovascular disease, or peripheral arterial disease ibuprofen (up to 1200mg per day) and naproxen (up to 1000mg) should be prescribed first-line",
+    "and COX-2 inhibitors, diclofenac, and high-dose ibuprofen are contraindicated"
   ],
   "tags": [
     "cardiovascular",
@@ -37,5 +32,12 @@
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
     "100101 # Non-Steroidal Anti-Inflammatory Drugs"
-  ]
+    ],
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+   "checked_by": "",
+   "date_reviewed": "2024-02-12",
+   "next_review": "2026-02-12",
+   "measure_complexity": "low",
+   "measure_type": "bnf_code",
+   "radar_exclude": "false"
 }

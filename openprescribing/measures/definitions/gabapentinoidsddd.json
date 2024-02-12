@@ -2,11 +2,12 @@
   "name": "Prescribing of gabapentin and pregabalin (DDD)",
   "title": "Prescribing of gabapentin and pregabalin (combined Defined Daily Dose (DDD) per 1000 patients",
   "description": "Total DDD of pregabalin + gabapentin per 1000 patients",
+  "y_label": "DDD per 1000 patients",
   "why_it_matters": [
     "Gabapentin and pregabalin are increasingly used in neuropathic and other types of pain, and use is ",
     "rising rapidly in the NHS. There are also concerns about the ",
     "<a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/385791/PHE-NHS_England_pregabalin_and_gabapentin_advice_Dec_2014.pdf'>",
-    "potential for abuse</a> and consequently both medicines have been reclassified legally  <a href='https://www.england.nhs.uk/wp-content/uploads/2019/03/pregabalin-and-gabapentin-guidance-v1.pdf'> (more information here)</a>. There appears to be no robust evidence for dose conversion between gabapentin and pregabalin. ",
+    "potential for abuse</a> and consequently both medicines have been reclassified legally  <a href='https://www.england.nhs.uk/wp-content/uploads/2019/02/handling-pregabalin-and-gabapentin.pdf'> (more information here)</a>. There appears to be no robust evidence for dose conversion between gabapentin and pregabalin. ",
      "We have therefore chosen to use the <a href='https://www.who.int/medicines/regulation/medicines-safety/toolkit_ddd/en/'>",
     "Defined Daily Dose</a> (DDD) for this measure.  This is a similar dose ratio that <a href='https://www.ncbi.nlm.nih.gov/pubmed/20113408'>",
     "Toth described</a> in his paper on the substitution of gabapentin with pregabalin. ",
@@ -49,11 +50,12 @@
     "386845007)  --Gabapentin ing_code"
   ],
   "denominator_type": "list_size",
-   "date_reviewed":"12/06/2023",
-  "next_review": "12/06/2024",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by":"andrew.brown@phc.ox.ac.uk",
+  "date_reviewed":"2024-02-12",
+  "next_review": "2025-02-12",
   "measure_complexity":"medium",
-  "measure_type": "dmd"
+  "measure_type": "dmd",
+  "radar_exclude": "false"
 }
 
