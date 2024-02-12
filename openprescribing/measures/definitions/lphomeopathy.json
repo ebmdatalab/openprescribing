@@ -1,13 +1,10 @@
 {
   "name": "Items which should not routinely be prescribed in primary care - homeopathy",
-  "title": [
-    "Homeopathy cost per 1000 patients"
-  ],
-  "description": [
-    "Cost of homeopathy per 1000 patients"
-  ],
+  "title": "Homeopathy cost per 1000 patients",
+  "description": "Cost of homeopathy per 1000 patients",
   "numerator_short": "Homeopathy cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Homeopathy cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#homeopathy-2017' target='_blank'>",
     "NHS England guidance states</a>:</p>",

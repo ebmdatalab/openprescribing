@@ -4,6 +4,7 @@
   "description": "Total cost per 1,000 registered patients for all NHS England items which should not routinely be prescribed in primary care",
   "numerator_short": "cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Cost (£) per 1000 patients",
   "why_it_matters": [
     "In August 2023 NHS England updated guidance on a <a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/' target='_blank'>number of items which should not be routinely prescribed in primary care</a>.",
     "This is the combined cost per 1000 patients for all of these measures. "

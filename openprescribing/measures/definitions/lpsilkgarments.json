@@ -2,8 +2,9 @@
   "name": "Items which should not routinely be prescribed in primary care - silk garments",
   "title":"Silk garments cost per 1000 patients",
   "description":"Silk garments per 1000 patients",
-  "numerator_short": "Silk garments (£)",
+  "numerator_short": "Silk garments cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Silk garments cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#silk-garments-2019' target='_blank'>",
     "NHS England guidance states</a>:</p>",

@@ -3,6 +3,7 @@
   "title": "Liothyronine cost per 1000 patients",
   "description": "Cost of liothyronine per 1000 patients",
   "numerator_short": "Liothyronine cost (£)",
+  "y_label": "Liothyronine cost (£) per 1000 patients",
   "denominator_short": "1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#liothyronine-including-armour-thyroid-and-liothyronine-combination-products-updated-2023' target='_blank'>",

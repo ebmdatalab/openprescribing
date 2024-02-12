@@ -2,8 +2,9 @@
   "name": "Items which should not routinely be prescribed in primary care - lutein and antioxidants",
   "title": "Lutein and antioxidant cost per 1000 patients",
   "description": "Cost of lutein and antioxidant per 1000 patients",
-  "numerator_short": "Lutein and antioxidant  cost (£)",
+  "numerator_short": "Lutein and antioxidant cost (£)",
   "denominator_short": "1000 patients",
+  "y_label": "Lutein and antioxidant cost (£) per 1000 patients",
   "why_it_matters": [
     "<p><a href='https://www.england.nhs.uk/long-read/items-which-should-not-routinely-be-prescribed-in-primary-care-policy-guidance/#lutein-and-antioxidants-updated-2023' target='_Blank'>",
     "NHS England guidance states</a>:</p>",
