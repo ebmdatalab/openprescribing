@@ -30,9 +30,13 @@
     "UNION DISTINCT",
     "SELECT amp.bnf_code FROM {dmd}.vmp INNER JOIN {dmd}.amp ON vmp.id = amp.vmp WHERE UPPER(vmp.nm) LIKE '%SILV%' OR UPPER(vmp.nm) LIKE '% AG %'"
   ],
-  "numerator_bnf_codes_filter": "20 # Dressings",
+  "numerator_bnf_codes_filter": [
+    "20 # Dressings"
+  ],
   "denominator_type": "bnf_items",
-  "denominator_bnf_codes_filter": "20 # Dressings",
+  "denominator_bnf_codes_filter": [
+  "20 # Dressings"
+  ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
   "date_reviewed": "2024-02-12",
