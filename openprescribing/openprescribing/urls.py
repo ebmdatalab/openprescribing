@@ -403,4 +403,9 @@ urlpatterns = [
         TemplateView.as_view(template_name="labs/sicbl-change-detection.html"),
         name="sicbl_change_detection",
     ),
+    path(
+        "labs/sicbl-improvement-radar/",
+        TemplateView.as_view(template_name="labs/sicbl-improvement-radar.html"),
+        name="sicbl_improvement_radar",
+    ),
 ]
