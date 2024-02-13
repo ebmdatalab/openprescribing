@@ -4,6 +4,7 @@
   "description": "Prescribing of short acting beta agonist (SABA) inhalers - salbutamol and terbutaline - compared with prescribing of inhaled corticosteroid inhalers and SABA inhalers",
   "numerator_short": "SABA quantity",
   "denominator_short": "ICS and SABA quantity",
+  "y_label": "Percentage of inhalers (ICS and SABA) prescribed as SABA",
   "why_it_matters": [
     "<a href='https://www.rcplondon.ac.uk/projects/outputs/why-asthma-still-kills' target='_Blank'> Why Asthma Still Kills</a> ",
     "reports that high use of short acting beta agonists (salbutamol and terbutaline) and poor adherence to ",

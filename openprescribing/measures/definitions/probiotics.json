@@ -2,6 +2,7 @@
   "name": "Probiotics that have been removed from the drug tariff",
   "title": "Cost of non-ACBS probiotics per 1000 patients",
   "description": "Cost of non-ACBS probiotics per 1000 patients",
+  "y_label": "Cost (£) per 1000 patients",
   "why_it_matters": [
     "<p>The Advisory Committee on Borderline Substances (ACBS) is responsible for assessing and recommending products applying for ",
     "listing in Part XV of the Drug Tariff. In 2018 the ACBS reviewed some products listed in Part XV to ensure they are still ",
@@ -41,5 +42,6 @@
   "date_reviewed": "2023-03-27",
   "next_review": "2024-03-27",
   "measure_complexity": "low",
-  "measure_type": "bnf_code"
+  "measure_type": "bnf_code",
+  "radar_exclude": "false"
 }

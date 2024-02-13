@@ -8,6 +8,7 @@
   ],
   "numerator_short": "Total pregabalin prescribed (in milligrams)",
   "denominator_short": "1000 patients",
+  "y_label": "Pregabalin (mg) per 1000 patients",
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
@@ -38,10 +39,11 @@
   "AND i.ing = 415160008 --Pregabalin"
   ],
   "denominator_type": "list_size",
-  "date_reviewed":"12/06/2023",
-  "next_review": "12/06/2024",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by":"andrew.brown@phc.ox.ac.uk",
+  "date_reviewed":"2023-06-12",
+  "next_review": "2024-06-12",
   "measure_complexity":"medium",
-  "measure_type": "dmd"
+  "measure_type": "dmd",
+  "radar_exclude": "false"
 }

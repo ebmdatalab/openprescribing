@@ -4,6 +4,7 @@
   "description": "Percentage of prescriptions for blood glucose testing strips (BGTS) not included in NHS England commissioning recommendations",
   "numerator_short": "BGTS prescriptions for strips not included in guidance",
   "denominator_short": "All BGTS prescriptions",
+  "y_label": "Percentage of blood glucose test strip items not in line with NHS England recommendations",
   "why_it_matters": [
     " Many people with diabetes test their blood glucose levels, using a blood glucose meter, in order to help control their diabetes by adjusting diet and the dose of medicines.  A drop of blood from the user’s finger is placed on a ",
     "testing strip in order for the meter to analyse the glucose levels.  A new strip is required each time, and is specific to a brand of meter.</p>",
@@ -52,5 +53,6 @@
   "date_reviewed": "2023-09-10",
   "next_review": "2025-09-10",
   "measure_complexity": "low",
-  "measure_type": "bnf_code"
+  "measure_type": "bnf_code",
+  "radar_exclude": false
 }
