@@ -27,7 +27,7 @@
   "numerator_bnf_codes_query": "SELECT DISTINCT(bnf_code) FROM {measures}.vw__dmd_objs_with_form_route WHERE form_route = 'paste.dental'",
   "denominator_type": "list_size",
   "authored_by": "brian.mackenna@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
   "date_reviewed": "2024-02-12",
   "next_review": "2026-02-12",
   "measure_complexity": "low",
