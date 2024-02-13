@@ -10,7 +10,7 @@
 ],
 "numerator_short": "Number of pens on prescription of four or more",
 "denominator_short": "total number of pens",
-"y_label": "Percentage of items issued as 7-day quantities",
+"y_label": "Percentage of semaglutide items with quantity >3",
 "url": null,
 "is_percentage": true,
 "is_cost_based": false,
@@ -37,7 +37,7 @@
 	"AND bnf_name LIKE '%inj%'"
 ],
 "authored_by": "richard.croker@phc.ox.ac.uk",
-"checked_by": "",
+"checked_by": "andrew.brown@phc.ox.ac.uk",
 "date_reviewed": "2024-02-12",
 "next_review": "2026-02-12",
 "measure_complexity": "low",
