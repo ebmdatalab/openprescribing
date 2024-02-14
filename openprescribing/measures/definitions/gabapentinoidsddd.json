@@ -56,6 +56,6 @@
   "next_review": "2025-02-12",
   "measure_complexity":"medium",
   "measure_type": "dmd",
-  "radar_exclude": "false"
+  "radar_exclude": false
 }
 

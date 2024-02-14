@@ -32,7 +32,7 @@
   "next_review": "2026-02-12",
   "measure_complexity": "low",
   "measure_type": "dmd",
-  "radar_exclude": "false",
+  "radar_exclude": false,
   "measure_notebook_url": "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Toothpaste/Toothpaste.ipynb"
 
 }
