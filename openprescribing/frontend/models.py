@@ -865,6 +865,18 @@ class OrgBookmark(models.Model):
         else:
             return "all_england"
 
+    def get_org(self):
+        if self.pct is not None and self.practice is None:
+            return self.pct
+        elif self.practice is not None:
+            return self.practice
+        elif self.pcn is not None:
+            return self.pcn
+        elif self.stp is not None:
+            return self.stp
+        else:
+            return None
+
     def topic(self):
         """Sentence snippet describing the bookmark"""
         return "prescribing in %s" % self.name
@@ -886,6 +898,9 @@ class NCSOConcessionBookmark(models.Model):
 
     @property
     def entity(self):
+        return self.get_org()
+
+    def get_org(self):
         if self.pct is not None:
             return self.pct
         elif self.practice is not None:
