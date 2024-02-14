@@ -68,6 +68,8 @@ class RegionalTeam(models.Model):
 
     objects = RegionalTeamManager()
 
+    HUMAN_NAME = "Regional Team"
+
     def __str__(self):
         return self.name
 
@@ -92,6 +94,8 @@ class STP(models.Model):
     code = models.CharField(max_length=3, primary_key=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     ons_code = models.CharField(max_length=9, null=True, blank=True)
+
+    HUMAN_NAME = "ICB"
 
     def __str__(self):
         return self.name
@@ -122,6 +126,8 @@ class PCN(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
 
     objects = PCNManager()
+
+    HUMAN_NAME = "PCN"
 
     def __str__(self):
         return self.name
@@ -168,6 +174,8 @@ class PCT(models.Model):
     close_date = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=400, null=True, blank=True)
     postcode = models.CharField(max_length=10, null=True, blank=True)
+
+    HUMAN_NAME = "SICBL"
 
     def __str__(self):
         return self.name or ""
@@ -257,6 +265,8 @@ class Practice(models.Model):
         max_length=1, choices=STATUS_SETTINGS, null=True, blank=True
     )
     ccg_change_reason = models.TextField(null=True, blank=True)
+
+    HUMAN_NAME = "Practice"
 
     def __str__(self):
         return self.name
