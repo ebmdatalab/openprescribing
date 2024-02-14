@@ -199,7 +199,7 @@ class Command(BaseCommand):
         else:
             assert False
         if getattr(org, "close_date", None):
-            self.log_info("Skipping sending alert for closed org %s", org.pk)
+            self.log_info("Skipping sending alert for closed org %s" % org.pk)
             return
         stats = bookmark_utils.InterestingMeasureFinder(org).context_for_org_email()
 
@@ -211,7 +211,7 @@ class Command(BaseCommand):
                 "Sent org bookmark alert to %s about %s" % (msg.to, org_bookmark.id)
             )
         except bookmark_utils.BadAlertImageError as e:
-            self.log_info("Failed to send {org_bookmark!r}")
+            self.log_info(f"Failed to send {org_bookmark!r}")
             self.error_count += 1
             self.log_exception(e)
 
@@ -226,7 +226,7 @@ class Command(BaseCommand):
                 % (recipient_id, search_bookmark.id)
             )
         except bookmark_utils.BadAlertImageError as e:
-            self.log_info("Failed to send {search_bookmark!r}")
+            self.log_info(f"Failed to send {search_bookmark!r}")
             self.error_count += 1
             self.log_exception(e)
 
