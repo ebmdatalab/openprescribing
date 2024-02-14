@@ -4,10 +4,15 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db import connection
 from django.db.models import Count
+from django.http import StreamingHttpResponse
+from django.urls import path
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from matrixstore.csv_utils import dicts_to_csv
 
 from .models import (
+    PCN,
+    STP,
     EmailMessage,
     MailLog,
     NCSOConcessionBookmark,
@@ -168,6 +173,72 @@ class UserWithProfile(UserAdmin):
 
     emails_clicked.short_description = "Links clicked"
     emails_clicked.admin_order_field = "profile__emails_clicked"
+
+    def get_urls(self):
+        return [
+            path(
+                "exports/alert-signups.csv",
+                self.admin_site.admin_view(self.export_alert_signups),
+                name="export_alert_signups",
+            ),
+            *super().get_urls(),
+        ]
+
+    def export_alert_signups(self, request):
+        return StreamingHttpResponse(
+            dicts_to_csv(get_all_bookmark_details()),
+            content_type="text/csv",
+            headers={
+                "content-disposition": 'attachment; filename="alert-signups.csv"',
+            },
+        )
+
+
+def get_all_bookmark_details():
+    for bookmark_type, bookmark in get_all_bookmarks():
+        org = bookmark.get_org()
+        if org_is_closed(org):
+            continue
+        yield {
+            "email": bookmark.user.email,
+            "created_at": bookmark.created_at.date(),
+            "alert_type": bookmark_type,
+            "org_type": org.HUMAN_NAME if org else "National",
+            "org_id": org.code if org else "England",
+            "org_name": org.cased_name if org else "All England",
+        }
+
+
+def org_is_closed(org):
+    # All England – never closed
+    if org is None:
+        return False
+    # We don't have close dates for PCNs or ICBs
+    if isinstance(org, PCN | STP):
+        return False
+    return org.close_date is not None
+
+
+def get_all_bookmarks():
+    org_bookmarks = OrgBookmark.objects.select_related(
+        "user",
+    ).prefetch_related(
+        "pct",
+        "practice",
+        "pcn",
+        "stp",
+    )
+    for bookmark in org_bookmarks:
+        yield "monthly", bookmark
+
+    ncso_bookmarks = NCSOConcessionBookmark.objects.select_related(
+        "user",
+    ).prefetch_related(
+        "pct",
+        "practice",
+    )
+    for bookmark in ncso_bookmarks:
+        yield "price_concessions", bookmark
 
 
 class MailLogInline(admin.TabularInline):
