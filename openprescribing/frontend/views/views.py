@@ -527,6 +527,7 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
 
     _add_measure_for_children_in_entity_url(measure_options, entity_type)
     _add_measure_for_siblings_url(measure_options, entity_type)
+    _add_improvement_radar_url(measure_options, entity_type)
     _add_measure_url(measure_options, entity_type)
 
     if entity_type == "practice":
@@ -641,6 +642,7 @@ def _measures_for_one_entity(request, entity_code, entity_type):
 
     _add_measure_for_children_in_entity_url(measure_options, entity_type)
     _add_measure_for_siblings_url(measure_options, entity_type)
+    _add_improvement_radar_url(measure_options, entity_type)
     _add_measure_url(measure_options, entity_type)
 
     if entity_type == "practice":
@@ -722,6 +724,7 @@ def _measure_for_children_in_entity(
     }
 
     _add_measure_details(measure_options, measure)
+    _add_improvement_radar_url(measure_options, child_entity_type)
     _add_measure_for_children_in_entity_url(measure_options, child_entity_type)
 
     context = {
@@ -770,6 +773,7 @@ def measure_for_all_entities(request, measure, entity_type):
     }
 
     _add_measure_for_children_in_entity_url(measure_options, entity_type)
+    _add_improvement_radar_url(measure_options, entity_type)
     _add_measure_details(measure_options, measure)
 
     entity_type_human = _entity_type_human(entity_type)
@@ -1465,6 +1469,7 @@ def _home_page_context_for_entity(request, entity):
 
     _add_measure_for_children_in_entity_url(measure_options, entity_type)
     _add_measure_for_siblings_url(measure_options, entity_type)
+    _add_improvement_radar_url(measure_options, entity_type)
     _add_measure_url(measure_options, entity_type)
 
     if entity_type == "practice":
@@ -1543,6 +1548,7 @@ def _add_measure_details(options, measure):
     options["denominator"] = measure.denominator_short
     options["isCostBasedMeasure"] = measure.is_cost_based
     options["lowIsGood"] = measure.low_is_good
+    options["radarInclude"] = not measure.radar_exclude
     if measure.tags_focus:
         options["tagsFocus"] = ",".join(measure.tags_focus)
 
@@ -1571,6 +1577,16 @@ def _add_measure_for_siblings_url(options, entity_type):
         options["measureForSiblingsUrlTemplate"] = _url_template(
             "measure_for_practices_in_ccg"
         )
+
+
+def _add_improvement_radar_url(options, entity_type):
+    if entity_type in ["practice", "pcn"]:
+        return
+    # This is correct, and shouldn't be `+ f"{measure}"`, because we're going to do the
+    # interpolation in JS.
+    options["improvementRadarUrlTemplate"] = (
+        _url_template("sicbl_improvement_radar") + "#{measure}"
+    )
 
 
 def _add_measure_url(options, entity_type):
