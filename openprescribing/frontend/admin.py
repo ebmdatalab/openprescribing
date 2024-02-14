@@ -200,13 +200,25 @@ def get_all_bookmark_details():
         if org_is_closed(org):
             continue
         yield {
-            "email": bookmark.user.email,
+            "email": redact_email_address(bookmark.user.email),
             "created_at": bookmark.created_at.date(),
             "alert_type": bookmark_type,
             "org_type": org.HUMAN_NAME if org else "National",
             "org_id": org.code if org else "England",
             "org_name": org.cased_name if org else "All England",
         }
+
+
+def redact_email_address(email):
+    user, _, domain = email.rpartition("@")
+    if len(user) == 1:
+        user = "*"
+    elif len(user) == 2:
+        user = user[0] + "*"
+    else:
+        user = list(user)
+        user[1:-1] = "*" * (len(user) - 2)
+    return "".join([*user, _, domain])
 
 
 def org_is_closed(org):

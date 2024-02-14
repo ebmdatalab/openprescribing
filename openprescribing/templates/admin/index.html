@@ -5,7 +5,12 @@
   {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
   <h2>CSV Exports</h2>
   <ul>
-    <li><a href="{% url 'admin:export_alert_signups' %}">Download all alert signups</a></li>
+    <li>
+      <a href="{% url 'admin:export_alert_signups' %}">
+        Download all alert signups
+      </a>
+      (emails redacted)
+    </li>
   </ul>
 </div>
 {% endblock %}
