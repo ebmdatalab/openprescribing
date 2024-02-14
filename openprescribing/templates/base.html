@@ -47,6 +47,11 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
       {% endif %}
       ga('send', 'pageview', location.pathname + location.search + location.hash);
     </script>
+    {% else %}
+    <script>
+      // Define no-op `ga()` function so code which assumes it doesn't error
+      function ga() {}
+    </script>
     {% endif %}
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
