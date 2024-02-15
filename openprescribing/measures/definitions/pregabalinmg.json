@@ -45,5 +45,5 @@
   "next_review": "2024-06-12",
   "measure_complexity":"medium",
   "measure_type": "dmd",
-  "radar_exclude": "false"
+  "radar_exclude": false
 }

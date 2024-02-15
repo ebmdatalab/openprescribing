@@ -633,6 +633,7 @@ class Measure(models.Model):
         ),
     )
     include_in_alerts = models.BooleanField(default=True)
+    radar_exclude = models.BooleanField(default=True)
     url = models.URLField(null=True, blank=True)
     is_percentage = models.BooleanField(null=True)
     is_cost_based = models.BooleanField(null=True)
