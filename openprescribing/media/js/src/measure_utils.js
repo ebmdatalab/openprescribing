@@ -367,7 +367,7 @@ var utils = {
       options.measureForSiblingsUrlTemplate,
       context
     );
-    if (d.radarInclude) {
+    if (d.radar_include) {
         improvementRadarUrl = _this._buildUrl(
           options.improvementRadarUrlTemplate,
           context
