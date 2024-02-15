@@ -1548,7 +1548,6 @@ def _add_measure_details(options, measure):
     options["denominator"] = measure.denominator_short
     options["isCostBasedMeasure"] = measure.is_cost_based
     options["lowIsGood"] = measure.low_is_good
-    options["radarInclude"] = not measure.radar_exclude
     if measure.tags_focus:
         options["tagsFocus"] = ",".join(measure.tags_focus)
 

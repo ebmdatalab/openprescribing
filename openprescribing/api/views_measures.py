@@ -66,6 +66,7 @@ def measure_global(request, format=None):
                 "is_cost_based": measure.is_cost_based,
                 "is_percentage": measure.is_percentage,
                 "low_is_good": measure.low_is_good,
+                "radar_include": not measure.radar_exclude,
                 "tags_focus": tags_focus,
                 "numerator_is_list_of_bnf_codes": measure.numerator_is_list_of_bnf_codes,
                 "analyse_url": measure.analyse_url,
@@ -324,6 +325,7 @@ def _roll_up_measure_values(measure_values, org_type):
                 "is_cost_based": measure.is_cost_based,
                 "is_percentage": measure.is_percentage,
                 "low_is_good": measure.low_is_good,
+                "radar_include": not measure.radar_exclude,
                 "tags": _hydrate_tags(measure.tags),
                 "data": [measure_value_data],
             }
