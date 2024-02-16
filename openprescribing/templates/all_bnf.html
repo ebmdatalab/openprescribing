@@ -8,6 +8,8 @@
 
 <h1>All BNF sections</h1>
 
+{% include '_chart.html' %}
+
 <p>Search for a BNF section by name or code, and get trends for total prescribing.</p>
 
 <input class="form-control" id="search" placeholder="Search by name or code, e.g. diabetes" />
@@ -39,4 +41,10 @@ allItems.push(section);
 {% endfor %}
 </script>
 {% conditional_js 'list-filter' %}
+{% conditional_js 'config' %}
+<script>
+var filename = config.apiHost + "{% url 'total_spending' %}?format=json";
+var pageType = 'bnf-section';
+</script>
+{% conditional_js 'bar-charts' %}
 {% endblock %}
