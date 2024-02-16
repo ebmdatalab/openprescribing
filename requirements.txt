@@ -241,7 +241,7 @@ premailer==3.10.0
     # via -r requirements.in
 proto-plus==1.23.0
     # via google-cloud-bigquery-storage
-protobuf==4.25.2
+protobuf==4.25.3
     # via
     #   google-api-core
     #   google-cloud-bigquery-storage
