@@ -97,7 +97,7 @@ fab-classic==1.19.2
     # via -r requirements.in
 flake8==7.0.0
     # via -r requirements.in
-fonttools==4.48.1
+fonttools==4.49.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
