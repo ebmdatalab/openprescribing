@@ -93,7 +93,7 @@ var barChart = {
 
     setUp: function() {
         var _this = this;
-        _this.graphType = 'items';
+        _this.graphType = 'actual_cost';
         $.ajax({
           type: 'GET',
           url: filename,
