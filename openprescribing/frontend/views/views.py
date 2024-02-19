@@ -1413,6 +1413,9 @@ def _home_page_context_for_entity(request, entity):
         "entity": entity,
         "entity_type": entity_type,
         "entity_type_human": _entity_type_human(entity_type),
+        "public_entity_type": {"ccg": "sicbl", "stp": "icb"}.get(
+            entity_type, entity_type
+        ),
         "has_prescribing": org_has_prescribing(entity_type, entity.code),
     }
     if not context["has_prescribing"]:
