@@ -16,7 +16,7 @@ from frontend.price_per_unit.savings import (
 )
 from matrixstore.db import get_db, get_row_grouper
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import APIException, NotFound
+from rest_framework.exceptions import APIException, NotFound, ValidationError
 from rest_framework.response import Response
 
 from . import view_utils as utils
@@ -407,6 +407,27 @@ def spending_by_org(request, format=None, org_type=None):
     org_type = request.query_params.get("org_type", org_type)
     date = request.query_params.get("date", None)
 
+    org_type, orgs = _get_org_type_and_orgs(org_type, org_ids)
+
+    # Due to the number of practices we only return data for all practices
+    # if a single date is specified
+    if org_type == "practice" and not date and not org_ids:
+        return Response(
+            "Error: You must supply either a list of practice IDs or a date "
+            "parameter, e.g. date=2015-04-01",
+            status=400,
+        )
+
+    data = list(_get_prescribing_entries(codes, orgs, org_type, date=date))
+
+    response = Response(data)
+    if request.accepted_renderer.format == "csv":
+        filename = "spending-by-{}-{}.csv".format(org_type, "-".join(codes))
+        response["content-disposition"] = "attachment; filename={}".format(filename)
+    return response
+
+
+def _get_org_type_and_orgs(org_type, org_ids):
     # Accept both cases of CCG (better to fix this specific string rather than
     # make the whole API case-insensitive)
     if org_type == "CCG":
@@ -421,14 +442,6 @@ def spending_by_org(request, format=None, org_type=None):
     if org_type == "practice":
         # Translate any CCG codes into the codes of all practices in that CCG
         org_ids = utils.get_practice_ids_from_org(org_ids)
-        # Due to the number of practices we only return data for all practices
-        # if a single date is specified
-        if not date and not org_ids:
-            return Response(
-                "Error: You must supply either a list of practice IDs or a date "
-                "parameter, e.g. date=2015-04-01",
-                status=400,
-            )
 
     if org_type == "pcn":
         extra_ids = Practice.objects.filter(ccg_id__in=org_ids).values_list(
@@ -447,7 +460,7 @@ def spending_by_org(request, format=None, org_type=None):
     elif org_type == "regional_team":
         orgs = RegionalTeam.objects.all()
     else:
-        return Response("Error: unrecognised org_type parameter", status=400)
+        raise ValidationError(detail="Error: unrecognised org_type parameter")
 
     # Filter and sort
     if org_ids:
@@ -460,13 +473,7 @@ def spending_by_org(request, format=None, org_type=None):
     if org_type != "practice":
         orgs = orgs.only("code", "name")
 
-    data = list(_get_prescribing_entries(codes, orgs, org_type, date=date))
-
-    response = Response(data)
-    if request.accepted_renderer.format == "csv":
-        filename = "spending-by-{}-{}.csv".format(org_type, "-".join(codes))
-        response["content-disposition"] = "attachment; filename={}".format(filename)
-    return response
+    return org_type, orgs
 
 
 def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
