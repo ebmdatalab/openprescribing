@@ -1697,9 +1697,9 @@ def _get_entity(entity_type, entity_code):
         return get_object_or_404(Practice, code=entity_code)
     elif entity_type == "pcn":
         return get_object_or_404(PCN, code=entity_code)
-    elif entity_type == "ccg":
+    elif entity_type == "ccg" or entity_type == "sicbl":
         return get_object_or_404(PCT, code=entity_code)
-    elif entity_type == "stp":
+    elif entity_type == "stp" or entity_type == "icb":
         return get_object_or_404(STP, code=entity_code)
     elif entity_type == "regional_team":
         return get_object_or_404(RegionalTeam, code=entity_code)
