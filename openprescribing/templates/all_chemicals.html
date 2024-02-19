@@ -13,7 +13,7 @@
 
 <ul class="list-unstyled" id="all-results">
 {% for c in chemicals %}
-<li><a href="{% url 'chemical' c.bnf_code %}">{{ c.chem_name }}</a> ({{ c.bnf_code }})</li>
+<li><a href="{% url 'chemical' c.bnf_code %}{{ extra_url_params }}">{{ c.chem_name }}</a> ({{ c.bnf_code }})</li>
 {% endfor %}
 </ul>
 
@@ -28,7 +28,7 @@ var inputSearch = '#search',
 var chemical = {
     name: '{{ c.chem_name }}',
     code: '{{ c.bnf_code }}',
-    url: "{% url 'chemical' c.bnf_code %}"
+    url: "{% url 'chemical' c.bnf_code %}{{ extra_url_params }}"
 };
 allItems.push(chemical);
 {% endfor %}

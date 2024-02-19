@@ -10,14 +10,14 @@
 {% if section %}
 <h1>{{ section.number_str}}: {{ section.name }}</h1>
 {% if bnf_chapter %}
-<p class="lead">Part of chapter <a href="{% url 'bnf_section' bnf_chapter.bnf_id %}">{{ bnf_chapter.number_str }} {{ bnf_chapter.name }}</a>{% if bnf_section %}, section <a href="{% url 'bnf_section' bnf_section.bnf_id %}">{{ bnf_section.number_str }} {{ bnf_section.name }}</a>{% endif %}
+<p class="lead">Part of chapter <a href="{% url 'bnf_section' bnf_chapter.bnf_id %}{{ extra_url_params }}">{{ bnf_chapter.number_str }} {{ bnf_chapter.name }}</a>{% if bnf_section %}, section <a href="{% url 'bnf_section' bnf_section.bnf_id %}{{ extra_url_params }}">{{ bnf_section.number_str }} {{ bnf_section.name }}</a>{% endif %}
 </p>
 {% endif %}
 {% endif %}
 
 <hr/>
 
-<p>High-level prescribing trends for {{ section.name }} (BNF section {{ section.number_str }}) across all GP practices in NHS England for the last five years. You can <a href="{% url 'analyse' %}#numIds={{ section.number_str }}">explore prescribing trends for this section by Sub-ICB Location</a>, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
+<p>High-level prescribing trends for {{ section.name }} (BNF section {{ section.number_str }}) across {% if org %}{{ org.cased_name }}{% else %}all GP practices in NHS England{% endif %} for the last five years. You can <a href="{% url 'analyse' %}#numIds={{ section.number_str }}">explore prescribing trends for this section by Sub-ICB Location</a>, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
 
 <p><a href="{% url 'dmd_search' %}?q={{ page_id }}">View all matching dm+d items.</a></p>
 
@@ -28,21 +28,21 @@
 {% if subsections %}
 <h3>Subsections</h3>
 {% for subsection in subsections %}
-<a class="subsection" href="{% url 'bnf_section' subsection.bnf_id %}">{{ subsection.number_str }}: {{ subsection.name }}</a><br/>
+<a class="subsection" href="{% url 'bnf_section' subsection.bnf_id %}{{ extra_url_params }}">{{ subsection.number_str }}: {{ subsection.name }}</a><br/>
 {% endfor %}
 {% endif %}
 
 {% if chemicals %}
 <h3>Chemicals</h3>
 {% for chemical in chemicals %}
-<a href="{% url 'chemical' chemical.bnf_code %}">{{ chemical.chem_name }} ({{ chemical.bnf_code }})</a><br/>
+<a href="{% url 'chemical' chemical.bnf_code %}{{ extra_url_params }}">{{ chemical.chem_name }} ({{ chemical.bnf_code }})</a><br/>
 {% endfor %}
 {% endif %}
 
 <div id="download-data">
 <h3>Download raw data</h3>
 <p>Download CSVs:
-<a href="{% url 'total_spending' %}?code={{ page_id }}&format=csv">all data on {{ section.name }}</a> or
+<a href="{% url 'spending_by_org' %}?code={{ page_id }}&format=csv{{ extra_api_params }}">all data on {{ section.name }}</a> or
 <a href="{% url 'spending_by_ccg' %}?code={{ page_id }}&format=csv">data on {{ section.name }} by Sub-ICB Location</a>.
 </p>
 </div>
@@ -52,8 +52,9 @@
 {% block extra_js %}
 {% conditional_js 'config' %}
 <script>
-var filename = config.apiHost + "{% url 'total_spending' %}?format=json&code={{ page_id }}";
+var filename = config.apiHost + "{% url 'spending_by_org' %}?format=json&code={{ page_id }}{{ extra_api_params }}";
 var pageType = 'bnf-section';
+var orgName = {% if org %}"{{ org.cased_name }}"{% else %}null{% endif %};
 </script>
 {% conditional_js 'bar-charts' %}
 {% endblock %}
