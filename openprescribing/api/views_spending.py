@@ -297,55 +297,6 @@ def ghost_generics(request, format=None):
 
 
 @api_view(["GET"])
-def total_spending(request, format=None):
-    codes = utils.param_to_list(request.query_params.get("code", []))
-    codes = utils.get_bnf_codes_from_number_str(codes)
-    data = _get_total_prescribing_entries(codes)
-    response = Response(list(data))
-    if request.accepted_renderer.format == "csv":
-        filename = "spending-{}.csv".format("-".join(codes))
-        response["content-disposition"] = "attachment; filename={}".format(filename)
-    return response
-
-
-def _get_total_prescribing_entries(bnf_code_prefixes):
-    """
-    Yields a dict for each date in our data giving the total prescribing values
-    across all practices for all presentations matching the supplied BNF code
-    prefixes
-    """
-    db = get_db()
-    items_matrix, quantity_matrix, actual_cost_matrix = _get_prescribing_for_codes(
-        db, bnf_code_prefixes
-    )
-    # If no data at all was found, return early which results in an empty
-    # iterator
-    if items_matrix is None:
-        return
-    # This will sum over every practice (whether setting 4 or not) which might
-    # not seem like what we want but is what the original API did (it was
-    # powered by the `vw__presentation_summary` table which summed over all
-    # practice types)
-    group_all = get_row_grouper("all_practices")
-    items_matrix = group_all.sum(items_matrix)
-    quantity_matrix = group_all.sum(quantity_matrix)
-    actual_cost_matrix = group_all.sum(actual_cost_matrix)
-    # Yield entries for each date (unlike _get_prescribing_entries below we
-    # return a value for each date even if it's zero as this is what the
-    # original API did)
-    for date, col_offset in sorted(db.date_offsets.items()):
-        # The grouped matrices only ever have one row (which represents the
-        # total over all practices) so we always want row 0 in our index
-        index = (0, col_offset)
-        yield {
-            "items": items_matrix[index],
-            "quantity": quantity_matrix[index],
-            "actual_cost": round(actual_cost_matrix[index], 2),
-            "date": date,
-        }
-
-
-@api_view(["GET"])
 def tariff(request, format=None):
     # This view uses raw SQL as we cannot produce the LEFT OUTER JOIN using the
     # ORM.

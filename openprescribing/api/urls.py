@@ -11,7 +11,7 @@ from . import (
 )
 
 urlpatterns = [
-    path(r"spending/", views_spending.total_spending, name="total_spending"),
+    path(r"spending/", views_spending.spending_by_org, name="total_spending"),
     path(r"bubble/", views_spending.bubble, name="bubble"),
     path(r"tariff/", views_spending.tariff, name="tariff_api"),
     path(

@@ -112,59 +112,55 @@ class TestSpending(ApiTestBase):
     def test_total_spending(self):
         rows = self._get_rows({})
 
-        self.assertEqual(len(rows), 60)
-        self.assertEqual(rows[25]["date"], "2013-04-01")
-        self.assertEqual(rows[25]["actual_cost"], "3.12")
-        self.assertEqual(rows[25]["items"], "2")
-        self.assertEqual(rows[25]["quantity"], "52.0")
-        self.assertEqual(rows[26]["date"], "2013-05-01")
-        self.assertEqual(rows[26]["actual_cost"], "0.0")
-        self.assertEqual(rows[26]["items"], "0")
-        self.assertEqual(rows[26]["quantity"], "0.0")
-        self.assertEqual(rows[44]["date"], "2014-11-01")
-        self.assertEqual(rows[44]["actual_cost"], "230.54")
-        self.assertEqual(rows[44]["items"], "96")
-        self.assertEqual(rows[44]["quantity"], "5143.0")
+        self.assertEqual(len(rows), 7)
+        self.assertEqual(rows[0]["date"], "2013-04-01")
+        self.assertEqual(rows[0]["actual_cost"], "3.12")
+        self.assertEqual(rows[0]["items"], "2")
+        self.assertEqual(rows[0]["quantity"], "52.0")
+        self.assertEqual(rows[5]["date"], "2014-11-01")
+        self.assertEqual(rows[5]["actual_cost"], "230.54")
+        self.assertEqual(rows[5]["items"], "96")
+        self.assertEqual(rows[5]["quantity"], "5143.0")
 
     def test_total_spending_by_bnf_section(self):
         rows = self._get_rows({"code": "2"})
 
-        self.assertEqual(rows[25]["date"], "2013-04-01")
-        self.assertEqual(rows[25]["actual_cost"], "3.12")
-        self.assertEqual(rows[25]["items"], "2")
-        self.assertEqual(rows[25]["quantity"], "52.0")
-        self.assertEqual(rows[44]["date"], "2014-11-01")
-        self.assertEqual(rows[44]["actual_cost"], "230.54")
-        self.assertEqual(rows[44]["items"], "96")
-        self.assertEqual(rows[44]["quantity"], "5143.0")
+        self.assertEqual(rows[0]["date"], "2013-04-01")
+        self.assertEqual(rows[0]["actual_cost"], "3.12")
+        self.assertEqual(rows[0]["items"], "2")
+        self.assertEqual(rows[0]["quantity"], "52.0")
+        self.assertEqual(rows[5]["date"], "2014-11-01")
+        self.assertEqual(rows[5]["actual_cost"], "230.54")
+        self.assertEqual(rows[5]["items"], "96")
+        self.assertEqual(rows[5]["quantity"], "5143.0")
 
     def test_total_spending_by_bnf_section_full_code(self):
         rows = self._get_rows({"code": "02"})
 
-        self.assertEqual(rows[25]["date"], "2013-04-01")
-        self.assertEqual(rows[25]["actual_cost"], "3.12")
-        self.assertEqual(rows[25]["items"], "2")
-        self.assertEqual(rows[25]["quantity"], "52.0")
-        self.assertEqual(rows[44]["date"], "2014-11-01")
-        self.assertEqual(rows[44]["actual_cost"], "230.54")
-        self.assertEqual(rows[44]["items"], "96")
-        self.assertEqual(rows[44]["quantity"], "5143.0")
+        self.assertEqual(rows[0]["date"], "2013-04-01")
+        self.assertEqual(rows[0]["actual_cost"], "3.12")
+        self.assertEqual(rows[0]["items"], "2")
+        self.assertEqual(rows[0]["quantity"], "52.0")
+        self.assertEqual(rows[5]["date"], "2014-11-01")
+        self.assertEqual(rows[5]["actual_cost"], "230.54")
+        self.assertEqual(rows[5]["items"], "96")
+        self.assertEqual(rows[5]["quantity"], "5143.0")
 
     def test_total_spending_by_code(self):
         rows = self._get_rows({"code": "0204000I0"})
 
-        self.assertEqual(rows[44]["date"], "2014-11-01")
-        self.assertEqual(rows[44]["actual_cost"], "176.28")
-        self.assertEqual(rows[44]["items"], "34")
-        self.assertEqual(rows[44]["quantity"], "2355.0")
+        self.assertEqual(rows[0]["date"], "2014-11-01")
+        self.assertEqual(rows[0]["actual_cost"], "176.28")
+        self.assertEqual(rows[0]["items"], "34")
+        self.assertEqual(rows[0]["quantity"], "2355.0")
 
     def test_total_spending_by_codes(self):
         rows = self._get_rows({"code": "0204000I0,0202010B0"})
 
-        self.assertEqual(rows[42]["date"], "2014-09-01")
-        self.assertEqual(rows[42]["actual_cost"], "36.29")
-        self.assertEqual(rows[42]["items"], "40")
-        self.assertEqual(rows[42]["quantity"], "1209.0")
+        self.assertEqual(rows[3]["date"], "2014-09-01")
+        self.assertEqual(rows[3]["actual_cost"], "36.29")
+        self.assertEqual(rows[3]["items"], "40")
+        self.assertEqual(rows[3]["quantity"], "1209.0")
 
 
 class TestSpendingByCCG(ApiTestBase):
