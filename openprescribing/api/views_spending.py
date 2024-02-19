@@ -428,6 +428,10 @@ def spending_by_org(request, format=None, org_type=None):
 
 
 def _get_org_type_and_orgs(org_type, org_ids):
+    # If no org parameters are supplied then we sum over absolutely everything
+    if org_type is None and not org_ids:
+        return "all_practices", [AllEngland()]
+
     # Accept both cases of CCG (better to fix this specific string rather than
     # make the whole API case-insensitive)
     if org_type == "CCG":
@@ -474,6 +478,16 @@ def _get_org_type_and_orgs(org_type, org_ids):
         orgs = orgs.only("code", "name")
 
     return org_type, orgs
+
+
+class AllEngland:
+    """
+    Implements enough of the API of the ORM org models that we can use it in
+    `_get_prescribing_entries` below
+    """
+
+    pk = None
+    name = "england"
 
 
 def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
