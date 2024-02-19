@@ -235,7 +235,7 @@ paramiko-ng==2.8.10
     # via fab-classic
 pillow==10.2.0
     # via matplotlib
-pip-tools==7.3.0
+pip-tools==7.4.0
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
@@ -273,7 +273,9 @@ pyparsing==3.1.1
     #   httplib2
     #   matplotlib
 pyproject-hooks==1.0.0
-    # via build
+    # via
+    #   build
+    #   pip-tools
 pyquery==2.0.0
     # via -r requirements.in
 pysocks==1.7.1
