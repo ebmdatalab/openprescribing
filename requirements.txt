@@ -317,7 +317,7 @@ scipy==1.12.0
     # via -r requirements.in
 seaborn==0.13.2
     # via -r requirements.in
-selenium==4.17.2
+selenium==4.18.1
     # via -r requirements.in
 six==1.16.0
     # via
@@ -353,6 +353,7 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
+    #   urllib3
 watchdog==4.0.0
     # via when-changed
 webencodings==0.5.1
