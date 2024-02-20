@@ -2,9 +2,9 @@
   "name": "Antibiotic stewardship: fluoroquinolone items per 1000 patients",
   "title": "Antibiotic stewardship: fluoroquinolone items per 1000 patients",
   "description": "Number of prescription items for systemic fluoroquinolones per 1000 patients",
-  "numerator_short": "Fluroquinolone items",
+  "numerator_short": "Fluoroquinolone items",
   "denominator_short": "1000 patients",
-  "y_label": "Prescriptions for fluroquinolones per 1000 patients",
+  "y_label": "Prescriptions for fluoroquinolones per 1000 patients",
   "why_it_matters": [
     "The <a href='https://www.gov.uk/drug-safety-update/fluoroquinolone-antibiotics-must-now-only-be-prescribed-when-other-commonly-recommended-antibiotics-are-inappropriate'>MHRA advise</a> ",
     "that due to the risk of disabling and potentially long-lasting or irreversible side effects, systemic fluoroquinolones ",
