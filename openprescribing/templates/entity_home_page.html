@@ -181,7 +181,8 @@
       <h3>Looking for more data?</h3>
       <p>
         Try our <a href="{% url 'analyse' %}">Analyse form</a> which allows you
-        run custom analyses on prescribing data for this {{ entity_type_human }}.
+        run custom analyses on prescribing data for this {{ entity_type_human }}, or view
+        <a href="{% url 'all_bnf' %}?org_type={{ public_entity_type }}&org={{ entity.code }}">high-level prescribing trends</a>.
       </p>
     </div>
   </div>

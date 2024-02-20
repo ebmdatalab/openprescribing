@@ -10,14 +10,14 @@
 <h1>{{ chemical.chem_name }} ({{ chemical.bnf_code }})</h1>
 
 <p class="lead">Part of chapter
-<a href="{% url 'bnf_section' bnf_chapter.bnf_id %}">{{ bnf_chapter.number_str }} {{ bnf_chapter.name }}</a>, section <a href="{% url 'bnf_section' bnf_section.bnf_id %}">{{ bnf_section.number_str }} {{ bnf_section.name }}</a>{% if bnf_para %}, paragraph
-<a href="{% url 'bnf_section' bnf_para.bnf_id %}">{{ bnf_para.number_str }} {{ bnf_para.name }}</a>
+<a href="{% url 'bnf_section' bnf_chapter.bnf_id %}{{ extra_url_params }}">{{ bnf_chapter.number_str }} {{ bnf_chapter.name }}</a>, section <a href="{% url 'bnf_section' bnf_section.bnf_id %}{{ extra_url_params }}">{{ bnf_section.number_str }} {{ bnf_section.name }}</a>{% if bnf_para %}, paragraph
+<a href="{% url 'bnf_section' bnf_para.bnf_id %}{{ extra_url_params }}">{{ bnf_para.number_str }} {{ bnf_para.name }}</a>
 {% endif %}
 </p>
 
 <hr/>
 
-<p>High-level prescribing trends for {{ chemical.chem_name }} (BNF code {{ chemical.bnf_code }}) across all GP practices in NHS England for the last five years. You can see <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={% if bnf_para %}{{ bnf_para.number_str }}{% else %}{{ bnf_section.number_str }}{% endif %}">which Sub-ICB Locations prescribe most of this chemical</a> relative to its class, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
+<p>High-level prescribing trends for {{ chemical.chem_name }} (BNF code {{ chemical.bnf_code }}) across {% if org %}{{ org.cased_name }}{% else %}all GP practices in NHS England{% endif %} for the last five years. You can see <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={% if bnf_para %}{{ bnf_para.number_str }}{% else %}{{ bnf_section.number_str }}{% endif %}">which Sub-ICB Locations prescribe most of this chemical</a> relative to its class, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
 
 <p><a href="{% url 'dmd_search' %}?q={{ chemical.bnf_code }}">View all matching dm+d items.</a></p>
 
@@ -29,7 +29,7 @@
 <h3>Download raw data</h3>
 <p>
 Download CSV:
-<a href="{% url 'total_spending' %}?code={{ page_id }}&format=csv">all data on {{ chemical.chem_name }}</a> or
+<a href="{% url 'spending_by_org' %}?code={{ page_id }}&format=csv{{ extra_api_params }}">all data on {{ chemical.chem_name }}</a> or
 <a href="{% url 'spending_by_ccg' %}?code={{ page_id }}&format=csv">data on {{ chemical.chem_name }} by Sub-ICB Location</a>.
 </p>
 </div>
@@ -39,8 +39,9 @@ Download CSV:
 {% block extra_js %}
 {% conditional_js 'config' %}
 <script>
-var filename = config.apiHost + "{% url 'total_spending' %}?format=json&code={{ page_id }}";
+var filename = config.apiHost + "{% url 'spending_by_org' %}?format=json&code={{ page_id }}{{ extra_api_params }}";
 var pageType = 'chemical';
+var orgName = {% if org %}"{{ org.cased_name }}"{% else %}null{% endif %};
 </script>
 {% conditional_js 'bar-charts' %}
 {% endblock %}

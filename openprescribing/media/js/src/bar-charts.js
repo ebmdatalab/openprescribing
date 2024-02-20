@@ -30,7 +30,9 @@ var barChart = {
     getChartTitle: function(graphType) {
         var title = 'Total ';
         title += (graphType === 'actual_cost') ? 'spending' : 'items';
-        if ((pageType !== 'ccg') && (pageType !== 'practice')) {
+        if (window.orgName) {
+          title += " across " + orgName;
+        } else if ((pageType !== 'ccg') && (pageType !== 'practice')) {
             title += ' across all practices in England';
         }
         return title;

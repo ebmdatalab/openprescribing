@@ -16,7 +16,7 @@ from frontend.price_per_unit.savings import (
 )
 from matrixstore.db import get_db, get_row_grouper
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import APIException, NotFound
+from rest_framework.exceptions import APIException, NotFound, ValidationError
 from rest_framework.response import Response
 
 from . import view_utils as utils
@@ -297,55 +297,6 @@ def ghost_generics(request, format=None):
 
 
 @api_view(["GET"])
-def total_spending(request, format=None):
-    codes = utils.param_to_list(request.query_params.get("code", []))
-    codes = utils.get_bnf_codes_from_number_str(codes)
-    data = _get_total_prescribing_entries(codes)
-    response = Response(list(data))
-    if request.accepted_renderer.format == "csv":
-        filename = "spending-{}.csv".format("-".join(codes))
-        response["content-disposition"] = "attachment; filename={}".format(filename)
-    return response
-
-
-def _get_total_prescribing_entries(bnf_code_prefixes):
-    """
-    Yields a dict for each date in our data giving the total prescribing values
-    across all practices for all presentations matching the supplied BNF code
-    prefixes
-    """
-    db = get_db()
-    items_matrix, quantity_matrix, actual_cost_matrix = _get_prescribing_for_codes(
-        db, bnf_code_prefixes
-    )
-    # If no data at all was found, return early which results in an empty
-    # iterator
-    if items_matrix is None:
-        return
-    # This will sum over every practice (whether setting 4 or not) which might
-    # not seem like what we want but is what the original API did (it was
-    # powered by the `vw__presentation_summary` table which summed over all
-    # practice types)
-    group_all = get_row_grouper("all_practices")
-    items_matrix = group_all.sum(items_matrix)
-    quantity_matrix = group_all.sum(quantity_matrix)
-    actual_cost_matrix = group_all.sum(actual_cost_matrix)
-    # Yield entries for each date (unlike _get_prescribing_entries below we
-    # return a value for each date even if it's zero as this is what the
-    # original API did)
-    for date, col_offset in sorted(db.date_offsets.items()):
-        # The grouped matrices only ever have one row (which represents the
-        # total over all practices) so we always want row 0 in our index
-        index = (0, col_offset)
-        yield {
-            "items": items_matrix[index],
-            "quantity": quantity_matrix[index],
-            "actual_cost": round(actual_cost_matrix[index], 2),
-            "date": date,
-        }
-
-
-@api_view(["GET"])
 def tariff(request, format=None):
     # This view uses raw SQL as we cannot produce the LEFT OUTER JOIN using the
     # ORM.
@@ -407,6 +358,31 @@ def spending_by_org(request, format=None, org_type=None):
     org_type = request.query_params.get("org_type", org_type)
     date = request.query_params.get("date", None)
 
+    org_type, orgs = _get_org_type_and_orgs(org_type, org_ids)
+
+    # Due to the number of practices we only return data for all practices
+    # if a single date is specified
+    if org_type == "practice" and not date and not org_ids:
+        return Response(
+            "Error: You must supply either a list of practice IDs or a date "
+            "parameter, e.g. date=2015-04-01",
+            status=400,
+        )
+
+    data = list(_get_prescribing_entries(codes, orgs, org_type, date=date))
+
+    response = Response(data)
+    if request.accepted_renderer.format == "csv":
+        filename = "spending-by-{}-{}.csv".format(org_type, "-".join(codes))
+        response["content-disposition"] = "attachment; filename={}".format(filename)
+    return response
+
+
+def _get_org_type_and_orgs(org_type, org_ids):
+    # If no org parameters are supplied then we sum over absolutely everything
+    if org_type is None and not org_ids:
+        return "all_practices", [AllEngland()]
+
     # Accept both cases of CCG (better to fix this specific string rather than
     # make the whole API case-insensitive)
     if org_type == "CCG":
@@ -421,14 +397,6 @@ def spending_by_org(request, format=None, org_type=None):
     if org_type == "practice":
         # Translate any CCG codes into the codes of all practices in that CCG
         org_ids = utils.get_practice_ids_from_org(org_ids)
-        # Due to the number of practices we only return data for all practices
-        # if a single date is specified
-        if not date and not org_ids:
-            return Response(
-                "Error: You must supply either a list of practice IDs or a date "
-                "parameter, e.g. date=2015-04-01",
-                status=400,
-            )
 
     if org_type == "pcn":
         extra_ids = Practice.objects.filter(ccg_id__in=org_ids).values_list(
@@ -447,7 +415,7 @@ def spending_by_org(request, format=None, org_type=None):
     elif org_type == "regional_team":
         orgs = RegionalTeam.objects.all()
     else:
-        return Response("Error: unrecognised org_type parameter", status=400)
+        raise ValidationError(detail="Error: unrecognised org_type parameter")
 
     # Filter and sort
     if org_ids:
@@ -460,13 +428,17 @@ def spending_by_org(request, format=None, org_type=None):
     if org_type != "practice":
         orgs = orgs.only("code", "name")
 
-    data = list(_get_prescribing_entries(codes, orgs, org_type, date=date))
+    return org_type, orgs
 
-    response = Response(data)
-    if request.accepted_renderer.format == "csv":
-        filename = "spending-by-{}-{}.csv".format(org_type, "-".join(codes))
-        response["content-disposition"] = "attachment; filename={}".format(filename)
-    return response
+
+class AllEngland:
+    """
+    Implements enough of the API of the ORM org models that we can use it in
+    `_get_prescribing_entries` below
+    """
+
+    pk = None
+    name = "england"
 
 
 def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):

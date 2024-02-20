@@ -21,6 +21,7 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import get_resolver, reverse
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from dmd.models import VMP
 from frontend.forms import (
@@ -93,7 +94,7 @@ def first_or_none(lst):
 ##################################################
 def all_bnf(request):
     sections = Section.objects.filter(is_current=True)
-    context = {"sections": sections}
+    context = {"sections": sections, **get_org_context(request.GET)}
     return render(request, "all_bnf.html", context)
 
 
@@ -124,6 +125,7 @@ def bnf_section(request, section_id):
         "subsections": subsections,
         "chemicals": chemicals,
         "page_id": section_id,
+        **get_org_context(request.GET),
     }
     return render(request, "bnf_section.html", context)
 
@@ -135,7 +137,7 @@ def bnf_section(request, section_id):
 
 def all_chemicals(request):
     chemicals = Chemical.objects.filter(is_current=True).order_by("bnf_code")
-    context = {"chemicals": chemicals}
+    context = {"chemicals": chemicals, **get_org_context(request.GET)}
     return render(request, "all_chemicals.html", context)
 
 
@@ -156,8 +158,27 @@ def chemical(request, bnf_code):
         "bnf_chapter": bnf_chapter,
         "bnf_section": bnf_section,
         "bnf_para": bnf_para,
+        **get_org_context(request.GET),
     }
     return render(request, "chemical.html", context)
+
+
+def get_org_context(params):
+    org_type = params.get("org_type", "")
+    org_code = params.get("org", "")
+    if not org_type or not org_code:
+        return {
+            "org": None,
+            "extra_url_params": "",
+            "extra_api_params": "",
+        }
+
+    org = _get_entity(org_type, org_code)
+    return {
+        "org": org,
+        "extra_url_params": format_html("?org_type={}&org={}", org_type, org.code),
+        "extra_api_params": format_html("&org_type={}&org={}", org_type, org.code),
+    }
 
 
 ##################################################
@@ -1392,6 +1413,9 @@ def _home_page_context_for_entity(request, entity):
         "entity": entity,
         "entity_type": entity_type,
         "entity_type_human": _entity_type_human(entity_type),
+        "public_entity_type": {"ccg": "sicbl", "stp": "icb"}.get(
+            entity_type, entity_type
+        ),
         "has_prescribing": org_has_prescribing(entity_type, entity.code),
     }
     if not context["has_prescribing"]:
@@ -1697,9 +1721,9 @@ def _get_entity(entity_type, entity_code):
         return get_object_or_404(Practice, code=entity_code)
     elif entity_type == "pcn":
         return get_object_or_404(PCN, code=entity_code)
-    elif entity_type == "ccg":
+    elif entity_type == "ccg" or entity_type == "sicbl":
         return get_object_or_404(PCT, code=entity_code)
-    elif entity_type == "stp":
+    elif entity_type == "stp" or entity_type == "icb":
         return get_object_or_404(STP, code=entity_code)
     elif entity_type == "regional_team":
         return get_object_or_404(RegionalTeam, code=entity_code)

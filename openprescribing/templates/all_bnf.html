@@ -19,7 +19,7 @@
 <li>
 {% if s.bnf_section %}&nbsp;&nbsp;{% endif %}
 {% if s.bnf_para %}&nbsp;&nbsp;{% endif %}
-<a href="{% url 'bnf_section' s.bnf_id %}">{{ s.number_str }}: {{ s.name }}</a>
+<a href="{% url 'bnf_section' s.bnf_id %}{{ extra_url_params }}">{{ s.number_str }}: {{ s.name }}</a>
 </li>
 {% endfor %}
 </ul>
@@ -35,7 +35,7 @@ var inputSearch = '#search',
 var section = {
     name: '{{ s.name }}',
     code: '{{ s.number_str }}',
-    url: "{% url 'bnf_section' s.bnf_id %}"
+    url: "{% url 'bnf_section' s.bnf_id %}{{ extra_url_params  }}"
 };
 allItems.push(section);
 {% endfor %}
@@ -43,8 +43,9 @@ allItems.push(section);
 {% conditional_js 'list-filter' %}
 {% conditional_js 'config' %}
 <script>
-var filename = config.apiHost + "{% url 'total_spending' %}?format=json";
+var filename = config.apiHost + "{% url 'spending_by_org' %}?format=json{{ extra_api_params }}";
 var pageType = 'bnf-section';
+var orgName = {% if org %}"{{ org.cased_name }}"{% else %}null{% endif %};
 </script>
 {% conditional_js 'bar-charts' %}
 {% endblock %}
