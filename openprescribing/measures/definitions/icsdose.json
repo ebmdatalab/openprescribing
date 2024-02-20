@@ -29,27 +29,26 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "bnf_items",
-  "numerator_bnf_codes_filter": [
-    "0302000C0%AC # Beclomet Diprop_Inha 250mcg (200D) (brands and generic)",
-    "0302000C0%AU # Beclomet Diprop_Inha B/A 250mcg (200 D) (brands and generic)",
-    "0302000C0%BK # Beclomet Diprop_Pdr For Inh 250mcg(100 D (brands and generic)",
-    "0302000C0%BW # Beclomet Diprop_Inha 250mcg (200 D) CFF (brands and generic)",
-    "0302000C0%BZ # Beclomet/Formoterol_Inh 200/6 (120D) CFF (brands and generic)",
-    "0302000C0%CA # Beclomet/Formoterol_Inh 200/6 (120D) Dry (brands and generic)",
-    "0302000K0%AH # Budesonide_Pdr For Inh 400mcg (50 D) (brands and generic)",
-    "0302000K0%AY # Budesonide_Pdr For Inh 400mcg (100 D) (brands and generic)",
-    "0302000K0%AU # Budesonide/Formoterol_InhaB/A 400/12(60D (brands and generic)",
-    "0302000N0%AF # Fluticasone Prop_Pdr Inh 250mcg Disk Ref (brands and generic)",
-    "0302000N0%AP # Fluticasone Prop_Pdr Inh 500mcg Disk+Dev (brands and generic)",
-    "0302000N0%AU # Fluticasone Prop_Pdr For Inh 500mcg(60D) (brands and generic)",
-    "0302000N0%AZ # Fluticasone/Salmeterol_Inh 500/50mcg 60D (brands and generic)",
-    "0302000N0%BC # ...",
-    "0302000N0%BD # ...",
-    "0302000N0%BG # Fluticasone/Salmeterol_Inh 250/25mcg120D (brands and generic)",
-    "0302000N0%BK # Fluticasone/Formoterol_Inh 250/10mcg120D (brands and generic)",
-    "0302000U0%AB # Ciclesonide_Inh 160mcg (120 D) CFF (brands and generic)",
-    "0302000V0%AA # Fluticasone/Vilanterol_Inha 184/22mcg30D (brands and generic)"
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(p.items) AS numerator"
+  ],
+ "numerator_from": [
+  "{hscic}.normalised_prescribing p ",
+  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
+  ],
+  "numerator_where": [
+  "(vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=250) -- 116575004 - Beclometasone dipropionate - no extra fine inhalers meet strong definition \n",
+  "OR (vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=200 AND (p.bnf_code LIKE '0302000C0%CA' OR p.bnf_code LIKE '0302000C0%BZ')) -- 116575004 - Beclometasone dipropionate + Formeterol extrafine - all combo currently extrafine \n",
+  "OR (vpi.ing = 395726003 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=320) -- 395726003 - Budesonide \n",
+  "OR (vpi.ing = 396064000 AND descr = 'pressurizedinhalation.inhalation' AND strnt_nmrtr_val>=250) -- 396064000 - Fluticasone propionate \n",
+  "OR (vpi.ing = 396064000 AND descr = 'powderinhalation.inhalation' AND strnt_nmrtr_val>=500) -- 396064000 - Fluticasone propionate \n",
+  "OR (vpi.ing = 395802006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>400) -- 395802006 - Mometasone furoate \n",
+  "OR (vpi.ing = 417420004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>160) -- 417420004 - Ciclesonide \n",
+  "OR (vpi.ing = 426409006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=184) -- 426409006 - Fluticasone furoate"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
@@ -62,23 +61,20 @@
     "0301011AB # BeclometDiprop/Formoterol/Glycopyrronium",
     "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
     "~0302000N0%AW # Fluticasone Prop_Inh Soln 2mg/2ml Ud (brands and generic)"
-  ],  
- "date_reviewed": [
-    "2019-12-02"
+  ], 
+  "date_reviewed": [
+    "2024-02-20"
   ],
   "next_review": [
-    "2020-06-02"
+    ""
   ],
   "authored_by": [
-    "richard.croker@phc.ox.ac.uk"
+    "christopher.wood@phc.ox.ac.uk"
   ],
   "checked_by": [
-    "brian.mackenna@phc.ox.ac.uk"
+    ""
   ],
   "measure_complexity": [
     "low"
-  ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/ICS_code_differences/ICS_code_differences.ipynb"
   ]
 }
