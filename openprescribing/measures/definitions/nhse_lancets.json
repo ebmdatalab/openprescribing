@@ -47,7 +47,8 @@
     "'21010900725', # CareSens lancets 0.36mm/28gauge (Spirit Healthcare Ltd) \n",
     "'21010900563', # TRUEplus lancets 0.32mm/30gauge (Trividia Health UK Ltd) \n",
     "'21010900512', # TRUEplus lancets 0.36mm/28gauge (Trividia Health UK Ltd) \n",
-    "'21010900564')) # TRUEplus lancets 0.195mm/33gauge (Trividia Health UK Ltd) + PLACEHOLDER agamatric comfort twist? "
+    "'21010900564', # TRUEplus lancets 0.195mm/33gauge (Trividia Health UK Ltd) \n",
+    "'21012600193')) # AgaMatrix Comfort Twist lancets 0.32mm/30gauge (AgaMatrix Europe Ltd)"
   ],
   "denominator_type": "custom",
   "denominator_columns": "SUM(items) AS denominator",
