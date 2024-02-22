@@ -153,11 +153,11 @@ googleapis-common-protos==1.62.0
     #   grpcio-status
 graphviz==0.20.1
     # via -r requirements.in
-grpcio==1.60.1
+grpcio==1.62.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio-status==1.60.1
+grpcio-status==1.62.0
     # via google-api-core
 gunicorn==21.2.0
     # via -r requirements.in
