@@ -107,7 +107,7 @@ google-api-core[grpc]==2.15.0
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.118.0
+google-api-python-client==2.119.0
     # via -r requirements.in
 google-auth==2.28.1
     # via
@@ -353,7 +353,6 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
-    #   urllib3
 watchdog==4.0.0
     # via when-changed
 webencodings==0.5.1
