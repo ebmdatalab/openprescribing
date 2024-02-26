@@ -36,7 +36,7 @@ click==8.1.7
     # via pip-tools
 contourpy==1.2.0
     # via matplotlib
-coverage==7.4.2
+coverage==7.4.3
     # via -r requirements.in
 crispy-bootstrap3==2024.1
     # via -r requirements.in
@@ -353,7 +353,6 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
-    #   urllib3
 watchdog==4.0.0
     # via when-changed
 webencodings==0.5.1
