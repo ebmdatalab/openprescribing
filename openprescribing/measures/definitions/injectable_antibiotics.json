@@ -1,11 +1,7 @@
 {
   "name": "Antibiotic stewardship: Injectable preparations for the treatment of infection",
-  "title": [
-    "Antibiotic stewardship: Injectable preparations for the treatment of infection"
-  ],
-  "description": [
-    "Number of prescription items for all injectable medicines in BNF Chapter 5 (infections) excluding colistimethate sodium per 1000 patients"
-  ],
+  "title": "Antibiotic stewardship: Injectable preparations for the treatment of infection",
+  "description": "Number of prescription items for all injectable medicines in BNF Chapter 5 (infections) excluding colistimethate sodium per 1000 patients",
   "numerator_short": "Items",
   "denominator_short": "1000 Patients",
   "why_it_matters": [
@@ -16,8 +12,7 @@
     "sodium</a>, as the injection is more commonly inhaled for the treatment of infections in people with cystic fibrosis.</p>",
     "<p>The prescribing of injectable preparations may vary substantially throughout the country depending on the availability of local ",
     "services such as Antibiotic Outpatient Parenteral Therapy (OPAT), where patients receive injectable antibiotics in their own home.  ",
-    "Nevertheless it is important to audit and review the appropriateness of all treatments to support good antimicrobial stewardship.</p>",
-    "<p><strong>Please note that this is an experimental measure. We would be grateful for any feedback at <a href='mailto:bennett@phc.ox.ac.uk?Subject=Injectable%20Antibiotics%20Measure'>bennett@phc.ox.ac.uk</a></strong>.</p>"
+    "Nevertheless it is important to audit and review the appropriateness of all treatments to support good antimicrobial stewardship.</p>"
   ],
   "tags": [
     "antimicrobial",
@@ -39,22 +34,12 @@
     "~0501070I0 # colistimethate sodium"
   ],
   "denominator_type": "list_size",
-  "authored_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2020-03-24"
-  ],
-  "next_review": [
-    "2021-03-24"
-  ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/antibiotics-non-oral-routes-notebook/blob/master/notebooks/injections.ipynb"
-  ],
-  "measure_complexity": [
-    "low"
-  ]
+  "authored_by": "brian.mackenna@phc.ox.ac.uk",
+  "checked_by": "andrew.brown@phc.ox.ac.uk",
+  "date_reviewed": "2024-02-06",
+  "next_review": "2026-02-06",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code+dmd",
+  "measure_notebook_url": "https://github.com/ebmdatalab/antibiotics-non-oral-routes-notebook/blob/master/notebooks/injections.ipynb",
+  "radar_exclude": true
 }
