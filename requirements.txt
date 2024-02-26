@@ -223,7 +223,7 @@ packaging==23.2
     #   gunicorn
     #   matplotlib
     #   pandas-gbq
-pandas==2.2.0
+pandas==2.2.1
     # via
     #   -r requirements.in
     #   db-dtypes
@@ -353,7 +353,6 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
-    #   urllib3
 watchdog==4.0.0
     # via when-changed
 webencodings==0.5.1
