@@ -20,7 +20,7 @@ beautifulsoup4==4.12.3
     # via -r requirements.in
 build==1.0.3
     # via pip-tools
-cachetools==5.3.2
+cachetools==5.3.3
     # via
     #   google-auth
     #   premailer
@@ -353,7 +353,6 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
-    #   urllib3
 watchdog==4.0.0
     # via when-changed
 webencodings==0.5.1
