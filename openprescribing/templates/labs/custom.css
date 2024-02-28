@@ -1,3 +1,30 @@
-h1 {
-        color: red;
+html {
+  font-size: 16px;
+}
+
+#notebook {
+  font-size: 1rem;
+  line-height: 1.5;
+  padding-top: 0.1rem !important;
+
+  #notebook-container {
+    box-shadow: none;
+    font-size: 1rem;
+    line-height: 1.5;
+    max-width: 60rem;
+    padding: 0;
+  }
+
+  h1 {
+    margin-top: 0;
+  }
+
+  div.cell {
+    border-width: 0;
+    padding: 0;
+
+    &:before {
+      display: none;
+    }
+  }
 }
