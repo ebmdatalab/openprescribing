@@ -282,7 +282,7 @@ pysocks==1.7.1
     # via urllib3
 pysqlite3-binary==0.5.2.post3
     # via -r requirements.in
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -r requirements.in
     #   google-cloud-bigquery
@@ -353,7 +353,6 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
-    #   urllib3
 watchdog==4.0.0
     # via when-changed
 webencodings==0.5.1
