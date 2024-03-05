@@ -70,8 +70,8 @@
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "christopher.wood@phc.ox.ac.uk",
-  "date_reviewed": "2023-09-12",
-  "next_review": "2024-09-12",
+  "date_reviewed": "2024-03-05",
+  "next_review": "2025-03-05",
   "measure_complexity": "medium",
   "measure_type": "bnf_code",
   "radar_exclude": false
