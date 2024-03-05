@@ -163,7 +163,7 @@ gunicorn==21.2.0
     # via -r requirements.in
 h11==0.14.0
     # via wsproto
-html2text==2020.1.16
+html2text==2024.2.26
     # via -r requirements.in
 html5lib==1.1
     # via -r requirements.in
