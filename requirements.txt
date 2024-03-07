@@ -268,7 +268,7 @@ pydata-google-auth==1.8.2
     # via pandas-gbq
 pyflakes==3.2.0
     # via flake8
-pyparsing==3.1.1
+pyparsing==3.1.2
     # via
     #   httplib2
     #   matplotlib
