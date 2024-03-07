@@ -235,7 +235,7 @@ paramiko-ng==2.8.10
     # via fab-classic
 pillow==10.2.0
     # via matplotlib
-pip-tools==7.4.0
+pip-tools==7.4.1
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
