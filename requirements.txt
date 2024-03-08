@@ -130,9 +130,7 @@ google-cloud-bigquery==3.18.0
     #   -r requirements.in
     #   pandas-gbq
 google-cloud-bigquery-storage==2.24.0
-    # via
-    #   -r requirements.in
-    #   pandas-gbq
+    # via -r requirements.in
 google-cloud-core==2.4.1
     # via
     #   google-cloud-bigquery
@@ -229,7 +227,7 @@ pandas==2.2.1
     #   db-dtypes
     #   pandas-gbq
     #   seaborn
-pandas-gbq==0.21.0
+pandas-gbq==0.22.0
     # via -r requirements.in
 paramiko-ng==2.8.10
     # via fab-classic
