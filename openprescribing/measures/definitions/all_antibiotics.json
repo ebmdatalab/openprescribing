@@ -1,14 +1,13 @@
 {
   "name": "Antibiotic stewardship: volume of antibiotic prescribing",
-  "title": [
-    "Antibiotic stewardship: volume of antibiotic prescribing"
-  ],
+  "title": "Antibiotic stewardship: volume of antibiotic prescribing",
   "description": [
     "Number of prescription items for all oral antibacterial drugs (BNF 5.1, ",
     "excluding antituberculosis drugs and antileprotic drugs) per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU."
   ],
   "numerator_short": "Oral antibacterial items",
-  "denominator_short": "STAR-PUs",
+  "denominator_short": "Antibacterial item-based STAR-PUs",
+  "y_label": "Oral antibiotic items per antibacterial item-based STAR-PU",
   "why_it_matters": [
     "Antimicrobial resistance poses a significant threat to public health, ",
     "especially because antimicrobials underpin routine medical practice. </a>",
@@ -42,5 +41,6 @@
   "date_reviewed": "05/02/2024",
   "next_review": "05/02/2026",
   "measure_complexity": "low",
+  "measure_type": "custom",
   "radar_exclude": false
 }
