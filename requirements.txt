@@ -101,6 +101,7 @@ fonttools==4.49.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
+    #   google-api-core
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
@@ -115,6 +116,7 @@ google-auth==2.28.2
     #   google-api-python-client
     #   google-auth-httplib2
     #   google-auth-oauthlib
+    #   google-cloud-bigquery
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
@@ -125,7 +127,7 @@ google-auth-oauthlib==1.2.0
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-cloud-bigquery==3.18.0
+google-cloud-bigquery==3.19.0
     # via
     #   -r requirements.in
     #   pandas-gbq
