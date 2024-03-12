@@ -13,8 +13,8 @@
   "y_label": "Co-amoxiclav, cephalosporin or quinolone prescriptions per STAR-PU",
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
-    "However they should [only be used where narrow spectrum antibiotics are not likely to be effective, as they can increase the risk ",
-    "of *Clostridioides difficile*, MRSA and drug-resistant bacteria developing](https://www.england.nhs.uk/long-read/infection-prevention-and-control-education-framework/).",
+    "However they should <a href='https://www.england.nhs.uk/long-read/infection-prevention-and-control-education-framework/'>only be used where narrow spectrum antibiotics are not likely to be effective</a>,",
+    "as they can increase the risk of <em>Clostridioides difficile</em>, MRSA and other drug-resistant bacteria developing. ",
     "This measure shows how many broad spectrum antibiotics are being prescribed locally."
   ],
   "tags": [
