@@ -9,9 +9,11 @@
   "denominator_short": "Antibacterial item-based STAR-PUs",
   "y_label": "Oral antibiotic items per antibacterial item-based STAR-PU",
   "why_it_matters": [
-    "Antimicrobial resistance poses a significant threat to public health, ",
-    "especially because antimicrobials underpin routine medical practice. </a>",
-    "It is important that we don't overuse antibiotics. This measure shows how many are being prescribed locally."
+    "Antibiotics play a critical role in modern medicines, as both a treatment of common infections and ",
+    "for the prevention of infections, for example in patients undergoing surgery or chemotherapy.  ",
+    "[Antimicrobial resistance](https://www.england.nhs.uk/ourwork/prevention/antimicrobial-resistance-amr/) therefore poses a significant threat to public health. It is important that ",
+    "we don't overuse antibiotics to slow the development of resistance. ",
+    "This measure shows how many are being prescribed locally."
   ],
   "tags": [
     "antimicrobial",
