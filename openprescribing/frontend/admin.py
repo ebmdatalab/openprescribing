@@ -1,5 +1,8 @@
+import base64
+import hmac
 import json
 
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db import connection
@@ -200,7 +203,7 @@ def get_all_bookmark_details():
         if org_is_closed(org):
             continue
         yield {
-            "email": redact_email_address(bookmark.user.email),
+            "email": hash_email_username(bookmark.user.email),
             "created_at": bookmark.created_at.date(),
             "alert_type": bookmark_type,
             "org_type": org.HUMAN_NAME if org else "National",
@@ -209,16 +212,13 @@ def get_all_bookmark_details():
         }
 
 
-def redact_email_address(email):
+def hash_email_username(email):
     user, _, domain = email.rpartition("@")
-    if len(user) == 1:
-        user = "*"
-    elif len(user) == 2:
-        user = user[0] + "*"
-    else:
-        user = list(user)
-        user[1:-1] = "*" * (len(user) - 2)
-    return "".join([*user, _, domain])
+    digest = hmac.digest(
+        settings.SECRET_KEY.encode("utf8"), user.encode("utf8"), "sha1"
+    )
+    hashed_user = base64.urlsafe_b64encode(digest).decode("ascii")[:16]
+    return f"{hashed_user}@{domain}"
 
 
 def org_is_closed(org):
