@@ -357,7 +357,7 @@ watchdog==4.0.0
     # via when-changed
 webencodings==0.5.1
     # via html5lib
-wheel==0.42.0
+wheel==0.43.0
     # via pip-tools
 when-changed==0.3.0
     # via -r requirements.in
