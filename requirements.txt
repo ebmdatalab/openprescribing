@@ -99,7 +99,6 @@ fonttools==4.50.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
-    #   google-api-core
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
@@ -248,7 +247,7 @@ protobuf==4.25.3
     #   proto-plus
 psycopg2-binary==2.9.9
     # via -r requirements.in
-pyarrow==15.0.1
+pyarrow==15.0.2
     # via
     #   db-dtypes
     #   pandas-gbq
