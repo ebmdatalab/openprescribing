@@ -199,16 +199,29 @@ class UserWithProfile(UserAdmin):
 
 def get_all_bookmark_details():
     for bookmark_type, bookmark in get_all_bookmarks():
-        org = bookmark.get_org()
-        if org_is_closed(org):
-            continue
+        if bookmark_type == "search":
+            org_type = ""
+            org_code = ""
+            org_name = bookmark.name
+        else:
+            org = bookmark.get_org()
+            if org_is_closed(org):
+                continue
+            if org:
+                org_type = org.HUMAN_NAME
+                org_code = org.code
+                org_name = org.cased_name
+            else:
+                org_type = "National"
+                org_code = "England"
+                org_name = "All England"
         yield {
             "email": hash_email_username(bookmark.user.email),
             "created_at": bookmark.created_at.date(),
             "alert_type": bookmark_type,
-            "org_type": org.HUMAN_NAME if org else "National",
-            "org_id": org.code if org else "England",
-            "org_name": org.cased_name if org else "All England",
+            "org_type": org_type,
+            "org_id": org_code,
+            "org_name": org_name,
         }
 
 
@@ -251,6 +264,10 @@ def get_all_bookmarks():
     )
     for bookmark in ncso_bookmarks:
         yield "price_concessions", bookmark
+
+    search_bookmarks = SearchBookmark.objects.select_related("user")
+    for bookmark in search_bookmarks:
+        yield "search", bookmark
 
 
 class MailLogInline(admin.TabularInline):
