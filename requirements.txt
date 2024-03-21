@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-asgiref==3.7.2
+asgiref==3.8.0
     # via
     #   django
     #   django-cors-headers
@@ -99,7 +99,6 @@ fonttools==4.50.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
-    #   google-api-core
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
