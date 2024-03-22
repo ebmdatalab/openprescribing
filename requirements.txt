@@ -99,7 +99,6 @@ fonttools==4.50.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
-    #   google-api-core
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
@@ -149,7 +148,7 @@ googleapis-common-protos==1.63.0
     # via
     #   google-api-core
     #   grpcio-status
-graphviz==0.20.2
+graphviz==0.20.3
     # via -r requirements.in
 grpcio==1.62.1
     # via
