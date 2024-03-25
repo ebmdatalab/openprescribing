@@ -99,7 +99,6 @@ fonttools==4.50.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
-    #   google-api-core
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
@@ -306,7 +305,7 @@ requests[security]==2.31.0
     #   requests-oauthlib
 requests-futures==1.0.1
     # via -r requirements.in
-requests-oauthlib==1.4.0
+requests-oauthlib==2.0.0
     # via google-auth-oauthlib
 rsa==4.9
     # via google-auth
