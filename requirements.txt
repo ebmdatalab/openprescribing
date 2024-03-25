@@ -83,7 +83,7 @@ django-dotenv==1.4.2
     # via -r requirements.in
 django-extensions==3.2.3
     # via -r requirements.in
-djangorestframework==3.15.0
+djangorestframework==3.15.1
     # via
     #   -r requirements.in
     #   djangorestframework-csv
@@ -99,7 +99,6 @@ fonttools==4.50.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
-    #   google-api-core
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
