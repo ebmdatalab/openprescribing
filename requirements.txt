@@ -259,7 +259,7 @@ pyasn1-modules==0.4.0
     # via google-auth
 pycodestyle==2.11.1
     # via flake8
-pycparser==2.21
+pycparser==2.22
     # via cffi
 pydata-google-auth==1.8.2
     # via pandas-gbq
