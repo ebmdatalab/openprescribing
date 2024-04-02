@@ -251,7 +251,7 @@ pyarrow==15.0.2
     # via
     #   db-dtypes
     #   pandas-gbq
-pyasn1==0.5.1
+pyasn1==0.6.0
     # via
     #   pyasn1-modules
     #   rsa
