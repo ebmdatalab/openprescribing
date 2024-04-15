@@ -3,14 +3,14 @@
   "title": [
     "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones:",
     "Number of prescription items for co-amoxiclav,",
-    "cephalosporins and quinolones per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU"
+    "cephalosporins and quinolones per 1000 patients"
   ],
   "description": [
-    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones per item-based STAR-PU "
+    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones per 1000 patients"
   ],
   "numerator_short": "Selected items",
-  "denominator_short": "STAR-PUs",
-  "y_label": "Co-amoxiclav, cephalosporin or quinolone prescriptions per STAR-PU",
+  "denominator_short": "1000 patients",
+  "y_label": "Co-amoxiclav, cephalosporin or quinolone prescriptions per 1000 patients",
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
     "However they should <a href='https://www.england.nhs.uk/long-read/infection-prevention-and-control-education-framework/'>only be used where narrow spectrum antibiotics are not likely to be effective</a>,",
@@ -38,7 +38,7 @@
     "0501021 # Cephalosporins",
     "050112 # Quinolones"
   ],
-  "denominator_type": "star_pu_antibiotics",
+  "denominator_type": "list_size",
   "no_analyse_url": false,
   "authored_by": "christopher.wood@phc.ox.ac.uk",
   "checked_by": "andrew.brown@phc.ox.ac.uk",
