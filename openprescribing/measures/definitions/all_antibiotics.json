@@ -3,7 +3,7 @@
   "title": "Antibiotic stewardship: volume of antibiotic prescribing",
   "description": [
     "Number of prescription items for all oral antibacterial drugs (BNF 5.1, ",
-    "excluding antituberculosis drugs and antileprotic drugs) 1000 patients"
+    "excluding antituberculosis drugs and antileprotic drugs) per 1000 patients"
   ],
   "numerator_short": "Oral antibacterial items",
   "denominator_short": "1000 patients",
