@@ -64,7 +64,7 @@
   ],
   "denominator_where": [
   "vpi.ing in (116575004, 395726003, 417420004, 426409006, 396064000, 395802006)",
-  "descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation')"
+  "AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation')"
   ],
   "authored_by": "christopher.wood@phc.ox.ac.uk",
   "checked_by": "",
