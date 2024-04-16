@@ -53,7 +53,7 @@
   ],
   "denominator_type": "custom",
   "denominator_columns": [
-    "SUM(p.items) AS numerator"
+    "SUM(p.items) AS denominator"
   ],
  "denominator_from": [
   "{hscic}.normalised_prescribing p ",
@@ -63,7 +63,7 @@
   "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
   "denominator_where": [
-  "vpi.ing in (116575004, 395726003, 417420004, 426409006, 396064000, 395802006)",
+  "vpi.ing in (116575004, 395726003, 417420004, 426409006, 396064000, 395802006) ",
   "AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation')"
   ],
   "authored_by": "christopher.wood@phc.ox.ac.uk",
