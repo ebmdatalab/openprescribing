@@ -150,7 +150,7 @@ googleapis-common-protos==1.63.0
     #   grpcio-status
 graphviz==0.20.3
     # via -r requirements.in
-grpcio==1.62.1
+grpcio==1.62.2
     # via
     #   google-api-core
     #   grpcio-status
