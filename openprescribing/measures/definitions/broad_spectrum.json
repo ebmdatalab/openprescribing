@@ -9,8 +9,8 @@
     "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage ",
     "of total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs)."
   ],
-  "numerator_short": "Selected items",
-  "denominator_short": "All oral antibiotics",
+  "numerator_short": "Co-amoxiclav, cephalosporins and quinolones items",
+  "denominator_short": "All oral antibiotic items",
   "y_label": "Percentage of antibiotic prescriptions that are for co-amoxiclav, cephalosporins or quinolones",
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
