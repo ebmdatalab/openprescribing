@@ -1,16 +1,18 @@
 {
-"name": "Possible excess quantities of semaglutide",
-"title": "Semaglutide prescriptions for quantity of 4 pens or more",
-"description": "Total quantity where a prescription is for four pens per prescription as a proportion of all semaglutide prescribing",
+"name": "Possible excess quantities of semaglutide and tirzepatide",
+"title": "Semaglutide or tirzepatide prescriptions for quantity of 4 pens or more",
+"description": "Total quantity where a prescription is for four pens per prescription as a proportion of all semaglutide and tirzepatide prescribing",
 "why_it_matters": [
-	"Semaglutide is a new (glucagon-like peptide-1) GLP-1 agonist, used to treat diabetes. ",
-    "It comes as a pre-filled pen and is used weekly.  Each of these pens contains four doses and a single pen will last for one month",
-    "However, there have been some reports that prescribers are requesting four pens per month in error.",
+	"Semaglutide and tirzepatide are both used mainly to treat diabetes. ",
+    "Semaglutide is used weekly and is only available as a multidose pre-filled pen, each of which contains four doses and a single pen will last for one month. ",
+	"Tirzepatide is used weekly and is licensed in both a single-use and a multidose pre-filled pen form. ",
+	"The tirzepatide multidose pen contains four doses and a single pen will last for one month. ",
+    "There have been some reports that prescribers are requesting four multidose pens per month in error. ",
     "This is unlikely to be required and likely to be caused by the dose and quantity being confused on a picking list."
 ],
-"numerator_short": "Number of pens on prescription of four or more",
+"numerator_short": "Number of semaglutide/tirzepatide multidose pens on prescription of four or more",
 "denominator_short": "total number of pens",
-"y_label": "Percentage of semaglutide items with quantity >3",
+"y_label": "Percentage of semaglutide and tirzepatide items with quantity >3",
 "url": null,
 "is_percentage": true,
 "is_cost_based": false,
@@ -26,15 +28,23 @@
 "numerator_from": "{hscic}.raw_prescribing_normalised",
 "numerator_where": [
 	"quantity_per_item>3",
-	"AND bnf_code LIKE '0601023AW%' --Semaglutide \n",
-	"AND bnf_name LIKE '%inj%'"
+	"AND",
+	"(bnf_code LIKE '0601023AW%' --Semaglutide \n",
+	"AND bnf_name LIKE '%inj%')",
+	"OR",
+	"(bnf_code LIKE '0601023AW%' --Tirzepatide \n",
+	"AND bnf_name LIKE '%0.6ml%' --limit to 0.6ml pens as these are multidose Kwikpens",
+	"AND bnf_name LIKE '%inj%')"
 ],
 "denominator_type": "custom",
 "denominator_columns": "SUM(total_quantity) AS denominator",
 "denominator_from": "{hscic}.raw_prescribing_normalised",
 "denominator_where": [
-	"bnf_code LIKE '0601023AW%' --Semaglutide \n", 
-	"AND bnf_name LIKE '%inj%'"
+	"(bnf_code LIKE '0601023AW%' --Semaglutide \n", 
+	"AND bnf_name LIKE '%inj%')",
+	"OR",
+	"(bnf_code LIKE '0601023AW%' --Tirzepatide \n", 
+	"AND bnf_name LIKE '%inj%')"
 ],
 "authored_by": "richard.croker@phc.ox.ac.uk",
 "checked_by": "andrew.brown@phc.ox.ac.uk",
