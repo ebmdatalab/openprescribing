@@ -33,7 +33,7 @@
 	"AND bnf_name LIKE '%inj%')",
 	"OR",
 	"(bnf_code LIKE '0601023AW%' --Tirzepatide \n",
-	"AND bnf_name LIKE '%0.6ml%' --limit to 0.6ml pens as these are multidose Kwikpens",
+	"AND bnf_name LIKE '%0.6ml%' --limit to 0.6ml pens as these are multidose Kwikpens \n",
 	"AND bnf_name LIKE '%inj%')"
 ],
 "denominator_type": "custom",
