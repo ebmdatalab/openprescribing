@@ -10,6 +10,7 @@
   ],
   "numerator_short": "High dose ICS items",
   "denominator_short": "All ICS items",
+  "y_label": "Percentage of high dose ICS items",
   "why_it_matters": [
     "<p><a href='https://www.brit-thoracic.org.uk/quality-improvement/guidelines/asthma/'> ",
     "Latest BTS/SIGN guidance </a> on the treatment of asthma recommends that patients should be maintained at the lowest possible ",
