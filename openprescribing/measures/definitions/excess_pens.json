@@ -46,9 +46,9 @@
 	"(bnf_code LIKE '0601023AZ%' --Tirzepatide \n", 
 	"AND bnf_name LIKE '%inj%')"
 ],
-"authored_by": "",
+"authored_by": "christopher.wood@phc.ox.ac.uk",
 "checked_by": "",
-"date_reviewed": "2024-04-22",
+"date_reviewed": "2024-04-23",
 "next_review": "",
 "measure_complexity": "low",
 "measure_type": "bnf_code",
