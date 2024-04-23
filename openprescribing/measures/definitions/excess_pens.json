@@ -32,7 +32,7 @@
 	"(bnf_code LIKE '0601023AW%' --Semaglutide \n",
 	"AND bnf_name LIKE '%inj%')",
 	"OR",
-	"(bnf_code LIKE '0601023AW%' --Tirzepatide \n",
+	"(bnf_code LIKE '0601023AZ%' --Tirzepatide \n",
 	"AND bnf_name LIKE '%0.6ml%' --limit to 0.6ml pens as these are multidose Kwikpens \n",
 	"AND bnf_name LIKE '%inj%')"
 ],
@@ -43,7 +43,7 @@
 	"(bnf_code LIKE '0601023AW%' --Semaglutide \n", 
 	"AND bnf_name LIKE '%inj%')",
 	"OR",
-	"(bnf_code LIKE '0601023AW%' --Tirzepatide \n", 
+	"(bnf_code LIKE '0601023AZ%' --Tirzepatide \n", 
 	"AND bnf_name LIKE '%inj%')"
 ],
 "authored_by": "",
