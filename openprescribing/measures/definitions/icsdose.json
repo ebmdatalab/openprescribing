@@ -52,7 +52,7 @@
   "OR (vpi.ing = 426409006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=184) -- 426409006 - Fluticasone furoate \n",
   "OR (vpi.ing = 396064000 AND ((descr = 'pressurizedinhalation.inhalation' AND strnt_nmrtr_val>=250)",
   "OR (descr = 'powderinhalation.inhalation' AND strnt_nmrtr_val>=500))",
-  "OR (vpi.ing = 395802006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>400) -- 395802006 - Mometasone furoate \n"
+  "OR (vpi.ing = 395802006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>400) -- 395802006 - Mometasone furoate"
   ],
   "denominator_type": "custom",
   "denominator_columns": [
