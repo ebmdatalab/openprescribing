@@ -32,7 +32,7 @@ def send_alerts(date):
     success_count = 0
     error_count = 0
     for bookmark in bookmarks:
-        description = f"to {bookmark.user.email} about {bookmark.entity.cased_name}"
+        description = f"to {bookmark.user.email} about {bookmark.entity_cased_name}"
         try:
             send_alert(bookmark, date)
             success_count += 1
