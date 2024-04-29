@@ -1,0 +1,57 @@
+{
+"name": "Possible excess quantities of semaglutide and tirzepatide",
+"title": "Semaglutide or tirzepatide prescriptions for quantity of 4 pens or more",
+"description": "Total quantity where a prescription is for four pens per prescription as a proportion of all semaglutide and tirzepatide prescribing",
+"why_it_matters": [
+	"Semaglutide and tirzepatide are both used mainly to treat diabetes. ",
+    "Semaglutide injection is used weekly and is only available as a multidose pre-filled pen, each of which contains four doses so one multidose pen will last for one month. ",
+	"Tirzepatide is used weekly and is licensed in both a single-use and a multidose pre-filled pen form. ",
+	"The tirzepatide multidose pen contains four doses so one multidose pen will last for one month. ",
+    "There have been some reports that prescribers are requesting four multidose pens per month in error. ",
+    "This is unlikely to be required and likely to be caused by the dose and quantity being confused on a picking list."
+],
+"numerator_short": "Number of semaglutide/tirzepatide multidose pens on prescription of four or more",
+"denominator_short": "total number of pens",
+"y_label": "Percentage of semaglutide and tirzepatide items with quantity >3",
+"url": null,
+"is_percentage": true,
+"is_cost_based": false,
+"low_is_good": true,
+"tags": [
+	"core",
+	"cost",
+	"diabetes",
+	"safety"
+],
+"numerator_type": "custom",
+"numerator_columns": "SUM(total_quantity) AS numerator",
+"numerator_from": "{hscic}.raw_prescribing_normalised",
+"numerator_where": [
+	"quantity_per_item>3",
+	"AND",
+	"(bnf_code LIKE '0601023AW%' --Semaglutide \n",
+	"AND bnf_name LIKE '%inj%')",
+	"OR",
+	"(bnf_code LIKE '0601023AZ%' --Tirzepatide \n",
+	"AND bnf_name LIKE '%0.6ml%' --limit to 0.6ml pens as these are multidose Kwikpens \n",
+	"AND bnf_name LIKE '%inj%')"
+],
+"denominator_type": "custom",
+"denominator_columns": "SUM(total_quantity) AS denominator",
+"denominator_from": "{hscic}.raw_prescribing_normalised",
+"denominator_where": [
+	"(bnf_code LIKE '0601023AW%' --Semaglutide \n", 
+	"AND bnf_name LIKE '%inj%')",
+	"OR",
+	"(bnf_code LIKE '0601023AZ%' --Tirzepatide \n", 
+	"AND bnf_name LIKE '%inj%')"
+],
+"authored_by": "christopher.wood@phc.ox.ac.uk",
+"checked_by": "",
+"date_reviewed": "2024-04-23",
+"next_review": "",
+"measure_complexity": "low",
+"measure_type": "bnf_code",
+"radar_exclude": false,
+"measure_notebook_url": "https://github.com/ebmdatalab/jupyter-notebooks/blob/e9168900e2ecf08d80315d38fd155f1ce45a435f/measures_by_software/Draft%20ideas/Diabetes%20-%20Semaglutide/Semaglutide%20Quantity%20Draft.ipynb"
+}
