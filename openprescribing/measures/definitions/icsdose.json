@@ -42,11 +42,11 @@
   "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
   "numerator_where": [
-  "(vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=250) -- 116575004 - Beclometasone dipropionate - no extra fine beclometasone only inhalers meet strong definition \n",
+  "(vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation') AND strnt_nmrtr_val>=250) -- 116575004 - Beclometasone dipropionate pMDI - High dose 250 2 puffs BD - no extra fine beclometasone only inhalers meet strong definition \n",
   "OR (vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=200 AND (p.bnf_code LIKE '0302000C0%CA' OR p.bnf_code LIKE '0302000C0%BZ')) -- 116575004 - Beclometasone dipropionate + Formeterol extrafine - all combo currently extrafine \n",
-  "OR (vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=172 AND (p.bnf_code LIKE '0301011AB%AB')) -- 116575004 - Beclometasone dipropionate + Formeterol extrafine - all combo currently extrafine \n",
-  "OR (vpi.ing = 395726003 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>400) -- 395726003 - Budesonide \n",
-  "OR (vpi.ing = 417420004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>160) -- 417420004 - Ciclesonide \n",
+  "OR (vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=172 AND (p.bnf_code LIKE '0301011AB%AB')) -- 116575004 - Beclometasone dipropionate extrafine + Formeterol + glycopyrronium  - all combo currently extrafine \n",
+  "OR (vpi.ing = 395726003 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=320) -- 395726003 - Budesonide \n",
+  "OR (vpi.ing = 417420004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=160) -- 417420004 - Ciclesonide \n",
   "OR (vpi.ing = 426409006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=184) -- 426409006 - Fluticasone furoate \n",
   "OR (vpi.ing = 396064000 AND descr = 'pressurizedinhalation.inhalation' AND strnt_nmrtr_val>=250) -- 396064000 - Fluticasone propionate \n",
   "OR (vpi.ing = 396064000 AND descr = 'powderinhalation.inhalation' AND strnt_nmrtr_val>=500) -- 396064000 - Fluticasone propionate \n",
