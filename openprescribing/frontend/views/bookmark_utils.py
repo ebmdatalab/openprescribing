@@ -44,7 +44,7 @@ from frontend.views.views import (
 from premailer import Premailer
 
 GRAB_CMD = (
-    "/usr/local/bin/phantomjs "
+    "/usr/local/bin/phantomjs --ignore-ssl-errors=true "
     + settings.APPS_ROOT
     + "/frontend/management/commands/grab_chart.js"
 )
