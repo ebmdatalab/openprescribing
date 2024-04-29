@@ -4,8 +4,8 @@ Send alerts about about NCSO concessions.
 
 import datetime
 import logging
+import sys
 
-from common.alert_utils import EmailErrorDeferrer
 from django.core.management import BaseCommand
 from frontend.models import EmailMessage, NCSOConcessionBookmark
 from frontend.views import bookmark_utils
@@ -29,11 +29,19 @@ def send_alerts(date):
 
     bookmarks = get_unsent_bookmarks(date)
 
+    success_count = 0
+    error_count = 0
     for bookmark in bookmarks:
-        with EmailErrorDeferrer() as error_deferrer:
-            error_deferrer.try_email(send_alert, bookmark, date)
+        description = f"to {bookmark.user.email} about {bookmark.entity.cased_name}"
+        try:
+            send_alert(bookmark, date)
+            success_count += 1
+            log_info(f"Sent bookmark {description}")
+        except Exception as e:
+            error_count += 1
+            log_exception(f"Error sending bookmark {description}", e)
 
-    print("Sent {} alerts".format(bookmarks.count()))
+    print(f"Sent {success_count} alerts and encountered {error_count} errors")
 
 
 def get_unsent_bookmarks(date):
@@ -49,11 +57,17 @@ def get_unsent_bookmarks(date):
 
 def send_alert(bookmark, date):
     """Send alert for bookmark for given date."""
+    msg = bookmark_utils.make_ncso_concession_email(bookmark, tag=date)
+    msg = EmailMessage.objects.create_from_message(msg)
+    msg.send()
 
-    try:
-        msg = bookmark_utils.make_ncso_concession_email(bookmark, tag=date)
-        msg = EmailMessage.objects.create_from_message(msg)
-        msg.send()
-        logger.info("Sent concession alert to %s about %s" % (msg.to, bookmark.id))
-    except bookmark_utils.BadAlertImageError as e:
-        logger.exception(e)
+
+def log_info(msg):
+    logger.info(msg)
+    print(msg, file=sys.stderr)
+
+
+def log_exception(msg, exc):
+    logger.exception(exc)
+    print(msg, file=sys.stderr)
+    print(str(exc), file=sys.stderr)
