@@ -46,7 +46,7 @@
   "(vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
   "AND ((strnt_nmrtr_val>=250)",
   "OR (strnt_nmrtr_val>=200 AND (p.bnf_code LIKE '0302000C0%CA' OR p.bnf_code LIKE '0302000C0%BZ'))",
-  "OR (strnt_nmrtr_val>=172 AND (p.bnf_code LIKE '0301011AB%AB')))",
+  "OR (strnt_nmrtr_val>=172 AND (p.bnf_code LIKE '0301011AB%AB'))))",
   "OR (vpi.ing = 395726003 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=320) -- 395726003 - Budesonide \n",
   "OR (vpi.ing = 417420004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=160) -- 417420004 - Ciclesonide \n",
   "OR (vpi.ing = 426409006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=184) -- 426409006 - Fluticasone furoate \n",
