@@ -18,13 +18,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--date", help="Date that concessions were imported")
+        parser.add_argument(
+            "--quiet", action="store_true", help="Produce minimal output"
+        )
 
     def handle(self, *args, **options):
         date = options["date"] or datetime.date.today().strftime("%Y-%m-%d")
-        send_alerts(date)
+        quiet = options.get("quiet", False)
+        send_alerts(date, quiet=quiet)
 
 
-def send_alerts(date):
+def send_alerts(date, quiet=False):
     """Send unsent alerts for given date."""
 
     bookmarks = get_unsent_bookmarks(date)
@@ -36,10 +40,10 @@ def send_alerts(date):
         try:
             send_alert(bookmark, date)
             success_count += 1
-            log_info(f"Sent bookmark {description}")
+            log_info(f"Sent bookmark {description}", quiet=quiet)
         except Exception as e:
             error_count += 1
-            log_exception(f"Error sending bookmark {description}", e)
+            log_exception(f"Error sending bookmark {description}", e, quiet=quiet)
 
     print(f"Sent {success_count} alerts and encountered {error_count} errors")
 
@@ -62,12 +66,15 @@ def send_alert(bookmark, date):
     msg.send()
 
 
-def log_info(msg):
+def log_info(msg, quiet=False):
     logger.info(msg)
-    print(msg, file=sys.stderr)
+    if not quiet:
+        print(msg, file=sys.stderr)
 
 
-def log_exception(msg, exc):
+def log_exception(msg, exc, quiet=False):
+    logger.info(msg)
     logger.exception(exc)
-    print(msg, file=sys.stderr)
-    print(str(exc), file=sys.stderr)
+    if not quiet:
+        print(msg, file=sys.stderr)
+        print(str(exc), file=sys.stderr)
