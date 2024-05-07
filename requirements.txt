@@ -114,6 +114,7 @@ google-auth==2.29.0
     #   google-auth-httplib2
     #   google-auth-oauthlib
     #   google-cloud-bigquery
+    #   google-cloud-bigquery-storage
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
@@ -128,7 +129,7 @@ google-cloud-bigquery==3.21.0
     # via
     #   -r requirements.in
     #   pandas-gbq
-google-cloud-bigquery-storage==2.24.0
+google-cloud-bigquery-storage==2.25.0
     # via -r requirements.in
 google-cloud-core==2.4.1
     # via
