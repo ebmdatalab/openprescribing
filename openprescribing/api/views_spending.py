@@ -366,19 +366,11 @@ def spending_by_org(request, format=None, org_type=None):
 
 
 def _get_org_type_and_orgs(org_type, org_ids):
+    org_type = utils.translate_org_type(org_type)
+
     # If no org parameters are supplied then we sum over absolutely everything
     if org_type is None and not org_ids:
         return "all_practices", [AllEngland()]
-
-    # Accept both cases of CCG (better to fix this specific string rather than
-    # make the whole API case-insensitive)
-    if org_type == "CCG":
-        org_type = "ccg"
-    # Accept the public org type names
-    elif org_type == "sicbl":
-        org_type = "ccg"
-    elif org_type == "icb":
-        org_type = "stp"
 
     # Some special case handling for practices
     if org_type == "practice":

@@ -26,6 +26,7 @@ def org_details(request, format=None):
     Get list size and ASTRO-PU by month, for CCGs or practices.
     """
     org_type = request.GET.get("org_type", None)
+    org_type = utils.translate_org_type(org_type)
     keys = utils.param_to_list(request.query_params.get("keys", []))
     org_codes = utils.param_to_list(request.query_params.get("org", []))
     if org_type is None:

@@ -3,6 +3,16 @@ import itertools
 from django.db import connection
 from django.shortcuts import get_object_or_404
 
+ORG_TYPE_ALIASES = {
+    "CCG": "ccg",
+    "sicbl": "ccg",
+    "icb": "stp",
+}
+
+
+def translate_org_type(org_type):
+    return ORG_TYPE_ALIASES.get(org_type, org_type)
+
 
 def param_to_list(str):
     params = []
