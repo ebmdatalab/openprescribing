@@ -1,5 +1,4 @@
 from common.utils import nhs_titlecase, parse_date
-from django.shortcuts import get_object_or_404
 from frontend.ghost_branded_generics import (
     get_ghost_branded_generic_spending,
     get_total_ghost_branded_generic_spending,
@@ -40,18 +39,6 @@ class BadDate(NotFound):
         else:
             detail = "Date is outside the 5 years of data available"
         super().__init__(detail)
-
-
-def _get_org_or_404(org_code, org_type=None):
-    if not org_type and org_code:
-        org_type = "ccg" if len(org_code) in [3, 5] else "practice"
-    if org_type.lower() == "ccg":
-        org = get_object_or_404(PCT, pk=org_code)
-    elif org_type == "practice":
-        org = get_object_or_404(Practice, pk=org_code)
-    else:
-        raise ValueError(org_type)
-    return org
 
 
 @api_view(["GET"])
@@ -379,19 +366,11 @@ def spending_by_org(request, format=None, org_type=None):
 
 
 def _get_org_type_and_orgs(org_type, org_ids):
+    org_type = utils.translate_org_type(org_type)
+
     # If no org parameters are supplied then we sum over absolutely everything
     if org_type is None and not org_ids:
         return "all_practices", [AllEngland()]
-
-    # Accept both cases of CCG (better to fix this specific string rather than
-    # make the whole API case-insensitive)
-    if org_type == "CCG":
-        org_type = "ccg"
-    # Accept the public org type names
-    elif org_type == "sicbl":
-        org_type = "ccg"
-    elif org_type == "icb":
-        org_type = "stp"
 
     # Some special case handling for practices
     if org_type == "practice":

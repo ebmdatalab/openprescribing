@@ -12,6 +12,7 @@ def org_location(request, format=None):
     # We make practice the default org type for compatibility with the previous
     # API
     org_type = request.GET.get("org_type", "practice")
+    org_type = utils.translate_org_type(org_type)
     centroids = request.GET.get("centroids", "")
     org_codes = utils.param_to_list(request.GET.get("q", ""))
     if org_type == "practice":
