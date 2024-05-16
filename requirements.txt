@@ -186,7 +186,7 @@ lz4==4.3.3
     # via -r requirements.in
 markupsafe==2.1.5
     # via jinja2
-matplotlib==3.8.4
+matplotlib==3.9.0
     # via
     #   -r requirements.in
     #   seaborn
