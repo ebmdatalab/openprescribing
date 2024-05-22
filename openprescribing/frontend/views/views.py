@@ -544,6 +544,10 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
         ),
         "rollUpBy": "measure_id",
         "tagsFocusUrlTemplate": _url_template("measures_for_one_" + entity_type),
+        "allMeasuresForOrgUrl": reverse(
+            "measures_for_one_" + entity_type,
+            kwargs={entity_type + "_code": entity_code},
+        ),
     }
 
     _add_measure_for_children_in_entity_url(measure_options, entity_type)
@@ -589,6 +593,7 @@ def measure_for_all_england(request, measure):
         ),
         "rollUpBy": "measure_id",
         "tagsFocusUrlTemplate": reverse("all_england"),
+        "allMeasuresForOrgUrl": reverse("all_england"),
     }
 
     _add_measure_details(measure_options, measure)

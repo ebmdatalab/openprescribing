@@ -446,6 +446,7 @@ var utils = {
       measureForAllPracticesUrl: measureForAllPracticesUrl,
       measureForAllCCGsUrl: measureForAllCCGsUrl,
       measureForSiblingsUrl: measureForSiblingsUrl,
+      allMeasuresForOrgUrl: options.allMeasuresForOrgUrl || "",
       improvementRadarUrl: improvementRadarUrl,
       chartExplanation: chartExplanation,
       tags: d.tags,
