@@ -294,7 +294,7 @@ pyvirtualdisplay==3.0
     # via -r requirements.in
 raven==6.10.0
     # via -r requirements.in
-requests[security]==2.31.0
+requests[security]==2.32.2
     # via
     #   -r requirements.in
     #   django-anymail
