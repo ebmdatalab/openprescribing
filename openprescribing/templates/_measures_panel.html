@@ -110,7 +110,7 @@
             <div class="descriptive">
               <strong>Tagged as:</strong>
               {{# each tagsForDisplay as |tag index|}}
-                <a href="?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
+                <a href="{{ ../allMeasuresForOrgUrl }}?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
               {{/each}}
               {{# unless tagsForDisplay }}<em>No tags yet</em>{{/unless}}
             </div>
