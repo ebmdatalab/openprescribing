@@ -10,9 +10,9 @@ from google.cloud.exceptions import Conflict
 SCHEMA = build_schema(
     ("year_month", "DATE"),
     ("ods_code", "STRING"),
-    ("vmp_snomed_code", "STRING"),
+    ("vmp_snomed_code", "INTEGER"),
     ("vmp_product_name", "STRING"),
-    ("unit_of_measure_identifier", "STRING"),
+    ("unit_of_measure_identifier", "INTEGER"),
     ("unit_of_measure_name", "STRING"),
     ("total_quanity_in_vmp_unit", "FLOAT"),
     ("indicative_cost", "FLOAT"),
