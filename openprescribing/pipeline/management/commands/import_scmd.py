@@ -1,8 +1,8 @@
 import csv
 import tempfile
+import re
 
 import requests
-from bs4 import BeautifulSoup
 from django.core.management import BaseCommand
 from gcutils.bigquery import Client, build_schema
 from google.cloud.exceptions import Conflict
@@ -98,24 +98,27 @@ class Command(BaseCommand):
                 print("{} | Ingested into BigQuery".format(month))
 
     def iter_dataset_urls(self, session):
-        """Extract CSV file URLs from the dataset page."""
-        datasets_url = "https://opendata.nhsbsa.net/dataset/secondary-care-medicines-data-indicative-price"
+        """Extract CSV file URLs via the API"""
+        dataset_name = "secondary-care-medicines-data-indicative-price"
+        dataset_url = f"https://opendata.nhsbsa.net/api/3/action/package_show?id={dataset_name}"
 
-        # scrape available datasets
-        r = session.get(datasets_url)
+        r = session.get(dataset_url)
         r.raise_for_status()
 
-        doc = BeautifulSoup(r.text, "html.parser")
+        data = r.json()
+        resources = data['result']['resources']
 
-        for a in doc.find_all("a", href=True):
-            if a["href"].endswith(".csv"):
-                yield a["href"]
+        pattern = r"scmd_(final|provisional|wip)_[0-9]{6}\.csv"
+
+        for resource in resources:
+            if resource['format'].upper() == 'CSV' and re.search(pattern, resource['url'].split('/')[-1]):
+                yield resource['url']
 
     def iter_months(self, urls):
         """
         Extract a "month" from each URL given.
 
-        URLs are expected to end in the format `/SCMD_<something>_<year><month>.csv`, from
+        URLs are expected to end in the format `/scmd_<something>_<year><month>.csv`, from
         that we get the year and month, converting them to the format
         <year>-<month>.
         """
