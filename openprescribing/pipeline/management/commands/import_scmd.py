@@ -1,6 +1,6 @@
 import csv
-import tempfile
 import re
+import tempfile
 
 import requests
 from django.core.management import BaseCommand
@@ -100,19 +100,23 @@ class Command(BaseCommand):
     def iter_dataset_urls(self, session):
         """Extract CSV file URLs via the API"""
         dataset_name = "secondary-care-medicines-data-indicative-price"
-        dataset_url = f"https://opendata.nhsbsa.net/api/3/action/package_show?id={dataset_name}"
+        dataset_url = (
+            f"https://opendata.nhsbsa.net/api/3/action/package_show?id={dataset_name}"
+        )
 
         r = session.get(dataset_url)
         r.raise_for_status()
 
         data = r.json()
-        resources = data['result']['resources']
+        resources = data["result"]["resources"]
 
         pattern = r"scmd_(final|provisional|wip)_[0-9]{6}\.csv"
 
         for resource in resources:
-            if resource['format'].upper() == 'CSV' and re.search(pattern, resource['url'].split('/')[-1]):
-                yield resource['url']
+            if resource["format"].upper() == "CSV" and re.search(
+                pattern, resource["url"].split("/")[-1]
+            ):
+                yield resource["url"]
 
     def iter_months(self, urls):
         """
