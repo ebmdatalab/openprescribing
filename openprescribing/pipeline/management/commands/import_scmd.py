@@ -5,6 +5,7 @@ import tempfile
 import requests
 from django.core.management import BaseCommand
 from gcutils.bigquery import Client, build_schema
+from google.cloud import bigquery as gcbq
 from google.cloud.exceptions import Conflict
 
 SCHEMA = build_schema(
@@ -42,7 +43,15 @@ class Command(BaseCommand):
         # set up the BigQuery client, dataset, and table
         client = Client(dataset_key="scmd")
         self.ensure_dataset_exists(client)
-        table = client.get_or_create_table("scmd", schema=SCHEMA)
+
+        time_partitioning = gcbq.TimePartitioning(
+            type_=gcbq.TimePartitioningType.DAY,
+            field="year_month",
+        )
+
+        table = client.get_or_create_table(
+            "scmd", schema=SCHEMA, time_partitioning=time_partitioning
+        )
 
         # look for existing months in BigQuery
         sql = "SELECT DISTINCT year_month, file_type FROM {};".format(
@@ -117,7 +126,7 @@ class Command(BaseCommand):
 
                 # insert into BigQuery
                 table.insert_rows_from_csv(
-                    f.name, SCHEMA, write_disposition="WRITE_APPEND"
+                    f.name, SCHEMA, write_disposition="WRITE_TRUNCATE"
                 )
                 print("{} | Ingested into BigQuery".format(month))
 
