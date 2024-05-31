@@ -34,7 +34,10 @@ class Command(BaseCommand):
 
         # Get URLs keyed by the date (year-month) they're for
         urls = set(self.iter_dataset_urls(s))
-        urls_by_month = dict(self.iter_months(urls))
+        urls_by_month_and_file_type = {
+            month: {"url": url, "file_type": file_type}
+            for month, url, file_type in self.iter_months(urls)
+        }
 
         # set up the BigQuery client, dataset, and table
         client = Client(dataset_key="scmd")
@@ -42,17 +45,34 @@ class Command(BaseCommand):
         table = client.get_or_create_table("scmd", schema=SCHEMA)
 
         # look for existing months in BigQuery
-        sql = "SELECT DISTINCT year_month FROM {};".format(table.qualified_name)
-        known_dates = [r[0] for r in client.query(sql).rows]
+        sql = "SELECT DISTINCT year_month, file_type FROM {};".format(
+            table.qualified_name
+        )
+        known_dates_and_types = {
+            r["year_month"]: r["file_type"] for r in client.query(sql).rows
+        }
 
         # convert the datetime.dates the query gives us to strings since
         # that's what we're dealing with elsewhere.
-        known_months = {d.strftime("%Y-%m") for d in known_dates}
+        known_dates_and_types = {
+            k.strftime("%Y-%m"): v for k, v in known_dates_and_types.items()
+        }
+        known_months = set(known_dates_and_types.keys())
         print(known_months)
 
-        missing_months = set(urls_by_month.keys()) - known_months
+        missing_months = set(urls_by_month_and_file_type.keys()) - known_months
         print("Missing months: {}".format(", ".join(sorted(missing_months))))
-        pending_urls = {m: urls_by_month[m] for m in missing_months}
+
+        out_of_date_months = {
+            m: urls_by_month_and_file_type[m]
+            for m in urls_by_month_and_file_type.keys()
+            if urls_by_month_and_file_type[m]["file_type"] != known_dates_and_types[m]
+        }
+
+        pending_urls = {
+            m: urls_by_month_and_file_type[m]
+            for m in missing_months.union(out_of_date_months)
+        }
 
         # abort if there's nothing to get
         if not pending_urls:
