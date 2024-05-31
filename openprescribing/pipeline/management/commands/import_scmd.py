@@ -99,13 +99,16 @@ class Command(BaseCommand):
             with tempfile.NamedTemporaryFile(mode="w+") as f:
                 writer = csv.writer(f, delimiter=",")
                 for line in reader:
+                    # add the file type
+                    line.insert(0, url["file_type"])
+
                     # Convert year-month dates to year-month-day
-                    if len(line[0]) == 7:
-                        line[0] = line[0] + "-01"
-                    elif len(line[0]) == 6:
-                        line[0] = line[0][:4] + "-" + line[0][4:6] + "-01"
+                    if len(line[1]) == 7:
+                        line[1] = line[1] + "-01"
+                    elif len(line[1]) == 6:
+                        line[1] = line[1][:4] + "-" + line[1][4:6] + "-01"
                     else:
-                        assert False, line[0]
+                        assert False, line[1]
                     writer.writerow(line)
                 print("{} | Wrote: {}".format(month, f.name))
 
