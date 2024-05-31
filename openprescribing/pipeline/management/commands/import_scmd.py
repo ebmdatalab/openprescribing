@@ -8,6 +8,7 @@ from gcutils.bigquery import Client, build_schema
 from google.cloud.exceptions import Conflict
 
 SCHEMA = build_schema(
+    ("file_type", "STRING"),
     ("year_month", "DATE"),
     ("ods_code", "STRING"),
     ("vmp_snomed_code", "STRING"),
