@@ -121,16 +121,19 @@ class Command(BaseCommand):
 
     def iter_months(self, urls):
         """
-        Extract a "month" from each URL given.
+        Extract a "month" and file type from each URL given.
 
-        URLs are expected to end in the format `/scmd_<something>_<year><month>.csv`, from
+        URLs are expected to end in the format `/scmd_<file_type>_<year><month>.csv`, from
         that we get the year and month, converting them to the format
-        <year>-<month>.
+        <year>-<month> and the file type.
         """
+        pattern = r"scmd_(final|provisional|wip)_([0-9]{4})([0-9]{2})\.csv"
         for url in urls:
-            year_and_month = url.split("_")[-1].split(".")[0]
-
-            # Split up dates with hyphens and add a day to match what we put
-            # into BigQuery.
-            date = "{}-{}".format(year_and_month[:4], year_and_month[4:])
-            yield date, url
+            match = re.search(pattern, url.split("/")[-1])
+            if match:
+                file_type, year, month = match.groups()
+                # Split up dates with hyphens and add a day to match what we put
+                # into BigQuery.
+                yield f"{year}-{month}", file_type, url
+            else:
+                raise ValueError(f"Unexpected URL format: {url}")
