@@ -1,0 +1,31 @@
+{
+  "name": "Prescribing of non-combination vitamin D preparations",
+  "title": "Prescribing of non-combination vitamin D preparations per 1000 patients",
+  "description": "Prescribing of non-combination vitamin D preparations per 1000 patients",
+  "numerator_short": "Cost of vitamin D prescriptions (£)",
+  "denominator_short": "1000 patients",
+  "y_label": "Vitamin D (£) per 1000 patients",
+  "why_it_matters": "tbc",
+  "tags": [
+    "core",
+    "nutrition"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator"
+  ],
+  "numerator_from": "{measures}.vw__vitamin_d_solo",
+  "numerator_where": "1 = 1",
+  "denominator_type": "list_size",
+  "authored_by": "",
+  "checked_by": "",
+  "date_reviewed": "",
+  "next_review": "",
+  "measure_complexity": "medium",
+  "measure_type": "dmd",
+  "radar_exclude": false
+}
