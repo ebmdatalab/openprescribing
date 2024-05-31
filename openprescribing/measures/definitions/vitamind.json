@@ -14,11 +14,11 @@
   "is_percentage": false,
   "is_cost_based": true,
   "low_is_good": true,
-  "numerator_type": "custom",
-  "numerator_columns": [
-    "SUM(actual_cost) AS numerator"
+  "numerator_type": "bnf_cost",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT bnf_code",
+    "FROM {measures}.vw_vitamin_d_codes"
   ],
-  "numerator_from": "{measures}.vw__vitamin_d_solo",
   "numerator_where": "1 = 1",
   "denominator_type": "list_size",
   "authored_by": "",
