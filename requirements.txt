@@ -40,7 +40,7 @@ coverage==7.5.3
     # via -r requirements.in
 crispy-bootstrap3==2024.1
     # via -r requirements.in
-cryptography==42.0.7
+cryptography==42.0.8
     # via paramiko-ng
 cssselect==1.2.0
     # via
