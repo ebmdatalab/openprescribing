@@ -1,4 +1,5 @@
 from django.core.management import BaseCommand, CommandError
+from django.db import transaction
 from dmd.models import VMPP
 from frontend.models import NCSOConcession
 
@@ -19,8 +20,26 @@ class Command(BaseCommand):
         except VMPP.DoesNotExist:
             raise CommandError("Could not find VMPP")
 
-        concession.vmpp = vmpp
-        concession.save()
+        try:
+            existing = NCSOConcession.objects.get(date=concession.date, vmpp=vmpp)
+        except NCSOConcession.DoesNotExist:
+            existing = None
+
+        if existing is None:
+            concession.vmpp = vmpp
+            concession.save()
+        else:
+            # If we've previously correctly imported a concession for this VMPP and this
+            # month then we can't just set the VMPP on the new object and save it as
+            # this violates the uniqueness constraint. Instead we have to update the
+            # existing object and delete this one.
+            existing.drug = concession.drug
+            existing.pack_size = concession.pack_size
+            existing.price_pence = concession.price_pence
+            with transaction.atomic():
+                existing.save()
+                concession.delete()
+            concession = existing
 
         print(
             "Reconciled `{}` against `{}`".format(

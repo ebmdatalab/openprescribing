@@ -27,6 +27,29 @@ class TestNCSOReconciliation(TestCase):
         with self.assertRaises(CommandError):
             call_command("reconcile_ncso_concession", 1234, 9191111000001100)
 
+    def test_reconcile_ncso_concession_with_previous_match(self):
+        concession_1 = NCSOConcession.objects.create(
+            id=1234,
+            date="2017-10-01",
+            drug="Amiloride 5mg tablets",
+            pack_size="28",
+            price_pence=925,
+            vmpp_id=1191111000001100,
+        )
+        concession_2 = NCSOConcession.objects.create(
+            id=1235,
+            date="2017-10-01",
+            drug="Amiloride 5mg tablets",
+            pack_size="Twenty Eight",
+            price_pence=950,
+            vmpp_id=None,
+        )
+
+        call_command("reconcile_ncso_concession", 1235, 1191111000001100)
+        concession_1.refresh_from_db()
+        self.assertEqual(concession_1.price_pence, 950)
+        self.assertEqual(NCSOConcession.objects.filter(id=concession_2.id).count(), 0)
+
     def test_reconcile_ncso_concessions(self):
         concession = NCSOConcession.objects.create(
             date="2017-01-01",
