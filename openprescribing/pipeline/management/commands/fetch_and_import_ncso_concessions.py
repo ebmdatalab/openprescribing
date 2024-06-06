@@ -164,7 +164,21 @@ def parse_price(price_str):
     if price_str == "11..35":
         price_str = "£11.35"
     # We need to accept a variety of formats here: £1.50, 1.50, 1.5, 11
-    match = re.fullmatch(r"£?(\d+)(\.(\d)(\d)?)?", price_str)
+    match = re.fullmatch(
+        r"""
+        # Optional leading currency symbol
+        £ ?
+        # Pounds digits
+        ( \d+ )
+        # Optional pence digits (.N or .NN)
+        ( \. (\d) (\d)? ) ?
+        # Optional previous price in parentheses
+        \s*
+        ( \( previously \s+ [£\d\.]+ \) ) ?
+        """,
+        price_str,
+        re.VERBOSE,
+    )
     assert match, price_str
     return (
         int(match[1]) * 100
