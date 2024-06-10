@@ -278,7 +278,7 @@ pyquery==2.0.0
     # via -r requirements.in
 pysocks==1.7.1
     # via urllib3
-pysqlite3-binary==0.5.2.post3
+pysqlite3-binary==0.5.3
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
