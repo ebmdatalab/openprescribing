@@ -229,7 +229,7 @@ pandas==2.2.2
     #   db-dtypes
     #   pandas-gbq
     #   seaborn
-pandas-gbq==0.23.0
+pandas-gbq==0.23.1
     # via -r requirements.in
 paramiko-ng==2.8.10
     # via fab-classic
