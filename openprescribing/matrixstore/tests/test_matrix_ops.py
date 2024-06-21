@@ -50,9 +50,9 @@ class TestConvertToSmallestIntType(SimpleTestCase):
             small_value = self.random.randint(minimum, -1)
         else:
             small_value = 0
-        # Ensure that the dtype is big enough to hold the maximum value (int_
+        # Ensure that the dtype is big enough to hold the maximum value (int64
         # will do for all cases apart from uint64)
-        dtype = numpy.promote_types(numpy.int_, numpy.min_scalar_type(maximum))
+        dtype = numpy.promote_types(numpy.int64, numpy.min_scalar_type(maximum))
         matrix = numpy.zeros((2, 2), dtype=dtype)
         matrix[0, 0] = value
         matrix[0, 1] = small_value
