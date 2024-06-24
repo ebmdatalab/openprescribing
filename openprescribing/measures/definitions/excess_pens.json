@@ -29,12 +29,12 @@
 "numerator_where": [
 	"quantity_per_item>3",
 	"AND",
-	"(bnf_code LIKE '0601023AW%' --Semaglutide \n",
+	"((bnf_code LIKE '0601023AW%' --Semaglutide \n",
 	"AND bnf_name LIKE '%inj%')",
 	"OR",
 	"(bnf_code LIKE '0601023AZ%' --Tirzepatide \n",
 	"AND bnf_name LIKE '%0.6ml%' --limit to 0.6ml pens as these are multidose Kwikpens \n",
-	"AND bnf_name LIKE '%inj%')"
+	"AND bnf_name LIKE '%inj%'))"
 ],
 "denominator_type": "custom",
 "denominator_columns": "SUM(total_quantity) AS denominator",
