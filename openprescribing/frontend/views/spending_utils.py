@@ -159,7 +159,7 @@ def _get_prescribed_quantity_matrix(bnf_code_offsets, date_offsets, org_type, or
     db = get_db()
     group_by_org = get_row_grouper(org_type)
     shape = (len(bnf_code_offsets), len(date_offsets))
-    quantities = numpy.zeros(shape, dtype=numpy.int_)
+    quantities = numpy.zeros(shape, dtype=numpy.int64)
     # If this organisation is not in the set of available groups (because it
     # has no prescribing data) then return the zero-valued quantity matrix
     if org_id not in group_by_org.offsets:
@@ -266,8 +266,8 @@ def _get_concession_price_matrices(min_date, max_date):
     bnf_code_offsets = {bnf_code: i for (i, bnf_code) in enumerate(bnf_codes)}
     # Construct the matrices we need
     shape = (len(bnf_code_offsets), len(date_offsets))
-    tariff_prices = numpy.zeros(shape, dtype=numpy.float_)
-    price_increases = numpy.zeros(shape, dtype=numpy.float_)
+    tariff_prices = numpy.zeros(shape, dtype=numpy.float64)
+    price_increases = numpy.zeros(shape, dtype=numpy.float64)
     # Loop over the concessions and write them into the matrices
     for date, bnf_code, tariff_price, price_increase, quantity_per_pack in concessions:
         index = (bnf_code_offsets[bnf_code], date_offsets[str(date)])

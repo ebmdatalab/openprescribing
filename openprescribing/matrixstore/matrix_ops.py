@@ -9,7 +9,7 @@ def sparse_matrix(shape, integer=False):
     Create a new sparse matrix (either integer or floating point) in a form
     suitable for populating with data
     """
-    dtype = numpy.int_ if integer else numpy.float_
+    dtype = numpy.int64 if integer else numpy.float64
     return scipy.sparse.lil_matrix(shape, dtype=dtype)
 
 
@@ -31,11 +31,11 @@ def zeros_like(matrix, order=None):
     equivalent integer or floating point type
 
     Note this differs from `numpy.zeros_like` in that it always uses the
-    largest integer type (int_) even if the source matrix uses a smaller type
+    largest integer type (int64) even if the source matrix uses a smaller type
     (e.g.  uint8). This is so that we have sufficient headroom to sum many
     matrices together.
     """
-    dtype = numpy.int_ if is_integer(matrix) else numpy.float_
+    dtype = numpy.int64 if is_integer(matrix) else numpy.float64
     return numpy.zeros(matrix.shape, dtype=dtype, order=order)
 
 
