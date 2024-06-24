@@ -316,7 +316,7 @@ scipy==1.13.1
     # via -r requirements.in
 seaborn==0.13.2
     # via -r requirements.in
-selenium==4.21.0
+selenium==4.22.0
     # via -r requirements.in
 six==1.16.0
     # via
@@ -356,6 +356,8 @@ watchdog==4.0.1
     # via when-changed
 webencodings==0.5.1
     # via html5lib
+websocket-client==1.8.0
+    # via selenium
 wheel==0.43.0
     # via pip-tools
 when-changed==0.3.0
