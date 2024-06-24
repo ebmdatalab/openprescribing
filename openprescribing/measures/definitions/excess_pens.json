@@ -4,11 +4,11 @@
 "description": "Total quantity where a prescription is for four pens per prescription as a proportion of all semaglutide and tirzepatide prescribing",
 "why_it_matters": [
 	"Semaglutide and tirzepatide are both used mainly to treat diabetes. ",
-    "Semaglutide injection is used weekly and is only available as a multidose pre-filled pen, each of which contains four doses so one multidose pen will last for one month. ",
+    	"Semaglutide injection is used weekly and is only available as a multidose pre-filled pen, each of which contains four doses so one multidose pen will last for one month. ",
 	"Tirzepatide is used weekly and is licensed in both a single-use and a multidose pre-filled pen form. ",
-	"The tirzepatide multidose pen contains four doses so one multidose pen will last for one month. ",
-    "There have been some reports that prescribers are requesting four multidose pens per month in error. ",
-    "This is unlikely to be required and likely to be caused by the dose and quantity being confused on a picking list."
+	"The tirzepatide multidose pen contains four doses so one multidose pen will last for one month.</p> ",
+    	"<p>There have been some reports that prescribers are requesting four multidose pens per month in error. ",
+    	"This is unlikely to be required and likely to be caused by the dose and quantity being confused on a picking list.</p>"
 ],
 "numerator_short": "Number of semaglutide/tirzepatide multidose pens on prescription of four or more",
 "denominator_short": "total number of pens",
@@ -29,12 +29,12 @@
 "numerator_where": [
 	"quantity_per_item>3",
 	"AND",
-	"(bnf_code LIKE '0601023AW%' --Semaglutide \n",
+	"((bnf_code LIKE '0601023AW%' --Semaglutide \n",
 	"AND bnf_name LIKE '%inj%')",
 	"OR",
 	"(bnf_code LIKE '0601023AZ%' --Tirzepatide \n",
 	"AND bnf_name LIKE '%0.6ml%' --limit to 0.6ml pens as these are multidose Kwikpens \n",
-	"AND bnf_name LIKE '%inj%')"
+	"AND bnf_name LIKE '%inj%'))"
 ],
 "denominator_type": "custom",
 "denominator_columns": "SUM(total_quantity) AS denominator",
@@ -47,9 +47,9 @@
 	"AND bnf_name LIKE '%inj%')"
 ],
 "authored_by": "christopher.wood@phc.ox.ac.uk",
-"checked_by": "",
-"date_reviewed": "2024-04-23",
-"next_review": "",
+"checked_by": "richard.croker@phc.ox.ac.uk",
+"date_reviewed": "2024-06-24",
+"next_review": "2026-06-24",
 "measure_complexity": "low",
 "measure_type": "bnf_code",
 "radar_exclude": false,
