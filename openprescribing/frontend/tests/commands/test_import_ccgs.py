@@ -34,3 +34,6 @@ class CommandsTestCase(TestCase):
         # Check that a newly-created CCG's name is set
         new_ccg = PCT.objects.get(code="00D")
         self.assertEqual(new_ccg.name, "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG")
+
+        # Check that the Sub-ICB Reporting Entity is not imported
+        self.assertFalse(PCT.objects.filter(code="Z000X").exists())
