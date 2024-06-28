@@ -18,6 +18,12 @@ class Command(BaseCommand):
                 # This indicates a National Commissioning Hub which does not
                 # belong to a region, and which in any case we ignore.
                 continue
+            if row[1].endswith("SUB-ICB REPORTING ENTITY"):
+                # These aren't "real" SICBLs and we don't want them in our table.
+                # Unfortunately there's no field in the structured data which identifies
+                # these so we have to look for a string in the name. See:
+                # https://github.com/ebmdatalab/openprescribing/issues/4862
+                continue
 
             ccg, created = PCT.objects.get_or_create(code=row[0])
             if created:

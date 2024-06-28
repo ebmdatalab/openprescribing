@@ -69,6 +69,7 @@ class Command(BaseCommand):
             if row[11]:
                 practice.close_date = self.parse_date(row[11])
             practice.status_code = row[12]
+            practice.setting = row[-2]
 
             if not practice.ccg_change_reason:
                 try:
@@ -80,13 +81,18 @@ class Command(BaseCommand):
                 except PCT.DoesNotExist:
                     if self.IS_VERBOSE:
                         print("ccg not found with code", pco_code)
+                    # We expect all standard GP practices (setting 4) to be assigned to
+                    # a known SICBL
+                    if practice.setting == 4:
+                        raise RuntimeError(
+                            f"Practice {practice.code} assigned to unknown SICBL/CCG {pco_code}"
+                        )
 
             if row[15]:
                 practice.join_provider_date = self.parse_date(row[15])
             if row[16]:
                 practice.leave_provider_date = self.parse_date(row[16])
 
-            practice.setting = row[-2]
             practice.save()
             if created:
                 count += 1
