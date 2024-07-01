@@ -16,8 +16,19 @@
   "low_is_good": true,
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_query": [
-    "SELECT DISTINCT bnf_code",
-    "FROM {measures}.vw_vitamin_d_codes"
+    "WITH cole AS (",
+      "SELECT vmp FROM {dmd}.vpi",
+      "WHERE ing = 18414002",
+      ")",
+    "SELECT bnf_code",
+    "FROM {dmd}.vpi vpi",
+    "INNER JOIN",
+    "{dmd}.vmp vmp",
+    "ON",
+    "vmp.id = vpi.vmp",
+    "WHERE vpi.vmp IN (SELECT vmp FROM cole)",
+    "GROUP BY bnf_code",
+    "HAVING COUNT(ing) = 1"
   ],
   "numerator_where": "1 = 1",
   "denominator_type": "list_size",
