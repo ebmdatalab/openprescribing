@@ -12,7 +12,17 @@
     "<p><i><a href='https://www.nhs.uk/conditions/vitamins-and-minerals/vitamin-d/' target='_Blank'>NHS advice</a> is that people at risk of vitamin D deficiency should consider taking daily supplements of vitamin D, ",
     "which should be purchased from a pharmacy, supermarket or other retailer. No evidence supports taking vitamin D supplements to <a href='https://www.nice.org.uk/guidance/ng187' target='_Blank'>prevent or treat Covid-19</a>. ",
     "People with medically confirmed deficiency may be prescribed vitamin D in line with <a href='https://cks.nice.org.uk/topics/vitamin-d-deficiency-in-adults/management/management/#how-to-treat target='_Blank'>NICE guidance.</a></i></p>",
-    "<p>This measure only shows colecalciferol prescriptions which are <b>not</b> prescribed as a combination product with other medicines.</p>"
+    "<p>This measure only shows colecalciferol prescriptions which are <b>not</b> prescribed as a combination product with other medicines.</p>",
+    "<p>There is significant variation in the price per unit for colecalciferol products. Our Price Per Unit Tool can help identify the most cost-effective options for your practice, although consideration needs to be given to the unlicensed status of some of the products.",
+    "The links below give some common examples, or you can find more detailed information on your organisation's Price Per Unit page.</p>",
+    "<ul>",
+    "<li><a href='https://openprescribing.net/national/england/0906040G0AABIBI/price-per-unit/'>Colecalciferol 400units</a></li>",
+    "<li><a href='https://openprescribing.net/national/england/0906040G0AACSCS/price-per-unit/'>Colecalciferol 800units</a></li>",
+    "<li><a href='https://openprescribing.net/national/england/0906040G0AABGBG/price-per-unit/'>Colecalciferol 1,000units</a></li>",
+    "<li><a href='https://openprescribing.net/national/england/0906040G0AACRCR/price-per-unit/'>Colecalciferol 20,000units</a></li>",
+    "<li><a href='https://openprescribing.net/national/england/0906040G0AADKDK/price-per-unit/'>Colecalciferol 25,000units</a></li>",
+    "<li><a href='https://openprescribing.net/national/england/0906040G0AACYCY/price-per-unit/'>Colecalciferol 50,000units</a></li>",
+    "</ul>"
   ],
   "tags": [
     "core",
