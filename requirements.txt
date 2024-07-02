@@ -233,7 +233,7 @@ pandas-gbq==0.23.1
     # via -r requirements.in
 paramiko-ng==2.8.10
     # via fab-classic
-pillow==10.3.0
+pillow==10.4.0
     # via matplotlib
 pip-tools==7.4.1
     # via -r requirements.in
