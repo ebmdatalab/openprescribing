@@ -26,10 +26,13 @@ class TestSpendingViews(TestCase):
     def setUpClass(cls):
         super(TestSpendingViews, cls).setUpClass()
         factory = DataFactory()
-        cls.months = factory.create_months_array(start_date="2018-02-01", num_months=6)
+        cls.months = factory.create_months_array(start_date="2023-03-01", num_months=17)
         # Our NCSO and tariff data extends further than our prescribing data by
         # a couple of months
         cls.prescribing_months = cls.months[:-2]
+        # The test needs to span the dates when the price concession calculation changes
+        assert any(date < "2023-04-01" for date in cls.prescribing_months)
+        assert any(date > "2024-04-01" for date in cls.prescribing_months)
         # Create some high level orgs
         cls.regional_team = factory.create_regional_team()
         cls.stp = factory.create_stp()
