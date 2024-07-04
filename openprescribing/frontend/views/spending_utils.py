@@ -269,11 +269,18 @@ def _get_concession_price_matrices(min_date, max_date):
     tariff_prices = numpy.zeros(shape, dtype=numpy.float64)
     price_increases = numpy.zeros(shape, dtype=numpy.float64)
     # Loop over the concessions and write them into the matrices
-    for date, bnf_code, tariff_price, price_increase, quantity_per_pack in concessions:
+    for (
+        date,
+        bnf_code,
+        tariff_price,
+        concession_price,
+        quantity_per_pack,
+    ) in concessions:
         index = (bnf_code_offsets[bnf_code], date_offsets[str(date)])
         # Convert prices from per-pack into per-unit
         tariff_price = tariff_price / quantity_per_pack
-        price_increase = price_increase / quantity_per_pack
+        concession_price = concession_price / quantity_per_pack
+        price_increase = concession_price - tariff_price
         # Price concessions are defined at the product-pack level but we only
         # have prescribing data at product level. Occasionally there are
         # multiple simultaneous concessions for a given product with different
@@ -315,8 +322,7 @@ def _get_concession_prices(min_date, max_date):
 
              tariff_price: Standard drug tariff price in pence-per-pack
 
-           price_increase: The *extra* cost of the price concession (i.e. the
-                           cost above the tariff price) in pence-per-pack
+         concession_price: The cost of the price concession in pence-per-pack
 
         quantity_per_pack: Divide prescribed quantity by this to get number of
                            packs
@@ -332,7 +338,7 @@ def _get_concession_prices(min_date, max_date):
               ncso.date AS date,
               vmpp.bnf_code AS bnf_code,
               tariff.price_pence AS tariff_price,
-              COALESCE(ncso.price_pence - tariff.price_pence, 0) AS price_increase,
+              ncso.price_pence AS concession_price,
               CASE WHEN presentation.quantity_means_pack THEN
                   1
                 ELSE
