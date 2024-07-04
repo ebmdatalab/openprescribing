@@ -1,4 +1,5 @@
 import collections
+import datetime
 
 from dateutil.parser import parse as parse_date
 from dateutil.relativedelta import relativedelta
@@ -347,9 +348,11 @@ def calculate_concession_costs(concession):
     tariff_cost_discounted = tariff_cost * (
         1 - (NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE / 100)
     )
-    concession_cost_discounted = concession_cost * (
-        1 - (NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE / 100)
-    )
+    if concession["date"] < datetime.date(2023, 4, 1):
+        concession_discount = NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
+    else:
+        concession_discount = 0
+    concession_cost_discounted = concession_cost * (1 - (concession_discount / 100))
     return {
         "tariff_cost": tariff_cost_discounted,
         "additional_cost": concession_cost_discounted - tariff_cost_discounted,

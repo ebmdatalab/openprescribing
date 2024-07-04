@@ -12,6 +12,8 @@ from matrixstore.db import get_db, get_row_grouper
 # will have some kind of discount with the dispenser. However the average
 # discount has been pretty consistent over the years so we use that here.
 NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE = 7.2
+# From this date onwards, the discount does *not* apply to the concession price
+CONCESSION_DISCOUNT_CUTOFF_DATE = "2023-04-01"
 
 
 ConcessionPriceMatrices = namedtuple(
@@ -335,11 +337,17 @@ def _get_concession_prices(min_date, max_date):
               ncso.date AS date,
               vmpp.bnf_code AS bnf_code,
               tariff.price_pence::float8 * %(discount_factor)s AS tariff_price,
-              ncso.price_pence::float8 * %(discount_factor)s AS concession_price,
+
+              CASE
+                WHEN ncso.date < %(ncso_cutoff_date)s THEN %(discount_factor)s
+                ELSE 1.0
+              END * ncso.price_pence::float8 AS concession_price,
+
               CASE
                 WHEN presentation.quantity_means_pack THEN 1.0
                 ELSE vmpp.qtyval::float8
               END AS quantity_per_pack
+
             FROM
               frontend_ncsoconcession AS ncso
             JOIN
@@ -361,6 +369,7 @@ def _get_concession_prices(min_date, max_date):
                 "min_date": min_date,
                 "max_date": max_date,
                 "discount_factor": (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / 100.0,
+                "ncso_cutoff_date": CONCESSION_DISCOUNT_CUTOFF_DATE,
             },
         )
         return cursor.fetchall()
