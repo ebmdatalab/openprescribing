@@ -290,12 +290,9 @@ def _get_concession_price_matrices(min_date, max_date):
         if price_increase > price_increases[index]:
             price_increases[index] = price_increase
             tariff_prices[index] = tariff_price
-    # Apply the national average discount to get a better approximation of the
-    # actual price paid, and while we're at it convert from pence to pounds to
-    # make later calcuations easier
-    discount_factor = (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100 * 100)
-    tariff_prices *= discount_factor
-    price_increases *= discount_factor
+    # Convert to pounds
+    tariff_prices *= 0.01
+    price_increases *= 0.01
     return ConcessionPriceMatrices(
         bnf_code_offsets=bnf_code_offsets,
         date_offsets=date_offsets,
@@ -337,14 +334,12 @@ def _get_concession_prices(min_date, max_date):
             SELECT
               ncso.date AS date,
               vmpp.bnf_code AS bnf_code,
-              tariff.price_pence AS tariff_price,
-              ncso.price_pence AS concession_price,
-              CASE WHEN presentation.quantity_means_pack THEN
-                  1
-                ELSE
-                  vmpp.qtyval
-                END
-              AS quantity_per_pack
+              tariff.price_pence::float8 * %(discount_factor)s AS tariff_price,
+              ncso.price_pence::float8 * %(discount_factor)s AS concession_price,
+              CASE
+                WHEN presentation.quantity_means_pack THEN 1.0
+                ELSE vmpp.qtyval::float8
+              END AS quantity_per_pack
             FROM
               frontend_ncsoconcession AS ncso
             JOIN
@@ -362,6 +357,10 @@ def _get_concession_prices(min_date, max_date):
             WHERE
               ncso.date >= %(min_date)s AND ncso.date <= %(max_date)s
             """,
-            {"min_date": min_date, "max_date": max_date},
+            {
+                "min_date": min_date,
+                "max_date": max_date,
+                "discount_factor": (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / 100.0,
+            },
         )
         return cursor.fetchall()
