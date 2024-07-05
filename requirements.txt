@@ -24,7 +24,7 @@ cachetools==5.3.3
     # via
     #   google-auth
     #   premailer
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   requests
     #   selenium
