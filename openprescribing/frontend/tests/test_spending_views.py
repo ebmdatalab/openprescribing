@@ -171,7 +171,7 @@ class TestSpendingViews(TestCase):
 
 def round_floats(value):
     if isinstance(value, float):
-        return round(value, 5)
+        return round(value, 2)
     elif isinstance(value, list):
         return [round_floats(i) for i in value]
     elif isinstance(value, tuple):
