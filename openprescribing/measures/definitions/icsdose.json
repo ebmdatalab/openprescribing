@@ -43,15 +43,15 @@
   "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
   "numerator_where": [
-  "(vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
+  "(vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation') -- 116575004 - Beclometasone dipropionate \n",
   "AND ((strnt_nmrtr_val>=250)",
-  "OR (strnt_nmrtr_val>=200 AND (p.bnf_code LIKE '0302000C0%CA' OR p.bnf_code LIKE '0302000C0%BZ'))",
-  "OR (strnt_nmrtr_val>=172 AND (p.bnf_code LIKE '0301011AB%AB'))))",
+  "OR (strnt_nmrtr_val>=200 AND (p.bnf_code LIKE '0302000C0%CA' OR p.bnf_code LIKE '0302000C0%BZ')) -- beclometasone (extrafine)/formeterol - 0302000C0%CA 200/6 DPI, 0302000C0%BZ 200/6 MDI \n",
+  "OR (strnt_nmrtr_val>=172 AND (p.bnf_code LIKE '0301011AB%AB')))) -- 0301011AB%AB beclometasone (extrafine)/formeterol/glycopyrronium 200mcg beclometasone delivered) \n",
   "OR (vpi.ing = 395726003 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=320) -- 395726003 - Budesonide \n",
   "OR (vpi.ing = 417420004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=160) -- 417420004 - Ciclesonide \n",
   "OR (vpi.ing = 426409006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=184) -- 426409006 - Fluticasone furoate \n",
-  "OR (vpi.ing = 396064000 AND ((descr = 'pressurizedinhalation.inhalation' AND strnt_nmrtr_val>=250)",
-  "OR (descr = 'powderinhalation.inhalation' AND strnt_nmrtr_val>=500)))",
+  "OR (vpi.ing = 396064000 AND ((descr = 'pressurizedinhalation.inhalation' AND strnt_nmrtr_val>=250) -- 396064000 - Fluticasone propionate \n",
+  "OR (descr = 'powderinhalation.inhalation' AND strnt_nmrtr_val>=500))) -- pMDI licensed 2 puffs BD, DPI licensed 1 puff BD \n",
   "OR (vpi.ing = 395802006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>400) -- 395802006 - Mometasone furoate"
   ],
   "denominator_type": "custom",
