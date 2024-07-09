@@ -14,6 +14,12 @@ from matrixstore.db import get_db, get_row_grouper
 NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE = 7.2
 # From this date onwards, the discount does *not* apply to the concession price
 CONCESSION_DISCOUNT_CUTOFF_DATE = "2023-04-01"
+# From this date onwards, the discount applied depends on the drug tariff category
+# of the product
+PER_CATEGORY_DISCOUNT_CUTOFF_DATE = "2024-04-01"
+GENERIC_DISCOUNT_PERCENTAGE = 20.0
+BRAND_DISCOUNT_PERCENTAGE = 5.0
+APPLIANCE_DISCOUNT_PERCENTAGE = 9.85
 
 
 ConcessionPriceMatrices = namedtuple(
@@ -336,7 +342,15 @@ def _get_concession_prices(min_date, max_date):
             SELECT
               ncso.date AS date,
               vmpp.bnf_code AS bnf_code,
-              tariff.price_pence::float8 * %(discount_factor)s AS tariff_price,
+
+              CASE
+                WHEN ncso.date < %(tariff_cutoff_date)s THEN %(discount_factor)s
+                ELSE CASE
+                WHEN tariff.tariff_category_id in (1, 11) THEN %(generic_discount)s
+                  WHEN tariff.tariff_category_id in (5, 6, 7, 8, 10) THEN %(appliance_discount)s
+                  ELSE %(brand_discount)s
+                END
+              END * tariff.price_pence::float8 AS tariff_price,
 
               CASE
                 WHEN ncso.date < %(ncso_cutoff_date)s THEN %(discount_factor)s
@@ -370,6 +384,10 @@ def _get_concession_prices(min_date, max_date):
                 "max_date": max_date,
                 "discount_factor": (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / 100.0,
                 "ncso_cutoff_date": CONCESSION_DISCOUNT_CUTOFF_DATE,
+                "tariff_cutoff_date": PER_CATEGORY_DISCOUNT_CUTOFF_DATE,
+                "appliance_discount": (100 - APPLIANCE_DISCOUNT_PERCENTAGE) / 100.0,
+                "generic_discount": (100 - GENERIC_DISCOUNT_PERCENTAGE) / 100.0,
+                "brand_discount": (100 - BRAND_DISCOUNT_PERCENTAGE) / 100.0,
             },
         )
         return cursor.fetchall()

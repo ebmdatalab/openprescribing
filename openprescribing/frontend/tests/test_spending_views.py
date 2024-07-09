@@ -14,6 +14,9 @@ from frontend.models import (
 )
 from frontend.tests.data_factory import DataFactory
 from frontend.views.spending_utils import (
+    APPLIANCE_DISCOUNT_PERCENTAGE,
+    BRAND_DISCOUNT_PERCENTAGE,
+    GENERIC_DISCOUNT_PERCENTAGE,
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
     ncso_spending_breakdown_for_entity,
     ncso_spending_for_entity,
@@ -272,6 +275,7 @@ def get_ncso_concessions(start_date, end_date):
                 "bnf_code": vmpp.bnf_code,
                 "product_name": vmpp.vmp.nm,
                 "tariff_price_pence": tariff.price_pence,
+                "tariff_category": tariff.tariff_category.descr,
                 "concession_price_pence": ncso.price_pence,
                 "quantity_value": float(ncso.vmpp.qtyval),
                 "quantity_means_pack": presentation.quantity_means_pack,
@@ -345,13 +349,26 @@ def calculate_concession_costs(concession):
     concession_cost_pence = num_units * concession["concession_price_pence"]
     tariff_cost = tariff_cost_pence / 100
     concession_cost = concession_cost_pence / 100
-    tariff_cost_discounted = tariff_cost * (
-        1 - (NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE / 100)
-    )
+
+    if concession["date"] < datetime.date(2024, 4, 1):
+        tariff_discount = NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
+    else:
+        if "Part IX" in concession["tariff_category"]:
+            tariff_discount = APPLIANCE_DISCOUNT_PERCENTAGE
+        elif "Category A" in concession["tariff_category"]:
+            tariff_discount = GENERIC_DISCOUNT_PERCENTAGE
+        elif "Category M" in concession["tariff_category"]:
+            tariff_discount = GENERIC_DISCOUNT_PERCENTAGE
+        else:
+            # Everything else
+            tariff_discount = BRAND_DISCOUNT_PERCENTAGE
+
     if concession["date"] < datetime.date(2023, 4, 1):
         concession_discount = NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
     else:
         concession_discount = 0
+
+    tariff_cost_discounted = tariff_cost * (1 - (tariff_discount / 100))
     concession_cost_discounted = concession_cost * (1 - (concession_discount / 100))
     return {
         "tariff_cost": tariff_cost_discounted,
