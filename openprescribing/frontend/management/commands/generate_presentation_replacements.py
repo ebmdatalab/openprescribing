@@ -119,7 +119,13 @@ def create_code_mapping(filenames):
                 bnf_map[prev_code] = next_code
 
     with transaction.atomic():
-        Presentation.objects.filter(replaced_by__isnull=False).delete()
+        with connection.cursor() as cursor:
+            # Perform the delete manually to avoid spurious integrity complaints from
+            # Django (some deleted rows are referred to by other rows – but they are
+            # also being deleted)
+            cursor.execute(
+                f"DELETE FROM {Presentation._meta.db_table} WHERE replaced_by_id IS NOT NULL"
+            )
         for prev_code, next_code in bnf_map.items():
             if len(prev_code) <= 7:  # section, subsection, paragraph, subparagraph
                 Section.objects.filter(bnf_id__startswith=prev_code).update(
