@@ -126,9 +126,6 @@ class DataFactory(object):
     def create_tariff_and_ncso_costings_for_presentations(
         self, presentations, months=None
     ):
-        tariff_category, _ = dmd_models.DtPaymentCategory.objects.get_or_create(
-            cd=1, descr="TariffCategory VIIIA Category A"
-        )
         for presentation in presentations:
             for date in months:
                 price_pence = self.random.randint(10, 100)
@@ -138,7 +135,7 @@ class DataFactory(object):
                     tariff_price = TariffPrice.objects.create(
                         date=date,
                         vmpp=vmpp,
-                        tariff_category=tariff_category,
+                        tariff_category=self.create_tariff_category(),
                         price_pence=price_pence,
                     )
                     if self.random.choice([True, False]):
@@ -151,6 +148,27 @@ class DataFactory(object):
                                 tariff_price.price_pence + self.random.randint(10, 100)
                             ),
                         )
+
+    def create_tariff_category(self):
+        categories = [
+            (1, "Part VIIIA Category A"),
+            (3, "Part VIIIA Category C"),
+            (5, "Part IXa"),
+            (6, "Part IXb"),
+            (7, "Part IXc"),
+            (8, "Part IXr"),
+            (9, "Part X"),
+            (10, "Parts IXb and IXc"),
+            (11, "Part VIIIA Category M"),
+            (12, "Part VIIIB"),
+            (13, "Part VIIIC"),
+            (14, "Part VIIID"),
+        ]
+        cd, descr = self.random.choice(categories)
+        tariff_category, _ = dmd_models.DtPaymentCategory.objects.get_or_create(
+            cd=cd, descr=descr
+        )
+        return tariff_category
 
     def create_prescribing_for_practice(
         self, practice, presentations=None, months=None
