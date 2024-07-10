@@ -103,20 +103,24 @@ def create_code_mapping(filenames):
       * replacement
 
     """
-    bnf_map = {}
+    bnf_map = []
+    removed_mappings = []
     for f in filenames:
         for line in open(f, "r"):
-            if not line.strip():
+            line = line.strip()
+            if not line:
                 continue  # skip blank lines
-            if "\t" not in line:
+            elif line.startswith("#"):
+                continue  # skip comments
+            elif "\t" not in line:
                 raise CommandError("Input lines must be tab delimited: %s" % line)
             prev_code, next_code = line.split("\t")
             prev_code = prev_code.strip()
             next_code = next_code.strip()
-            if prev_code in bnf_map:
-                del bnf_map[prev_code]
-            if re.match(r"^[0-9A-Z]+$", next_code):
-                bnf_map[prev_code] = next_code
+            if next_code.upper() == "REMOVED":
+                removed_mappings.append(prev_code)
+            elif re.match(r"^[0-9A-Z]+$", next_code):
+                bnf_map.append((prev_code, next_code))
 
     with transaction.atomic():
         with connection.cursor() as cursor:
@@ -126,7 +130,7 @@ def create_code_mapping(filenames):
             cursor.execute(
                 f"DELETE FROM {Presentation._meta.db_table} WHERE replaced_by_id IS NOT NULL"
             )
-        for prev_code, next_code in bnf_map.items():
+        for prev_code, next_code in bnf_map:
             if len(prev_code) <= 7:  # section, subsection, paragraph, subparagraph
                 Section.objects.filter(bnf_id__startswith=prev_code).update(
                     is_current=False
@@ -147,6 +151,10 @@ def create_code_mapping(filenames):
                     old_version.bnf_code = old_bnf_code
                 old_version.replaced_by_id = replaced_by_id
                 old_version.save()
+        # Remove any mappings which are marked for removal
+        Presentation.objects.filter(bnf_code__in=removed_mappings).update(
+            replaced_by=None
+        )
 
 
 def create_bigquery_table():
