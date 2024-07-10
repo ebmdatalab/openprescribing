@@ -106,9 +106,12 @@ def create_code_mapping(filenames):
     bnf_map = []
     for f in filenames:
         for line in open(f, "r"):
-            if not line.strip():
+            line = line.strip()
+            if not line:
                 continue  # skip blank lines
-            if "\t" not in line:
+            elif line.startswith("#"):
+                continue  # skip comments
+            elif "\t" not in line:
                 raise CommandError("Input lines must be tab delimited: %s" % line)
             prev_code, next_code = line.split("\t")
             prev_code = prev_code.strip()
