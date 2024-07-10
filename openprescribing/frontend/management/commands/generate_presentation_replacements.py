@@ -104,6 +104,7 @@ def create_code_mapping(filenames):
 
     """
     bnf_map = []
+    removed_mappings = []
     for f in filenames:
         for line in open(f, "r"):
             line = line.strip()
@@ -116,7 +117,9 @@ def create_code_mapping(filenames):
             prev_code, next_code = line.split("\t")
             prev_code = prev_code.strip()
             next_code = next_code.strip()
-            if re.match(r"^[0-9A-Z]+$", next_code):
+            if next_code.upper() == "REMOVED":
+                removed_mappings.append(prev_code)
+            elif re.match(r"^[0-9A-Z]+$", next_code):
                 bnf_map.append((prev_code, next_code))
 
     with transaction.atomic():
@@ -148,6 +151,10 @@ def create_code_mapping(filenames):
                     old_version.bnf_code = old_bnf_code
                 old_version.replaced_by_id = replaced_by_id
                 old_version.save()
+        # Remove any mappings which are marked for removal
+        Presentation.objects.filter(bnf_code__in=removed_mappings).update(
+            replaced_by=None
+        )
 
 
 def create_bigquery_table():

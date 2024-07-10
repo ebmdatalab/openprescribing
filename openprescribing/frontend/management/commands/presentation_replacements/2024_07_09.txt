@@ -1,3 +1,6 @@
+# These are presentation replacements which should be removed. See:
+# https://github.com/ebmdatalab/openprescribing/issues/4876#issuecomment-2213952291
+
 0302000W0AAAAAA	REMOVED
 0302000W0BBAAAA	REMOVED
 0407010X0CDACBF	REMOVED
