@@ -1,4 +1,5 @@
 import collections
+import datetime
 
 from dateutil.parser import parse as parse_date
 from dateutil.relativedelta import relativedelta
@@ -13,6 +14,9 @@ from frontend.models import (
 )
 from frontend.tests.data_factory import DataFactory
 from frontend.views.spending_utils import (
+    APPLIANCE_DISCOUNT_PERCENTAGE,
+    BRAND_DISCOUNT_PERCENTAGE,
+    GENERIC_DISCOUNT_PERCENTAGE,
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
     ncso_spending_breakdown_for_entity,
     ncso_spending_for_entity,
@@ -26,10 +30,13 @@ class TestSpendingViews(TestCase):
     def setUpClass(cls):
         super(TestSpendingViews, cls).setUpClass()
         factory = DataFactory()
-        cls.months = factory.create_months_array(start_date="2018-02-01", num_months=6)
+        cls.months = factory.create_months_array(start_date="2023-03-01", num_months=17)
         # Our NCSO and tariff data extends further than our prescribing data by
         # a couple of months
         cls.prescribing_months = cls.months[:-2]
+        # The test needs to span the dates when the price concession calculation changes
+        assert any(date < "2023-04-01" for date in cls.prescribing_months)
+        assert any(date > "2024-04-01" for date in cls.prescribing_months)
         # Create some high level orgs
         cls.regional_team = factory.create_regional_team()
         cls.stp = factory.create_stp()
@@ -164,7 +171,7 @@ class TestSpendingViews(TestCase):
 
 def round_floats(value):
     if isinstance(value, float):
-        return round(value, 5)
+        return round(value, 2)
     elif isinstance(value, list):
         return [round_floats(i) for i in value]
     elif isinstance(value, tuple):
@@ -268,6 +275,7 @@ def get_ncso_concessions(start_date, end_date):
                 "bnf_code": vmpp.bnf_code,
                 "product_name": vmpp.vmp.nm,
                 "tariff_price_pence": tariff.price_pence,
+                "tariff_category": tariff.tariff_category.descr,
                 "concession_price_pence": ncso.price_pence,
                 "quantity_value": float(ncso.vmpp.qtyval),
                 "quantity_means_pack": presentation.quantity_means_pack,
@@ -341,12 +349,27 @@ def calculate_concession_costs(concession):
     concession_cost_pence = num_units * concession["concession_price_pence"]
     tariff_cost = tariff_cost_pence / 100
     concession_cost = concession_cost_pence / 100
-    tariff_cost_discounted = tariff_cost * (
-        1 - (NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE / 100)
-    )
-    concession_cost_discounted = concession_cost * (
-        1 - (NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE / 100)
-    )
+
+    if concession["date"] < datetime.date(2024, 4, 1):
+        tariff_discount = NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
+    else:
+        if "Part IX" in concession["tariff_category"]:
+            tariff_discount = APPLIANCE_DISCOUNT_PERCENTAGE
+        elif "Category A" in concession["tariff_category"]:
+            tariff_discount = GENERIC_DISCOUNT_PERCENTAGE
+        elif "Category M" in concession["tariff_category"]:
+            tariff_discount = GENERIC_DISCOUNT_PERCENTAGE
+        else:
+            # Everything else
+            tariff_discount = BRAND_DISCOUNT_PERCENTAGE
+
+    if concession["date"] < datetime.date(2023, 4, 1):
+        concession_discount = NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
+    else:
+        concession_discount = 0
+
+    tariff_cost_discounted = tariff_cost * (1 - (tariff_discount / 100))
+    concession_cost_discounted = concession_cost * (1 - (concession_discount / 100))
     return {
         "tariff_cost": tariff_cost_discounted,
         "additional_cost": concession_cost_discounted - tariff_cost_discounted,

@@ -31,6 +31,7 @@
 <p><a href="#ccgchange">How do you determine ICB membership when GP practices have moved ICBs or ICBs have merged?</a></p>
 <p><a href="#fp34">Do items claimed on FP34 forms show on OpenPrescribing?</a></p>
 <p><a href="#ssps">How do items dispensed under a Serious Shortage Protocol (SSP) appear in OpenPrescribing?</a></p>
+<p><a href="#concessioncosts">How are price concession costs calculated?</a></p>
 
 <h2>Analyse</h2>
 <p><a href="#analysetutorial">How do I use the analyse page?</a></p>
@@ -167,6 +168,25 @@
 
 <h3 id="ssps">How do items dispensed under a Serious Shortage Protocol (SSP) appear in OpenPrescribing?</h3>
 <p>The BSA <a href="https://opendata.nhsbsa.net/dataset/65050ec0-5abd-48ce-989d-defc08ed837e/issues/2">have confirmed</a> that the prescribing dataset we use shows entries for items dispensed under an SSP, but does not include information on the item originally prescribed.</p>
+
+<h3 id="concessioncosts">How are price concession costs calculated?</h3>
+<p>
+  The extra costs for an organisation implied by a price concession are
+  calculated as the difference between the drug tariff price and the concession
+  price <em>after</em> applying the relevant discounts, multiplied by the
+  quantity prescribed by that organisation.
+</p>
+<p>
+  For concessions prior to April 2023 we appply the national average discount
+  of 7.2% to both the tariff price and the concession price. From April 2023
+  onwards we no longer apply any discount to the concession price, as <a
+    href="https://cpe.org.uk/our-news/changes-to-discount-deduction-arrangements-from-april-2023/">specified
+    by CPE</a>. From April 2024, we apply a different discount rate to tariff
+  prices depending on the <a
+    href="https://www.drugtariff.nhsbsa.nhs.uk/#/00857004-DC/DC00856269/Part%20V%20-%20Deduction%20Scale%20(Pharmacy%20Contractors)">category
+    of the product</a>: 20% for generics, 9.85% discount for appliances and 5%
+  discount for everything else.
+</p>
 
 <h2>Analyse</h2>
 <h3 id="analysetutorial">How do I use the analyse page?</h3>

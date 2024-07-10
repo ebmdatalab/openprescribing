@@ -55,7 +55,6 @@ from frontend.price_per_unit.substitution_sets import (
     get_substitution_sets_by_presentation,
 )
 from frontend.views.spending_utils import (
-    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
     ncso_spending_breakdown_for_entity,
     ncso_spending_for_entity,
 )
@@ -1094,7 +1093,6 @@ def spending_for_one_entity(request, entity_code, entity_type):
         "breakdown_is_estimate": breakdown_metadata["is_estimate"],
         "breakdown_is_incomplete_month": breakdown_metadata["is_incomplete_month"],
         "last_prescribing_date": last_prescribing_date,
-        "national_average_discount_percentage": NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
         "form": form,
     }
     return render(request, "spending_for_one_entity.html", context)

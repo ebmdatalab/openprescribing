@@ -12,6 +12,14 @@ from matrixstore.db import get_db, get_row_grouper
 # will have some kind of discount with the dispenser. However the average
 # discount has been pretty consistent over the years so we use that here.
 NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE = 7.2
+# From this date onwards, the discount does *not* apply to the concession price
+CONCESSION_DISCOUNT_CUTOFF_DATE = "2023-04-01"
+# From this date onwards, the discount applied depends on the drug tariff category
+# of the product
+PER_CATEGORY_DISCOUNT_CUTOFF_DATE = "2024-04-01"
+GENERIC_DISCOUNT_PERCENTAGE = 20.0
+BRAND_DISCOUNT_PERCENTAGE = 5.0
+APPLIANCE_DISCOUNT_PERCENTAGE = 9.85
 
 
 ConcessionPriceMatrices = namedtuple(
@@ -269,11 +277,18 @@ def _get_concession_price_matrices(min_date, max_date):
     tariff_prices = numpy.zeros(shape, dtype=numpy.float64)
     price_increases = numpy.zeros(shape, dtype=numpy.float64)
     # Loop over the concessions and write them into the matrices
-    for date, bnf_code, tariff_price, price_increase, quantity_per_pack in concessions:
+    for (
+        date,
+        bnf_code,
+        tariff_price,
+        concession_price,
+        quantity_per_pack,
+    ) in concessions:
         index = (bnf_code_offsets[bnf_code], date_offsets[str(date)])
         # Convert prices from per-pack into per-unit
         tariff_price = tariff_price / quantity_per_pack
-        price_increase = price_increase / quantity_per_pack
+        concession_price = concession_price / quantity_per_pack
+        price_increase = concession_price - tariff_price
         # Price concessions are defined at the product-pack level but we only
         # have prescribing data at product level. Occasionally there are
         # multiple simultaneous concessions for a given product with different
@@ -283,12 +298,9 @@ def _get_concession_price_matrices(min_date, max_date):
         if price_increase > price_increases[index]:
             price_increases[index] = price_increase
             tariff_prices[index] = tariff_price
-    # Apply the national average discount to get a better approximation of the
-    # actual price paid, and while we're at it convert from pence to pounds to
-    # make later calcuations easier
-    discount_factor = (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100 * 100)
-    tariff_prices *= discount_factor
-    price_increases *= discount_factor
+    # Convert to pounds
+    tariff_prices *= 0.01
+    price_increases *= 0.01
     return ConcessionPriceMatrices(
         bnf_code_offsets=bnf_code_offsets,
         date_offsets=date_offsets,
@@ -315,8 +327,7 @@ def _get_concession_prices(min_date, max_date):
 
              tariff_price: Standard drug tariff price in pence-per-pack
 
-           price_increase: The *extra* cost of the price concession (i.e. the
-                           cost above the tariff price) in pence-per-pack
+         concession_price: The cost of the price concession in pence-per-pack
 
         quantity_per_pack: Divide prescribed quantity by this to get number of
                            packs
@@ -331,14 +342,26 @@ def _get_concession_prices(min_date, max_date):
             SELECT
               ncso.date AS date,
               vmpp.bnf_code AS bnf_code,
-              tariff.price_pence AS tariff_price,
-              COALESCE(ncso.price_pence - tariff.price_pence, 0) AS price_increase,
-              CASE WHEN presentation.quantity_means_pack THEN
-                  1
-                ELSE
-                  vmpp.qtyval
+
+              CASE
+                WHEN ncso.date < %(tariff_cutoff_date)s THEN %(discount_factor)s
+                ELSE CASE
+                WHEN tariff.tariff_category_id in (1, 11) THEN %(generic_discount)s
+                  WHEN tariff.tariff_category_id in (5, 6, 7, 8, 10) THEN %(appliance_discount)s
+                  ELSE %(brand_discount)s
                 END
-              AS quantity_per_pack
+              END * tariff.price_pence::float8 AS tariff_price,
+
+              CASE
+                WHEN ncso.date < %(ncso_cutoff_date)s THEN %(discount_factor)s
+                ELSE 1.0
+              END * ncso.price_pence::float8 AS concession_price,
+
+              CASE
+                WHEN presentation.quantity_means_pack THEN 1.0
+                ELSE vmpp.qtyval::float8
+              END AS quantity_per_pack
+
             FROM
               frontend_ncsoconcession AS ncso
             JOIN
@@ -356,6 +379,15 @@ def _get_concession_prices(min_date, max_date):
             WHERE
               ncso.date >= %(min_date)s AND ncso.date <= %(max_date)s
             """,
-            {"min_date": min_date, "max_date": max_date},
+            {
+                "min_date": min_date,
+                "max_date": max_date,
+                "discount_factor": (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / 100.0,
+                "ncso_cutoff_date": CONCESSION_DISCOUNT_CUTOFF_DATE,
+                "tariff_cutoff_date": PER_CATEGORY_DISCOUNT_CUTOFF_DATE,
+                "appliance_discount": (100 - APPLIANCE_DISCOUNT_PERCENTAGE) / 100.0,
+                "generic_discount": (100 - GENERIC_DISCOUNT_PERCENTAGE) / 100.0,
+                "brand_discount": (100 - BRAND_DISCOUNT_PERCENTAGE) / 100.0,
+            },
         )
         return cursor.fetchall()
