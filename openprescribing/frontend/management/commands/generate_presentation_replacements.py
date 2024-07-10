@@ -103,41 +103,50 @@ def create_code_mapping(filenames):
       * replacement
 
     """
-    Presentation.objects.filter(replaced_by__isnull=False).delete()
+    bnf_map = {}
     for f in filenames:
-        with transaction.atomic():
-            for line in open(f, "r"):
-                if not line.strip():
-                    continue  # skip blank lines
-                if "\t" not in line:
-                    raise CommandError("Input lines must be tab delimited: %s" % line)
-                prev_code, next_code = line.split("\t")
-                prev_code = prev_code.strip()
-                next_code = next_code.strip()
-                if not re.match(r"^[0-9A-Z]+$", next_code):
-                    # Skip 'withdrawn' &c
-                    continue
+        for line in open(f, "r"):
+            if not line.strip():
+                continue  # skip blank lines
+            if "\t" not in line:
+                raise CommandError("Input lines must be tab delimited: %s" % line)
+            prev_code, next_code = line.split("\t")
+            prev_code = prev_code.strip()
+            next_code = next_code.strip()
+            if prev_code in bnf_map:
+                del bnf_map[prev_code]
+            if re.match(r"^[0-9A-Z]+$", next_code):
+                bnf_map[prev_code] = next_code
 
-                if len(prev_code) <= 7:  # section, subsection, paragraph, subparagraph
-                    Section.objects.filter(bnf_id__startswith=prev_code).update(
-                        is_current=False
-                    )
-                elif len(prev_code) == 9:
-                    Chemical.objects.filter(bnf_code=prev_code).update(is_current=False)
-                elif len(prev_code) == 11:
-                    Product.objects.filter(bnf_code=prev_code).update(is_current=False)
-                matches = Presentation.objects.filter(bnf_code__startswith=next_code)
-                for row in matches:
-                    replaced_by_id = row.pk
-                    old_bnf_code = prev_code + replaced_by_id[len(prev_code) :]
-                    try:
-                        old_version = Presentation.objects.get(pk=old_bnf_code)
-                    except Presentation.DoesNotExist:
-                        old_version = row
-                        old_version.pk = None  # allows us to clone
-                        old_version.bnf_code = old_bnf_code
-                    old_version.replaced_by_id = replaced_by_id
-                    old_version.save()
+    with transaction.atomic():
+        with connection.cursor() as cursor:
+            # Perform the delete manually to avoid spurious integrity complaints from
+            # Django (some deleted rows are referred to by other rows – but they are
+            # also being deleted)
+            cursor.execute(
+                f"DELETE FROM {Presentation._meta.db_table} WHERE replaced_by_id IS NOT NULL"
+            )
+        for prev_code, next_code in bnf_map.items():
+            if len(prev_code) <= 7:  # section, subsection, paragraph, subparagraph
+                Section.objects.filter(bnf_id__startswith=prev_code).update(
+                    is_current=False
+                )
+            elif len(prev_code) == 9:
+                Chemical.objects.filter(bnf_code=prev_code).update(is_current=False)
+            elif len(prev_code) == 11:
+                Product.objects.filter(bnf_code=prev_code).update(is_current=False)
+            matches = Presentation.objects.filter(bnf_code__startswith=next_code)
+            for row in matches:
+                replaced_by_id = row.pk
+                old_bnf_code = prev_code + replaced_by_id[len(prev_code) :]
+                try:
+                    old_version = Presentation.objects.get(pk=old_bnf_code)
+                except Presentation.DoesNotExist:
+                    old_version = row
+                    old_version.pk = None  # allows us to clone
+                    old_version.bnf_code = old_bnf_code
+                old_version.replaced_by_id = replaced_by_id
+                old_version.save()
 
 
 def create_bigquery_table():
