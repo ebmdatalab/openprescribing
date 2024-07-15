@@ -73,7 +73,7 @@ django-crispy-forms==2.2
     # via
     #   -r requirements.in
     #   crispy-bootstrap3
-django-debug-toolbar==4.4.5
+django-debug-toolbar==4.4.6
     # via
     #   -r requirements.in
     #   django-debug-toolbar-template-timings
