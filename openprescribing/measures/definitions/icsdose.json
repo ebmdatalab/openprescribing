@@ -1,24 +1,18 @@
 {
   "name": "High dose inhaled corticosteroids",
-  "title": [
-    "high dose inhaled corticosteroids",
-    "compared with prescribing of all inhaled corticosteroids"
-  ],
-  "description": [
-    "Prescribing of high dose inhaled corticosteroids",
-    "compared with prescribing of all inhaled corticosteroids"
-  ],
+  "title": "High dose inhaled corticosteroids compared with prescribing of all inhaled corticosteroids",
+  "description": "Prescribing of high dose inhaled corticosteroids" compared with prescribing of all inhaled corticosteroids",
   "numerator_short": "High dose ICS items",
   "denominator_short": "All ICS items",
   "y_label": "Percentage of high dose ICS items",
   "why_it_matters": [
-    "<p><a href='https://www.brit-thoracic.org.uk/quality-improvement/guidelines/asthma/'> ",
+    "<p><a href='https://www.brit-thoracic.org.uk/quality-improvement/guidelines/asthma/'> target='_blank'",
     "Latest BTS/SIGN guidance </a> on the treatment of asthma recommends that patients should be maintained at the lowest possible ",
     "dose of inhaled corticosteroid.  Reduction in inhaled corticosteroid dose should be slow as patients deteriorate at different ",
     "rates.  Reductions should be considered every three months, decreasing the dose by approximately 25–50% each time. ",
     "This measure uses table 12 of the BTS/SIGN guidance to define which inhalers are considered high-dose. ",
     "We include inhalers in the measure where standard doses of the inhaler could administer high-doses of inhaled corticosteroids.</p>",
-    "<p><a href='https://goldcopd.org/wp-content/uploads/2024/02/POCKET-GUIDE-GOLD-2024-ver-1.2-11Jan2024_WMV.pdf'>The latest guidance for treatment ",
+    "<p><a href='https://goldcopd.org/wp-content/uploads/2024/02/POCKET-GUIDE-GOLD-2024-ver-1.2-11Jan2024_WMV.pdf' target='_blank'>The latest guidance for treatment ",
     "of COPD</a> now recommends use of another treatment in preference to inhaled corticosteroids. ",
     "There is some evidence that inhaled corticosteroids increases the risk of pneumonia.  This risk appears to increase with dose.</p>"
   ],
@@ -70,9 +64,10 @@
   "AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation')"
   ],
   "authored_by": "christopher.wood@phc.ox.ac.uk",
-  "checked_by": "",
-  "date_reviewed": "2024-04-16",
-  "next_review": "",
-  "measure_type": "custom",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2024-07-16",
+  "next_review": "2025-07-16",
   "measure_complexity": "high"
+  "measure_type": "custom",
+  "radar_exclude": false
 }
