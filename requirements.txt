@@ -20,7 +20,7 @@ beautifulsoup4==4.12.3
     # via -r requirements.in
 build==1.2.1
     # via pip-tools
-cachetools==5.3.3
+cachetools==5.4.0
     # via
     #   google-auth
     #   premailer
