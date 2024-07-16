@@ -1,7 +1,7 @@
 {
   "name": "High dose inhaled corticosteroids",
   "title": "High dose inhaled corticosteroids compared with prescribing of all inhaled corticosteroids",
-  "description": "Prescribing of high dose inhaled corticosteroids" compared with prescribing of all inhaled corticosteroids",
+  "description": "Prescribing of high dose inhaled corticosteroids compared with prescribing of all inhaled corticosteroids",
   "numerator_short": "High dose ICS items",
   "denominator_short": "All ICS items",
   "y_label": "Percentage of high dose ICS items",
