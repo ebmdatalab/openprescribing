@@ -67,7 +67,7 @@
   "checked_by": "richard.croker@phc.ox.ac.uk",
   "date_reviewed": "2024-07-16",
   "next_review": "2025-07-16",
-  "measure_complexity": "high"
+  "measure_complexity": "high",
   "measure_type": "custom",
   "radar_exclude": false
 }
