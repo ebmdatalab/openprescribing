@@ -1,22 +1,18 @@
 {
   "name": "High dose inhaled corticosteroids",
-  "title": [
-    "high dose inhaled corticosteroids",
-    "compared with prescribing of all inhaled corticosteroids"
-  ],
-  "description": [
-    "Prescribing of high dose inhaled corticosteroids",
-    "compared with prescribing of all inhaled corticosteroids"
-  ],
+  "title": "High dose inhaled corticosteroids compared with prescribing of all inhaled corticosteroids",
+  "description": "Prescribing of high dose inhaled corticosteroids compared with prescribing of all inhaled corticosteroids",
   "numerator_short": "High dose ICS items",
   "denominator_short": "All ICS items",
+  "y_label": "Percentage of high dose ICS items",
   "why_it_matters": [
-    "<p><a href='https://www.brit-thoracic.org.uk/quality-improvement/guidelines/asthma/'> ",
+    "<p><a href='https://www.brit-thoracic.org.uk/quality-improvement/guidelines/asthma/'> target='_blank'",
     "Latest BTS/SIGN guidance </a> on the treatment of asthma recommends that patients should be maintained at the lowest possible ",
     "dose of inhaled corticosteroid.  Reduction in inhaled corticosteroid dose should be slow as patients deteriorate at different ",
     "rates.  Reductions should be considered every three months, decreasing the dose by approximately 25–50% each time. ",
-    "This measure uses table 12 of the BTS/SIGN guidance to define which inhalers are considered high-dose.</p>",
-    "<p><a href='https://goldcopd.org/wp-content/uploads/2016/12/wms-GOLD-2017-Pocket-Guide.pdf'>The latest guidance for treatment ",
+    "This measure uses table 12 of the BTS/SIGN guidance to define which inhalers are considered high-dose. ",
+    "We include inhalers in the measure where standard doses of the inhaler could administer high-doses of inhaled corticosteroids.</p>",
+    "<p><a href='https://goldcopd.org/wp-content/uploads/2024/02/POCKET-GUIDE-GOLD-2024-ver-1.2-11Jan2024_WMV.pdf' target='_blank'>The latest guidance for treatment ",
     "of COPD</a> now recommends use of another treatment in preference to inhaled corticosteroids. ",
     "There is some evidence that inhaled corticosteroids increases the risk of pneumonia.  This risk appears to increase with dose.</p>"
   ],
@@ -29,56 +25,49 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "bnf_items",
-  "numerator_bnf_codes_filter": [
-    "0302000C0%AC # Beclomet Diprop_Inha 250mcg (200D) (brands and generic)",
-    "0302000C0%AU # Beclomet Diprop_Inha B/A 250mcg (200 D) (brands and generic)",
-    "0302000C0%BK # Beclomet Diprop_Pdr For Inh 250mcg(100 D (brands and generic)",
-    "0302000C0%BW # Beclomet Diprop_Inha 250mcg (200 D) CFF (brands and generic)",
-    "0302000C0%BZ # Beclomet/Formoterol_Inh 200/6 (120D) CFF (brands and generic)",
-    "0302000C0%CA # Beclomet/Formoterol_Inh 200/6 (120D) Dry (brands and generic)",
-    "0302000K0%AH # Budesonide_Pdr For Inh 400mcg (50 D) (brands and generic)",
-    "0302000K0%AY # Budesonide_Pdr For Inh 400mcg (100 D) (brands and generic)",
-    "0302000K0%AU # Budesonide/Formoterol_InhaB/A 400/12(60D (brands and generic)",
-    "0302000N0%AF # Fluticasone Prop_Pdr Inh 250mcg Disk Ref (brands and generic)",
-    "0302000N0%AP # Fluticasone Prop_Pdr Inh 500mcg Disk+Dev (brands and generic)",
-    "0302000N0%AU # Fluticasone Prop_Pdr For Inh 500mcg(60D) (brands and generic)",
-    "0302000N0%AZ # Fluticasone/Salmeterol_Inh 500/50mcg 60D (brands and generic)",
-    "0302000N0%BC # ...",
-    "0302000N0%BD # ...",
-    "0302000N0%BG # Fluticasone/Salmeterol_Inh 250/25mcg120D (brands and generic)",
-    "0302000N0%BK # Fluticasone/Formoterol_Inh 250/10mcg120D (brands and generic)",
-    "0302000U0%AB # Ciclesonide_Inh 160mcg (120 D) CFF (brands and generic)",
-    "0302000V0%AA # Fluticasone/Vilanterol_Inha 184/22mcg30D (brands and generic)"
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(p.items) AS numerator"
   ],
-  "denominator_type": "bnf_items",
-  "denominator_bnf_codes_filter": [
-    "0302000C0 # Beclometasone Dipropionate",
-    "0302000K0 # Budesonide",
-    "0302000N0 # Fluticasone Propionate (Inh)",
-    "0302000R0 # Mometasone Furoate",
-    "0302000U0 # Ciclesonide",
-    "0302000V0 # Fluticasone Furoate (Inh)",
-    "0301011AB # BeclometDiprop/Formoterol/Glycopyrronium",
-    "~0302000N0%AV # Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic)",
-    "~0302000N0%AW # Fluticasone Prop_Inh Soln 2mg/2ml Ud (brands and generic)"
-  ],  
- "date_reviewed": [
-    "2019-12-02"
+ "numerator_from": [
+  "{hscic}.normalised_prescribing p ",
+  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
-  "next_review": [
-    "2020-06-02"
+  "numerator_where": [
+  "(vpi.ing = 116575004 AND descr IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation') -- 116575004 - Beclometasone dipropionate \n",
+  "AND ((strnt_nmrtr_val>=250)",
+  "OR (strnt_nmrtr_val>=200 AND (p.bnf_code LIKE '0302000C0%CA' OR p.bnf_code LIKE '0302000C0%BZ')) -- beclometasone (extrafine)/formeterol - 0302000C0%CA 200/6 DPI, 0302000C0%BZ 200/6 MDI \n",
+  "OR (strnt_nmrtr_val>=172 AND (p.bnf_code LIKE '0301011AB%AB')))) -- 0301011AB%AB beclometasone (extrafine)/formeterol/glycopyrronium 200mcg beclometasone delivered) \n",
+  "OR (vpi.ing = 395726003 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=320) -- 395726003 - Budesonide \n",
+  "OR (vpi.ing = 417420004 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=160) -- 417420004 - Ciclesonide \n",
+  "OR (vpi.ing = 426409006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>=184) -- 426409006 - Fluticasone furoate \n",
+  "OR (vpi.ing = 396064000 AND ((descr = 'pressurizedinhalation.inhalation' AND strnt_nmrtr_val>=250) -- 396064000 - Fluticasone propionate \n",
+  "OR (descr = 'powderinhalation.inhalation' AND strnt_nmrtr_val>=500))) -- pMDI licensed 2 puffs BD, DPI licensed 1 puff BD \n",
+  "OR (vpi.ing = 395802006 AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation') AND strnt_nmrtr_val>400) -- 395802006 - Mometasone furoate"
   ],
-  "authored_by": [
-    "richard.croker@phc.ox.ac.uk"
+  "denominator_type": "custom",
+  "denominator_columns": [
+    "SUM(p.items) AS denominator"
   ],
-  "checked_by": [
-    "brian.mackenna@phc.ox.ac.uk"
+ "denominator_from": [
+  "{hscic}.normalised_prescribing p ",
+  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
-  "measure_complexity": [
-    "low"
+  "denominator_where": [
+  "vpi.ing in (116575004, 395726003, 417420004, 426409006, 396064000, 395802006) ",
+  "AND descr IN ('pressurizedinhalation.inhalation','powderinhalation.inhalation')"
   ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/ICS_code_differences/ICS_code_differences.ipynb"
-  ]
+  "authored_by": "christopher.wood@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2024-07-16",
+  "next_review": "2025-07-16",
+  "measure_complexity": "high",
+  "measure_type": "custom",
+  "radar_exclude": false
 }
