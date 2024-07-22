@@ -34,7 +34,7 @@
   "numerator_columns": [
     "SUM(ome_dose) AS numerator"
   ],
-  "numerator_from": "{measures}.vw__opioids_total_dmd",
+  "numerator_from": "{measures}.vw__opioids_total_dmd_test",
   "numerator_where": "1 = 1",
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT pr.bnf_code",
