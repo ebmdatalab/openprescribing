@@ -1,0 +1,34 @@
+{
+    "name": "Sulfadiazine items per 1000 patients",
+    "title": "Sulfadiazine items per 1000 patients",
+    "description": "Items for sulfadiazine items",
+    "numerator_short": "Sulfadiazine items",
+    "denominator_short": "1000 patients",
+    "y_label": "Number of sulfadiazine items per 1000 patients",
+    "why_it_matters": [
+        "There have been <a href='https://doi.org/10.1093/rheumatology/kes154'>case reports</a>",
+        "of selection errors between sulfadiazine and sulfasalazine &ndash; two look-alike sound-alike (LASA) drugs.",
+        "Sulfadiazine is a specialist antibacterial drug which is not usually prescribed in primary care.",
+        "<p>Any prescribing on this measure could prompt investigation to ascertain if sulfadiazine was prescribed in error.",
+        "You can read more about the background to this measure in <a href='https://doi.org/10.1002/pds.5859'>this study</a>.</p>"
+    ],
+    "tags": [
+        "safety"
+    ],
+    "url": null,
+    "is_percentage": false,
+    "is_cost_based": false,
+    "low_is_good": true,
+    "numerator_type": "bnf_items",
+    "numerator_bnf_codes_filter": [
+        "0501080J0 # sulfadiazine chemical"
+    ],
+    "denominator_type": "list_size",
+    "no_analyse_url": true,
+    "authored_by": "andrew.brown@phc.ox.ac.uk",
+    "checked_by": "@phc.ox.ac.uk",
+    "date_reviewed": "",
+    "next_review": "",
+    "measure_complexity": "low",
+    "radar_exclude": true
+}
