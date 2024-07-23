@@ -24,7 +24,7 @@
         "0501080J0 # sulfadiazine chemical"
     ],
     "denominator_type": "custom",
-    "denominator_value": 1,
+    "denominator_columns": "1",
     "no_analyse_url": true,
     "authored_by": "andrew.brown@phc.ox.ac.uk",
     "checked_by": "@phc.ox.ac.uk",
