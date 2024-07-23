@@ -138,10 +138,8 @@ def measure_numerators_by_org(request, format=None):
                 "cost": actual_cost / 100.0,
             }
         )
-    # Equivalent to ORDER BY and LIMIT
+    # Sort by whatever is the appropriate field for this measure
     results.sort(key=lambda i: i[sort_field], reverse=True)
-    results = results[:50]
-    # Fetch names after truncating results so we have fewer to look up
     names = Presentation.names_for_bnf_codes([i["bnf_code"] for i in results])
     for item in results:
         # Occasional issues with BNF code updates mean we temporarily can't
