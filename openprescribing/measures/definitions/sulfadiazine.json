@@ -25,7 +25,7 @@
     ],
    "denominator_type": "custom",
     "denominator_columns": [
-        "SUM(IEEE_DIVIDE(ITEMS, ITEMS)) AS denominator"
+        "SUM(IEEE_DIVIDE(items, items)) AS denominator"
     ],
     "denominator_from": "{hscic}.prescribing_normalised",
     "denominator_where": [
