@@ -24,14 +24,14 @@
         "0501080J0 # sulfadiazine chemical"
     ],
    "denominator_type": "custom",
-"denominator_columns": [
-  "COALESCE(SUM(IEEE_DIVIDE(ITEMS, ITEMS)),1) AS denominator"
-],
-"denominator_from": "{hscic}.raw_prescribing_normalised",
-"denominator_where": [
-"bnf_code LIKE '0501080J0%'"
-],
-"denominator_is_list_of_bnf_codes": false,
+    "denominator_columns": [
+        "SUM(IEEE_DIVIDE(ITEMS, ITEMS)) AS denominator"
+    ],
+    "denominator_from": "{hscic}.prescribing_normalised",
+    "denominator_where": [
+    "bnf_code LIKE '0501080J0%'"
+    ],
+    "denominator_is_list_of_bnf_codes": false,
     "no_analyse_url": true,
     "authored_by": "andrew.brown@phc.ox.ac.uk",
     "checked_by": "@phc.ox.ac.uk",
