@@ -1,10 +1,10 @@
 {
-    "name": "Sulfadiazine items per 1000 patients",
-    "title": "Sulfadiazine items per 1000 patients",
-    "description": "Number of items for sulfadiazine per 1000 patients",
+    "name": "Sulfadiazine items",
+    "title": "Sulfadiazine items",
+    "description": "Number of items for sulfadiazine",
     "numerator_short": "Sulfadiazine items",
-    "denominator_short": "1000 patients",
-    "y_label": "Sulfadiazine items per 1000 patients",
+    "denominator_short": "",
+    "y_label": "Sulfadiazine items",
     "why_it_matters": [
         "There have been <a href='https://doi.org/10.1093/rheumatology/kes154'>case reports</a>",
         "of selection errors between sulfadiazine and sulfasalazine &ndash; two look-alike sound-alike (LASA) drugs.",
@@ -25,7 +25,7 @@
     ],
    "denominator_type": "custom",
     "denominator_columns": [
-        "SUM(items)/SUM(items) AS denominator"
+        "SUM(items)/(SUM(items)*1000) AS denominator"
     ],
     "denominator_from": "{hscic}.normalised_prescribing",
     "denominator_where": [
