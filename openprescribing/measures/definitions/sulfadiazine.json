@@ -25,7 +25,7 @@
     ],
    "denominator_type": "custom",
     "denominator_columns": [
-        "SUM(items)/(SUM(items)*1000) AS denominator"
+        "'1' AS denominator"
     ],
     "denominator_from": "{hscic}.normalised_prescribing",
     "denominator_where": [
