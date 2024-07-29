@@ -25,7 +25,7 @@
     ],
    "denominator_type": "custom",
     "denominator_columns": [
-        "1 AS denominator"
+        "SUM(items) AS denominator"
     ],
     "denominator_from": "{hscic}.prescribing_normalised",
     "denominator_where": [
