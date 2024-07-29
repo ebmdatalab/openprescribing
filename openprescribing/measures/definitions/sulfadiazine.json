@@ -25,9 +25,9 @@
     ],
    "denominator_type": "custom",
     "denominator_columns": [
-        "SUM(items) AS denominator"
+        "SUM(IEEE_DIVIDE(items,items)) AS denominator"
     ],
-    "denominator_from": "{hscic}.prescribing_normalised",
+    "denominator_from": "{hscic}.normalised_prescribing",
     "denominator_where": [
     "bnf_code LIKE '0501080J0%'"
     ],
