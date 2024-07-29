@@ -23,7 +23,7 @@
     "numerator_bnf_codes_filter": [
         "0501080J0 # sulfadiazine chemical"
     ],
-   "denominator_type": "custom",
+    "denominator_type": "custom",
     "denominator_columns": [
         "SUM(items)/SUM(items) AS denominator"
     ],
@@ -39,4 +39,5 @@
     "next_review": "",
     "measure_complexity": "low",
     "radar_exclude": true
+    
 }
