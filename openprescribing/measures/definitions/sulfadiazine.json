@@ -25,7 +25,7 @@
     ],
    "denominator_type": "custom",
     "denominator_columns": "SUM(items)/(SUM(items) AS denominator",
-    "denominator_from": "{hscic}.prescribing_normalised",
+    "denominator_from": "{hscic}.normalised_prescribing",
     "denominator_where": "bnf_name LIKE '0501080J0%'",
     "denominator_is_list_of_bnf_codes": false,
     "no_analyse_url": true,
