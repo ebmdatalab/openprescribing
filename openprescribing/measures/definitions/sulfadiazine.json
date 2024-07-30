@@ -7,7 +7,7 @@
     "y_label": "Sulfadiazine items per 1000 patients",
     "why_it_matters": [
         "There have been <a href='https://doi.org/10.1093/rheumatology/kes154'>case reports</a>",
-        "of selection errors between sulfadiazine and sulfasalazine &ndash; two look-alike sound-alike (LASA) drugs.",
+        "of selection errors between sulfadiazine and sulfasalazine - two look-alike sound-alike (LASA) drugs.",
         "Sulfasalazine is most commonly prescribed in primary care to manage rheumatoid arthritis or inflammatory bowel disease, whereas sulfadiazine is a specialist antibacterial drug not usually prescribed in primary care.",
         "Prescribing the wrong drug can lead to ineffective treatment and potential harm, along with unnecessary costs, especially given the high cost of sulfadiazine.",
         "<p>Any prescribing on this measure could prompt investigation to ascertain if sulfadiazine was prescribed in error.</p>"
@@ -26,9 +26,9 @@
     "denominator_type": "list_size",
     "no_analyse_url": true,
     "authored_by": "andrew.brown@phc.ox.ac.uk",
-    "checked_by": "@phc.ox.ac.uk",
-    "date_reviewed": "",
-    "next_review": "",
+    "checked_by": "richard.croker@phc.ox.ac.uk",
+    "date_reviewed": "2024-07-30",
+    "next_review": "2026-07-30",
     "measure_complexity": "low",
     "radar_exclude": true
     
