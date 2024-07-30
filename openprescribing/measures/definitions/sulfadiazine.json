@@ -1,0 +1,35 @@
+{
+    "name": "Sulfadiazine items per 1000 patients",
+    "title": "Sulfadiazine items per 1000 patients",
+    "description": "Number of items for sulfadiazine per 1000 patients",
+    "numerator_short": "Sulfadiazine items",
+    "denominator_short": "1000 patients",
+    "y_label": "Sulfadiazine items per 1000 patients",
+    "why_it_matters": [
+        "There have been <a href='https://doi.org/10.1093/rheumatology/kes154'>case reports</a>",
+        "of selection errors between sulfadiazine and sulfasalazine - two look-alike sound-alike (LASA) drugs.",
+        "Sulfasalazine is most commonly prescribed in primary care to manage rheumatoid arthritis or inflammatory bowel disease, whereas sulfadiazine is a specialist antibacterial drug not usually prescribed in primary care.",
+        "Prescribing the wrong drug can lead to ineffective treatment and potential harm, along with unnecessary costs, especially given the high cost of sulfadiazine.",
+        "<p>Any prescribing on this measure could prompt investigation to ascertain if sulfadiazine was prescribed in error.</p>"
+    ],
+    "tags": [
+        "safety"
+    ],
+    "url": null,
+    "is_percentage": false,
+    "is_cost_based": false,
+    "low_is_good": true,
+    "numerator_type": "bnf_items",
+    "numerator_bnf_codes_filter": [
+        "0501080J0 # sulfadiazine chemical"
+    ],
+    "denominator_type": "list_size",
+    "no_analyse_url": true,
+    "authored_by": "andrew.brown@phc.ox.ac.uk",
+    "checked_by": "richard.croker@phc.ox.ac.uk",
+    "date_reviewed": "2024-07-30",
+    "next_review": "2026-07-30",
+    "measure_complexity": "low",
+    "radar_exclude": true
+    
+}
