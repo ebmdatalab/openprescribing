@@ -1,10 +1,10 @@
 {
-    "name": "Sulfadiazine items",
-    "title": "Sulfadiazine items",
-    "description": "Number of items for sulfadiazine",
+    "name": "Sulfadiazine items per 1000 patients",
+    "title": "Sulfadiazine items per 1000 patients",
+    "description": "Number of items for sulfadiazine per 1000 patients",
     "numerator_short": "Sulfadiazine items",
-    "denominator_short": "",
-    "y_label": "Sulfadiazine items",
+    "denominator_short": "1000 patients",
+    "y_label": "Sulfadiazine items per 1000 patients",
     "why_it_matters": [
         "There have been <a href='https://doi.org/10.1093/rheumatology/kes154'>case reports</a>",
         "of selection errors between sulfadiazine and sulfasalazine &ndash; two look-alike sound-alike (LASA) drugs.",
@@ -23,15 +23,7 @@
     "numerator_bnf_codes_filter": [
         "0501080J0 # sulfadiazine chemical"
     ],
-    "denominator_type": "custom",
-    "denominator_columns": [
-        "SUM(items)/SUM(items) AS denominator"
-    ],
-    "denominator_from": "{hscic}.normalised_prescribing",
-    "denominator_where": [
-    "bnf_code LIKE '0501080J0%'"
-    ],
-    "denominator_is_list_of_bnf_codes": false,
+    "denominator_type": "list_size",
     "no_analyse_url": true,
     "authored_by": "andrew.brown@phc.ox.ac.uk",
     "checked_by": "@phc.ox.ac.uk",
