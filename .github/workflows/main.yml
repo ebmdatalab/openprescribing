@@ -22,7 +22,7 @@ jobs:
         env:
           GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE: ${{ secrets.GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE }}
       - name: Unit tests
-        run: docker-compose run --service-ports test && docker-compose run --service-ports test-production
+        run: docker compose run --service-ports test && docker compose run --service-ports test-production
         env:
           TEST_SUITE: nonfunctional
       - name: Notify slack failure
@@ -62,7 +62,7 @@ jobs:
         env:
           GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE: ${{ secrets.GOOGLE_CLOUD_GITHUB_ACTIONS_PASSPHRASE }}
       - name: Functional tests
-        run: docker-compose run --service-ports test
+        run: docker compose run --service-ports test
         env:
           TEST_SUITE: functional
           BROWSER: ${{ matrix.browser }}
