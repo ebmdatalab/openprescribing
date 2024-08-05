@@ -67,7 +67,7 @@
     "OR (COALESCE(vpi.bs_subid,vpi.ing) = 387485001  AND route.descr LIKE '%modified-release.oral')) --Hydromorphone HCl MR oral preps (ing code) \n"
  ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
   "date_reviewed": "2024-08-05",
   "next_review": "2025-08-05",
   "measure_complexity": "medium",
