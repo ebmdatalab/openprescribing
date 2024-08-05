@@ -358,7 +358,7 @@ webencodings==0.5.1
     # via html5lib
 websocket-client==1.8.0
     # via selenium
-wheel==0.43.0
+wheel==0.44.0
     # via pip-tools
 when-changed==0.3.0
     # via -r requirements.in
