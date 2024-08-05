@@ -2,7 +2,7 @@
   "name": "High-cost drugs for erectile dysfunction",
   "title": "Spend on high-cost drugs for erectile dysfunction per 1000 patients",
   "description": "Spend of drugs for erectile dysfunction which are not low-cost generic PD5E-inhibitor tablets per 1000 patients",
-  "numerator_short": "Spend on high-cost drugs for erectile dysfunction",
+  "numerator_short": "Spend on high-cost drugs for erectile dysfunction (£)",
   "denominator_short": "1000 patients",
   "y_label": "Spend on high cost ED drugs per 1000 pts",
   "why_it_matters": [
