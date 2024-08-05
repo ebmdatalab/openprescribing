@@ -25,7 +25,6 @@
   "authored_by": "sebastian.bacon@phc.ox.ac.uk",
   "checked_by": "richard.croker@phc.ox.ac.uk",
   "date_reviewed": "2024-08-05",
-  "date_reviewed": "2024-08-05",
   "next_review": "2026-08-05",
   "measure_complexity": "low",
   "measure_type": "bnf_code",
