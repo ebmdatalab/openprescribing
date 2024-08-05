@@ -1,23 +1,15 @@
 {
   "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones",
-  "title": [
-    "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones:",
-    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the ",
-    "total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs)"
-  ],
-  "description": [
-    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage ",
-    "of total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs)."
-  ],
+  "title": "Pprescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs)",
+  "description": "Prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of total prescription items for oral antibiotics (excluding antituberculosis drugs and antileprotic drugs).",
   "numerator_short": "Co-amoxiclav, cephalosporins and quinolones items",
   "denominator_short": "All oral antibiotic items",
   "y_label": "Percentage of antibiotic prescriptions that are for co-amoxiclav, cephalosporins or quinolones",
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
-    "However they should <a href='https://www.england.nhs.uk/long-read/infection-prevention-and-control-education-framework/'>",
+    "However they should <a href='https://www.england.nhs.uk/long-read/infection-prevention-and-control-education-framework/' target='_Blank'>",
     "only be used where narrow spectrum antibiotics are not likely to be effective</a>, as they can increase the risk ",
-    "of <em>Clostridioides difficile</em>, MRSA and other drug-resistant bacteria developing. ",
-    "This measure looks at the quantity of these broad spectrum antibiotics prescribed, as a proportion of all antibiotics."
+    "of <em>Clostridioides difficile</em>, MRSA and other drug-resistant bacteria developing."
   ],
   "tags": [
     "antimicrobial",
@@ -53,9 +45,9 @@
   ],
   "no_analyse_url": false,
   "authored_by": "christopher.wood@phc.ox.ac.uk",
-  "checked_by": "",
-  "date_reviewed": "2024-04-16",
-  "next_review": "2026-04-16",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2024-08-05",
+  "next_review": "2026-08-05",
   "measure_complexity": "low",
   "measure_type": "dmd",
   "radar_exclude": false
