@@ -22,13 +22,15 @@
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
     "070405 # Drugs For Erectile Dysfunction",
-    "~0704050Z0AA # Sildenafil (generic)",
+    "~0704050Z0AAABAB # Sildenafil 50mg tablet (generic)",
+    "~0704050Z0AAAAAA # Sildenafil 50mg tablet (generic)",
+    "~0704050Z0AAACAC # Sildenafil 100mg tablet (generic)",
     "~0704050R0AAAAAA # Tadalafil 10mg tablet (generic)",
     "~0704050R0AAABAB # Tadalafil 20mg tablet (generic)", 
     "~0704050R0AAADAD # Tadalafil 5mg tablet (generic)", 
     "~0704050AAAAABAB # Vardenafil 10mg tablets (generic)",
     "~0704050AAAAACAC # Vardenafil 20mg tablets (generic)",
-    "~0704050AAAAAAAA Vardenafil 5mg tablets (generic)"
+    "~0704050AAAAAAAA # Vardenafil 5mg tablets (generic)"
   ],    
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
