@@ -1,19 +1,15 @@
 {
   "name": "Ulipristal acetate 5mg prescribing for uterine fibroids",
-  "title": [
-    "Ulipristal acetate 5mg prescribing for uterine fibroids"
-  ],
-  "description": [
-    "Number of items for ulipristal acetate 5mg per 1000 patients"
-  ],
+  "title": "Ulipristal acetate 5mg prescribing for uterine fibroids",
+  "description": "Number of items for ulipristal acetate 5mg per 1000 patients",
   "numerator_short": "Items",
   "denominator_short": "1000 Patients",
   "why_it_matters": [
-    "The <a href='https://www.gov.uk/drug-safety-update/esmya-ulipristal-acetate-suspension-of-the-licence-due-to-risk-of-serious-liver-injury'> MHRA has a clear safety direction advising that</a>",
+    "The <a href='https://www.gov.uk/drug-safety-update/esmya-ulipristal-acetate-suspension-of-the-licence-due-to-risk-of-serious-liver-injury' 'target='_Blank'> MHRA has a clear safety direction advising that</a>",
     "patients taking Esmya (ulipristal acetate) for uterine fibroids should <b>STOP</b> their treatment <b>IMMEDIATELY</b>.",
     "<p>Any prescribing on this measure should prompt investigation to identify patients and ensure the treatment is stopped and followup blood tests arranged.</p>",
     "<p>Please note that this is an experimental measure to support a new type of alert. We would be grateful for",
-    "any feedback at <a href='mailto:bennett@phc.ox.ac.uk?Subject=ulipristal%20measure'>bennett@phc.ox.ac.uk</a>.</p>"
+    "any feedback at <a href='mailto:bennett@phc.ox.ac.uk?Subject=ulipristal%20measure' 'target='_Blank'>bennett@phc.ox.ac.uk</a>.</p>"
   ],
   "tags": [
     "safety",
@@ -28,22 +24,11 @@
     "0604012U0 # ulipristal"
   ],
   "denominator_type": "list_size",
-  "authored_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2020-04-02"
-  ],
-  "next_review": [
-    "2020-10-02"
-  ],
-  "measure_notebook_url": [
-    ""
-  ],
-  "measure_complexity": [
-    "low"
-  ]
+  "authored_by": "brian.mackenna@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2024-08-05",
+  "next_review": "2026-08-05",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": true
 }
