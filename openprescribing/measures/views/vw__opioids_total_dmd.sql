@@ -16,8 +16,11 @@ WITH simp_form AS (
 #subquery to normalise strength to mg
 ,norm_vpi AS (
     SELECT 
-    vmp, #vmp code
-    ing, #ing code
+    vpi.vmp as vmp, #vmp code
+    vpi.ing as ing, #ing code
+    ing.nm as nm, #ing name
+    vpi.basis_strnt as basis_strnt, # strength based on ingredient (1) or base (2) substance
+    vpi.bs_subid as bs_subid, # VPI code for base substance where it exists
     strnt_nmrtr_val,#numerator strength value
     strnt_nmrtr_uom,#numerator unit of measurement
     unit_num.descr as num_unit, #numerator unit 
@@ -44,19 +47,19 @@ SELECT
   rx.pct, 
   vpi.strnt_dnmtr_val_ml, 
   sum(rx.quantity) as quantity, 
-  ing.id, #ingredient DM+D code. Combination products will have more than one ing code per VMP, e.g. co-codamol will have ing for paracetamoland codeine
-  ing.nm,#ingredient name
+  vpi.ing, #ingredient DM+D code. Combination products will have more than one ing code per VMP, e.g. co-codamol will have ing for paracetamoland codeine
+  vpi.nm,#ingredient name
   rx.bnf_code as bnf_code, #BNF code to link to prescribing data
   rx.bnf_name as bnf_name, #BNF name from prescribing data
   vpi.strnt_nmrtr_val_mg, #strength numerator in mg
   SUM(
     ( CASE WHEN rx.bnf_code LIKE '0407020A0%BJ' OR rx.bnf_code LIKE '0407020A0%BP' THEN (net_cost / 4.56 * ome * strnt_nmrtr_val_mg) / coalesce(vpi.strnt_dnmtr_val_ml, 1) # adjust for special container for PecFent 100mcg
-      WHEN ing.id = 373492002 
+      WHEN COALESCE(vpi.bs_subid, vpi.ing) = 373492002 
       AND form.simple_form = 'transdermal' THEN (quantity * ome * vpi.strnt_nmrtr_val_mg * 72)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 72 hour dose for fentanyl transdermal patches, as doses are per hour on DM+D)
-      WHEN ing.id = 387173000 
+      WHEN COALESCE(vpi.bs_subid, vpi.ing) = 387173000 
       AND form.simple_form = 'transdermal' 
       AND vpi.strnt_nmrtr_val IN (5, 10, 15, 20) THEN (quantity * ome * vpi.strnt_nmrtr_val_mg * 168)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 168 hour (7 day) dose for low-dose buprenorphine patch
-      WHEN ing.id = 387173000 
+      WHEN COALESCE(vpi.bs_subid, vpi.ing) = 387173000 
       AND form.simple_form = 'transdermal' 
       AND vpi.strnt_nmrtr_val IN (35, 52.5, 70) THEN (quantity * ome * vpi.strnt_nmrtr_val_mg * 96)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # creates 96 hour dose for higher-dose buprenorphine patch
       WHEN form.simple_form = 'injection' THEN (quantity * ome * vpi.strnt_nmrtr_val_mg * vmp.udfs)/ coalesce(vpi.strnt_dnmtr_val_ml, 1) # injections need to be weighted by pack size
@@ -70,7 +73,7 @@ FROM
   INNER JOIN {project}.{dmd}.ing AS ing ON vpi.ing = ing.id #join to ING to get ING codes and name
   INNER JOIN {project}.{dmd}.vmp AS vmp ON vpi.vmp = vmp.id #join to get BNF codes for both VMPs and AMPs joined indirectly TO ING. 
   INNER JOIN simp_form AS form ON vmp.id = form.vmp #join to subquery for simplified administration route
-  INNER JOIN {project}.{measures}.opioid_ing_form_ome AS opioid ON opioid.vpi = ing.id AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
+  INNER JOIN {project}.{measures}.opioid_ing_form_ome AS opioid ON opioid.vpi = COALESCE(vpi.bs_subid, vpi.ing) AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
   INNER JOIN {project}.{hscic}.normalised_prescribing AS rx ON CONCAT(
     SUBSTR(rx.bnf_code, 0, 9), 
     'AA', 
@@ -85,8 +88,8 @@ GROUP BY
   rx.month, 
   rx.practice, 
   rx.pct, 
-  id, 
-  ing.nm, 
+  vpi.ing, 
+  vpi.nm,
   rx.bnf_code, 
   rx.bnf_name, 
   vpi.strnt_nmrtr_val, 
