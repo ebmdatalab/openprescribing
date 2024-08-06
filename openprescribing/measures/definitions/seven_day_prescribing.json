@@ -69,7 +69,7 @@
     "p.bnf_code LIKE '0212000Y0%' OR #Simvastatin \n",
     "p.bnf_code LIKE '0602010V0%' OR #Levothyroxine \n",
     "p.bnf_code LIKE '0206020A0%') #Amlodipine \n",
-    "AND",
+    "AND \n ",
     "r.form_route IN ('tablet.oral', 'capsule.oral', 'tabletchewable.oral')"
 ],
   "denominator_is_list_of_bnf_codes": false,
