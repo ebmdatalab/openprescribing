@@ -7,11 +7,10 @@
   "y_label": "Cost (£) per 1000 patients",
   "why_it_matters": [
     "Gluten-free products are available on prescription for patients who have a biopsy-confirmed diagnosis of coeliac disease. ",
-    "These products are also now available to purchase, e.g. from supermarkets, and many NHS areas are considering stopping or ",
-    "restricting their supply on prescribing.",
-    "Following a <a href='https://www.gov.uk/government/consultations/availability-of-gluten-free-foods-on-nhs-prescription'>",
-    "consultation</a>, the Department for Health has recommended that a restricted range of products remain available on prescription.",
-    "Please note this list now excludes low-protein products which are also catagorised by dm+d and NHSBSA as being gluten-free, as",
+    "These products are also now available to purchase, e.g. from supermarkets.",
+    "Following a <a href='https://www.gov.uk/government/consultations/availability-of-gluten-free-foods-on-nhs-prescription' target='_Blank'>",
+    "consultation</a> in 2017, the Drug Tariff was amended to only allow gluten-free breads or gluten-free food mixes on prescription.",
+    "Please note this list now excludes low-protein products which are also categorised by dm+d and NHSBSA as being gluten-free, as",
     "these products have different indications for ACBS use."
   ],
   "tags": [
@@ -31,8 +30,8 @@
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "andrew.brown@phc.ox.ac.uk",
-  "date_reviewed": "2023-03-27",
-  "next_review": "2024-03-27",
+  "date_reviewed": "2024-08-06",
+  "next_review": "2026-08-06",
   "measure_complexity": "low",
   "measure_type": "bnf_code",
   "radar_exclude": false
