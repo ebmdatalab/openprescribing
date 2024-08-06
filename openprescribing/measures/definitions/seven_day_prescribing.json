@@ -49,7 +49,7 @@
     "AND ",
     "p.bnf_code IN ",
     "(SELECT DISTINCT bnf_code FROM measures.vw__dmd_objs_with_form_route \n",
-    "WHERE bnf_code (LIKE '0205051R0%' OR #Ramipril \n",
+    "WHERE (bnf_code LIKE '0205051R0%' OR #Ramipril \n",
     "bnf_code LIKE '0212000B0%' OR #Atorvastatin \n",
     "bnf_code LIKE '0212000Y0%' OR #Simvastatin \n",
     "bnf_code LIKE '0602010V0%' OR #Levothyroxine \n",
@@ -69,7 +69,7 @@
   "denominator_where": [
     "p.bnf_code IN ",
     "(SELECT DISTINCT bnf_code FROM measures.vw__dmd_objs_with_form_route \n",
-    "WHERE bnf_code (LIKE '0205051R0%' OR #Ramipril \n",
+    "WHERE (bnf_code LIKE '0205051R0%' OR #Ramipril \n",
     "bnf_code LIKE '0212000B0%' OR #Atorvastatin \n",
     "bnf_code LIKE '0212000Y0%' OR #Simvastatin \n",
     "bnf_code LIKE '0602010V0%' OR #Levothyroxine \n",
