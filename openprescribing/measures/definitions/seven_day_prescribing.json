@@ -38,8 +38,12 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "custom",
-  "numerator_columns": "SUM(total_quantity) AS numerator",
-  "numerator_from": "{hscic}.raw_prescribing_normalised p LEFT JOIN {measures}.vw__dmd_objs_with_form_route r ON p.bnf_code = r.bnf_code",
+  "numerator_columns": [
+    "SUM(total_quantity) AS numerator"
+  ],
+  "numerator_from": [
+    "{hscic}.raw_prescribing_normalised p LEFT JOIN {measures}.vw__dmd_objs_with_form_route r ON p.bnf_code = r.bnf_code"
+  ],
   "numerator_where": [
     "p.quantity_per_item=7 AND(",
     "p.bnf_code LIKE '0205051R0%' OR #Ramipril \n",
@@ -52,8 +56,12 @@
   ],
   "numerator_is_list_of_bnf_codes": false,
   "denominator_type": "custom",
-  "denominator_columns": "SUM(total_quantity) AS denominator",
-  "denominator_from": "{hscic}.raw_prescribing_normalised p LEFT JOIN {measures}.vw__dmd_objs_with_form_route r ON p.bnf_code = r.bnf_code",
+  "denominator_columns": [
+  "SUM(total_quantity) AS numerator"
+  ],
+  "denominator_from": [
+    "{hscic}.raw_prescribing_normalised p LEFT JOIN {measures}.vw__dmd_objs_with_form_route r ON p.bnf_code = r.bnf_code"
+  ],
   "denominator__where": [
     "(",
     "p.bnf_code LIKE '0205051R0%' OR #Ramipril \n",
