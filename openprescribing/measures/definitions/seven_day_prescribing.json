@@ -38,42 +38,31 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "custom",
-  "numerator_columns": [
-    "SUM(total_quantity) AS numerator"
-  ],
-  "numerator_from": "{hscic}.raw_prescribing_normalised",
+  "numerator_columns": "SUM(total_quantity) AS numerator",
+  "numerator_from": "{hscic}.raw_prescribing_normalised p LEFT JOIN {measures}.vw__dmd_objs_with_form_route r ON p.bnf_code = r.bnf_code",
   "numerator_where": [
-    "quantity_per_item=7"
-  ],
-  "numerator_bnf_codes_query": [
-      "SELECT DISTINCT(bnf_code)",
-      "FROM {measures}.vw__dmd_objs_with_form_route",
-      "WHERE form_route IN ('tablet.oral', 'capsule.oral', 'tabletchewable.oral')"
-    ],
-    "numerator_bnf_codes_filter": [
-      "0205051R0% #Ramipril",
-      "0212000B0% #Atorvastatin",
-      "0212000Y0% #Simvastatin",
-      "0602010V0% #Levothyroxine",
-      "0206020A0% ##amlodipine"
+    "p.quantity_per_item=7 AND(",
+    "p.bnf_code LIKE '0205051R0%' OR #Ramipril \n",
+    "p.bnf_code LIKE '0212000B0%' OR #Atorvastatin \n",
+    "p.bnf_code LIKE '0212000Y0%' OR #Simvastatin \n",
+    "p.bnf_code LIKE '0602010V0%' OR #Levothyroxine \n",
+    "p.bnf_code LIKE '0206020A0%') #Amlodipine \n",
+    "AND",
+    "r.form_route IN ('tablet.oral', 'capsule.oral', 'tabletchewable.oral')"
   ],
   "numerator_is_list_of_bnf_codes": false,
   "denominator_type": "custom",
-  "denominator_columns": [
-    "SUM(total_quantity) AS denominator"
-  ],
-  "denominator_from": "{hscic}.raw_prescribing_normalised",
-  "denominator_bnf_codes_query": [
-    "SELECT DISTINCT(bnf_code)",
-    "FROM {measures}.vw__dmd_objs_with_form_route",
-    "WHERE form_route IN ('tablet.oral', 'capsule.oral', 'tabletchewable.oral')"
-  ],
-  "denominator_bnf_codes_filter": [
-    "0205051R0% #Ramipril",
-    "0212000B0% #Atorvastatin",
-    "0212000Y0% #Simvastatin",
-    "0602010V0% #Levothyroxine",
-    "0206020A0% ##amlodipine"
+  "denominator_columns": "SUM(total_quantity) AS denominator",
+  "denominator_from": "{hscic}.raw_prescribing_normalised p LEFT JOIN {measures}.vw__dmd_objs_with_form_route r ON p.bnf_code = r.bnf_code",
+  "denominator__where": [
+    "(",
+    "p.bnf_code LIKE '0205051R0%' OR #Ramipril \n",
+    "p.bnf_code LIKE '0212000B0%' OR #Atorvastatin \n",
+    "p.bnf_code LIKE '0212000Y0%' OR #Simvastatin \n",
+    "p.bnf_code LIKE '0602010V0%' OR #Levothyroxine \n",
+    "p.bnf_code LIKE '0206020A0%') #Amlodipine \n",
+    "AND",
+    "r.form_route IN ('tablet.oral', 'capsule.oral', 'tabletchewable.oral')"
 ],
   "denominator_is_list_of_bnf_codes": false,
   "authored_by": "brian.mackenna@phc.ox.ac.uk",
