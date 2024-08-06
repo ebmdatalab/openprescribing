@@ -55,7 +55,7 @@
     "bnf_code LIKE '0602010V0%' OR #Levothyroxine \n",
     "bnf_code LIKE '0206020A0%') #Amlodipine \n",
     "AND ",
-    "form_route IN ('tablet.oral', 'capsule.oral', 'tabletchewable.oral')",
+    "form_route IN ('tablet.oral', 'capsule.oral', 'tabletchewable.oral') ",
     ")"
   ],
   "numerator_is_list_of_bnf_codes": false,
