@@ -1,0 +1,44 @@
+{
+  "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones prescribing volume",
+  "title": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones: number of prescription items for co-amoxiclav, cephalosporins and quinolones per 1000 patients",
+  "description": "Number of prescription items for co-amoxiclav, cephalosporins and quinolones per 1000 patients",
+  "numerator_short": "Selected items",
+  "denominator_short": "1000 patients",
+  "y_label": "Co-amoxiclav, cephalosporin or quinolone prescriptions per 1000 patients",
+  "why_it_matters": [
+    "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
+    "However they should <a href='https://www.england.nhs.uk/long-read/infection-prevention-and-control-education-framework/' target='_Blank'>only be used where narrow spectrum antibiotics are not likely to be effective</a>,",
+    "as they can increase the risk of <em>Clostridioides difficile</em>, MRSA and other drug-resistant bacteria developing. </p>",
+    "<p> we are no longer using STAR-PUs in this measure.  Read more about why we have to decided to do this on our <a href:https://www.bennett.ox.ac.uk/blog/2024/08/openprescribing-summer-2024-newsletter/' target='_Blank'>blog<a>." 
+  ],
+  "tags": [
+    "antimicrobial",
+    "core",
+    "infections",
+    "nice"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE form_route LIKE '%.oral'"
+  ],
+  "numerator_bnf_codes_filter": [
+    "0501013K0 # Co-Amoxiclav",
+    "0501021 # Cephalosporins",
+    "050112 # Quinolones"
+  ],
+  "denominator_type": "list_size",
+  "no_analyse_url": false,
+  "authored_by": "christopher.wood@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2024-08-05",
+  "next_review": "2026-08-05",
+  "measure_complexity": "low",
+  "measure_type": "dmd",
+  "radar_exclude": false
+}
