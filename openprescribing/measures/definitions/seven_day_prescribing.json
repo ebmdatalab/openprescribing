@@ -62,7 +62,7 @@
   "denominator_from": [
     "{hscic}.raw_prescribing_normalised p LEFT JOIN {measures}.vw__dmd_objs_with_form_route r ON p.bnf_code = r.bnf_code"
   ],
-  "denominator__where": [
+  "denominator_where": [
     "(",
     "p.bnf_code LIKE '0205051R0%' OR #Ramipril \n",
     "p.bnf_code LIKE '0212000B0%' OR #Atorvastatin \n",
