@@ -1,5 +1,5 @@
 {
-  "name": "Environmental impact of inhalers - prescribing of non-salbutamol Metered Dose Inhalers (MDIs)",
+  "name": "Environmental impact of inhalers - Prescribing of the less environmentally friendly Metered Dose Inhaler (MDI) (excluding salbutamol)",
   "title": "",
   "description": "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol",
   "numerator_short": "MDI inhalers (items)",
@@ -47,8 +47,8 @@
   ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "andrew.brown@phc.ox.ac.uk",
-  "date_reviewed": "2023-09-12",
-  "next_review": "2024-09-12",
+  "date_reviewed": "2024-08-06",
+  "next_review": "2025-08-06",
   "measure_notebook_url":"https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Drafts/Enviromental%20Inhalers/Environmental%20Inhalers.ipynb",
   "measure_complexity": "medium",
   "measure_type": "dmd",
