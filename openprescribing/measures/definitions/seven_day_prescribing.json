@@ -57,7 +57,7 @@
   "numerator_is_list_of_bnf_codes": false,
   "denominator_type": "custom",
   "denominator_columns": [
-  "SUM(total_quantity) AS numerator"
+  "SUM(total_quantity) AS denominator"
   ],
   "denominator_from": [
     "{hscic}.raw_prescribing_normalised p LEFT JOIN {measures}.vw__dmd_objs_with_form_route r ON p.bnf_code = r.bnf_code"
