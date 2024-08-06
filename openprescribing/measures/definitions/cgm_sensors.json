@@ -4,10 +4,11 @@
   "description": "Prescribing of continuous glucose monitoring sensors per 1000 patients",
   "numerator_short": "Continuous glucose monitoring sensor quantity",
   "denominator_short": "1000 patients",
+  "y_label": "CGM sensors per 1000 patients",
   "why_it_matters": [
     "Continuous glucose monitoring devices (CGM) can significantly reduce the need for people with diabetes to conduct finger-prick testing.</p>",
-    "<p>NICE guidance for <a href='https://www.nice.org.uk/guidance/ng17'>Type 1 diabetes in adults</a>, <a href='https://www.nice.org.uk/guidance/ng28'>",
-    "Type 2 diabetes in adults</a> and <a href='https://www.nice.org.uk/guidance/ng18'>Type 1 and Type 2 diabetes in children and young people</a> were all ",
+    "<p>NICE guidance for <a href='https://www.nice.org.uk/guidance/ng17' target='_Blank'>Type 1 diabetes in adults</a>, <a href='https://www.nice.org.uk/guidance/ng28' target='_Blank'>",
+    "Type 2 diabetes in adults</a> and <a href='https://www.nice.org.uk/guidance/ng18' target='_Blank'>Type 1 and Type 2 diabetes in children and young people</a> were all ",
     "updated in March 2022. The updates include recommendations that all patients with type 1 diabetes should be offered a choice of real-time continuous ",
     "glucose monitoring (rtCGM) or intermittently scanned continuous glucose monitoring (isCGM) and that adults with type 2 diabetes on multiple daily ",
     "insulin injections should be offered GM where they meet specific clinical criteria."
@@ -34,8 +35,9 @@
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "christopher.wood@phc.ox.ac.uk",
-  "date_reviewed": "2023-06-05",
-  "next_review": "2024-06-05",
+  "date_reviewed": "2024-08-05",
+  "next_review": "2025-08-05",
   "measure_complexity": "medium",
+  "measure_type": "dmd",
   "radar_exclude": true
 }
