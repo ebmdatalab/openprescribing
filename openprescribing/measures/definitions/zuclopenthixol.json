@@ -1,23 +1,16 @@
 {
   "name": "Zuclopenthixol acetate prescribing in primary care",
-  "title": [
-    "Number of items for zuclopenthixol acetate items as a proportion of all injectable zuclopenthixol items"
-  ],
-  "description": [
-    "Number of items for zuclopenthixol acetate items as a proportion of all injectable zuclopenthixol items"
-  ],
+  "title": "Number of items for zuclopenthixol acetate items as a proportion of all injectable zuclopenthixol items",
+  "description": "Number of items for zuclopenthixol acetate items as a proportion of all injectable zuclopenthixol items",
   "numerator_short": "Zuclopenthixol Acetate Items",
   "denominator_short": "All injectable zuclopenthixol items",
+  "y-label": "Zuclopenthixol Acetate Items as percentage of all zuclopenthixol injections",
   "why_it_matters": [
-    "The <a href='https://bnf.nice.org.uk/drug/zuclopenthixol-acetate.html'> BNF has a safety warning advising that</a>",
+    "The <a href='https://bnf.nice.org.uk/drug/zuclopenthixol-acetate.html' target='_Blank'> BNF has a safety warning advising that</a>",
     "zuclopenthixol <b>acetate</b> should only be used in hospitals as it is a relatively short-acting antipsychotic.",
     "Sometimes it may be confused with zuclopnethixol <b>decanoate</b>, a long-acting antipsychotic which is",
-    "more commonly prescribed in primary care supporting long term maintenance.",
-    "<p>Any prescribing on this measure could prompt investigation to ascertain if zuclopenthixol <b>acetate</b> was prescribed in error.</p>",
-    "<p>Please note that this is an experimental measure to support a new type of alert. We would be grateful for",
-    "any feedback at <a href='mailto:bennett@phc.ox.ac.uk?Subject=zuclopenthixol%20measure'>bennett@phc.ox.ac.uk</a>",
-    "and you can read more about the measure ",
-    "<a href='https://ebmdatalab.net/zuclopenthixol-acetate-a-new-kind-of-measure-on-openprescribing/'>on our blog</a>.</p>"
+    "more commonly prescribed in primary care supporting long term maintenance.</p>",
+    "You can read more about the measure <a href='https://www.bennett.ox.ac.uk/blog/2019/10/zuclopenthixol-acetate-a-new-kind-of-measure-on-openprescribing/ target='_Blank''>on our blog</a>.</p>"
   ],
   "tags": [
     "mentalhealth",
@@ -29,29 +22,19 @@
   "low_is_good": true,
   "numerator_type": "bnf_items",
   "numerator_bnf_codes_filter": [
-    "040201010 # acetate"
+    "040201010 # Zuclopenthixol acetate"
   ],
   "denominator_type": "bnf_items",
   "denominator_bnf_codes_filter": [
     "040201010 # acetate",
     "0402020Z0 # decanoate"
   ],
-  "authored_by": [
-    "brian.mackenna@phc.ox.ac.uk"
-  ],
-  "checked_by": [
-    "richard.croker@phc.ox.ac.uk"
-  ],
-  "date_reviewed": [
-    "2019-10-09"
-  ],
-  "next_review": [
-    "2020-10-09"
-  ],
-  "measure_notebook_url": [
-    "https://github.com/ebmdatalab/jupyter-notebooks/tree/master/new_measures/Zuclopenthixol"
-  ],
-  "measure_complexity": [
-    "low"
-  ]
+  "authored_by": "brian.mackenna@phc.ox.ac.uk",
+  "checked_by":  "richard.croker@phc.ox.ac.uk",
+  "date_reviewed":"2024-08-06",
+  "next_review": "2026-08-06",
+  "measure_notebook_url": "https://github.com/ebmdatalab/jupyter-notebooks/tree/master/new_measures/Zuclopenthixol",
+  "measure_type": "bnf_code",
+  "measure_complexity": "low",
+  "radar_exclude": true
 }
