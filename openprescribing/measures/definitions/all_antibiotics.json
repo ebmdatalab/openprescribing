@@ -1,0 +1,45 @@
+{
+  "name": "Antibiotic stewardship: volume of antibiotic prescribing",
+  "title": "Antibiotic stewardship: volume of antibiotic prescribing",
+  "description": ["Prescription items for all oral antibacterial drugs (excluding antituberculosis drugs and antileprotic drugs) per 1000 patients"
+  ],
+  "numerator_short": "Oral antibacterial items",
+  "denominator_short": "1000 patients",
+  "y_label": "Oral antibiotic items per 1000 patients",
+  "why_it_matters": [
+    "Antibiotics play a critical role in modern medicines, as both a treatment of common infections and ",
+    "for the prevention of infections, for example in patients undergoing surgery or chemotherapy.  ",
+    "<a href='https://www.england.nhs.uk/ourwork/prevention/antimicrobial-resistance-amr/' target='_Blank'>Antimicrobial resistance</a> therefore poses a significant threat to public health. ",
+    "To help slow the development of resistance it is important that antiobiotics aren't overused."
+  ],
+  "tags": [
+    "antimicrobial",
+    "core",
+    "infections",
+    "nice"
+  ],
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "bnf_items",
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT(bnf_code)",
+    "FROM {measures}.vw__dmd_objs_with_form_route",
+    "WHERE form_route LIKE '%.oral'"
+  ],
+  "numerator_bnf_codes_filter": [
+    "0501 #Antibacterial drugs",
+    "~050109 #Exclude antituberculosis drugs",
+    "~050110 #Exclude antileprotic drugs"
+  ],
+  "denominator_type": "list_size",
+  "no_analyse_url": false,
+  "authored_by": "christopher.wood@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2024-08-05",
+  "next_review": "2026-08-05",
+  "measure_complexity": "low",
+  "measure_type": "dmd",
+  "radar_exclude": false
+}
