@@ -1,24 +1,14 @@
 {
   "name": "Prescribing of tamoxifen",
-  "title": [
-    "Prescribing of tamoxifen"
-  ],
-  "description": [
-    "Number of Average Daily Quantities (ADQs) for tamoxifen (20mg/day) ",
-    "per 1000 female population aged 35-74."
-  ],
+  "title": "Prescribing of tamoxifen",
+  "description": "Number of Average Daily Quantities (ADQs) for tamoxifen (20mg/day) per 1000 female population aged 35-74.",
   "numerator_short": "Tamoxifen ADQs",
   "denominator_short": "1000 female patients aged 35-74",
   "why_it_matters": [
-    "Alongside its use as a cancer treatment, in 2013 ",
-    "<a href='https://www.nice.org.uk/guidance/cg164'>NICE recommended</a> ",
-    "that tamoxifen should also be prescribed for chemoprevention of breast cancer ",
-    "for pre-menopausal women at increased risk. ",
+    "Alongside its use as a cancer treatment, in 2013 <a href='https://www.nice.org.uk/guidance/cg164'>NICE recommended</a> that tamoxifen should also be prescribed for chemoprevention of breast cancer for pre-menopausal women at increased risk. ",
     "Improving the use of preventative therapies was also reiterated in England's ",
-    "<a href='https://www.cancerresearchuk.org/sites/default/files/achieving_world-class_cancer_outcomes_-_a_strategy_for_england_2015-2020.pdf'>Cancer Strategy</a> ",
-    "for 2015-2020. ",
-    "This measure accompanies our paper investigating the national response to these guidelines, published in the ",
-    "<a href='https://www.nature.com/articles/s41416-018-0065-2'>British Journal of Cancer</a>."
+    "<a href='https://www.cancerresearchuk.org/sites/default/files/achieving_world-class_cancer_outcomes_-_a_strategy_for_england_2015-2020.pdf' target='_Blank'>Cancer Strategy</a> for 2015-2020. ",
+    "This measure accompanies our paper investigating the national response to these guidelines, published in the <a href='https://www.nature.com/articles/s41416-018-0065-2' target='_Blank'>British Journal of Cancer</a>."
   ],
   "tags": [
     "nice",
@@ -48,5 +38,12 @@
   "denominator_from": "{hscic}.practice_statistics ",
   "denominator_where": [
     " female_35_44 > 10 "
-  ]
+  ],
+  "authored_by": "helen_curtis@phc.ox.ac.uk",
+  "checked_by": "richard.croker@phc.ox.ac.uk",
+  "date_reviewed": "2024-08-05",
+  "next_review": "2026-08-05",
+  "measure_complexity": "low",
+  "measure_type": "bnf_code",
+  "radar_exclude": true
 }
