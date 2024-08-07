@@ -8,7 +8,7 @@ black==24.4.2
     # via -r requirements.dev.in
 click==8.1.7
     # via black
-flake8==7.1.0
+flake8==7.1.1
     # via -r requirements.dev.in
 isort==5.13.2
     # via -r requirements.dev.in
