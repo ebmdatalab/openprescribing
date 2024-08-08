@@ -1,15 +1,10 @@
 {
   "name": "Higher dose Proton Pump Inhibitors (PPIs)",
-  "title": [
-    "higher dose Proton Prump Inhibitors",
-    "compared with prescribing of all PPIs (excluding liquids)"
-  ],
-  "description": [
-    "Prescribing of higher dose Proton Prump Inhibitors",
-    "compared with prescribing of all PPIs (excluding liquids)"
-  ],
+  "title": "Higher dose Proton Prump Inhibitors, compared with prescribing of all PPIs (excluding liquids)",
+  "description": "Prescribing of higher dose Proton Prump Inhibitors compared with prescribing of all PPIs (excluding liquids)",
   "numerator_short": "Higher dose PPI items (excluding liquids)",
   "denominator_short": "All PPI items (excluding liquids)",
+  "y_label": "Higher dose PPI items vs all PPI items (excluding liquids)",
   "why_it_matters": [
     "PPIs are used to reduce acid levels in the stomach, in order to treat conditions such as gastro-oesphogeal reflux disease. ",
     "NICE guidance recommends that the lowest dose is used to treat the symptoms. ",
@@ -27,64 +22,47 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "bnf_items",
-  "numerator_bnf_codes_filter": [
-    "0103050E0%AA # Esomeprazole_Tab E/C 20mg (brands and generic)",
-    "0103050E0%AB # Esomeprazole_Tab E/C 40mg (brands and generic)",
-    "0103050E0%AE # Esomeprazole_Gran Sach G/R 10mg (brands and generic)",
-    "0103050E0%AF # Esomeprazole_Cap E/C 20mg (brands and generic)",
-    "0103050E0%AG # Esomeprazole_Cap E/C 40mg (brands and generic)",
-    "0103050L0%AA # Lansoprazole_Cap 30mg (E/C Gran) (brands and generic)",
-    "0103050L0%AC # Lansoprazole_Cap 30mg (E/C Gran) @gn (brands and generic)",
-    "0103050L0%AD # Lansoprazole_Gran Sach 30mg (brands and generic)",
-    "0103050L0%AF # Lansoprazole_Tab 30mg (brands and generic)",
-    "0103050L0%AH # Lansoprazole_Orodisper Tab 30mg (brands and generic)",
-    "0103050P0%AA # Omeprazole_Cap E/C 20mg (brands and generic)",
-    "0103050P0%AE # Omeprazole_Cap E/C 40mg (brands and generic)",
-    "0103050P0%AG # Omeprazole_Cap E/C 20mg @gn (brands and generic)",
-    "0103050P0%AN # Omeprazole_Tab Disper 20mg (E/C Pellets) (brands and generic)",
-    "0103050P0%AP # Omeprazole_Tab Disper 40mg (E/C Pellets) (brands and generic)",
-    "0103050P0%BD # Omeprazole_Tab E/C 20mg (brands and generic)",
-    "0103050P0%BE # Omeprazole_Tab E/C 40mg (brands and generic)",
-    "0103050R0%AA # Pantoprazole_Tab E/C 40mg (brands and generic)",
-    "0103050R0%AB # Pantoprazole_Tab E/C 20mg (brands and generic)",
-    "0103050R0%AD # Pantoprazole_Tab E/C 40mg @gn (brands and generic)",
-    "0103050T0%AB # Rabeprazole Sod_Tab E/C 20mg (brands and generic)"
+
+
+  "numerator_type": "custom",
+  "numerator_columns": "SUM(p.items) AS numerator",
+ "numerator_from": [
+  "{hscic}.normalised_prescribing p ",
+  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
-  "denominator_type": "bnf_items",
-  "denominator_bnf_codes_filter": [
-    "0103050E0%AA # Esomeprazole_Tab E/C 20mg (brands and generic)",
-    "0103050E0%AB # Esomeprazole_Tab E/C 40mg (brands and generic)",
-    "0103050E0%AE # Esomeprazole_Gran Sach G/R 10mg (brands and generic)",
-    "0103050E0%AF # Esomeprazole_Cap E/C 20mg (brands and generic)",
-    "0103050E0%AG # Esomeprazole_Cap E/C 40mg (brands and generic)",
-    "0103050L0%AA # Lansoprazole_Cap 30mg (E/C Gran) (brands and generic)",
-    "0103050L0%AB # Lansoprazole_Cap 15mg (E/C Gran) (brands and generic)",
-    "0103050L0%AC # Lansoprazole_Cap 30mg (E/C Gran) @gn (brands and generic)",
-    "0103050L0%AD # Lansoprazole_Gran Sach 30mg (brands and generic)",
-    "0103050L0%AE # Lansoprazole_Cap 15mg (E/C Gran) @gn (brands and generic)",
-    "0103050L0%AF # Lansoprazole_Tab 30mg (brands and generic)",
-    "0103050L0%AG # Lansoprazole_Orodisper Tab 15mg (brands and generic)",
-    "0103050L0%AH # Lansoprazole_Orodisper Tab 30mg (brands and generic)",
-    "0103050L0%AR # Lansoprazole_Pdr Sach 10mg (brands and generic)",
-    "0103050P0%AA # Omeprazole_Cap E/C 20mg (brands and generic)",
-    "0103050P0%AB # Omeprazole_Cap 10mg (brands and generic)",
-    "0103050P0%AC # Omeprazole_Cap 5mg (brands and generic)",
-    "0103050P0%AE # Omeprazole_Cap E/C 40mg (brands and generic)",
-    "0103050P0%AF # Omeprazole_Cap E/C 10mg (brands and generic)",
-    "0103050P0%AG # Omeprazole_Cap E/C 20mg @gn (brands and generic)",
-    "0103050P0%AM # Omeprazole_Tab Disper 10mg (E/C Pellets) (brands and generic)",
-    "0103050P0%AN # Omeprazole_Tab Disper 20mg (E/C Pellets) (brands and generic)",
-    "0103050P0%AP # Omeprazole_Tab Disper 40mg (E/C Pellets) (brands and generic)",
-    "0103050P0%AT # Omeprazole_Cap E/C 2.5mg (brands and generic)",
-    "0103050P0%AU # Omeprazole_Cap E/C 10mg @gn (brands and generic)",
-    "0103050P0%BC # Omeprazole_Tab E/C 10mg (brands and generic)",
-    "0103050P0%BD # Omeprazole_Tab E/C 20mg (brands and generic)",
-    "0103050P0%BE # Omeprazole_Tab E/C 40mg (brands and generic)",
-    "0103050R0%AA # Pantoprazole_Tab E/C 40mg (brands and generic)",
-    "0103050R0%AB # Pantoprazole_Tab E/C 20mg (brands and generic)",
-    "0103050R0%AD # Pantoprazole_Tab E/C 40mg @gn (brands and generic)",
-    "0103050T0%AA # Rabeprazole Sod_Tab E/C 10mg (brands and generic)",
-    "0103050T0%AB # Rabeprazole Sod_Tab E/C 20mg (brands and generic)"
-  ]
+  "numerator_where": [
+  "route.descr IN ('capsule.oral', 'capsulegastro-resistant.oral', 'tablet.oral','tabletchewable.oral', 'tabletdispersiblegastro-resistant.oral', 'tabletgastro-resistant.oral') -- selects only solid dose form oral formulations \n",
+  "AND (vpi.ing IN (396047003, 725856000, 725855001) # Esomeprazole, Esomeprazole magnesium trihydrate, Esomeprazole magnesium dihydrate (all strengths) (ing code) \n",
+  "OR (vpi.ing = 86888004 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1))>15) # Lansoprazole (strengths higher than 15mg) (ing code) \n", 
+  "OR (vpi.ing = 387137007 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >10) # Omeprazole, Omeprazole magnesium (strengths higher than 10mg) (ing code) \n",
+  "OR vpi.ing = 432408008 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >20) # Pantoprazole sodium sesquihydrate (strengths higher than 20mg) (ing code) \n",
+  "OR vpi.ing = 387013009 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >10)) # Rabeprazole sodium (strengths higher than 10mg) (ing code)"
+  ],
+ "denominator_type": "custom",
+ "denominator_columns": "SUM(p.items) AS denominator",
+ "denominator_from": [
+  "{hscic}.normalised_prescribing p ",
+  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
+  ],
+  "denominator_where": [
+    "route.descr IN ('capsule.oral', 'capsulegastro-resistant.oral', 'tablet.oral','tabletchewable.oral', 'tabletdispersiblegastro-resistant.oral', 'tabletgastro-resistant.oral') -- selects only solid dose form oral formulations \n",
+    "AND (vpi.ing IN (396047003, 725856000, 725855001) # Esomeprazole, Esomeprazole magnesium trihydrate, Esomeprazole magnesium dihydrate (all strengths) (ing code) \n",
+    "OR vpi.ing = 86888004 # Lansoprazole (all strengths) (ing code) \n", 
+    "OR vpi.ing = 387137007 # Omeprazole, Omeprazole magnesium (all strengths) (ing code) \n",
+    "OR vpi.ing = 432408008 # Pantoprazole sodium sesquihydrate (all strengths) (ing code) \n",
+    "OR vpi.ing = 387013009) # Rabeprazole sodium (all strengths)"
+    ],
+  "authored_by": "richard.croker@phc.ox.ac.uk",
+  "checked_by": "",
+  "date_reviewed": "2024-08-07",
+  "next_review": "2025-08-07",
+  "measure_complexity": "medium",
+  "measure_type": "dmd",
+  "radar_exclude": false
 }
