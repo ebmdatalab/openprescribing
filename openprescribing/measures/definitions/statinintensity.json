@@ -34,9 +34,9 @@
   ],
   "numerator_where": [
   "route.descr IN ('capsule.oral','tablet.oral','tabletchewable.oral','tabletmodified-release.oral') -- selects only solid dose form oral formulations \n",
-  "AND ((vpi.ing = 725658002 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) <20) --Atorvastatin calcium trihydrate (strengths lower than 20mg) (ing code) \n",
-  "OR (vpi.ing = 406435003 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1))<10) --Rosuvastatin calcium (strengths lower than 10mg) (ing code) \n", 
-  "OR (vpi.ing = 387584000 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) <80) --Simvastatin (strengths lower than 80mg) (ing code) \n",
+  "AND ((vpi.ing = 725658002 AND strnt_nmrtr_val/((COALESCE(strnt_dnmtr_val,1))) <20) --Atorvastatin calcium trihydrate (strengths lower than 20mg) (ing code) \n",
+  "OR (vpi.ing = 406435003 AND strnt_nmrtr_val/((COALESCE(strnt_dnmtr_val,1)))<10) --Rosuvastatin calcium (strengths lower than 10mg) (ing code) \n", 
+  "OR (vpi.ing = 387584000 AND strnt_nmrtr_val/((COALESCE(strnt_dnmtr_val,1))) <80) --Simvastatin (strengths lower than 80mg) (ing code) \n",
   "OR vpi.ing = 108597004 --Cerivastatin sodium (all strengths) (ing code) \n", 
   "OR vpi.ing = 412392009 --Fluvastatin sodium (all strengths) (ing code) \n", 
   "OR vpi.ing = 96306007) --Pravastatin sodium (all strengths) (ing code)"
