@@ -22,34 +22,32 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-
-
   "numerator_type": "custom",
   "numerator_columns": "SUM(p.items) AS numerator",
- "numerator_from": [
-  "{hscic}.normalised_prescribing p ",
-  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
-  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
-  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
-  ],
-  "numerator_where": [
-  "route.descr IN ('capsule.oral', 'capsulegastro-resistant.oral', 'tablet.oral','tabletchewable.oral', 'tabletdispersiblegastro-resistant.oral', 'tabletgastro-resistant.oral') -- selects only solid dose form oral formulations \n",
-  "AND (vpi.ing IN (396047003, 725856000, 725855001) # Esomeprazole, Esomeprazole magnesium trihydrate, Esomeprazole magnesium dihydrate (all strengths) (ing code) \n",
-  "OR (vpi.ing = 86888004 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1))>15) # Lansoprazole (strengths higher than 15mg) (ing code) \n", 
-  "OR (vpi.ing = 387137007 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >10) # Omeprazole, Omeprazole magnesium (strengths higher than 10mg) (ing code) \n",
-  "OR vpi.ing = 432408008 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >20) # Pantoprazole sodium sesquihydrate (strengths higher than 20mg) (ing code) \n",
-  "OR vpi.ing = 387013009 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >10)) # Rabeprazole sodium (strengths higher than 10mg) (ing code)"
-  ],
- "denominator_type": "custom",
- "denominator_columns": "SUM(p.items) AS denominator",
- "denominator_from": [
-  "{hscic}.normalised_prescribing p ",
-  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
-  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
-  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
-  ],
+  "numerator_from": [
+    "{hscic}.normalised_prescribing p ",
+    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
+    ],
+    "numerator_where": [
+    "route.descr IN ('capsule.oral', 'capsulegastro-resistant.oral', 'tablet.oral','tabletchewable.oral', 'tabletdispersiblegastro-resistant.oral', 'tabletgastro-resistant.oral') -- selects only solid dose form oral formulations \n",
+    "AND (vpi.ing IN (396047003, 725856000, 725855001) # Esomeprazole, Esomeprazole magnesium trihydrate, Esomeprazole magnesium dihydrate (all strengths) (ing code) \n",
+    "OR (vpi.ing = 86888004 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1))>15) # Lansoprazole (strengths higher than 15mg) (ing code) \n", 
+    "OR (vpi.ing = 387137007 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >10) # Omeprazole, Omeprazole magnesium (strengths higher than 10mg) (ing code) \n",
+    "OR vpi.ing = 432408008 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >20) # Pantoprazole sodium sesquihydrate (strengths higher than 20mg) (ing code) \n",
+    "OR vpi.ing = 387013009 AND strnt_nmrtr_val/(COALESCE(strnt_dnmtr_val,1)) >10)) # Rabeprazole sodium (strengths higher than 10mg) (ing code)"
+    ],
+  "denominator_type": "custom",
+  "denominator_columns": "SUM(p.items) AS denominator",
+  "denominator_from": [
+    "{hscic}.normalised_prescribing p ",
+    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
+    ],
   "denominator_where": [
     "route.descr IN ('capsule.oral', 'capsulegastro-resistant.oral', 'tablet.oral','tabletchewable.oral', 'tabletdispersiblegastro-resistant.oral', 'tabletgastro-resistant.oral') -- selects only solid dose form oral formulations \n",
     "AND (vpi.ing IN (396047003, 725856000, 725855001) # Esomeprazole, Esomeprazole magnesium trihydrate, Esomeprazole magnesium dihydrate (all strengths) (ing code) \n",
