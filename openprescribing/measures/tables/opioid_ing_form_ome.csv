@@ -1,53 +1,52 @@
-vpi,nm,form,ome,ref,link,notes
-387173000,Buprenorphine,transdermal,100,OA,https://fpm.ac.uk/opioids-aware-structured-approach-opioid-prescribing/dose-equivalents-and-changing-opioids,calculation based on buprenorphine mcg/hr to morphine mg per day
-21066009,Buprenorphine hydrochloride,injection,100,OA,https://fpm.ac.uk/opioids-aware-structured-approach-opioid-prescribing/dose-equivalents-and-changing-opioids,assumed from oral dose
-442699004,Tapentadol hydrochloride,oral,0.4,OA,https://fpm.ac.uk/opioids-aware-structured-approach-opioid-prescribing/dose-equivalents-and-changing-opioids,
-373492002,Fentanyl,transdermal,100,BNF,https://fpm.ac.uk/opioids-aware-structured-approach-opioid-prescribing/dose-equivalents-and-changing-opioids,
-60886004,Morphine sulfate,rectal,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-60886004,Morphine sulfate,oral,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-60886004,Morphine sulfate,injection,2,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-261000,Codeine phosphate,oral,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-261000,Codeine phosphate,rectal,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-442424007,Morphine tartrate,injection,2,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-4.36911E+15,Morphine anhydrous,oral,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-1.76324E+16,Oxycodone pectinate,rectal,1.5,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-395804007,Morphine hydrochloride,rectal,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-395804007,Morphine hydrochloride,injection,2,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-395804007,Morphine hydrochloride,oral,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,assumed from oral dose
-108505002,Tramadol hydrochloride,oral,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-322538006,Dihydrocodeine tartrate,oral,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-387024006,Oxycodone hydrochloride,injection,3,BNF,https://bnf.nice.org.uk/drug/oxycodone-hydrochloride.html#indicationsAndDoses,
-387024006,Oxycodone hydrochloride,rectal,1.5,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-387024006,Oxycodone hydrochloride,oral,1.5,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-387485001,Hydromorphone hydrochloride,oral,5,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-322538006,Dihydrocodeine tartrate,injection,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-396019002,Diamorphine hydrochloride,injection,3.3,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,
-29190006,Fentanyl citrate,oromucosal,130,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-29190006,Fentanyl citrate,nasal,160,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-29190006,Fentanyl citrate,buccal,130,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-71533000,Pentazocine lactate,rectal,0.37,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-71533000,Pentazocine lactate,injection,0.37,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-23883005,Methadone hydrochloride,inhalation,3,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-23883005,Methadone hydrochloride,injection,3,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-23883005,Methadone hydrochloride,oral,3,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-91013003,Pentazocine hydrochloride,oral,0.37,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,
-261000,Codeine phosphate,injection,0.1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,
-396019002,Diamorphine hydrochloride,oral,1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,
-396019002,Diamorphine hydrochloride,inhalation,1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,
-396019002,Diamorphine hydrochloride,rectal,1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,assumed from oral dose
-6837005,Dextropropoxyphene napsylate,oral,0.1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,
-56297001,Dextropropoxyphene hydrochloride,oral,0.1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,
-21066009,Buprenorphine hydrochloride,oromucosal,60,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,assumed from oral dose
-108505002,Tramadol hydrochloride,injection,0.2,SPC,https://www.medicines.org.uk/emc/product/82/smpc#gref,
-2878005,Pethidine hydrochloride,oral,0.1,ABHB,https://www.drjcope.com/uploads/1/3/1/4/13140168/palliative_care_drug_converter_1.pdf,
-2878005,Pethidine hydrochloride,injection,0.24,ABHB,https://www.drjcope.com/uploads/1/3/1/4/13140168/palliative_care_drug_converter_1.pdf,
-768496009,Meptazinol hydrochloride,injection,0.03,ABHB,https://www.drjcope.com/uploads/1/3/1/4/13140168/palliative_care_drug_converter_1.pdf,
-768496009,Meptazinol hydrochloride,oral,0.03,ABHB,https://www.drjcope.com/uploads/1/3/1/4/13140168/palliative_care_drug_converter_1.pdf,
-29190006,Fentanyl citrate,injection,150,Glos,https://www.gloshospitals.nhs.uk/gps/treatment-guidelines/opioid-equivalence-chart/,
-395822005,Papaveretum,injection,0.67,Loan,https://academic.oup.com/bja/article/38/11/891/241933,
-387485001,Hydromorphone hydrochloride,injection,12.5,Reddy,https://pubmed.ncbi.nlm.nih.gov/28711751/,
-322508000,Dextromoramide tartrate,oral,2,Barnett,https://pmj.bmj.com/content/postgradmedj/77/908/371.full.pdf,
-322554009,Dipipanone hydrochloride,oral,0.5,Barnett,https://pmj.bmj.com/content/postgradmedj/77/908/371.full.pdf,
-96184001,Alfentanil hydrochloride,nasal,30,ScotPCG,https://www.palliativecareguidelines.scot.nhs.uk/guidelines/pain/choosing-and-changing-opioids.aspx,
-96184001,Alfentanil hydrochloride,injection,30,ScotPCG,https://www.palliativecareguidelines.scot.nhs.uk/guidelines/pain/choosing-and-changing-opioids.aspx,
-111123003,Nalbuphine hydrochloride,injection,1,Sedation,https://www.sciencedirect.com/topics/medicine-and-dentistry/nalbuphine,
+vpi,nm,form,ome,ref,link,notes,vpi_type
+387561007,Dextromoramide,oral,2,Barnett,https://pmj.bmj.com/content/postgradmedj/77/908/371.full.pdf,changed from ingredient 322508000 to base,bs
+386858008,Tramadol,oral,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,"Oral drops only, used base substance calculation",bs
+387173000,Buprenorphine,oromucosal,60,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,assumed from oral dose changed from ingredient 21066009 to base,bs
+387042001,Dextropropoxyphene,oral,0.1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,changed from ingredient 56297001 and 6837005 to base,bs
+373492002,Fentanyl,buccal,130,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,,bs
+373492002,Fentanyl,nasal,160,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,,bs
+373492002,Fentanyl,oromucosal,130,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,changed from ingredient 29190006 to base,bs
+387213004,Pentazocine,injection,0.37,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,changed from ingredient 71533000 to base,bs
+387213004,Pentazocine,rectal,0.37,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,changed from ingredient 71533000 to base,bs
+373492002,Fentanyl,injection,150,Glos,https://www.gloshospitals.nhs.uk/gps/treatment-guidelines/opioid-equivalence-chart/,,bs
+395783008,Meptazinol,injection,0.03,ABHB,https://www.drjcope.com/uploads/1/3/1/4/13140168/palliative_care_drug_converter_1.pdf,changed from ingredient 768496009 to base,bs
+395783008,Meptazinol,oral,0.03,ABHB,https://www.drjcope.com/uploads/1/3/1/4/13140168/palliative_care_drug_converter_1.pdf,,bs
+387560008,Alfentanil,injection,30,ScotPCG,https://www.palliativecareguidelines.scot.nhs.uk/guidelines/pain/choosing-and-changing-opioids.aspx,changed from ingredient 96184001 to base,bs
+387560008,Alfentanil,nasal,30,ScotPCG,https://www.palliativecareguidelines.scot.nhs.uk/guidelines/pain/choosing-and-changing-opioids.aspx,changed from ingredient 96184001 to base,bs
+387173000,Buprenorphine,injection,100,OA,https://fpm.ac.uk/opioids-aware-structured-approach-opioid-prescribing/dose-equivalents-and-changing-opioids,assumed from oral dose changed from ingredient 21066009 to base,bs
+387173000,Buprenorphine,transdermal,100,OA,https://fpm.ac.uk/opioids-aware-structured-approach-opioid-prescribing/dose-equivalents-and-changing-opioids,calculation based on buprenorphine mcg/hr to morphine mg per day,bs
+441757005,Tapentadol,oral,0.4,OA,https://fpm.ac.uk/opioids-aware-structured-approach-opioid-prescribing/dose-equivalents-and-changing-opioids,changing from ingredient 442699004 to base,bs
+387485001,Hydromorphone hydrochloride,injection,12.5,Reddy,https://pubmed.ncbi.nlm.nih.gov/28711751/,,is
+395822005,Papaveretum,injection,0.67,Loan,https://academic.oup.com/bja/article/38/11/891/241933,,is
+108505002,Tramadol hydrochloride,injection,0.2,SPC,https://www.medicines.org.uk/emc/product/82/smpc#gref,,is
+322554009,Dipipanone hydrochloride,oral,0.5,Barnett,https://pmj.bmj.com/content/postgradmedj/77/908/371.full.pdf,,is
+261000,Codeine phosphate,oral,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+261000,Codeine phosphate,rectal,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+396019002,Diamorphine hydrochloride,injection,3.3,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+322538006,Dihydrocodeine tartrate,injection,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+322538006,Dihydrocodeine tartrate,oral,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+387485001,Hydromorphone hydrochloride,oral,5,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+395804007,Morphine hydrochloride,injection,2,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+395804007,Morphine hydrochloride,oral,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,assumed from oral dose,is
+395804007,Morphine hydrochloride,rectal,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+60886004,Morphine sulfate,injection,2,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+60886004,Morphine sulfate,oral,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+60886004,Morphine sulfate,rectal,1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+442424007,Morphine tartrate,injection,2,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+387024006,Oxycodone hydrochloride,oral,1.5,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+387024006,Oxycodone hydrochloride,rectal,1.5,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+17632411000001105,Oxycodone pectinate,rectal,1.5,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+108505002,Tramadol hydrochloride,oral,0.1,BNF,https://bnf.nice.org.uk/guidance/prescribing-in-palliative-care.html,,is
+261000,Codeine phosphate,injection,0.1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,,is
+396019002,Diamorphine hydrochloride,inhalation,1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,,is
+396019002,Diamorphine hydrochloride,oral,1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,,is
+396019002,Diamorphine hydrochloride,rectal,1,GPN,https://gpnotebook.com/en-gb/simplepage.cfm?ID=x20041106080748159860,assumed from oral dose,is
+111123003,Nalbuphine hydrochloride,injection,1,Sedation,https://www.sciencedirect.com/topics/medicine-and-dentistry/nalbuphine,,is
+387024006,Oxycodone hydrochloride,injection,3,BNF,https://bnf.nice.org.uk/drug/oxycodone-hydrochloride.html#indicationsAndDoses,,is
+23883005,Methadone hydrochloride,inhalation,3,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,,is
+23883005,Methadone hydrochloride,injection,3,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,,is
+23883005,Methadone hydrochloride,oral,3,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,,is
+91013003,Pentazocine hydrochloride,oral,0.37,CMS,https://medicaid.utah.gov/Documents/files/Opioid-Morphine-EQ-Conversion-Factors.pdf,,is
+2878005,Pethidine hydrochloride,injection,0.24,ABHB,https://www.drjcope.com/uploads/1/3/1/4/13140168/palliative_care_drug_converter_1.pdf,,is
+2878005,Pethidine hydrochloride,oral,0.1,ABHB,https://www.drjcope.com/uploads/1/3/1/4/13140168/palliative_care_drug_converter_1.pdf,,is
+373492002,Fentanyl,transdermal,100,BNF,https://fpm.ac.uk/opioids-aware-structured-approach-opioid-prescribing/dose-equivalents-and-changing-opioids,,is
