@@ -65,7 +65,7 @@ django==4.2.15
     #   django-debug-toolbar-template-timings
     #   django-extensions
     #   djangorestframework
-django-anymail[mailgun]==11.0.1
+django-anymail[mailgun]==11.1
     # via -r requirements.in
 django-cors-headers==4.4.0
     # via -r requirements.in
