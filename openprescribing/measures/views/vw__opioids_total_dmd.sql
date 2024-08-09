@@ -36,6 +36,7 @@ WITH simp_form AS (
     END AS strnt_dnmtr_val_ml #denominator now in ml
     FROM
     {project}.{dmd}.vpi AS vpi
+    INNER JOIN {project}.{dmd}.ing AS ing ON vpi.ing = ing.id
     LEFT JOIN {project}.{dmd}.unitofmeasure AS unit_num ON vpi.strnt_nmrtr_uom = unit_num.cd #join to create text value for numerator unit
     LEFT JOIN {project}.{dmd}.unitofmeasure AS unit_den ON vpi.strnt_dnmtr_uom = unit_den.cd #join to create text value for denominator unit
 )
@@ -70,7 +71,6 @@ SELECT
   opioid.ome AS ome
 FROM
   norm_vpi AS vpi #VPI has both ING and VMP codes in the table
-  INNER JOIN {project}.{dmd}.ing AS ing ON vpi.ing = ing.id #join to ING to get ING codes and name
   INNER JOIN {project}.{dmd}.vmp AS vmp ON vpi.vmp = vmp.id #join to get BNF codes for both VMPs and AMPs joined indirectly TO ING.
   INNER JOIN simp_form AS form ON vmp.id = form.vmp #join to subquery for simplified administration route
   INNER JOIN {project}.{measures}.opioid_ing_form_ome AS opioid ON opioid.vpi = COALESCE(vpi.bs_subid, vpi.ing) AND opioid.form = form.simple_form #join to OME table, which has OME value for ING/route pairs
