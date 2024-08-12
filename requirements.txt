@@ -352,7 +352,7 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
-watchdog==4.0.1
+watchdog==4.0.2
     # via when-changed
 webencodings==0.5.1
     # via html5lib
