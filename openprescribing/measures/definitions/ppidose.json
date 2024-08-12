@@ -51,7 +51,7 @@
         ")# esomeprazole, esomeprazole magnesium trihydrate, esomeprazole magnesium dihydrate (ALL strengths) (ing code) \n",
         "OR",
         "(",
-          "vpi.ing = 86888004",
+          "vpi.ing = 386888004",
           "AND",
           "strnt_nmrtr_val/COALESCE(strnt_dnmtr_val,1) >15 # lansoprazole (strengths higher than 15mg) (ing code) \n",
         ")",
@@ -96,7 +96,7 @@
 
         "vpi.ing = 725856000 # esomeprazole magnesium trihydrate (all strengths) (ing code) \n",
         "OR vpi.ing = 725855001 # esomeprazole magnesium dihydrate (all strengths) (ing code) \n",
-        "OR vpi.ing = 86888004 # lansoprazole (all strengths) (ing code) \n",
+        "OR vpi.ing = 386888004 # lansoprazole (all strengths) (ing code) \n",
         "OR vpi.ing = 387137007 # omeprazole, omeprazole magnesium (all strengths) (ing code) \n",
         "OR vpi.ing = 396047003 # omeprazole(all strengths) (ing code) \n",
         "OR vpi.ing = 432408008 # pantoprazole sodium sesquihydrate (all strengths) (ing code) \n",
