@@ -100,7 +100,7 @@
         "OR vpi.ing = 387137007 # omeprazole, omeprazole magnesium (all strengths) (ing code) \n",
         "OR vpi.ing = 396047003 # omeprazole(all strengths) (ing code) \n",
         "OR vpi.ing = 432408008 # pantoprazole sodium sesquihydrate (all strengths) (ing code) \n",
-        "OR vpi.ing = 387013009  # rabeprazole sodium (all strengths) (ing code)",
+        "OR vpi.ing = 387013009  # rabeprazole sodium (all strengths) (ing code) \n",
       ")"
     ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
@@ -110,5 +110,5 @@
   "measure_complexity": "medium",
   "measure_type": "dmd",
   "radar_exclude": false
-  
+
 }
