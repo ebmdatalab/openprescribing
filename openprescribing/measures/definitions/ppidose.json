@@ -40,7 +40,7 @@
           "'tabletchewable.oral',",
           "'tabletdispersiblegastro-resistant.oral',",
           "'tabletgastro-resistant.oral'",
-        "), ## selects only solid dose form oral formulations \n",
+        ") ## selects only solid dose form oral formulations \n",
       "AND",
       "(",
         "vpi.ing IN ",
