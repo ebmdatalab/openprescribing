@@ -32,7 +32,6 @@
     "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
     ],
     "numerator_where": [
-      "route.descr IN ",
       "SUBSTR",
       "(",
         "route.descr,",
@@ -90,7 +89,6 @@
     "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
     ],
   "denominator_where": [
-    "route.descr IN ",
     "SUBSTR",
     "(",
       "route.descr,",
