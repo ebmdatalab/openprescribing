@@ -44,7 +44,7 @@
         "form.descr, 1,", 
         "STRPOS(form.descr, '.') - 1",
       ")",
-        "NOT IN ('suspension', 'solution') # doesn't include liquid preps",
+        "NOT IN ('suspension', 'solution') # doesn't include liquid preps \n",
       "AND",
       "(",
         "vpi.ing IN ",
@@ -101,7 +101,7 @@
       "form.descr, 1,", 
       "STRPOS(form.descr, '.') - 1",
     ")",
-      "NOT IN ('suspension', 'solution') # doesn't include liquid preps",
+      "NOT IN ('suspension', 'solution') # doesn't include liquid preps \n",
     "AND",
       "(",
 
