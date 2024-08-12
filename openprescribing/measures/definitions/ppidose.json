@@ -110,5 +110,4 @@
   "measure_complexity": "medium",
   "measure_type": "dmd",
   "radar_exclude": false
-
 }
