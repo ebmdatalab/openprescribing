@@ -198,7 +198,7 @@ more-itertools==10.4.0
     # via cssutils
 networkx==3.3
     # via -r requirements.in
-numpy==2.0.1
+numpy==2.1.0
     # via
     #   -r requirements.in
     #   contourpy
