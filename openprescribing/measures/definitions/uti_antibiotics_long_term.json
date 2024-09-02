@@ -26,7 +26,19 @@
     "numerator_where": [
       "bnf_code LIKE '0501080W0%AD' AND quantity_per_item >27--Trimethoprim 100mg tablets (brands and generic)"
     ],
-    "denominator_type": "list_size",
+    "denominator_type": "custom",
+    "denominator_columns": [
+      "SUM(items) AS denominator"
+    ],
+    "denominator_from": "{hscic}.raw_prescribing_normalised",
+    "denominator_where": [
+      "bnf_code LIKE '0501015P0%AB' OR # Pivmecillinam HCl_Tab 200mg (brands and generic) \n",
+      "bnf_code LIKE '0501080W0%AE' OR # Trimethoprim_Tab 200mg (brands and generic) \n",
+      "bnf_code LIKE '0501130R0%AA' OR # Nitrofurantoin_Cap 50mg (brands and generic) \n",
+      "bnf_code LIKE '0501130R0%AD' OR # Nitrofurantoin_Tab 50mg (brands and generic) \n",
+      "bnf_code LIKE '0501130R0%AG' OR # Nitrofurantoin_Cap 100mg M/R (brands and generic) \n",
+      "bnf_code LIKE '0501070AE%AD' # Fosfomycin_Sachet 3g (brands and generic)"
+    ],
     "no_analyse_url": true,
     "authored_by": "richard.croker@phc.ox.ac.uk",
     "checked_by": "",
