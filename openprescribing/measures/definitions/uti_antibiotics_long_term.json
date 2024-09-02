@@ -7,8 +7,7 @@
     "y_label": "Items of antibiotics commonly used for UTI prophylaxis prescribed as 28 days or more",
     "why_it_matters": [
       ""
-    
-    ],
+        ],
     "tags": [
       "antimicrobial",
       "core",
@@ -16,7 +15,7 @@
       "nice"
     ],
     "url": null,
-    "is_percentage": true,
+    "is_percentage": false,
     "is_cost_based": false,
     "low_is_good": true,
     "numerator_type": "custom",
