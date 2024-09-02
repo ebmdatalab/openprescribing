@@ -29,12 +29,12 @@
       "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item >=28) OR --Nitrofurantoin 50mg capsules (brands and generic)\n",
       "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item >=28) --Nitrofurantoin 50mg tablets (brands and generic)"
     ],
-    "numerator_type": "custom",
-    "numerator_columns": [
+    "denominator_type": "custom",
+    "denominator_columns": [
       "SUM(items) AS numerator"
     ],
-    "numerator_from": "{hscic}.raw_prescribing_normalised_date",
-    "numerator_where": [
+    "denominator_from": "{hscic}.raw_prescribing_normalised_date",
+    "denominator_where": [
       "(bnf_code LIKE '0501080W0%AD' AND quantity_per_item >=28) OR --Trimethoprim 100mg tablets (brands and generic)\n",
       "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item >=28) OR --Nitrofurantoin 50mg capsules (brands and generic)\n",
       "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item >=28) OR --Nitrofurantoin 50mg tablets (brands and generic)\n",
