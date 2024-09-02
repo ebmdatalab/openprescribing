@@ -24,9 +24,7 @@
     ],
     "numerator_from": "{hscic}.raw_prescribing_normalised",
     "numerator_where": [
-      "(bnf_code LIKE '0501080W0%AD' AND quantity_per_item >27) OR --Trimethoprim 100mg tablets (brands and generic)\n",
-      "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item >27) OR --Nitrofurantoin 50mg capsules (brands and generic)\n",
-      "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item >27) --Nitrofurantoin 50mg tablets (brands and generic)\n"
+      "bnf_code LIKE '0501080W0%AD' AND quantity_per_item >27--Trimethoprim 100mg tablets (brands and generic)"
     ],
     "denominator_type": "list_size",
     "no_analyse_url": true,
