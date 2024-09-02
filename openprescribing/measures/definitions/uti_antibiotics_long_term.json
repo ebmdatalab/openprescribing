@@ -16,7 +16,7 @@
       "nice"
     ],
     "url": null,
-    "is_percentage": true,
+    "is_percentage": false,
     "is_cost_based": false,
     "low_is_good": true,
     "numerator_type": "custom",
