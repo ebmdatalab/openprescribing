@@ -1,12 +1,12 @@
 {
-    "name": "Antibiotic stewardship: long term antibiotics for UTIs",
-    "title": "Antibiotic stewardship: long term antibiotics for UTIs",
-    "description": "Number of prescriptions for long term prophylaxis (28 days or more) of urinary-tract infections per 1000 patients",
-    "numerator_short": "Quantity of 28 days or more",
-    "denominator_short": "1000 patients",
-    "y_label": "Items of antibiotics commonly used for UTI prophylaxis prescribed as 28 days or more",
+    "name": "Antibiotic stewardship",
+    "title": "Antibiotic stewardship",
+    "description": "urinary-tract infection",
+    "numerator_short": "Antibiotic items",
+    "denominator_short": "Antibiotic items",
+    "y_label": "1000 patients",
     "why_it_matters": [
-      ""
+      "tbc"
         ],
     "tags": [
       "antimicrobial",
@@ -24,15 +24,15 @@
     ],
     "numerator_from": "{hscic}.raw_prescribing_normalised",
     "numerator_where": [
-      "(bnf_code LIKE '0501080W0%AD' AND quantity_per_item >=28) OR --Trimethoprim 100mg tablets (brands and generic)\n",
-      "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item >=28) OR --Nitrofurantoin 50mg capsules (brands and generic)\n",
-      "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item >=28) --Nitrofurantoin 50mg tablets (brands and generic)"
+      "(bnf_code LIKE '0501080W0%AD' AND quantity_per_item >27) OR --Trimethoprim 100mg tablets (brands and generic)\n",
+      "(bnf_code LIKE '0501130R0%AA' AND quantity_per_item >27) OR --Nitrofurantoin 50mg capsules (brands and generic)\n",
+      "(bnf_code LIKE '0501130R0%AD' AND quantity_per_item >27) --Nitrofurantoin 50mg tablets (brands and generic)\n"
     ],
     "denominator_type": "list_size",
     "no_analyse_url": true,
     "authored_by": "richard.croker@phc.ox.ac.uk",
     "checked_by": "",
-    "date_reviewed": "2024-09-02",
+    "date_reviewed": "2024-02-12",
     "next_review": "",
     "measure_complexity": "low",
     "measure_type": "bnf_code",
