@@ -276,7 +276,7 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
-pyquery==2.0.0
+pyquery==2.0.1
     # via -r requirements.in
 pysocks==1.7.1
     # via urllib3
