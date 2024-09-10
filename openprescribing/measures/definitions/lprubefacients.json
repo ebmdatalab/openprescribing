@@ -43,7 +43,12 @@
     "~1003020M0 # Felbinac",
     "~1003020P0 # Ibuprofen",
     "~1003020R0 # Piroxicam",
-    "~1003020U0 # Diclofenac sodium"
+    "~1003020U0 # Diclofenac sodium",
+    "~1003020AD # Arnica montana",
+    "~1003020W0 # Heparinoid",
+    "~1003020L0 # Kaolin Heavy",
+    "~1003020S0 # Soft soap",
+    "~1003020V0 # Turpentine oil"
   ],
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
