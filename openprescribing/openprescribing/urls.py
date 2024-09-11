@@ -48,8 +48,8 @@ def all_england_redirects(request, *args, **kwargs):
 
 
 urlpatterns = [
+    path(r"", views.home, name="home"),
     # Static pages.
-    path(r"", TemplateView.as_view(template_name="index.html"), name="home"),
     path(r"api/", TemplateView.as_view(template_name="api.html"), name="api"),
     path(r"about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path(r"faq/", TemplateView.as_view(template_name="faq.html"), name="faq"),
