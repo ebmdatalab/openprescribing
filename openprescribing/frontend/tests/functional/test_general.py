@@ -63,7 +63,7 @@ class GeneralFrontendTest(SeleniumTestCase):
     def test_practice_name_typeahead(self):
         self.browser.get(self.live_server_url + "/analyse/")
         self.find_by_xpath('//span[@id="select2-org-container"]').click()
-        self.find_by_xpath('//li[contains(text(), "a practice or practices")]').click()
+        self.find_by_xpath('//li[contains(text(), "Practices")]').click()
         el = self.find_by_xpath(
             '//div[@id="orgIds-container"]' '//input[@class="select2-search__field"]'
         )
