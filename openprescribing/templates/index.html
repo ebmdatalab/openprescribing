@@ -58,16 +58,33 @@
   <div class="col-md-3">
     <h3>Latest News</h3>
 
-    <div class="latest-news-item">
-      <a href="https://www.bennett.ox.ac.uk/openprescribing/blog/">
-        <img src="{% static 'img/footer-bennett.svg' %}">
-      </a>
-      <p style="margin-top: 5px">
-        <a href="https://www.bennett.ox.ac.uk/openprescribing/blog/">
-          Read the latest news from OpenPrescribing on the Bennett Institute blog
-        </a>
-      </p>
-    </div>
+    {% if news_feed %}
+
+      {% for item in news_feed %}
+
+        <div class="latest-news-item">
+          <a href="{{ item.link }}"><img src="{{ item.image }}"></a>
+          <small class="text-muted">{{ item.date | date:"j M Y" }}</small>
+          <p><a href="{{ item.link }}">{{ item.title }}</a></p>
+        </div>
+
+      {% endfor %}
+
+    {% else %}
+
+        <div class="latest-news-item">
+          <a href="https://www.bennett.ox.ac.uk/openprescribing/blog/">
+            <img src="{% static 'img/footer-bennett.svg' %}">
+          </a>
+          <p style="margin-top: 5px">
+            <a href="https://www.bennett.ox.ac.uk/openprescribing/blog/">
+              Read the latest news from OpenPrescribing on the Bennett Institute blog
+            </a>
+          </p>
+        </div>
+
+    {% endif %}
+
   </div>
 
 </div>

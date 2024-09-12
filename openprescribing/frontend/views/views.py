@@ -89,7 +89,13 @@ def first_or_none(lst):
 
 
 def home(request):
-    return render(request, "index.html", {})
+    return render(
+        request,
+        "index.html",
+        {
+            "news_feed": cache.get("news_feed", [])[:3],
+        },
+    )
 
 
 ##################################################
