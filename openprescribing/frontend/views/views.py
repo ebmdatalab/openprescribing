@@ -88,9 +88,21 @@ def first_or_none(lst):
         return None
 
 
+def home(request):
+    return render(
+        request,
+        "index.html",
+        {
+            "news_feed": cache.get("news_feed", [])[:3],
+        },
+    )
+
+
 ##################################################
 # BNF sections
 ##################################################
+
+
 def all_bnf(request):
     sections = Section.objects.filter(is_current=True)
     context = {"sections": sections, **get_org_context(request.GET)}

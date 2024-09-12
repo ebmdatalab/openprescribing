@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% load template_extras %}
+{% load static %}
 
 {% block title %}Home{% endblock %}
 {% block active_class %}home{% endblock %}
 
 {% block content %}
 
-<h1>Explore England's prescribing data</h1>
 
 <div class="row">
 
   <div class="col-md-9">
+
+    <h1>Explore England's prescribing data</h1>
 
     <p>Every month, the NHS in England publishes <a href="https://digital.nhs.uk/practice-level-prescribing-summary">anonymised data</a> about the drugs prescribed by GPs. But the raw data files are large and unwieldy, with more than 700 million rows. We're making it easier for GPs, managers and everyone to explore - supporting safer, more efficient prescribing.</p>
 
@@ -54,7 +56,35 @@
   </div>
 
   <div class="col-md-3">
-    {% include '_mailchimp_signup.html' %}
+    <h3>Latest News</h3>
+
+    {% if news_feed %}
+
+      {% for item in news_feed %}
+
+        <div class="latest-news-item">
+          <a href="{{ item.link }}"><img src="{{ item.image }}"></a>
+          <small class="text-muted">{{ item.date | date:"j M Y" }}</small>
+          <p><a href="{{ item.link }}">{{ item.title }}</a></p>
+        </div>
+
+      {% endfor %}
+
+    {% else %}
+
+        <div class="latest-news-item">
+          <a href="https://www.bennett.ox.ac.uk/openprescribing/blog/">
+            <img src="{% static 'img/footer-bennett.svg' %}">
+          </a>
+          <p style="margin-top: 5px">
+            <a href="https://www.bennett.ox.ac.uk/openprescribing/blog/">
+              Read the latest news from OpenPrescribing on the Bennett Institute blog
+            </a>
+          </p>
+        </div>
+
+    {% endif %}
+
   </div>
 
 </div>
