@@ -7,3 +7,4 @@
 00 05 * * * hello /webapps/openprescribing/deploy/diskcache_garbage_collect.sh
 30 05 * * * hello /webapps/openprescribing/deploy/clearsessions.sh
 12 06 * * 1 hello /webapps/openprescribing/deploy/maillog_garbage_collect.sh
+*/5 * * * * hello /webapps/openprescribing/deploy/refresh_news_feed_cache.sh
