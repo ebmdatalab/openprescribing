@@ -377,6 +377,7 @@ var queryForm = {
     };
     var optionsNum = $.extend(true, {}, select2Options);
     optionsNum.placeholder += ', e.g. Cerazette';
+    optionsNum.width = "element";
     var optionsDenom = $.extend(true, {}, select2Options);
     optionsDenom.placeholder += ', e.g. 7.3.2';
     $(this.el.numeratorIds).select2(optionsNum);
