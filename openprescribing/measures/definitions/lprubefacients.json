@@ -37,19 +37,22 @@
   "numerator_type": "bnf_cost",
   "numerator_bnf_codes_filter": [
     "1003020 # Rubefacients, topical NSAIDS, capsaicin and poultice",
-    "~100302010 # Ketoprofen",
+    "~1003020AD # Arnica montana",
     "~1003020AA # Capsaicin",
     "~1003020AF # Diclofenac diethyl",
+    "~1003020U0 # Diclofenac sodium",
     "~1003020M0 # Felbinac",
+    "~1003020W0 # Heparinoid",
     "~1003020P0 # Ibuprofen",
-    "~1003020R0 # Piroxicam",
-    "~1003020U0 # Diclofenac sodium"
+    "~1003020L0 # Kaolin Heavy",
+    "~100302010 # Ketoprofen",
+    "~1003020R0 # Piroxicam"
   ],
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "andrew.brown@phc.ox.ac.uk",
-  "date_reviewed": "2024-03-05",
-  "next_review": "2026-03-05",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
+  "date_reviewed": "2024-09-17",
+  "next_review": "2026-09-17",
   "measure_complexity": "low",
   "measure_type": "bnf_code",
   "radar_exclude": false
