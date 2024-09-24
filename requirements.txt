@@ -343,7 +343,7 @@ trio-websocket==0.11.1
     # via selenium
 typing-extensions==4.12.2
     # via selenium
-tzdata==2024.1
+tzdata==2024.2
     # via pandas
 uritemplate==4.1.1
     # via google-api-python-client
