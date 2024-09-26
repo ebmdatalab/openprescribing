@@ -10,7 +10,7 @@ from fabric.contrib.files import exists
 env.hosts = ["web2.openprescribing.net"]
 env.forward_agent = True
 env.colorize_errors = True
-env.user = "ebmbot"
+env.user = "bennettbot"
 
 environments = {"production": "openprescribing", "staging": "openprescribing_staging"}
 

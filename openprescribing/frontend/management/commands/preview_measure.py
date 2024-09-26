@@ -18,7 +18,7 @@ class Command(BaseCommand):
             upload_supplementary_tables()
             measure_id = import_preview_measure(github_url)
         except BadRequest as e:
-            # We want these errors to be visble to users who run via ebmbot but the only
+            # We want these errors to be visble to users who run via bennettbot but the only
             # way to achieve that is to write them to stderr and exit 0 :(
             self.stdout.write(
                 f"Importing measure preview failed for {github_url}\n\n{e.message}"

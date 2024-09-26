@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, measure_id, **options):
         if not options["delete_live_measure"]:
             if not measure_id.startswith(settings.MEASURE_PREVIEW_PREFIX):
-                # We want these errors to be visble to users who run via ebmbot but the
+                # We want these errors to be visble to users who run via bennettbot but the
                 # only way to achieve that is to write them to stderr and exit 0 :(
                 self.stdout.write(
                     f"Not deleting '{measure_id}' because it doesn't look like a "
