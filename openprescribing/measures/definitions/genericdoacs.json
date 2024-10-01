@@ -91,7 +91,7 @@
   ],
   "denominator_where": [
     "vpi.ing IN (698090000,442031002) --Apixaban, rivaroxaban \n",
-    "AND route.descr IN ('tablet.oral', 'capsule.oral')
+    "AND route.descr IN ('tablet.oral', 'capsule.oral')"
   ], 
  "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
