@@ -94,7 +94,7 @@
     "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
   "denominator_where": [
-    "vpi.ing IN (698090000 700039002 1162278009 442031002) --Apixaban, babigatran etexilate mesilate, edoxaban tosilate, rivaroxaban"
+    "vpi.ing IN (698090000,700039002,1162278009,442031002) --Apixaban, babigatran etexilate mesilate, edoxaban tosilate, rivaroxaban"
   ], 
 "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
