@@ -13,7 +13,7 @@
     "<p>Table 1 provides the available DOACs ranked from highest to lowest best value according to the September 2024 and confidential framework prices.",
     "If the highest ranked best value DOAC (generic apixaban or generic rivaroxaban) is contraindicated or not clinically appropriate for the specific patient then, subject to the criteria ",
     "specified in the relevant NICE technology appraisal guidance, clinicians should then consider the next highest ranked DOAC (edoxaban) and so on until an appropriate treatment is identified.",
-    "<table style='border-collapse: separate; border-spacing: 10px;' border='1'>",
+    "<table style=\"border-collapse: separate; border-spacing: 10px;\" border=\"1\">",
     "<thead>",
     "  <tr>",
     "    <th style='width: 30%; padding: 10px;'>Overall rank</th>",
