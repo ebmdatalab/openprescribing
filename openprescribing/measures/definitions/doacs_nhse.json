@@ -74,6 +74,7 @@
   "numerator_from": [
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
     "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
     "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
@@ -88,6 +89,7 @@
   "denominator_from": [
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
     "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
     "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
   ],
@@ -95,7 +97,7 @@
     "vpi.ing IN (698090000,1162278009,700039002,442031002) --Apixaban, dabigatran etexilate mesilate, edoxaban tosilate, rivaroxaban \n"
   ], 
 "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "victoria.speed@phc.ox.ac.uk",
   "date_reviewed": "2024-10-01",
   "next_review": "2026-09-16",
   "measure_complexity": "low",
