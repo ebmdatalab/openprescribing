@@ -50,7 +50,7 @@
     }
   },
   "dependencies": {
-    "@sentry/browser": "^4.5.1",
+    "@sentry/browser": "^7.119.1",
     "bigtext": "^1.0.1",
     "bootstrap": "^3.3.4",
     "bootstrap-datepicker": "^1.8.0",
