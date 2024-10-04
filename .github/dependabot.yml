@@ -3,12 +3,15 @@ updates:
 - package-ecosystem: pip
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
   rebase-strategy: "disabled"
   open-pull-requests-limit: 99
   allow:
   - dependency-type: direct
   - dependency-type: indirect
+  groups:
+    dependencies:
+      applies-to: version-updates
   ignore:
   # We're just not interested in messing around with updates to this module
   # (changes to its capitalisation rules break our tests)
