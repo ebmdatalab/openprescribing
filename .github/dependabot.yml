@@ -12,6 +12,7 @@ updates:
   groups:
     dependencies:
       applies-to: version-updates
+      dependency-type: "production"
   ignore:
   # We're just not interested in messing around with updates to this module
   # (changes to its capitalisation rules break our tests)
