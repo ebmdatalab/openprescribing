@@ -196,7 +196,7 @@ mock==5.1.0
     # via -r requirements.in
 more-itertools==10.5.0
     # via cssutils
-networkx==3.3
+networkx==3.4
     # via -r requirements.in
 numpy==2.1.2
     # via
