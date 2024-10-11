@@ -25,7 +25,7 @@ google-cloud-storage
 google-cloud-bigquery-storage  # this speeds up access to BQ
 gunicorn
 # Newer versions break on our email contents (see #5017)
-html2text==2020.1.16
+html2text==2024.2.26
 html5lib
 lxml
 lz4
