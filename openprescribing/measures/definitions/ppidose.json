@@ -1,7 +1,7 @@
 {
   "name": "Higher dose Proton Pump Inhibitors (PPIs)",
   "title": "Higher dose Proton Prump Inhibitors, compared with prescribing of all PPIs (excluding liquids)",
-  "description": "Prescribing of higher dose Proton Prump Inhibitors compared with prescribing of all PPIs (excluding liquids)",
+  "description": "Prescribing of higher dose Proton Pump Inhibitors compared with prescribing of all PPIs (excluding liquids)",
   "numerator_short": "Higher dose PPI items (excluding liquids)",
   "denominator_short": "All PPI items (excluding liquids)",
   "y_label": "Higher dose PPI items vs all PPI items (excluding liquids)",
