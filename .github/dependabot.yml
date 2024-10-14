@@ -14,6 +14,10 @@ updates:
       applies-to: version-updates
       dependency-type: "production"
   ignore:
+  # Newer versions break on our email contents (see #5017)
+  - dependency-name: html2text
+    versions:
+    - "> 2020.1.16"
   # We're just not interested in messing around with updates to this module
   # (changes to its capitalisation rules break our tests)
   - dependency-name: titlecase
