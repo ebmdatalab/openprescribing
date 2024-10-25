@@ -104,7 +104,10 @@ def username_from_email(email):
 @register.simple_tag(takes_context=True)
 def dashboard_measure_uri(context, measure):
     return format_html(
-        "{}#{}",
+        "{}&tags={}#{}",
         context["dashboard_uri"],
+        # It doesn't matter which tag we chose, it just needs to be one that the target
+        # measure has so we know it will appear on the linked dashboard
+        measure.tags[0],
         measure.id,
     )
