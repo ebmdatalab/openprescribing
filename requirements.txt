@@ -89,7 +89,7 @@ djangorestframework==3.15.2
     #   djangorestframework-csv
 djangorestframework-csv==3.0.2
     # via -r requirements.in
-et-xmlfile==1.1.0
+et-xmlfile==2.0.0
     # via openpyxl
 fab-classic==1.19.2
     # via -r requirements.in
@@ -196,7 +196,7 @@ mock==5.1.0
     # via -r requirements.in
 more-itertools==10.5.0
     # via cssutils
-networkx==3.4.1
+networkx==3.4.2
     # via -r requirements.in
 numpy==2.1.2
     # via
@@ -239,7 +239,7 @@ pip-tools==7.4.1
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
-proto-plus==1.24.0
+proto-plus==1.25.0
     # via google-cloud-bigquery-storage
 protobuf==4.25.5
     # via
