@@ -28,7 +28,7 @@
     "0601011A0BDABAC #Trurapi 100units/ml solution for injection 3ml pre-filled Solostar pens"
   ],
   "denominator_type": "bnf_items",
-  "numerator_bnf_codes_filter": [
+  "denominator_bnf_codes_filter": [
     "0601012V0%AA # Insulin glargine 100units/ml solution for injection 3ml cartridge (brands and generic)",
     "0601012V0%AD # Insulin glargine 100units/ml solution for injection 3ml pre-filled disposable devices (brands and generic)", 
     "0601011L0%AB # Insulin lispro 100units/ml solution for injection 10ml vials (brands and generic)",
