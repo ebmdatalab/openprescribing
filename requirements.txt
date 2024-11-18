@@ -34,9 +34,9 @@ charset-normalizer==3.4.0
     # via requests
 click==8.1.7
     # via pip-tools
-contourpy==1.3.0
+contourpy==1.3.1
     # via matplotlib
-coverage==7.6.4
+coverage==7.6.7
     # via -r requirements.in
 crispy-bootstrap3==2024.1
     # via -r requirements.in
@@ -50,7 +50,7 @@ cssutils==2.11.1
     # via premailer
 cycler==0.12.1
     # via matplotlib
-db-dtypes==1.3.0
+db-dtypes==1.3.1
     # via pandas-gbq
 diskcache==5.6.3
     # via -r requirements.in
@@ -67,7 +67,7 @@ django==4.2.16
     #   djangorestframework
 django-anymail[mailgun]==12.0
     # via -r requirements.in
-django-cors-headers==4.5.0
+django-cors-headers==4.6.0
     # via -r requirements.in
 django-crispy-forms==2.3
     # via
@@ -89,13 +89,13 @@ djangorestframework==3.15.2
     #   djangorestframework-csv
 djangorestframework-csv==3.0.2
     # via -r requirements.in
-et-xmlfile==1.1.0
+et-xmlfile==2.0.0
     # via openpyxl
 fab-classic==1.19.2
     # via -r requirements.in
 flake8==7.1.1
     # via -r requirements.in
-fonttools==4.54.1
+fonttools==4.55.0
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
@@ -105,9 +105,9 @@ google-api-core[grpc]==2.15.0
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.149.0
+google-api-python-client==2.153.0
     # via -r requirements.in
-google-auth==2.35.0
+google-auth==2.36.0
     # via
     #   google-api-core
     #   google-api-python-client
@@ -125,7 +125,7 @@ google-auth-oauthlib==1.2.1
     # via
     #   pandas-gbq
     #   pydata-google-auth
-google-cloud-bigquery==3.26.0
+google-cloud-bigquery==3.27.0
     # via
     #   -r requirements.in
     #   pandas-gbq
@@ -145,13 +145,13 @@ google-resumable-media==2.7.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-googleapis-common-protos==1.65.0
+googleapis-common-protos==1.66.0
     # via
     #   google-api-core
     #   grpcio-status
 graphviz==0.20.3
     # via -r requirements.in
-grpcio==1.67.0
+grpcio==1.68.0
     # via
     #   google-api-core
     #   grpcio-status
@@ -196,9 +196,9 @@ mock==5.1.0
     # via -r requirements.in
 more-itertools==10.5.0
     # via cssutils
-networkx==3.4.1
+networkx==3.4.2
     # via -r requirements.in
-numpy==2.1.2
+numpy==2.1.3
     # via
     #   -r requirements.in
     #   contourpy
@@ -206,7 +206,6 @@ numpy==2.1.2
     #   matplotlib
     #   pandas
     #   pandas-gbq
-    #   pyarrow
     #   scipy
     #   seaborn
 oauthlib==3.2.2
@@ -215,7 +214,7 @@ openpyxl==3.1.5
     # via -r requirements.in
 outcome==1.3.0.post0
     # via trio
-packaging==24.1
+packaging==24.2
     # via
     #   build
     #   db-dtypes
@@ -239,7 +238,7 @@ pip-tools==7.4.1
     # via -r requirements.in
 premailer==3.10.0
     # via -r requirements.in
-proto-plus==1.24.0
+proto-plus==1.25.0
     # via google-cloud-bigquery-storage
 protobuf==4.25.5
     # via
@@ -250,7 +249,7 @@ protobuf==4.25.5
     #   proto-plus
 psycopg2-binary==2.9.10
     # via -r requirements.in
-pyarrow==17.0.0
+pyarrow==18.0.0
     # via
     #   db-dtypes
     #   pandas-gbq
@@ -306,7 +305,7 @@ requests[security]==2.32.3
     #   premailer
     #   requests-futures
     #   requests-oauthlib
-requests-futures==1.0.1
+requests-futures==1.0.2
     # via -r requirements.in
 requests-oauthlib==2.0.0
     # via google-auth-oauthlib
@@ -316,7 +315,7 @@ scipy==1.14.1
     # via -r requirements.in
 seaborn==0.13.2
     # via -r requirements.in
-selenium==4.25.0
+selenium==4.26.1
     # via -r requirements.in
 six==1.16.0
     # via
@@ -329,7 +328,7 @@ sortedcontainers==2.4.0
     # via trio
 soupsieve==2.6
     # via beautifulsoup4
-sqlparse==0.5.1
+sqlparse==0.5.2
     # via
     #   django
     #   django-debug-toolbar
@@ -352,13 +351,13 @@ urllib3[socks]==2.1.0
     #   django-anymail
     #   requests
     #   selenium
-watchdog==5.0.3
+watchdog==6.0.0
     # via when-changed
 webencodings==0.5.1
     # via html5lib
 websocket-client==1.8.0
     # via selenium
-wheel==0.44.0
+wheel==0.45.0
     # via pip-tools
 when-changed==0.3.0
     # via -r requirements.in
