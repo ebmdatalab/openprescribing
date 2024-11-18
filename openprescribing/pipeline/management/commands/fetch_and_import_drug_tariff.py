@@ -98,7 +98,6 @@ def import_month(rows, date):
     required_headers = {
         "medicine",
         "packsize",
-        "vmpsnomedcode",
         "vmppsnomedcode",
         "drugtariffcategory",
         "basicprice",
