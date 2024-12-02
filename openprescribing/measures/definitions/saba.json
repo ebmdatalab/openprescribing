@@ -36,7 +36,7 @@
     ],
   "numerator_where": [
     "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
-    "AND (bnf_code LIKE '0301011R0%' OR bnf_code LIKE '0301011V0%') #Salbutamol and Terbutaline"
+    "AND (p.bnf_code LIKE '0301011R0%' OR p.bnf_code LIKE '0301011V0%') #Salbutamol and Terbutaline"
   ],
   "denominator_type": "custom",
   "denominator_columns": "SUM(p.items/adj.qtyadj) AS denominator",
@@ -48,7 +48,7 @@
     ],
   "denominator_where": [
     "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
-    "AND (bnf_code LIKE '0301011R0%' OR bnf_code LIKE '0301011V0%' OR bnf_code LIKE '0302%') #Salbutamol, Terbutaline, Corticosteroids (Respiratory)"
+    "AND (p.bnf_code LIKE '0301011R0%' OR p.bnf_code LIKE '0301011V0%' OR p.bnf_code LIKE '0302%') #Salbutamol, Terbutaline, Corticosteroids (Respiratory)"
   ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
