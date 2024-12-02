@@ -40,7 +40,7 @@ coverage==7.6.8
     # via -r requirements.in
 crispy-bootstrap3==2024.1
     # via -r requirements.in
-cryptography==43.0.3
+cryptography==44.0.0
     # via paramiko-ng
 cssselect==1.2.0
     # via
@@ -186,7 +186,7 @@ lz4==4.3.3
     # via -r requirements.in
 markupsafe==3.0.2
     # via jinja2
-matplotlib==3.9.2
+matplotlib==3.9.3
     # via
     #   -r requirements.in
     #   seaborn
@@ -249,7 +249,7 @@ protobuf==4.25.5
     #   proto-plus
 psycopg2-binary==2.9.10
     # via -r requirements.in
-pyarrow==18.0.0
+pyarrow==18.1.0
     # via
     #   db-dtypes
     #   pandas-gbq
@@ -315,7 +315,7 @@ scipy==1.14.1
     # via -r requirements.in
 seaborn==0.13.2
     # via -r requirements.in
-selenium==4.26.1
+selenium==4.27.1
     # via -r requirements.in
 six==1.16.0
     # via
