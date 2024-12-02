@@ -27,7 +27,7 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "custom",
-  "numerator_columns": "SUM(p.items/adj.qtyadj) AS numerator",
+  "numerator_columns": "SUM(p.quantity/adj.qtyadj) AS numerator",
   "numerator_from": [
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
@@ -39,7 +39,7 @@
     "AND (p.bnf_code LIKE '0301011R0%' OR p.bnf_code LIKE '0301011V0%') #Salbutamol and Terbutaline"
   ],
   "denominator_type": "custom",
-  "denominator_columns": "SUM(p.items/adj.qtyadj) AS denominator",
+  "denominator_columns": "SUM(p.quantity/adj.qtyadj) AS denominator",
   "denominator_from": [
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
