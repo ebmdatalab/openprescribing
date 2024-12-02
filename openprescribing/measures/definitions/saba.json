@@ -22,7 +22,7 @@
     "opportunities",
     "safety"
   ],
-  "url": null,
+  "url": null, 
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
