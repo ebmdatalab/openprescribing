@@ -32,7 +32,7 @@
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
     "INNER JOIN {measures}.vw__dmd_objs_with_form_route AS route ON vmp.id = route.vpid",
-    "INNER JOIN {measures}.vw__inhaler_quantity_adjustment AS adj ON p.bnf_code = adj.bnf_code p.month = adj.month"
+    "INNER JOIN {measures}.vw__inhaler_quantity_adjustment AS adj ON p.bnf_code = adj.bnf_code AND p.month = adj.month"
     ],
   "numerator_where": [
     "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
