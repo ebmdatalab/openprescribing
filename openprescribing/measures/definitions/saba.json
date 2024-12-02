@@ -31,11 +31,11 @@
   "numerator_from": [
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-    "INNER JOIN {measures}.vw__dmd_objs_with_form_route AS form_route ON vmp.id = form_route.vpid",
+    "INNER JOIN {measures}.vw__dmd_objs_with_form_route AS route ON vmp.id = route.vpid",
     "INNER JOIN {measures}.vw__inhaler_quantity_adjustment AS adj ON p.bnf_code = adj.bnf_code AND DATE(p.month) = DATE(adj.month)"
     ],
   "numerator_where": [
-    "form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
+    "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "numerator_bnf_codes_filter": [
     "0301011R0 #Salbutamol",
@@ -46,11 +46,11 @@
   "denominator_from": [
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-    "INNER JOIN {measures}.vw__dmd_objs_with_form_route AS form_route ON vmp.id = form_route.vpid",
+    "INNER JOIN {measures}.vw__dmd_objs_with_form_route AS route ON vmp.id = route.vpid",
     "INNER JOIN {measures}.vw__inhaler_quantity_adjustment AS adj ON p.bnf_code = adj.bnf_code AND DATE(p.month) = DATE(adj.month)"
     ],
   "denominator_where": [
-    "form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
+    "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "denominator_bnf_codes_filter": [
     "0301011R0 #Salbutamol",
