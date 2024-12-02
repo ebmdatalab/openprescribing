@@ -26,21 +26,33 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "numerator_type": "bnf_quantity",
-  "numerator_bnf_codes_query": [
-    "SELECT DISTINCT(bnf_code)",
-    "FROM {measures}.vw__dmd_objs_with_form_route",
-    "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
+  "numerator_type": "custom",
+  "numerator_columns": "SUM(p.items/adj.qtyadj) AS numerator",
+  "numerator_from": [
+    "{hscic}.normalised_prescribing p ",
+    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names ",
+    "INNER JOIN {measures}.vw__inhaler_quantity_adjustment AS adj ON p.bnf_code = adj.bnf_code AND p.month = adj.month"
+    ],
+  "numerator_where": [
+    "form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "numerator_bnf_codes_filter": [
     "0301011R0 #Salbutamol",
     "0301011V0% #Terbutaline"
   ],
-  "denominator_type": "bnf_quantity",
-  "denominator_bnf_codes_query": [
-    "SELECT DISTINCT(bnf_code)",
-    "FROM {measures}.vw__dmd_objs_with_form_route",
-    "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
+  "denominator_type": "custom",
+  "denominator_columns": "SUM(p.items/adj.qtyadj) AS denominator",
+  "denominator_from": [
+    "{hscic}.normalised_prescribing p ",
+    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+    "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+    "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names ",
+    "INNER JOIN {measures}.vw__inhaler_quantity_adjustment AS adj ON p.bnf_code = adj.bnf_code AND p.month = adj.month"
+    ],
+  "denominator_where": [
+    "form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
   ],
   "denominator_bnf_codes_filter": [
     "0301011R0 #Salbutamol",
