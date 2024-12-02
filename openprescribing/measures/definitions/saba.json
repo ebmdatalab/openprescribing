@@ -35,11 +35,8 @@
     "INNER JOIN {measures}.vw__inhaler_quantity_adjustment AS adj ON p.bnf_code = adj.bnf_code AND p.month = adj.date"
     ],
   "numerator_where": [
-    "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
-  ],
-  "numerator_bnf_codes_filter": [
-    "0301011R0 #Salbutamol",
-    "0301011V0% #Terbutaline"
+    "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
+    "AND (bnf_code LIKE '0301011R0%' OR bnf_code LIKE '0301011V0%') #Salbutamol and Terbutaline"
   ],
   "denominator_type": "custom",
   "denominator_columns": "SUM(p.items/adj.qtyadj) AS denominator",
@@ -50,12 +47,8 @@
     "INNER JOIN {measures}.vw__inhaler_quantity_adjustment AS adj ON p.bnf_code = adj.bnf_code AND p.month = adj.date"
     ],
   "denominator_where": [
-    "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')"
-  ],
-  "denominator_bnf_codes_filter": [
-    "0301011R0 #Salbutamol",
-    "0301011V0% #Terbutaline",
-    "0302 #Corticosteroids (Respiratory)"
+    "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
+    "AND (bnf_code LIKE '0301011R0%' OR bnf_code LIKE '0301011V0%' OR bnf_code LIKE '0302%') #Salbutamol, Terbutaline, Corticosteroids (Respiratory)"
   ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
