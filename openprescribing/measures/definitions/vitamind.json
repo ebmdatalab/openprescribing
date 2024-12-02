@@ -57,8 +57,8 @@
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
-  "date_reviewed": "2024-07-01",
-  "next_review": "2026-07-01",
+  "date_reviewed": "2024-12-01",
+  "next_review": "2026-12-01",
   "measure_complexity": "medium",
   "measure_type": "dmd",
   "radar_exclude": false
