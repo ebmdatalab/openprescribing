@@ -9,7 +9,7 @@
     "The <a href='https://www.nice.org.uk/guidance/ng245/2024  target='_Blank'>BTS/NICE/SIGN guidance</a> ",
     "has updated guidance on use of short acting beta agonists (SABAs), and states ",
     "<a href='https://www.nice.org.uk/guidance/ng245/chapter/Recommendations#principles-of-pharmacological-treatment  target='_Blank'><i>Do not prescribe short-acting beta<sub>2</sub> agonists to people of any age ",
-    "with asthma without a concomitant prescription of an ICS</a>.</i>  In addition, it also recommends that patients aged 12 and over with uncontrolled asthma (e.g. using a reliever ",
+    "with asthma without a concomitant prescription of an ICS</a>.</i>  In addition, it also recommends that patients aged 12 and over with uncontrolled asthma (e.g. needing a reliever ",
     "3 or more days a week) <a href='https://www.nice.org.uk/guidance/ng245/chapter/Recommendations#pharmacological-management-in-people-aged-12-and-over' target='_Blank'>should have their treatment changed to a non SABA-based regimen</a>.</p>",
     "<p><a href='https://www.rcplondon.ac.uk/projects/outputs/why-asthma-still-kills' target='_Blank'>Why Asthma Still Kills</a> reports that high use of SABAs (salbutamol and terbutaline) and poor adherence to ",
     "inhaled corticosteroids in asthma suggests poor control - these patients should be reviewed regularly to ensure good control.</p>",
@@ -30,39 +30,26 @@
   "numerator_columns": "SUM(p.quantity/adj.qtyadj) AS numerator",
   "numerator_from": [
     "{hscic}.normalised_prescribing p ",
-    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-    "INNER JOIN (",
-      "SELECT DISTINCT bnf_code, form_route FROM measures.vw__dmd_objs_with_form_route",
-      "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
-      ") AS route",
-    "ON p.bnf_code = route.bnf_code",
-  "INNER JOIN (",
-      "SELECT DISTINCT bnf_code, date, qtyadj FROM measures.vw__inhaler_quantity_adjustment",
-      ") AS adj",
-    "ON p.bnf_code = adj.bnf_code AND p.month = adj.date"
+    "INNER JOIN {measures}.vw__inhaler_quantity_adjustment as adj ON p.bnf_code = adj.bnf_code AND p.month = adj.month -- joins prescribing data to view for form_route and adjustment where quantity = puffs not inhalers  \n",
     ],
   "numerator_where": [
-    "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
-    "AND (p.bnf_code LIKE '0301011R0%' OR p.bnf_code LIKE '0301011V0%') #Salbutamol and Terbutaline"
+    "adj.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
+    "AND ( \n",
+    "p.bnf_code LIKE '0301011R0%' -- Salbutamol \n",
+    "OR p.bnf_code LIKE '0301011V0%') -- Terbutaline"
   ],
   "denominator_type": "custom",
   "denominator_columns": "SUM(p.quantity/adj.qtyadj) AS denominator",
   "denominator_from": [
     "{hscic}.normalised_prescribing p ",
-    "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
-    "INNER JOIN (",
-      "SELECT DISTINCT bnf_code, form_route FROM measures.vw__dmd_objs_with_form_route",
-      "WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
-      ") AS route",
-    "ON p.bnf_code = route.bnf_code",
-  "INNER JOIN (",
-      "SELECT DISTINCT bnf_code, date, qtyadj FROM measures.vw__inhaler_quantity_adjustment",
-      ") AS adj",
-    "ON p.bnf_code = adj.bnf_code AND p.month = adj.date"
+    "INNER JOIN {measures}.vw__inhaler_quantity_adjustment as adj ON p.bnf_code = adj.bnf_code AND p.month = adj.month -- joins prescribing data to view for form_route and adjustment where quantity = puffs not inhalers  \n",
     ],
   "denominator_where": [
-    "route.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
-    "AND (p.bnf_code LIKE '0301011R0%' OR p.bnf_code LIKE '0301011V0%' OR p.bnf_code LIKE '0302%') #Salbutamol, Terbutaline, Corticosteroids (Respiratory)"
+    "adj.form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation', 'inhalationsolution.inhalation')",
+    "AND ( \n",
+    "p.bnf_code LIKE '0301011R0%' -- Salbutamol \n",
+    "OR p.bnf_code LIKE '0301011V0%' -- Terbutaline \n" ,
+    "OR p.bnf_code LIKE '0302%') -- Corticosteroids (Respiratory)"
   ],
   "authored_by": "richard.croker@phc.ox.ac.uk",
   "checked_by": "",
