@@ -1,7 +1,7 @@
 {
   "name": "Short acting beta agonist inhalers",
   "title": "Short acting beta agonist (SABA) inhalers compared with prescribing of inhaled corticosteroid inhalers and SABA inhalers",
-  "description": "Prescribing of short acting beta agonist (SABA) inhalers - salbutamol and terbutaline - compared with prescribing of inhaled corticosteroid inhalers and SABA inhalers",
+  "description": "Number of short acting beta agonist (SABA) inhalers - salbutamol and terbutaline - compared with number of all inhaled corticosteroid inhalers and SABA inhalers",
   "numerator_short": "SABA quantity",
   "denominator_short": "ICS and SABA quantity",
   "y_label": "Percentage of inhalers (ICS and SABA) prescribed as SABA",
