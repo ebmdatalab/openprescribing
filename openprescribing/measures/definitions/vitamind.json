@@ -19,9 +19,9 @@
     "<li><a href='https://openprescribing.net/national/england/0906040G0AABIBI/price-per-unit/' target='_Blank'>Colecalciferol 400units</a></li>",
     "<li><a href='https://openprescribing.net/national/england/0906040G0AACSCS/price-per-unit/' target='_Blank'>Colecalciferol 800units</a></li>",
     "<li><a href='https://openprescribing.net/national/england/0906040G0AABGBG/price-per-unit/' target='_Blank'>Colecalciferol 1,000units</a></li>",
-    "<li><a href='https://openprescribing.net/national/england/0906040G0AACRCR/price-per-unit/' target='_Blank'>Colecalciferol 20,000units</a></li>",
+    "<li><a href='https://openprescribing.net/national/england/0906040G0AADRDR/price-per-unit/' target='_Blank'>Colecalciferol 20,000units</a></li>",
     "<li><a href='https://openprescribing.net/national/england/0906040G0AADKDK/price-per-unit/' target='_Blank'>Colecalciferol 25,000units</a></li>",
-    "<li><a href='https://openprescribing.net/national/england/0906040G0AACYCY/price-per-unit/' target='_Blank'>Colecalciferol 50,000units</a></li>",
+    "<li><a href='https://openprescribing.net/national/england/0906040G0AAEQEQ/price-per-unit/' target='_Blank'>Colecalciferol 50,000units</a></li>",
     "</ul>"
   ],
   "tags": [
@@ -56,7 +56,7 @@
   "numerator_where": "1 = 1",
   "denominator_type": "list_size",
   "authored_by": "richard.croker@phc.ox.ac.uk",
-  "checked_by": "",
+  "checked_by": "christopher.wood@phc.ox.ac.uk",
   "date_reviewed": "2024-12-01",
   "next_review": "2026-12-01",
   "measure_complexity": "medium",
