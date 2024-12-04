@@ -19,43 +19,28 @@
 
 {% else %}
 
-  <h1>Hospitals</h1>
+ <h1>OpenPrescribing Hospitals - coming soon</h1>
 
-  <p>
-    In July 2020, Ben Goldacre and Brian MacKenna wrote a piece in the   <a
-    href="https://doi.org/10.1136/bmj.m2607">British Medical Journal</a> arguing that hospital medicines data 
-    should be openly shared. Magnificently, the NHS has now made secondary care medicines data (SCMD) available. 
-    You can read the full technical specification of the data <a
-    href="https://opendata.nhsbsa.net/dataset/secondary-care-medicines-data">here</a> but briefly: it is hospital pharmacy stock control data, which is 
-    collected and processed by Rx-Info, and is now published on the NHS Business Services Authority website 
-    in the <a
-      href="https://www.bennett.ox.ac.uk/blog/2019/08/what-is-the-dm-d-the-nhs-dictionary-of-medicines-and-devices/">NHS dm+d standard</a> we 
-      know, love, and have documented well.
-  </p>
+
+<p>With the support of the NHS Primary Care and Medicines Analytics Unit we have started to build OpenPrescribing Hospitals. 
+Every month, NHS England publishes processed pharmacy stock control data in the form of the [Secondary Care Medicines Dataset (SCMD)](https://opendata.nhsbsa.net/dataset/secondary-care-medicines-data-indicative-price). The [full technical specification](https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fpaulwestrip%2FOpen-Data-Portal-Documentation%2Fmain%2FSecondary%2520Care%2520Medicines%2520Data%2520%2520Release%2520Guidance%2520v003.odt&wdOrigin=BROWSELINK) of the SCMD is available to read, but briefly: it is hospital pharmacy stock control data, which is collected and processed by Rx-Info, and is now published on the NHS Business Services Authority website in the [NHS dm+d standard](https://www.bennett.ox.ac.uk/blog/2019/08/what-is-the-dm-d-the-nhs-dictionary-of-medicines-and-devices/). We have been spending time learning more about the data and carefully curating the data ready for use in OpenPrescribing Hospitals.
+OpenPrescribing Hospitals allows easy exploration of the SCMD through a set of curated measures and a custom analysis builder. We have used our domain knowledge to make exploring this data easier for a wider group of people.
+
+<h2>Sneak preview…</h2>
+
+<h3>
+<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
+
+![alt_text](images/image1.png "image_tooltip")
+</h3>
+
+We are working hard to include similar features to OpenPrescribing.net including
   
-  <p>
-    At the Bennett Institute we have long argued that hospital medicines data 
-    represents the greatest opportunities to manage variation in treatments and 
-    costs of medicines, as hospitals are where the newest and most expensive medicines are 
-    used. We would like to build OpenPrescribing.net/hospitals to deliver more insights for 
-    clinicians, patients, commissioners, and more. We live to ship! We just need a small amount of resource: OpenPrescribing runs 
-    on a shoestring: we are great at getting pure academic research grants (and <a
-    href="https://openprescribing.net/research/">publishing papers</a>); but there are no open
-    competitive funding streams for practical coalface analytics tools like OpenPrescribing (which now has 145,000 users a year). We think
-    that’s holding back progress, across the whole health data landscape! If you are a
-    funder and would like to support OpenPrescribing.net/hospitals please get in touch: bennett@phc.ox.ac.uk.
-   </p>
+* A custom ‘analyse page’
+* Pre-built curated measures based on NHS England Medicines Optimisation Opportunities / medicines safety topics which we will expand over time
+* A summary of data submitted by NHS secondary care organisations
 
-
-
-
-  <p>
-    You may also be interested in  <a
-      href="https://www.bennett.ox.ac.uk/blog/2020/11/biologic-medicines-for-severe-asthma/">our first blog and analysis</a>
-      using the new hospital medicines data about biologic medicines used in severe asthma.
-  </p>
-
-
+<h3>We will share an early version of this tool in the near future and look forward to hearing your feedback. </h3>
 {% endif %}
 
 {% endblock %}
