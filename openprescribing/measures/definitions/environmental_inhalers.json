@@ -1,12 +1,12 @@
 {
-  "name": "Environmental impact of inhalers - Prescribing of the less environmentally friendly Metered Dose Inhaler (MDI) (excluding salbutamol)",
+  "name": "Environmental impact of inhalers - Prescribing of Metered Dose Inhaler (MDI) (excluding salbutamol)",
   "title": "",
   "description": "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol",
   "numerator_short": "MDI inhalers (items)",
   "denominator_short": "All inhalers (items)",
   "y_label": "Percentage of non-salbutamol inhalers prescribed as MDI",
   "why_it_matters": [
-    "The updated <a href='https://www.nice.org.uk/guidance/ng245/chapter/Recommendations#principles-of-pharmacological-treatment' target='_Blank'>BTS/NICE/SIGN guidance on asthma management</a> recommends basing inhaler choice on:",
+    "<p>The updated <a href='https://www.nice.org.uk/guidance/ng245/chapter/Recommendations#principles-of-pharmacological-treatment' target='_Blank'>BTS/NICE/SIGN guidance on asthma management</a> recommends basing inhaler choice on:",
     "<i>",
     "<ul>",
     "<li>an assessment of correct technique</li>",
