@@ -2,60 +2,51 @@
 {% load static %}
 {% load template_extras %}
 
-{% block title %}All Hospitals{% endblock %}
+{% block title %}Hospitals{% endblock %}
 {% block active_class %}dashboards{% endblock %}
 
 {% block content %}
 
-{% if hospitals_enabled %}
-
-  <h1>Find a Hospital</h1>
-
-  <p>Search for a Hospital by name or code</p>
-
-  <input class="form-control" id="search" placeholder="Search by Hospital name or code" data-min-search-length="3" />
-  <ul class="list-unstyled" id="all-results">
-  </ul>
-
-{% else %}
-
-  <h1>Hospitals</h1>
+  <h1>
+    OpenPrescribing Hospitals – coming soon<br>
+    <small style="text-shadow: none">
+      With the support of the NHS Primary Care and Medicines Analytics Unit we
+      have started to build OpenPrescribing Hospitals.
+    </small>
+  </h1>
 
   <p>
-    In July 2020, Ben Goldacre and Brian MacKenna wrote a piece in the   <a
-    href="https://doi.org/10.1136/bmj.m2607">British Medical Journal</a> arguing that hospital medicines data 
-    should be openly shared. Magnificently, the NHS has now made secondary care medicines data (SCMD) available. 
-    You can read the full technical specification of the data <a
-    href="https://opendata.nhsbsa.net/dataset/secondary-care-medicines-data">here</a> but briefly: it is hospital pharmacy stock control data, which is 
-    collected and processed by Rx-Info, and is now published on the NHS Business Services Authority website 
-    in the <a
-      href="https://www.bennett.ox.ac.uk/blog/2019/08/what-is-the-dm-d-the-nhs-dictionary-of-medicines-and-devices/">NHS dm+d standard</a> we 
-      know, love, and have documented well.
-  </p>
-  
-  <p>
-    At the Bennett Institute we have long argued that hospital medicines data 
-    represents the greatest opportunities to manage variation in treatments and 
-    costs of medicines, as hospitals are where the newest and most expensive medicines are 
-    used. We would like to build OpenPrescribing.net/hospitals to deliver more insights for 
-    clinicians, patients, commissioners, and more. We live to ship! We just need a small amount of resource: OpenPrescribing runs 
-    on a shoestring: we are great at getting pure academic research grants (and <a
-    href="https://openprescribing.net/research/">publishing papers</a>); but there are no open
-    competitive funding streams for practical coalface analytics tools like OpenPrescribing (which now has 145,000 users a year). We think
-    that’s holding back progress, across the whole health data landscape! If you are a
-    funder and would like to support OpenPrescribing.net/hospitals please get in touch: bennett@phc.ox.ac.uk.
-   </p>
-
-
-
-
-  <p>
-    You may also be interested in  <a
-      href="https://www.bennett.ox.ac.uk/blog/2020/11/biologic-medicines-for-severe-asthma/">our first blog and analysis</a>
-      using the new hospital medicines data about biologic medicines used in severe asthma.
+    Every month, NHS England publishes processed pharmacy stock control data in
+    the form of the
+    <a href="https://opendata.nhsbsa.net/dataset/secondary-care-medicines-data-indicative-price">
+      Secondary Care Medicines Dataset (SCMD)</a>.
+    The
+    <a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fpaulwestrip%2FOpen-Data-Portal-Documentation%2Fmain%2FSecondary%2520Care%2520Medicines%2520Data%2520%2520Release%2520Guidance%2520v003.odt&wdOrigin=BROWSELINK">
+      full technical specification
+    </a>
+    of the SCMD is available to read, but briefly: it is hospital pharmacy
+    stock control data, which is collected and processed by Rx-Info, and is now
+    published on the NHS Business Services Authority website in the
+    <a href="https://www.bennett.ox.ac.uk/blog/2019/08/what-is-the-dm-d-the-nhs-dictionary-of-medicines-and-devices/">
+      NHS dm+d standard</a>.
+    We have been spending time learning more about the data and carefully
+    curating the data ready for use in OpenPrescribing Hospitals.
   </p>
 
+  <h2>Sneak preview…</h2>
 
-{% endif %}
+  <p>
+    <img src="{% static 'img/oph_screenshot.png' %}"class="img-responsive" alt="OpenPrescribing Hospitals screenshot">
+    <br>
+  </p>
+
+  <p>
+    We are working hard to include similar features to OpenPrescribing.net including
+    <ul>
+      <li>A custom ‘analyse page’</li>
+      <li>Pre-built curated measures based on NHS England Medicines Optimisation Opportunities / medicines safety topics which we will expand over time</li>
+      <li>A summary of data submitted by NHS Trusts in England</li>
+    </ul>
+    We will share an early version of this tool in the near future and look forward to hearing your feedback.
 
 {% endblock %}
