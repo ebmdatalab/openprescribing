@@ -95,7 +95,7 @@ fab-classic==1.19.2
     # via -r requirements.in
 flake8==7.1.1
     # via -r requirements.in
-fonttools==4.55.2
+fonttools==4.55.3
     # via matplotlib
 google-api-core[grpc]==2.15.0
     # via
@@ -105,9 +105,9 @@ google-api-core[grpc]==2.15.0
     #   google-cloud-core
     #   google-cloud-storage
     #   pandas-gbq
-google-api-python-client==2.154.0
+google-api-python-client==2.155.0
     # via -r requirements.in
-google-auth==2.36.0
+google-auth==2.37.0
     # via
     #   google-api-core
     #   google-api-python-client
@@ -228,7 +228,7 @@ pandas==2.2.3
     #   db-dtypes
     #   pandas-gbq
     #   seaborn
-pandas-gbq==0.24.0
+pandas-gbq==0.25.0
     # via -r requirements.in
 paramiko-ng==2.8.10
     # via fab-classic
@@ -328,7 +328,7 @@ sortedcontainers==2.4.0
     # via trio
 soupsieve==2.6
     # via beautifulsoup4
-sqlparse==0.5.2
+sqlparse==0.5.3
     # via
     #   django
     #   django-debug-toolbar
