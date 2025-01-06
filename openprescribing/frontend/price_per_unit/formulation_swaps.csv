@@ -336,8 +336,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0206010K0AAAUAU,Isosorbide mononitrate 50mg modified-release tablets,0206010K0AAAFAF,Modified-release tablet,Isosorbide mononitrate 50mg modified-release capsules,Modified-release capsule,Y
 0206010K0AABBBB,Isosorbide mononitrate 20mg/5ml oral suspension,0206010K0AAALAL,Oral suspension,Isosorbide mononitrate 20mg/5ml oral solution,Oral solution,Y
 0206020A0AAACAC,Amlodipine 5mg/5ml oral suspension,0206020A0AAALAL,Oral suspension,Amlodipine 5mg/5ml oral solution sugar free,Oral solution,Y
-0206020A0AAACAC,Amlodipine 5mg/5ml oral solution,0206020A0AAALAL,Oral solution,Amlodipine 5mg/5ml oral solution sugar free,Oral solution,Y
 0206020A0AAACAC,Amlodipine 5mg/5ml oral suspension,0206020A0AAAUAU,Oral suspension,Amlodipine 5mg/5ml oral suspension sugar free,Oral suspension,Y
+0206020A0AAACAC,Amlodipine 5mg/5ml oral solution,0206020A0AAALAL,Oral solution,Amlodipine 5mg/5ml oral solution sugar free,Oral solution,Y
 0206020A0AAACAC,Amlodipine 5mg/5ml oral solution,0206020A0AAAUAU,Oral solution,Amlodipine 5mg/5ml oral suspension sugar free,Oral suspension,Y
 0206020A0AAADAD,Amlodipine 10mg/5ml oral suspension,0206020A0AAATAT,Oral suspension,Amlodipine 10mg/5ml oral solution sugar free,Oral solution,Y
 0206020A0AAADAD,Amlodipine 10mg/5ml oral solution,0206020A0AAATAT,Oral solution,Amlodipine 10mg/5ml oral solution sugar free,Oral solution,Y
@@ -1110,8 +1110,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0408010F0AABEBE,Clonazepam 500micrograms/5ml oral suspension,0408010F0AACQCQ,Oral suspension,Clonazepam 500micrograms/5ml oral solution sugar free,Oral solution,Y
 0408010F0AABSBS,Clonazepam 2mg/5ml oral suspension,0408010F0AACRCR,Oral suspension,Clonazepam 2mg/5ml oral solution sugar free,Oral solution,Y
 0408010F0AACACA,Clonazepam 12.5mg/5ml oral suspension,0408010F0AAAAAA,Oral suspension,Clonazepam 2.5mg/ml drops sugar free,Oral drops,Y
-0408010F0AACACA,Clonazepam 12.5mg/5ml oral solution,0408010F0AAAAAA,Oral solution,Clonazepam 2.5mg/ml drops sugar free,Oral drops,Y
 0408010F0AACACA,Clonazepam 12.5mg/5ml oral suspension,0408010F0AADCDC,Oral suspension,Clonazepam 2.5mg/ml drops,Oral drops,Y
+0408010F0AACACA,Clonazepam 12.5mg/5ml oral solution,0408010F0AAAAAA,Oral solution,Clonazepam 2.5mg/ml drops sugar free,Oral drops,Y
 0408010F0AACACA,Clonazepam 12.5mg/5ml oral solution,0408010F0AADCDC,Oral solution,Clonazepam 2.5mg/ml drops,Oral drops,Y
 0408010F0AACQCQ,Clonazepam 500micrograms/5ml oral solution sugar free,0408010F0AABEBE,Oral solution,Clonazepam 500micrograms/5ml oral suspension,Oral suspension,Y
 0408010F0AACRCR,Clonazepam 2mg/5ml oral solution sugar free,0408010F0AABSBS,Oral solution,Clonazepam 2mg/5ml oral suspension,Oral suspension,Y
@@ -1663,8 +1663,6 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0905022T0AAAEAE,Lanthanum carbonate 750mg oral powder sachets,0905022T0AAABAB,Oral powder,Lanthanum carbonate 750mg chewable tablets,Chewable tablet,Y
 090504100AABCBC,Zinc citrate 15mg tablets,090504100AABDBD,Oral tablet,Zinc citrate 15mg capsules,Oral capsule,Y
 090504100AABDBD,Zinc citrate 15mg capsules,090504100AABCBC,Oral capsule,Zinc citrate 15mg tablets,Oral tablet,Y
-090504200BBBEA0,Chromium 200microgram capsules,090504200BBCAA0,Oral capsule,Chromium 200microgram tablets,Oral tablet,Y
-090504200BBCAA0,Chromium 200microgram tablets,090504200BBBEA0,Oral tablet,Chromium 200microgram capsules,Oral capsule,Y
 090504700AABCBC,Selenium 200microgram tablets,090504700AABKBK,Oral tablet,Selenium 200microgram capsules,Oral capsule,Y
 090504700AABKBK,Selenium 200microgram capsules,090504700AABCBC,Oral capsule,Selenium 200microgram tablets,Oral tablet,Y
 0905050A0AAAAAA,Selenium 100micrograms/2ml oral solution unit dose ampoules,0905050A0AAABAB,Oral solution,Selenium 500micrograms/10ml oral solution unit dose vials,Oral solution,Y
@@ -1705,14 +1703,12 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0906026M0AABMBM,Thiamine 100mg/5ml oral solution sugar free,0906026M0AABJBJ,Oral solution,Thiamine 100mg/5ml oral suspension,Oral suspension,Y
 090602800AACXCX,Pyridoxal phosphate 50mg capsules,090602800AACYCY,Oral capsule,Pyridoxal phosphate 50mg gastro-resistant tablets,Gastro-resistant tablet,Y
 090602800AACYCY,Pyridoxal phosphate 50mg gastro-resistant tablets,090602800AACXCX,Gastro-resistant tablet,Pyridoxal phosphate 50mg capsules,Oral capsule,Y
-090603100BBCVA0,Ascorbic acid 1g capsules,0906031C0AABWBW,Oral capsule,Ascorbic acid 1g chewable tablets,Chewable tablet,Y
 0906031C0AAAIAI,Ascorbic acid 500mg tablets,0906031C0AAALAL,Oral tablet,Ascorbic acid 500mg chewable tablets,Chewable tablet,Y
 0906031C0AAAIAI,Ascorbic acid 500mg tablets,0906031C0AABIBI,Oral tablet,Ascorbic acid 500mg capsules,Oral capsule,Y
 0906031C0AAALAL,Ascorbic acid 500mg chewable tablets,0906031C0AAAIAI,Chewable tablet,Ascorbic acid 500mg tablets,Oral tablet,Y
 0906031C0AAALAL,Ascorbic acid 500mg chewable tablets,0906031C0AABIBI,Chewable tablet,Ascorbic acid 500mg capsules,Oral capsule,Y
 0906031C0AABIBI,Ascorbic acid 500mg capsules,0906031C0AAAIAI,Oral capsule,Ascorbic acid 500mg tablets,Oral tablet,Y
 0906031C0AABIBI,Ascorbic acid 500mg capsules,0906031C0AAALAL,Oral capsule,Ascorbic acid 500mg chewable tablets,Chewable tablet,Y
-0906031C0AABWBW,Ascorbic acid 1g chewable tablets,090603100BBCVA0,Chewable tablet,Ascorbic acid 1g capsules,Oral capsule,Y
 0906040G0AAACAC,"Colecalciferol 3,000unit tablets",0906040G0AADYDY,Oral tablet,"Colecalciferol 3,000unit capsules",Oral capsule,Y
 0906040G0AAANAN,Colecalciferol 800unit capsules,0906040G0AACSCS,Oral capsule,Colecalciferol 800unit tablets,Oral tablet,Y
 0906040G0AAAPAP,"Colecalciferol 50,000units/5ml oral suspension",0906040G0AABMBM,Oral suspension,"Colecalciferol 10,000units/ml oral solution",Oral solution,Y
@@ -1844,9 +1840,7 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 091101000AACSCS,Arginine 500mg capsules,091101000AADQDQ,Oral capsule,Arginine 500mg tablets,Oral tablet,Y
 091101000AADQDQ,Arginine 500mg tablets,091101000AACSCS,Oral tablet,Arginine 500mg capsules,Oral capsule,Y
 091101000AAELEL,Arginine 500mg/5ml oral solution,091101000AAGDGD,Oral solution,Arginine 500mg/5ml oral solution sugar free,Oral solution,Y
-091101000AAFXFX,Lysine 500mg tablets,091101000BBRWA0,Oral tablet,Lysine 500mg capsules,Oral capsule,Y
 091101000AAGDGD,Arginine 500mg/5ml oral solution sugar free,091101000AAELEL,Oral solution,Arginine 500mg/5ml oral solution,Oral solution,Y
-091101000BBRWA0,Lysine 500mg capsules,091101000AAFXFX,Oral capsule,Lysine 500mg tablets,Oral tablet,Y
 091102000AAAIAI,Ubidecarenone 30mg capsules,091102000AABMBM,Oral capsule,Ubidecarenone 30mg tablets,Oral tablet,Y
 091102000AABDBD,Ubidecarenone 5mg/ml oral drops,091102000AABKBK,Oral drops,Ubidecarenone 25mg/5ml oral solution,Oral solution,Y
 091102000AABDBD,Ubidecarenone 5mg/ml oral drops,091102000AABNBN,Oral drops,Ubidecarenone 25mg/5ml oral suspension,Oral suspension,Y
@@ -2217,8 +2211,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 1501050X0AAAFAF,Rocuronium bromide 100mg/10ml solution for injection ampoules,1501050X0AAABAB,Solution for injection,Rocuronium bromide 100mg/10ml solution for injection vials,Solution for injection,Y
 1502010F0AAAXAX,Cocaine 10% nasal drops,1502010G0AAARAR,Nasal drops,Cocaine 10% spray,Spray,Y
 1502010G0AAAIAI,Cocaine 10% mouthwash,1502010G0AAARAR,Mouthwash,Cocaine 10% spray,Spray,Y
-1502010G0AAARAR,Cocaine 10% spray,1502010G0AAAIAI,Spray,Cocaine 10% mouthwash,Mouthwash,Y
 1502010G0AAARAR,Cocaine 10% spray,1502010F0AAAXAX,Spray,Cocaine 10% nasal drops,Nasal drops,Y
+1502010G0AAARAR,Cocaine 10% spray,1502010G0AAAIAI,Spray,Cocaine 10% mouthwash,Mouthwash,Y
 1502010J0AAADAD,Lidocaine 200mg/20ml (1%) solution for injection vials,1502010J0AACJCJ,Solution for injection,Lidocaine 200mg/20ml (1%) solution for injection ampoules,Solution for injection,Y
 1502010J0AACJCJ,Lidocaine 200mg/20ml (1%) solution for injection ampoules,1502010J0AAADAD,Solution for injection,Lidocaine 200mg/20ml (1%) solution for injection vials,Solution for injection,Y
 1902070E0AAABAB,Activated charcoal 300mg tablets,1902070E0AAAMAM,Oral tablet,Activated charcoal 300mg capsules,Oral capsule,Y
