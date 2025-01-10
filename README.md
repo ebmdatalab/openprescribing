@@ -128,17 +128,17 @@ database configuration, you'll need to blow away the volume with:
     docker-compose rm -f all
 
 Any time you change the npm or pip dependencies, you should rebuild
-the docker image used by the tests to improve runtime performance of
-travis.
+the docker image used by the tests to improve their runtime performance on
+Github Actions.
 
     # Base docker image, for production
-    docker build -t ebmdatalab/openprescribing-py3-base .
+    docker build -t ebmdatalab/openprescribing-py312-base .
     # Built from base image, with extras for testing
-    docker build -t ebmdatalab/openprescribing-py3-test -f Dockerfile-test .
-    docker login  # details in `pass`; only have to do this once on your machin
-    # push the images to hub.docker.io
-    docker push ebmdatalab/openprescribing-py3-base
-    docker push ebmdatalab/openprescribing-py3-test
+    docker build -t ebmdatalab/openprescribing-py312-test -f Dockerfile-test .
+    docker login  # login with a PAT from Github. only have to do this once on your machine
+    # push the images to ghrc.io
+    docker push ebmdatalab/openprescribing-py312-base
+    docker push ebmdatalab/openprescribing-py312-test
 
 
 ### Running the application from within Docker
