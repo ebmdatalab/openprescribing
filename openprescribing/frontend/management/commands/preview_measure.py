@@ -8,8 +8,7 @@ from requests.exceptions import InvalidJSONError, RequestException
 
 from .import_measures import BadRequest
 from .import_measures import Command as ImportMeasuresCommand
-from .import_measures import ImportLog, relativedelta
-from .import_measures import upload_supplementary_tables
+from .import_measures import ImportLog, relativedelta, upload_supplementary_tables
 
 
 class Command(BaseCommand):
