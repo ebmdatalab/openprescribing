@@ -47,7 +47,7 @@ If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en
 
 Install library dependencies (current as of Debian Jessie):
 
-    sudo apt-get install nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1 git-core vim sudo screen supervisor libpq-dev python-dev python-pip python-virtualenv python-gdal postgis emacs nginx build-essential libssl-dev libffi-dev unattended-upgrades libblas-dev liblapack-dev libatlas-base-dev gfortran libxml2-dev libxslt1-dev
+    sudo apt-get install nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1v5 git-core vim sudo screen supervisor libpq-dev python-dev-is-python3 python-pip gdal-bin postgis emacs nginx build-essential libssl-dev libffi-dev unattended-upgrades libblas-dev liblapack-dev libatlas-base-dev gfortran libxml2-dev libxslt1-dev
 
 Ensure pip and setuptools are up to date:
 
