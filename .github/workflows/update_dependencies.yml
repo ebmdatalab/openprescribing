@@ -20,7 +20,7 @@ jobs:
         app-id: ${{ vars.CREATE_PR_APP_ID }}
         private-key: ${{ secrets.CREATE_PR_APP_PRIVATE_KEY }}
 
-    - uses: opensafely-core/update-dependencies-action@v1
+    - uses: bennettoxford/update-dependencies-action@v1
       with:
         token: ${{ steps.generate-token.outputs.token }}
         automerge: false
