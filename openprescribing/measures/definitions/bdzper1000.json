@@ -24,7 +24,7 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "custom",
-  "numerator_columns": "SUM(p.quantity) * IEEE_DIVIDE(CASE when vpi.strnt_nmrtr_uom = 258685003 THEN vpi.strnt_nmrtr_val/1000 ELSE vpi.strnt_nmrtr_val END, COALESCE(vpistrnt_dnmtr_val, 1))/adq.adq AS numerator",
+  "numerator_columns": "SUM(p.quantity) * IEEE_DIVIDE(CASE when vpi.strnt_nmrtr_uom = 258685003 THEN vpi.strnt_nmrtr_val/1000 ELSE vpi.strnt_nmrtr_val END, COALESCE(vpi.strnt_dnmtr_val, 1))/adq.adq AS numerator",
   "numerator_from": [
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp AS vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(vmp.bnf_code,0,9),SUBSTR(vmp.bnf_code,-2)) ",
