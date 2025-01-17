@@ -29,7 +29,7 @@
     "{hscic}.normalised_prescribing p ",
     "INNER JOIN {dmd}.vmp AS vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(vmp.bnf_code,0,9),SUBSTR(vmp.bnf_code,-2)) ",
     "INNER JOIN {dmd}.vpi AS vpi ON vpi.vmp = vmp.id ",
-    "INNER JOIN {measures}.adq_bdz` AS adq ON SUBSTR(p.bnf_code,0,9) = adq.chemical_substance"
+    "INNER JOIN {measures}.adq_bdz AS adq ON SUBSTR(p.bnf_code,0,9) = adq.chemical_substance"
   ],
   "numerator_where": [
     "p.bnf_code LIKE '0401%' AND --Hypnotics and Anxiolytics \n",
