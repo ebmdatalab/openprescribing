@@ -1,7 +1,7 @@
 {
   "name": "Anxiolytics and Hypnotics: Average Daily Quantity per item",
   "title": "Anxiolytics and Hypnotics: Average Daily Quantity per item ",
-  "description": "Number of average daily quantities (ADQs) per item for anxiolytics and hypnotics",
+  "description": "Number of average daily quantities (ADQs) per item for oral anxiolytics and hypnotics",
   "numerator_short": "Anxiolytics and Hypnotics ADQ",
   "denominator_short": "Prescription items",
   "y_label": "ADQ per item",
@@ -9,7 +9,7 @@
     "Anxiolytics and Hypnotics are drugs that are prescribed for short-term treatment of conditions such as",
     "anxiety and sleep problems. <a href='https://www.rcpsych.ac.uk/expertadvice/treatments/benzodiazepines.aspx'> The Royal College of Psychiatrists states</a> ",
     "that \"around 4 in every 10 people who take them every day for more than 6 weeks will become addicted\" ",
-    "and therefore they should not be prescribed for longer than 4 weeks.  This measure shows the mean Average Daily Quantity (ADQ) given per prescription, ",
+    "and therefore they should not be prescribed for longer than 4 weeks.  This measure shows the mean Average Daily Quantity (ADQ) given per prescription for oral drugs, ",
     "for both the older benzodiazepines, such as diazepam and temazepam, and the newer \"Z-drugs\", such as zopiclone.  It excludes items that do not have ",
     "an ADQ, such as melatonin and daridorexant."
   ],
