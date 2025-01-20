@@ -100,12 +100,12 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0103050P0AAAPAP,Omeprazole 40mg dispersible gastro-resistant tablets,0103050P0AABEBE,Gastro-resistant tablet,Omeprazole 40mg gastro-resistant tablets,Gastro-resistant tablet,Y
 0103050P0AAAQAQ,Omeprazole 20mg/5ml oral solution,0103050P0AABMBM,Oral solution,Omeprazole 20mg/5ml oral suspension,Oral suspension,Y
 0103050P0AAAQAQ,Omeprazole 20mg/5ml oral solution,0103050P0AABVBV,Oral solution,Omeprazole 20mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
-0103050P0AABCBC,Omeprazole 10mg gastro-resistant tablets,0103050P0AAAFAF,Gastro-resistant tablet,Omeprazole 10mg gastro-resistant capsules,Gastro-resistant capsule,Y
 0103050P0AABCBC,Omeprazole 10mg gastro-resistant tablets,0103050P0AAAMAM,Gastro-resistant tablet,Omeprazole 10mg dispersible gastro-resistant tablets,Gastro-resistant tablet,Y
-0103050P0AABDBD,Omeprazole 20mg gastro-resistant tablets,0103050P0AAAAAA,Gastro-resistant tablet,Omeprazole 20mg gastro-resistant capsules,Gastro-resistant capsule,Y
+0103050P0AABCBC,Omeprazole 10mg gastro-resistant tablets,0103050P0AAAFAF,Gastro-resistant tablet,Omeprazole 10mg gastro-resistant capsules,Gastro-resistant capsule,Y
 0103050P0AABDBD,Omeprazole 20mg gastro-resistant tablets,0103050P0AAANAN,Gastro-resistant tablet,Omeprazole 20mg dispersible gastro-resistant tablets,Gastro-resistant tablet,Y
-0103050P0AABEBE,Omeprazole 40mg gastro-resistant tablets,0103050P0AAAEAE,Gastro-resistant tablet,Omeprazole 40mg gastro-resistant capsules,Gastro-resistant capsule,Y
+0103050P0AABDBD,Omeprazole 20mg gastro-resistant tablets,0103050P0AAAAAA,Gastro-resistant tablet,Omeprazole 20mg gastro-resistant capsules,Gastro-resistant capsule,Y
 0103050P0AABEBE,Omeprazole 40mg gastro-resistant tablets,0103050P0AAAPAP,Gastro-resistant tablet,Omeprazole 40mg dispersible gastro-resistant tablets,Gastro-resistant tablet,Y
+0103050P0AABEBE,Omeprazole 40mg gastro-resistant tablets,0103050P0AAAEAE,Gastro-resistant tablet,Omeprazole 40mg gastro-resistant capsules,Gastro-resistant capsule,Y
 0103050P0AABLBL,Omeprazole 10mg/5ml oral suspension,0103050P0AAAJAJ,Oral suspension,Omeprazole 10mg/5ml oral solution,Oral solution,Y
 0103050P0AABLBL,Omeprazole 10mg/5ml oral suspension,0103050P0AABUBU,Oral suspension,Omeprazole 10mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
 0103050P0AABMBM,Omeprazole 20mg/5ml oral suspension,0103050P0AAAQAQ,Oral suspension,Omeprazole 20mg/5ml oral solution,Oral solution,Y
@@ -136,11 +136,11 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0104020L0AAATAT,Loperamide 2mg oral lyophilisates sugar free,0104020L0AAADAD,Oral lyophilisate sugar free,Loperamide 2mg tablets,Oral tablet,Y
 0104020L0AAATAT,Loperamide 2mg oral lyophilisates sugar free,0104020L0AAARAR,Oral lyophilisate sugar free,Loperamide 2mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 0105010B0AAAIAI,Mesalazine 500mg modified-release tablets,0105010B0AAAPAP,Modified-release tablet,Mesalazine 500mg gastro-resistant modified-release granules sachets sugar free,Modified-release granules sugar free,Y
-0105010B0AAANAN,Mesalazine 1g modified-release granules sachets sugar free,0105010B0AAAYAY,Modified-release granules sugar free,Mesalazine 1g modified-release tablets,Modified-release tablet,Y
 0105010B0AAANAN,Mesalazine 1g modified-release granules sachets sugar free,0105010B0AAAXAX,Modified-release granules sugar free,Mesalazine 1g gastro-resistant modified-release granules sachets sugar free,Modified-release granules sugar free,Y
+0105010B0AAANAN,Mesalazine 1g modified-release granules sachets sugar free,0105010B0AAAYAY,Modified-release granules sugar free,Mesalazine 1g modified-release tablets,Modified-release tablet,Y
 0105010B0AAAPAP,Mesalazine 500mg gastro-resistant modified-release granules sachets sugar free,0105010B0AAAIAI,Modified-release granules sugar free,Mesalazine 500mg modified-release tablets,Modified-release tablet,Y
-0105010B0AAAXAX,Mesalazine 1g gastro-resistant modified-release granules sachets sugar free,0105010B0AAAYAY,Modified-release granules sugar free,Mesalazine 1g modified-release tablets,Modified-release tablet,Y
 0105010B0AAAXAX,Mesalazine 1g gastro-resistant modified-release granules sachets sugar free,0105010B0AAANAN,Modified-release granules sugar free,Mesalazine 1g modified-release granules sachets sugar free,Modified-release granules sugar free,Y
+0105010B0AAAXAX,Mesalazine 1g gastro-resistant modified-release granules sachets sugar free,0105010B0AAAYAY,Modified-release granules sugar free,Mesalazine 1g modified-release tablets,Modified-release tablet,Y
 0105010B0AAAYAY,Mesalazine 1g modified-release tablets,0105010B0AAANAN,Modified-release tablet,Mesalazine 1g modified-release granules sachets sugar free,Modified-release granules sugar free,Y
 0105010B0AAAYAY,Mesalazine 1g modified-release tablets,0105010B0AAAXAX,Modified-release tablet,Mesalazine 1g gastro-resistant modified-release granules sachets sugar free,Modified-release granules sugar free,Y
 0105010E0AAAAAA,Sulfasalazine 500mg tablets,0105010E0AAABAB,Oral tablet,Sulfasalazine 500mg gastro-resistant tablets,Gastro-resistant tablet,Y
@@ -204,19 +204,19 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0202030C0AAASAS,Amiloride 5mg/5ml oral solution sugar free,0202030C0AAAXAX,Oral solution sugar free,Amiloride 5mg/5ml oral suspension,Oral suspension,Y
 0202030C0AAAXAX,Amiloride 5mg/5ml oral suspension,0202030C0AAASAS,Oral suspension,Amiloride 5mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0202030S0AACMCM,Spironolactone 5mg/5ml oral solution,0202030S0AAECEC,Oral solution,Spironolactone 5mg/5ml oral suspension,Oral suspension,Y
-0202030S0AACPCP,Spironolactone 50mg/5ml oral solution,0202030S0AAEHEH,Oral solution,Spironolactone 50mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0202030S0AACPCP,Spironolactone 50mg/5ml oral solution,0202030S0AAEBEB,Oral solution,Spironolactone 50mg/5ml oral suspension,Oral suspension,Y
+0202030S0AACPCP,Spironolactone 50mg/5ml oral solution,0202030S0AAEHEH,Oral solution,Spironolactone 50mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0202030S0AACQCQ,Spironolactone 10mg/5ml oral solution,0202030S0AAEDED,Oral solution,Spironolactone 10mg/5ml oral suspension,Oral suspension,Y
 0202030S0AACRCR,Spironolactone 100mg/5ml oral solution,0202030S0AAEEEE,Oral solution,Spironolactone 100mg/5ml oral suspension,Oral suspension,Y
-0202030S0AAEAEA,Spironolactone 25mg/5ml oral suspension,0202030S0AAEIEI,Oral suspension,Spironolactone 25mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0202030S0AAEAEA,Spironolactone 25mg/5ml oral suspension,0202030S0AAEFEF,Oral suspension,Spironolactone 25mg/5ml oral solution,Oral solution,Y
-0202030S0AAEBEB,Spironolactone 50mg/5ml oral suspension,0202030S0AAEHEH,Oral suspension,Spironolactone 50mg/5ml oral solution sugar free,Oral solution sugar free,Y
+0202030S0AAEAEA,Spironolactone 25mg/5ml oral suspension,0202030S0AAEIEI,Oral suspension,Spironolactone 25mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0202030S0AAEBEB,Spironolactone 50mg/5ml oral suspension,0202030S0AACPCP,Oral suspension,Spironolactone 50mg/5ml oral solution,Oral solution,Y
+0202030S0AAEBEB,Spironolactone 50mg/5ml oral suspension,0202030S0AAEHEH,Oral suspension,Spironolactone 50mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0202030S0AAECEC,Spironolactone 5mg/5ml oral suspension,0202030S0AACMCM,Oral suspension,Spironolactone 5mg/5ml oral solution,Oral solution,Y
 0202030S0AAEDED,Spironolactone 10mg/5ml oral suspension,0202030S0AACQCQ,Oral suspension,Spironolactone 10mg/5ml oral solution,Oral solution,Y
 0202030S0AAEEEE,Spironolactone 100mg/5ml oral suspension,0202030S0AACRCR,Oral suspension,Spironolactone 100mg/5ml oral solution,Oral solution,Y
-0202030S0AAEFEF,Spironolactone 25mg/5ml oral solution,0202030S0AAEIEI,Oral solution,Spironolactone 25mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0202030S0AAEFEF,Spironolactone 25mg/5ml oral solution,0202030S0AAEAEA,Oral solution,Spironolactone 25mg/5ml oral suspension,Oral suspension,Y
+0202030S0AAEFEF,Spironolactone 25mg/5ml oral solution,0202030S0AAEIEI,Oral solution,Spironolactone 25mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0202030S0AAEHEH,Spironolactone 50mg/5ml oral solution sugar free,0202030S0AAEBEB,Oral solution sugar free,Spironolactone 50mg/5ml oral suspension,Oral suspension,Y
 0202030S0AAEHEH,Spironolactone 50mg/5ml oral solution sugar free,0202030S0AACPCP,Oral solution sugar free,Spironolactone 50mg/5ml oral solution,Oral solution,Y
 0202030S0AAEIEI,Spironolactone 25mg/5ml oral solution sugar free,0202030S0AAEAEA,Oral solution sugar free,Spironolactone 25mg/5ml oral suspension,Oral suspension,Y
@@ -352,8 +352,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0206010K0AAAUAU,Isosorbide mononitrate 50mg modified-release tablets,0206010K0AAAFAF,Modified-release tablet,Isosorbide mononitrate 50mg modified-release capsules,Modified-release capsule,Y
 0206010K0AABBBB,Isosorbide mononitrate 20mg/5ml oral suspension,0206010K0AAALAL,Oral suspension,Isosorbide mononitrate 20mg/5ml oral solution,Oral solution,Y
 0206020A0AAACAC,Amlodipine 5mg/5ml oral suspension,0206020A0AAALAL,Oral suspension,Amlodipine 5mg/5ml oral solution sugar free,Oral solution sugar free,Y
-0206020A0AAACAC,Amlodipine 5mg/5ml oral suspension,0206020A0AAAUAU,Oral suspension,Amlodipine 5mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
 0206020A0AAACAC,Amlodipine 5mg/5ml oral solution,0206020A0AAALAL,Oral solution,Amlodipine 5mg/5ml oral solution sugar free,Oral solution sugar free,Y
+0206020A0AAACAC,Amlodipine 5mg/5ml oral suspension,0206020A0AAAUAU,Oral suspension,Amlodipine 5mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
 0206020A0AAACAC,Amlodipine 5mg/5ml oral solution,0206020A0AAAUAU,Oral solution,Amlodipine 5mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
 0206020A0AAADAD,Amlodipine 10mg/5ml oral suspension,0206020A0AAATAT,Oral suspension,Amlodipine 10mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0206020A0AAADAD,Amlodipine 10mg/5ml oral solution,0206020A0AAATAT,Oral solution,Amlodipine 10mg/5ml oral solution sugar free,Oral solution sugar free,Y
@@ -517,30 +517,30 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0304020X0AAAGAG,Omalizumab 300mg/2ml solution for injection pre-filled syringes,0304020X0AAAFAF,Solution for injection,Omalizumab 300mg/2ml solution for injection pre-filled disposable devices,Solution for injection,Y
 0304020Y0AAABAB,Mepolizumab 100mg/1ml solution for injection pre-filled syringes,0304020Y0AAACAC,Solution for injection,Mepolizumab 100mg/1ml solution for injection pre-filled disposable devices,Solution for injection,Y
 0304020Y0AAACAC,Mepolizumab 100mg/1ml solution for injection pre-filled disposable devices,0304020Y0AAABAB,Solution for injection,Mepolizumab 100mg/1ml solution for injection pre-filled syringes,Solution for injection,Y
+0307000C0AAAAAA,Acetylcysteine 200mg granules for oral solution sachets,0307000C0AAAPAP,Granules for oral solution,Acetylcysteine 200mg tablets,Oral tablet,Y
 0307000C0AAAAAA,Acetylcysteine 200mg granules for oral solution sachets,0307000C0AAAQAQ,Granules for oral solution,Acetylcysteine 200mg oral powder sachets sugar free,Powder for oral solution sugar free,Y
 0307000C0AAAAAA,Acetylcysteine 200mg granules for oral solution sachets,0307000C0AAASAS,Granules for oral solution,Acetylcysteine 200mg oral powder sachets,Powder for oral solution,Y
-0307000C0AAAAAA,Acetylcysteine 200mg granules for oral solution sachets,0307000C0AAAPAP,Granules for oral solution,Acetylcysteine 200mg tablets,Oral tablet,Y
+0307000C0AAAJAJ,Acetylcysteine 600mg effervescent tablets,0307000C0AAAKAK,Effervescent tablet,Acetylcysteine 600mg capsules,Oral capsule,Y
 0307000C0AAAJAJ,Acetylcysteine 600mg effervescent tablets,0307000C0AAAMAM,Effervescent tablet,Acetylcysteine 600mg tablets,Oral tablet,Y
 0307000C0AAAJAJ,Acetylcysteine 600mg effervescent tablets,0307000C0AAARAR,Effervescent tablet,Acetylcysteine 600mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
-0307000C0AAAJAJ,Acetylcysteine 600mg effervescent tablets,0307000C0AAAKAK,Effervescent tablet,Acetylcysteine 600mg capsules,Oral capsule,Y
 0307000C0AAAKAK,Acetylcysteine 600mg capsules,0307000C0AAAMAM,Oral capsule,Acetylcysteine 600mg tablets,Oral tablet,Y
 0307000C0AAAKAK,Acetylcysteine 600mg capsules,0307000C0AAAJAJ,Oral capsule,Acetylcysteine 600mg effervescent tablets,Effervescent tablet,Y
 0307000C0AAAKAK,Acetylcysteine 600mg capsules,0307000C0AAARAR,Oral capsule,Acetylcysteine 600mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
+0307000C0AAAMAM,Acetylcysteine 600mg tablets,0307000C0AAAKAK,Oral tablet,Acetylcysteine 600mg capsules,Oral capsule,Y
 0307000C0AAAMAM,Acetylcysteine 600mg tablets,0307000C0AAAJAJ,Oral tablet,Acetylcysteine 600mg effervescent tablets,Effervescent tablet,Y
 0307000C0AAAMAM,Acetylcysteine 600mg tablets,0307000C0AAARAR,Oral tablet,Acetylcysteine 600mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
-0307000C0AAAMAM,Acetylcysteine 600mg tablets,0307000C0AAAKAK,Oral tablet,Acetylcysteine 600mg capsules,Oral capsule,Y
+0307000C0AAAPAP,Acetylcysteine 200mg tablets,0307000C0AAAAAA,Oral tablet,Acetylcysteine 200mg granules for oral solution sachets,Granules for oral solution,Y
 0307000C0AAAPAP,Acetylcysteine 200mg tablets,0307000C0AAAQAQ,Oral tablet,Acetylcysteine 200mg oral powder sachets sugar free,Powder for oral solution sugar free,Y
 0307000C0AAAPAP,Acetylcysteine 200mg tablets,0307000C0AAASAS,Oral tablet,Acetylcysteine 200mg oral powder sachets,Powder for oral solution,Y
-0307000C0AAAPAP,Acetylcysteine 200mg tablets,0307000C0AAAAAA,Oral tablet,Acetylcysteine 200mg granules for oral solution sachets,Granules for oral solution,Y
-0307000C0AAAQAQ,Acetylcysteine 200mg oral powder sachets sugar free,0307000C0AAASAS,Powder for oral solution sugar free,Acetylcysteine 200mg oral powder sachets,Powder for oral solution,Y
-0307000C0AAAQAQ,Acetylcysteine 200mg oral powder sachets sugar free,0307000C0AAAPAP,Powder for oral solution sugar free,Acetylcysteine 200mg tablets,Oral tablet,Y
 0307000C0AAAQAQ,Acetylcysteine 200mg oral powder sachets sugar free,0307000C0AAAAAA,Powder for oral solution sugar free,Acetylcysteine 200mg granules for oral solution sachets,Granules for oral solution,Y
+0307000C0AAAQAQ,Acetylcysteine 200mg oral powder sachets sugar free,0307000C0AAAPAP,Powder for oral solution sugar free,Acetylcysteine 200mg tablets,Oral tablet,Y
+0307000C0AAAQAQ,Acetylcysteine 200mg oral powder sachets sugar free,0307000C0AAASAS,Powder for oral solution sugar free,Acetylcysteine 200mg oral powder sachets,Powder for oral solution,Y
+0307000C0AAARAR,Acetylcysteine 600mg effervescent tablets sugar free,0307000C0AAAKAK,Effervescent tablet sugar free,Acetylcysteine 600mg capsules,Oral capsule,Y
 0307000C0AAARAR,Acetylcysteine 600mg effervescent tablets sugar free,0307000C0AAAMAM,Effervescent tablet sugar free,Acetylcysteine 600mg tablets,Oral tablet,Y
 0307000C0AAARAR,Acetylcysteine 600mg effervescent tablets sugar free,0307000C0AAAJAJ,Effervescent tablet sugar free,Acetylcysteine 600mg effervescent tablets,Effervescent tablet,Y
-0307000C0AAARAR,Acetylcysteine 600mg effervescent tablets sugar free,0307000C0AAAKAK,Effervescent tablet sugar free,Acetylcysteine 600mg capsules,Oral capsule,Y
-0307000C0AAASAS,Acetylcysteine 200mg oral powder sachets,0307000C0AAAQAQ,Powder for oral solution,Acetylcysteine 200mg oral powder sachets sugar free,Powder for oral solution sugar free,Y
-0307000C0AAASAS,Acetylcysteine 200mg oral powder sachets,0307000C0AAAPAP,Powder for oral solution,Acetylcysteine 200mg tablets,Oral tablet,Y
 0307000C0AAASAS,Acetylcysteine 200mg oral powder sachets,0307000C0AAAAAA,Powder for oral solution,Acetylcysteine 200mg granules for oral solution sachets,Granules for oral solution,Y
+0307000C0AAASAS,Acetylcysteine 200mg oral powder sachets,0307000C0AAAPAP,Powder for oral solution,Acetylcysteine 200mg tablets,Oral tablet,Y
+0307000C0AAASAS,Acetylcysteine 200mg oral powder sachets,0307000C0AAAQAQ,Powder for oral solution,Acetylcysteine 200mg oral powder sachets sugar free,Powder for oral solution sugar free,Y
 0307000J0AAACAC,Carbocisteine 250mg/5ml oral solution,0307000J0AAAHAH,Oral solution,Carbocisteine 250mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0307000J0AAAHAH,Carbocisteine 250mg/5ml oral solution sugar free,0307000J0AAACAC,Oral solution sugar free,Carbocisteine 250mg/5ml oral solution,Oral solution,Y
 0307000T0AAABAB,Lumacaftor 100mg / Ivacaftor 125mg tablets,0307000T0AAACAC,Oral tablet,Lumacaftor 100mg / Ivacaftor 125mg granules sachets,Oral granules,Y
@@ -581,12 +581,12 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0401010ADAABZBZ,Melatonin 2mg/5ml oral suspension,0401010ADAABYBY,Oral suspension,Melatonin 2mg/5ml oral solution,Oral solution,Y
 0401010ADAACACA,Melatonin 3mg/5ml oral solution,0401010ADAACBCB,Oral solution,Melatonin 3mg/5ml oral suspension,Oral suspension,Y
 0401010ADAACBCB,Melatonin 3mg/5ml oral suspension,0401010ADAACACA,Oral suspension,Melatonin 3mg/5ml oral solution,Oral solution,Y
-0401010ADAACCCC,Melatonin 3mg orodispersible tablets,0401010ADAABRBR,Orodispersible tablet,Melatonin 3mg capsules,Oral capsule,Y
 0401010ADAACCCC,Melatonin 3mg orodispersible tablets,0401010ADAACYCY,Orodispersible tablet,Melatonin 3mg tablets,Oral tablet,Y
-0401010ADAACDCD,Melatonin 10mg/5ml oral solution,0401010ADAADFDF,Oral solution,Melatonin 2mg/ml oral solution sugar free,Oral solution sugar free,Y
+0401010ADAACCCC,Melatonin 3mg orodispersible tablets,0401010ADAABRBR,Orodispersible tablet,Melatonin 3mg capsules,Oral capsule,Y
 0401010ADAACDCD,Melatonin 10mg/5ml oral solution,0401010ADAACECE,Oral solution,Melatonin 10mg/5ml oral suspension,Oral suspension,Y
-0401010ADAACECE,Melatonin 10mg/5ml oral suspension,0401010ADAADFDF,Oral suspension,Melatonin 2mg/ml oral solution sugar free,Oral solution sugar free,Y
+0401010ADAACDCD,Melatonin 10mg/5ml oral solution,0401010ADAADFDF,Oral solution,Melatonin 2mg/ml oral solution sugar free,Oral solution sugar free,Y
 0401010ADAACECE,Melatonin 10mg/5ml oral suspension,0401010ADAACDCD,Oral suspension,Melatonin 10mg/5ml oral solution,Oral solution,Y
+0401010ADAACECE,Melatonin 10mg/5ml oral suspension,0401010ADAADFDF,Oral suspension,Melatonin 2mg/ml oral solution sugar free,Oral solution sugar free,Y
 0401010ADAACFCF,Melatonin 2.5mg/5ml oral solution,0401010ADAACGCG,Oral solution,Melatonin 2.5mg/5ml oral suspension,Oral suspension,Y
 0401010ADAACGCG,Melatonin 2.5mg/5ml oral suspension,0401010ADAACFCF,Oral suspension,Melatonin 2.5mg/5ml oral solution,Oral solution,Y
 0401010ADAACHCH,Melatonin 2mg modified-release capsules,0401010ADAAAAAA,Modified-release capsule,Melatonin 2mg modified-release tablets,Modified-release tablet,Y
@@ -645,12 +645,12 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 040201030AAANAN,Risperidone 500microgram orodispersible tablets sugar free,040201030AAAKAK,Orodispersible tablet sugar free,Risperidone 500microgram tablets,Oral tablet,Y
 040201030AAAPAP,Risperidone 3mg orodispersible tablets sugar free,040201030AAACAC,Orodispersible tablet sugar free,Risperidone 3mg tablets,Oral tablet,Y
 040201030AAAQAQ,Risperidone 4mg orodispersible tablets sugar free,040201030AAADAD,Orodispersible tablet sugar free,Risperidone 4mg tablets,Oral tablet,Y
+040201060AAAAAA,Olanzapine 5mg tablets,040201060AAAEAE,Oral tablet,Olanzapine 5mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAAAA,Olanzapine 5mg tablets,040201060AAASAS,Oral tablet,Olanzapine 5mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAAAAA,Olanzapine 5mg tablets,040201060AAAWAW,Oral tablet,Olanzapine 5mg orodispersible tablets,Orodispersible tablet,Y
-040201060AAAAAA,Olanzapine 5mg tablets,040201060AAAEAE,Oral tablet,Olanzapine 5mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+040201060AAACAC,Olanzapine 10mg tablets,040201060AAAFAF,Oral tablet,Olanzapine 10mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAACAC,Olanzapine 10mg tablets,040201060AAATAT,Oral tablet,Olanzapine 10mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAACAC,Olanzapine 10mg tablets,040201060AAAXAX,Oral tablet,Olanzapine 10mg orodispersible tablets,Orodispersible tablet,Y
-040201060AAACAC,Olanzapine 10mg tablets,040201060AAAFAF,Oral tablet,Olanzapine 10mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAEAE,Olanzapine 5mg oral lyophilisates sugar free,040201060AAAAAA,Oral lyophilisate sugar free,Olanzapine 5mg tablets,Oral tablet,Y
 040201060AAAEAE,Olanzapine 5mg oral lyophilisates sugar free,040201060AAASAS,Oral lyophilisate sugar free,Olanzapine 5mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAAEAE,Olanzapine 5mg oral lyophilisates sugar free,040201060AAAWAW,Oral lyophilisate sugar free,Olanzapine 5mg orodispersible tablets,Orodispersible tablet,Y
@@ -661,39 +661,39 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 040201060AAAKAK,Olanzapine 15mg oral lyophilisates sugar free,040201060AAALAL,Oral lyophilisate sugar free,Olanzapine 15mg tablets,Oral tablet,Y
 040201060AAAKAK,Olanzapine 15mg oral lyophilisates sugar free,040201060AAAUAU,Oral lyophilisate sugar free,Olanzapine 15mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAAKAK,Olanzapine 15mg oral lyophilisates sugar free,040201060AAAYAY,Oral lyophilisate sugar free,Olanzapine 15mg orodispersible tablets,Orodispersible tablet,Y
+040201060AAALAL,Olanzapine 15mg tablets,040201060AAAKAK,Oral tablet,Olanzapine 15mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAALAL,Olanzapine 15mg tablets,040201060AAAUAU,Oral tablet,Olanzapine 15mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAALAL,Olanzapine 15mg tablets,040201060AAAYAY,Oral tablet,Olanzapine 15mg orodispersible tablets,Orodispersible tablet,Y
-040201060AAALAL,Olanzapine 15mg tablets,040201060AAAKAK,Oral tablet,Olanzapine 15mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAPAP,Olanzapine 20mg oral lyophilisates sugar free,040201060AAAQAQ,Oral lyophilisate sugar free,Olanzapine 20mg tablets,Oral tablet,Y
 040201060AAAPAP,Olanzapine 20mg oral lyophilisates sugar free,040201060AAAVAV,Oral lyophilisate sugar free,Olanzapine 20mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAAPAP,Olanzapine 20mg oral lyophilisates sugar free,040201060AAAZAZ,Oral lyophilisate sugar free,Olanzapine 20mg orodispersible tablets,Orodispersible tablet,Y
+040201060AAAQAQ,Olanzapine 20mg tablets,040201060AAAPAP,Oral tablet,Olanzapine 20mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAQAQ,Olanzapine 20mg tablets,040201060AAAVAV,Oral tablet,Olanzapine 20mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAAQAQ,Olanzapine 20mg tablets,040201060AAAZAZ,Oral tablet,Olanzapine 20mg orodispersible tablets,Orodispersible tablet,Y
-040201060AAAQAQ,Olanzapine 20mg tablets,040201060AAAPAP,Oral tablet,Olanzapine 20mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAASAS,Olanzapine 5mg orodispersible tablets sugar free,040201060AAAAAA,Orodispersible tablet sugar free,Olanzapine 5mg tablets,Oral tablet,Y
-040201060AAASAS,Olanzapine 5mg orodispersible tablets sugar free,040201060AAAWAW,Orodispersible tablet sugar free,Olanzapine 5mg orodispersible tablets,Orodispersible tablet,Y
 040201060AAASAS,Olanzapine 5mg orodispersible tablets sugar free,040201060AAAEAE,Orodispersible tablet sugar free,Olanzapine 5mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+040201060AAASAS,Olanzapine 5mg orodispersible tablets sugar free,040201060AAAWAW,Orodispersible tablet sugar free,Olanzapine 5mg orodispersible tablets,Orodispersible tablet,Y
 040201060AAATAT,Olanzapine 10mg orodispersible tablets sugar free,040201060AAACAC,Orodispersible tablet sugar free,Olanzapine 10mg tablets,Oral tablet,Y
-040201060AAATAT,Olanzapine 10mg orodispersible tablets sugar free,040201060AAAXAX,Orodispersible tablet sugar free,Olanzapine 10mg orodispersible tablets,Orodispersible tablet,Y
 040201060AAATAT,Olanzapine 10mg orodispersible tablets sugar free,040201060AAAFAF,Orodispersible tablet sugar free,Olanzapine 10mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+040201060AAATAT,Olanzapine 10mg orodispersible tablets sugar free,040201060AAAXAX,Orodispersible tablet sugar free,Olanzapine 10mg orodispersible tablets,Orodispersible tablet,Y
+040201060AAAUAU,Olanzapine 15mg orodispersible tablets sugar free,040201060AAAKAK,Orodispersible tablet sugar free,Olanzapine 15mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAUAU,Olanzapine 15mg orodispersible tablets sugar free,040201060AAALAL,Orodispersible tablet sugar free,Olanzapine 15mg tablets,Oral tablet,Y
 040201060AAAUAU,Olanzapine 15mg orodispersible tablets sugar free,040201060AAAYAY,Orodispersible tablet sugar free,Olanzapine 15mg orodispersible tablets,Orodispersible tablet,Y
-040201060AAAUAU,Olanzapine 15mg orodispersible tablets sugar free,040201060AAAKAK,Orodispersible tablet sugar free,Olanzapine 15mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+040201060AAAVAV,Olanzapine 20mg orodispersible tablets sugar free,040201060AAAPAP,Orodispersible tablet sugar free,Olanzapine 20mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAVAV,Olanzapine 20mg orodispersible tablets sugar free,040201060AAAQAQ,Orodispersible tablet sugar free,Olanzapine 20mg tablets,Oral tablet,Y
 040201060AAAVAV,Olanzapine 20mg orodispersible tablets sugar free,040201060AAAZAZ,Orodispersible tablet sugar free,Olanzapine 20mg orodispersible tablets,Orodispersible tablet,Y
-040201060AAAVAV,Olanzapine 20mg orodispersible tablets sugar free,040201060AAAPAP,Orodispersible tablet sugar free,Olanzapine 20mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAWAW,Olanzapine 5mg orodispersible tablets,040201060AAAAAA,Orodispersible tablet,Olanzapine 5mg tablets,Oral tablet,Y
-040201060AAAWAW,Olanzapine 5mg orodispersible tablets,040201060AAASAS,Orodispersible tablet,Olanzapine 5mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAAWAW,Olanzapine 5mg orodispersible tablets,040201060AAAEAE,Orodispersible tablet,Olanzapine 5mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+040201060AAAWAW,Olanzapine 5mg orodispersible tablets,040201060AAASAS,Orodispersible tablet,Olanzapine 5mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAAXAX,Olanzapine 10mg orodispersible tablets,040201060AAACAC,Orodispersible tablet,Olanzapine 10mg tablets,Oral tablet,Y
-040201060AAAXAX,Olanzapine 10mg orodispersible tablets,040201060AAATAT,Orodispersible tablet,Olanzapine 10mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 040201060AAAXAX,Olanzapine 10mg orodispersible tablets,040201060AAAFAF,Orodispersible tablet,Olanzapine 10mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+040201060AAAXAX,Olanzapine 10mg orodispersible tablets,040201060AAATAT,Orodispersible tablet,Olanzapine 10mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
+040201060AAAYAY,Olanzapine 15mg orodispersible tablets,040201060AAAKAK,Orodispersible tablet,Olanzapine 15mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAYAY,Olanzapine 15mg orodispersible tablets,040201060AAALAL,Orodispersible tablet,Olanzapine 15mg tablets,Oral tablet,Y
 040201060AAAYAY,Olanzapine 15mg orodispersible tablets,040201060AAAUAU,Orodispersible tablet,Olanzapine 15mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
-040201060AAAYAY,Olanzapine 15mg orodispersible tablets,040201060AAAKAK,Orodispersible tablet,Olanzapine 15mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+040201060AAAZAZ,Olanzapine 20mg orodispersible tablets,040201060AAAPAP,Orodispersible tablet,Olanzapine 20mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AAAZAZ,Olanzapine 20mg orodispersible tablets,040201060AAAQAQ,Orodispersible tablet,Olanzapine 20mg tablets,Oral tablet,Y
 040201060AAAZAZ,Olanzapine 20mg orodispersible tablets,040201060AAAVAV,Orodispersible tablet,Olanzapine 20mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
-040201060AAAZAZ,Olanzapine 20mg orodispersible tablets,040201060AAAPAP,Orodispersible tablet,Olanzapine 20mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 040201060AABABA,Olanzapine 2.5mg/5ml oral suspension,040201060AAAIAI,Oral suspension,Olanzapine 2.5mg/5ml oral solution,Oral solution,Y
 0402010ABAAAHAH,Quetiapine 25mg/5ml oral solution,0402010ABAABDBD,Oral solution,Quetiapine 25mg/5ml oral suspension,Oral suspension,Y
 0402010ABAAAIAI,Quetiapine 12.5mg/5ml oral solution,0402010ABAABBBB,Oral solution,Quetiapine 12.5mg/5ml oral suspension,Oral suspension,Y
@@ -871,35 +871,35 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0406000L0AABPBP,Hyoscine hydrobromide 500micrograms/5ml oral solution,0406000L0AABQBQ,Oral solution,Hyoscine hydrobromide 500micrograms/5ml oral suspension,Oral suspension,Y
 0406000L0AABQBQ,Hyoscine hydrobromide 500micrograms/5ml oral suspension,0406000L0AABPBP,Oral suspension,Hyoscine hydrobromide 500micrograms/5ml oral solution,Oral solution,Y
 0406000S0AAAAAA,Ondansetron 4mg/2ml solution for injection ampoules,0406000S0AAAQAQ,Solution for injection,Ondansetron 4mg/2ml solution for injection pre-filled syringes,Solution for injection,Y
-0406000S0AAABAB,Ondansetron 4mg tablets,0406000S0AAAMAM,Oral tablet,Ondansetron 4mg orodispersible films sugar free,Orodispersible film sugar free,Y
-0406000S0AAABAB,Ondansetron 4mg tablets,0406000S0AAAKAK,Oral tablet,Ondansetron 4mg orodispersible tablets,Orodispersible tablet,Y
 0406000S0AAABAB,Ondansetron 4mg tablets,0406000S0AAAIAI,Oral tablet,Ondansetron 4mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
-0406000S0AAACAC,Ondansetron 8mg tablets,0406000S0AAANAN,Oral tablet,Ondansetron 8mg orodispersible films sugar free,Orodispersible film sugar free,Y
-0406000S0AAACAC,Ondansetron 8mg tablets,0406000S0AAALAL,Oral tablet,Ondansetron 8mg orodispersible tablets,Orodispersible tablet,Y
+0406000S0AAABAB,Ondansetron 4mg tablets,0406000S0AAAKAK,Oral tablet,Ondansetron 4mg orodispersible tablets,Orodispersible tablet,Y
+0406000S0AAABAB,Ondansetron 4mg tablets,0406000S0AAAMAM,Oral tablet,Ondansetron 4mg orodispersible films sugar free,Orodispersible film sugar free,Y
 0406000S0AAACAC,Ondansetron 8mg tablets,0406000S0AAAJAJ,Oral tablet,Ondansetron 8mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+0406000S0AAACAC,Ondansetron 8mg tablets,0406000S0AAALAL,Oral tablet,Ondansetron 8mg orodispersible tablets,Orodispersible tablet,Y
+0406000S0AAACAC,Ondansetron 8mg tablets,0406000S0AAANAN,Oral tablet,Ondansetron 8mg orodispersible films sugar free,Orodispersible film sugar free,Y
 0406000S0AAADAD,Ondansetron 8mg/4ml solution for injection ampoules,0406000S0AAARAR,Solution for injection,Ondansetron 8mg/4ml solution for injection pre-filled syringes,Solution for injection,Y
 0406000S0AAAFAF,Ondansetron 4mg/5ml oral suspension,0406000S0AAAGAG,Oral suspension,Ondansetron 4mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0406000S0AAAFAF,Ondansetron 4mg/5ml oral solution,0406000S0AAAGAG,Oral solution,Ondansetron 4mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0406000S0AAAGAG,Ondansetron 4mg/5ml oral solution sugar free,0406000S0AAAFAF,Oral solution sugar free,Ondansetron 4mg/5ml oral suspension,Oral suspension,Y
 0406000S0AAAGAG,Ondansetron 4mg/5ml oral solution sugar free,0406000S0AAAFAF,Oral solution sugar free,Ondansetron 4mg/5ml oral solution,Oral solution,Y
+0406000S0AAAIAI,Ondansetron 4mg oral lyophilisates sugar free,0406000S0AAAKAK,Oral lyophilisate sugar free,Ondansetron 4mg orodispersible tablets,Orodispersible tablet,Y
 0406000S0AAAIAI,Ondansetron 4mg oral lyophilisates sugar free,0406000S0AAAMAM,Oral lyophilisate sugar free,Ondansetron 4mg orodispersible films sugar free,Orodispersible film sugar free,Y
 0406000S0AAAIAI,Ondansetron 4mg oral lyophilisates sugar free,0406000S0AAABAB,Oral lyophilisate sugar free,Ondansetron 4mg tablets,Oral tablet,Y
-0406000S0AAAIAI,Ondansetron 4mg oral lyophilisates sugar free,0406000S0AAAKAK,Oral lyophilisate sugar free,Ondansetron 4mg orodispersible tablets,Orodispersible tablet,Y
+0406000S0AAAJAJ,Ondansetron 8mg oral lyophilisates sugar free,0406000S0AAALAL,Oral lyophilisate sugar free,Ondansetron 8mg orodispersible tablets,Orodispersible tablet,Y
 0406000S0AAAJAJ,Ondansetron 8mg oral lyophilisates sugar free,0406000S0AAANAN,Oral lyophilisate sugar free,Ondansetron 8mg orodispersible films sugar free,Orodispersible film sugar free,Y
 0406000S0AAAJAJ,Ondansetron 8mg oral lyophilisates sugar free,0406000S0AAACAC,Oral lyophilisate sugar free,Ondansetron 8mg tablets,Oral tablet,Y
-0406000S0AAAJAJ,Ondansetron 8mg oral lyophilisates sugar free,0406000S0AAALAL,Oral lyophilisate sugar free,Ondansetron 8mg orodispersible tablets,Orodispersible tablet,Y
+0406000S0AAAKAK,Ondansetron 4mg orodispersible tablets,0406000S0AAAIAI,Orodispersible tablet,Ondansetron 4mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 0406000S0AAAKAK,Ondansetron 4mg orodispersible tablets,0406000S0AAAMAM,Orodispersible tablet,Ondansetron 4mg orodispersible films sugar free,Orodispersible film sugar free,Y
 0406000S0AAAKAK,Ondansetron 4mg orodispersible tablets,0406000S0AAABAB,Orodispersible tablet,Ondansetron 4mg tablets,Oral tablet,Y
-0406000S0AAAKAK,Ondansetron 4mg orodispersible tablets,0406000S0AAAIAI,Orodispersible tablet,Ondansetron 4mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+0406000S0AAALAL,Ondansetron 8mg orodispersible tablets,0406000S0AAAJAJ,Orodispersible tablet,Ondansetron 8mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
 0406000S0AAALAL,Ondansetron 8mg orodispersible tablets,0406000S0AAANAN,Orodispersible tablet,Ondansetron 8mg orodispersible films sugar free,Orodispersible film sugar free,Y
 0406000S0AAALAL,Ondansetron 8mg orodispersible tablets,0406000S0AAACAC,Orodispersible tablet,Ondansetron 8mg tablets,Oral tablet,Y
-0406000S0AAALAL,Ondansetron 8mg orodispersible tablets,0406000S0AAAJAJ,Orodispersible tablet,Ondansetron 8mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
-0406000S0AAAMAM,Ondansetron 4mg orodispersible films sugar free,0406000S0AAABAB,Orodispersible film sugar free,Ondansetron 4mg tablets,Oral tablet,Y
-0406000S0AAAMAM,Ondansetron 4mg orodispersible films sugar free,0406000S0AAAKAK,Orodispersible film sugar free,Ondansetron 4mg orodispersible tablets,Orodispersible tablet,Y
 0406000S0AAAMAM,Ondansetron 4mg orodispersible films sugar free,0406000S0AAAIAI,Orodispersible film sugar free,Ondansetron 4mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
-0406000S0AAANAN,Ondansetron 8mg orodispersible films sugar free,0406000S0AAACAC,Orodispersible film sugar free,Ondansetron 8mg tablets,Oral tablet,Y
-0406000S0AAANAN,Ondansetron 8mg orodispersible films sugar free,0406000S0AAALAL,Orodispersible film sugar free,Ondansetron 8mg orodispersible tablets,Orodispersible tablet,Y
+0406000S0AAAMAM,Ondansetron 4mg orodispersible films sugar free,0406000S0AAAKAK,Orodispersible film sugar free,Ondansetron 4mg orodispersible tablets,Orodispersible tablet,Y
+0406000S0AAAMAM,Ondansetron 4mg orodispersible films sugar free,0406000S0AAABAB,Orodispersible film sugar free,Ondansetron 4mg tablets,Oral tablet,Y
 0406000S0AAANAN,Ondansetron 8mg orodispersible films sugar free,0406000S0AAAJAJ,Orodispersible film sugar free,Ondansetron 8mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+0406000S0AAANAN,Ondansetron 8mg orodispersible films sugar free,0406000S0AAALAL,Orodispersible film sugar free,Ondansetron 8mg orodispersible tablets,Orodispersible tablet,Y
+0406000S0AAANAN,Ondansetron 8mg orodispersible films sugar free,0406000S0AAACAC,Orodispersible film sugar free,Ondansetron 8mg tablets,Oral tablet,Y
 0406000S0AAAQAQ,Ondansetron 4mg/2ml solution for injection pre-filled syringes,0406000S0AAAAAA,Solution for injection,Ondansetron 4mg/2ml solution for injection ampoules,Solution for injection,Y
 0406000S0AAARAR,Ondansetron 8mg/4ml solution for injection pre-filled syringes,0406000S0AAADAD,Solution for injection,Ondansetron 8mg/4ml solution for injection ampoules,Solution for injection,Y
 0406000W0AAANAN,Ketamine 50mg/5ml oral solution,0406000W0AAAPAP,Oral solution,Ketamine 50mg/5ml oral suspension,Oral suspension,Y
@@ -910,82 +910,82 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0407010B0AAAEAE,Aspirin 300mg dispersible tablets,0407010B0AAAFAF,Dispersible tablet,Aspirin 300mg tablets,Oral tablet,Y
 0407010B0AAAFAF,Aspirin 300mg tablets,0407010B0AAA3A3,Oral tablet,Aspirin 300mg gastro-resistant tablets,Gastro-resistant tablet,Y
 0407010B0AAAFAF,Aspirin 300mg tablets,0407010B0AAAEAE,Oral tablet,Aspirin 300mg dispersible tablets,Dispersible tablet,Y
-0407010F0AAAAAA,Co-codamol 8mg/500mg tablets,0407010F0AABABA,Oral tablet,Co-codamol 8mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
 0407010F0AAAAAA,Co-codamol 8mg/500mg tablets,0407010F0AAABAB,Oral tablet,Co-codamol 8mg/500mg capsules,Oral capsule,Y
 0407010F0AAAAAA,Co-codamol 8mg/500mg tablets,0407010F0AAACAC,Oral tablet,Co-codamol 8mg/500mg effervescent tablets,Effervescent tablet,Y
-0407010F0AAABAB,Co-codamol 8mg/500mg capsules,0407010F0AABABA,Oral capsule,Co-codamol 8mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
+0407010F0AAAAAA,Co-codamol 8mg/500mg tablets,0407010F0AABABA,Oral tablet,Co-codamol 8mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
 0407010F0AAABAB,Co-codamol 8mg/500mg capsules,0407010F0AAAAAA,Oral capsule,Co-codamol 8mg/500mg tablets,Oral tablet,Y
 0407010F0AAABAB,Co-codamol 8mg/500mg capsules,0407010F0AAACAC,Oral capsule,Co-codamol 8mg/500mg effervescent tablets,Effervescent tablet,Y
-0407010F0AAACAC,Co-codamol 8mg/500mg effervescent tablets,0407010F0AABABA,Effervescent tablet,Co-codamol 8mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
-0407010F0AAACAC,Co-codamol 8mg/500mg effervescent tablets,0407010F0AAABAB,Effervescent tablet,Co-codamol 8mg/500mg capsules,Oral capsule,Y
+0407010F0AAABAB,Co-codamol 8mg/500mg capsules,0407010F0AABABA,Oral capsule,Co-codamol 8mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
 0407010F0AAACAC,Co-codamol 8mg/500mg effervescent tablets,0407010F0AAAAAA,Effervescent tablet,Co-codamol 8mg/500mg tablets,Oral tablet,Y
+0407010F0AAACAC,Co-codamol 8mg/500mg effervescent tablets,0407010F0AAABAB,Effervescent tablet,Co-codamol 8mg/500mg capsules,Oral capsule,Y
+0407010F0AAACAC,Co-codamol 8mg/500mg effervescent tablets,0407010F0AABABA,Effervescent tablet,Co-codamol 8mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
 0407010F0AAADAD,Co-codamol 30mg/500mg capsules,0407010F0AAAHAH,Oral capsule,Co-codamol 30mg/500mg tablets,Oral tablet,Y
 0407010F0AAADAD,Co-codamol 30mg/500mg capsules,0407010F0AAAFAF,Oral capsule,Co-codamol 30mg/500mg effervescent tablets,Effervescent tablet,Y
-0407010F0AAAFAF,Co-codamol 30mg/500mg effervescent tablets,0407010F0AAADAD,Effervescent tablet,Co-codamol 30mg/500mg capsules,Oral capsule,Y
 0407010F0AAAFAF,Co-codamol 30mg/500mg effervescent tablets,0407010F0AAAHAH,Effervescent tablet,Co-codamol 30mg/500mg tablets,Oral tablet,Y
+0407010F0AAAFAF,Co-codamol 30mg/500mg effervescent tablets,0407010F0AAADAD,Effervescent tablet,Co-codamol 30mg/500mg capsules,Oral capsule,Y
 0407010F0AAAHAH,Co-codamol 30mg/500mg tablets,0407010F0AAADAD,Oral tablet,Co-codamol 30mg/500mg capsules,Oral capsule,Y
 0407010F0AAAHAH,Co-codamol 30mg/500mg tablets,0407010F0AAAFAF,Oral tablet,Co-codamol 30mg/500mg effervescent tablets,Effervescent tablet,Y
 0407010F0AAAKAK,Co-codamol 15mg/500mg tablets,0407010F0AAAVAV,Oral tablet,Co-codamol 15mg/500mg capsules,Oral capsule,Y
 0407010F0AAAKAK,Co-codamol 15mg/500mg tablets,0407010F0AAAWAW,Oral tablet,Co-codamol 15mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
-0407010F0AAAVAV,Co-codamol 15mg/500mg capsules,0407010F0AAAWAW,Oral capsule,Co-codamol 15mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
 0407010F0AAAVAV,Co-codamol 15mg/500mg capsules,0407010F0AAAKAK,Oral capsule,Co-codamol 15mg/500mg tablets,Oral tablet,Y
-0407010F0AAAWAW,Co-codamol 15mg/500mg effervescent tablets sugar free,0407010F0AAAVAV,Effervescent tablet sugar free,Co-codamol 15mg/500mg capsules,Oral capsule,Y
+0407010F0AAAVAV,Co-codamol 15mg/500mg capsules,0407010F0AAAWAW,Oral capsule,Co-codamol 15mg/500mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
 0407010F0AAAWAW,Co-codamol 15mg/500mg effervescent tablets sugar free,0407010F0AAAKAK,Effervescent tablet sugar free,Co-codamol 15mg/500mg tablets,Oral tablet,Y
-0407010F0AABABA,Co-codamol 8mg/500mg effervescent tablets sugar free,0407010F0AAABAB,Effervescent tablet sugar free,Co-codamol 8mg/500mg capsules,Oral capsule,Y
+0407010F0AAAWAW,Co-codamol 15mg/500mg effervescent tablets sugar free,0407010F0AAAVAV,Effervescent tablet sugar free,Co-codamol 15mg/500mg capsules,Oral capsule,Y
 0407010F0AABABA,Co-codamol 8mg/500mg effervescent tablets sugar free,0407010F0AAAAAA,Effervescent tablet sugar free,Co-codamol 8mg/500mg tablets,Oral tablet,Y
+0407010F0AABABA,Co-codamol 8mg/500mg effervescent tablets sugar free,0407010F0AAABAB,Effervescent tablet sugar free,Co-codamol 8mg/500mg capsules,Oral capsule,Y
 0407010F0AABABA,Co-codamol 8mg/500mg effervescent tablets sugar free,0407010F0AAACAC,Effervescent tablet sugar free,Co-codamol 8mg/500mg effervescent tablets,Effervescent tablet,Y
 0407010H0AAA5A5,Paracetamol 500mg/5ml oral suspension sugar free,0407010H0AACPCP,Oral suspension sugar free,Paracetamol 500mg/5ml oral suspension,Oral suspension,Y
 0407010H0AAA5A5,Paracetamol 500mg/5ml oral suspension sugar free,0407010H0AADPDP,Oral suspension sugar free,Paracetamol 500mg/5ml oral solution sugar free,Oral solution sugar free,Y
-0407010H0AAA7A7,Paracetamol 120mg/5ml oral solution paediatric sugar free,0407010H0AAAJAJ,Oral solution sugar free,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
 0407010H0AAA7A7,Paracetamol 120mg/5ml oral solution paediatric sugar free,0407010H0AAAWAW,Oral solution sugar free,Paracetamol 120mg/5ml oral suspension paediatric sugar free,Oral suspension sugar free,Y
 0407010H0AAA7A7,Paracetamol 120mg/5ml oral solution paediatric sugar free,0407010H0AAAIAI,Oral solution sugar free,Paracetamol 120mg/5ml oral suspension paediatric,Oral suspension,Y
-0407010H0AAAAAA,Paracetamol 500mg capsules,0407010H0AADRDR,Oral capsule,Paracetamol 500mg oral powder sachets,Oral powder,Y
+0407010H0AAA7A7,Paracetamol 120mg/5ml oral solution paediatric sugar free,0407010H0AAAJAJ,Oral solution sugar free,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
 0407010H0AAAAAA,Paracetamol 500mg capsules,0407010H0AAAMAM,Oral capsule,Paracetamol 500mg tablets,Oral tablet,Y
 0407010H0AAAAAA,Paracetamol 500mg capsules,0407010H0AAAQAQ,Oral capsule,Paracetamol 500mg soluble tablets,Effervescent tablet,Y
+0407010H0AAAAAA,Paracetamol 500mg capsules,0407010H0AADRDR,Oral capsule,Paracetamol 500mg oral powder sachets,Oral powder,Y
 0407010H0AAAAAA,Paracetamol 500mg capsules,0407010H0AADSDS,Oral capsule,Paracetamol 500mg effervescent tablets,Effervescent tablet,Y
-0407010H0AAACAC,Paracetamol 250mg/5ml oral suspension,0407010H0AADBDB,Oral suspension,Paracetamol 250mg/5ml oral solution,Oral solution,Y
-0407010H0AAACAC,Paracetamol 250mg/5ml oral suspension,0407010H0AADEDE,Oral suspension,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
 0407010H0AAACAC,Paracetamol 250mg/5ml oral suspension,0407010H0AABGBG,Oral suspension,Paracetamol 250mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
-0407010H0AAAIAI,Paracetamol 120mg/5ml oral suspension paediatric,0407010H0AAAJAJ,Oral suspension,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
+0407010H0AAACAC,Paracetamol 250mg/5ml oral suspension,0407010H0AADEDE,Oral suspension,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
+0407010H0AAACAC,Paracetamol 250mg/5ml oral suspension,0407010H0AADBDB,Oral suspension,Paracetamol 250mg/5ml oral solution,Oral solution,Y
 0407010H0AAAIAI,Paracetamol 120mg/5ml oral suspension paediatric,0407010H0AAAWAW,Oral suspension,Paracetamol 120mg/5ml oral suspension paediatric sugar free,Oral suspension sugar free,Y
 0407010H0AAAIAI,Paracetamol 120mg/5ml oral suspension paediatric,0407010H0AAA7A7,Oral suspension,Paracetamol 120mg/5ml oral solution paediatric sugar free,Oral solution sugar free,Y
+0407010H0AAAIAI,Paracetamol 120mg/5ml oral suspension paediatric,0407010H0AAAJAJ,Oral suspension,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
 0407010H0AAAJAJ,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,0407010H0AAAWAW,Oral suspension sugar free,Paracetamol 120mg/5ml oral suspension paediatric sugar free,Oral suspension sugar free,Y
 0407010H0AAAJAJ,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,0407010H0AAAIAI,Oral suspension sugar free,Paracetamol 120mg/5ml oral suspension paediatric,Oral suspension,Y
 0407010H0AAAJAJ,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,0407010H0AAA7A7,Oral suspension sugar free,Paracetamol 120mg/5ml oral solution paediatric sugar free,Oral solution sugar free,Y
-0407010H0AAAMAM,Paracetamol 500mg tablets,0407010H0AADRDR,Oral tablet,Paracetamol 500mg oral powder sachets,Oral powder,Y
-0407010H0AAAMAM,Paracetamol 500mg tablets,0407010H0AAAAAA,Oral tablet,Paracetamol 500mg capsules,Oral capsule,Y
 0407010H0AAAMAM,Paracetamol 500mg tablets,0407010H0AAAQAQ,Oral tablet,Paracetamol 500mg soluble tablets,Effervescent tablet,Y
+0407010H0AAAMAM,Paracetamol 500mg tablets,0407010H0AAAAAA,Oral tablet,Paracetamol 500mg capsules,Oral capsule,Y
+0407010H0AAAMAM,Paracetamol 500mg tablets,0407010H0AADRDR,Oral tablet,Paracetamol 500mg oral powder sachets,Oral powder,Y
 0407010H0AAAMAM,Paracetamol 500mg tablets,0407010H0AADSDS,Oral tablet,Paracetamol 500mg effervescent tablets,Effervescent tablet,Y
-0407010H0AAAQAQ,Paracetamol 500mg soluble tablets,0407010H0AADRDR,Effervescent tablet,Paracetamol 500mg oral powder sachets,Oral powder,Y
-0407010H0AAAQAQ,Paracetamol 500mg soluble tablets,0407010H0AAAAAA,Effervescent tablet,Paracetamol 500mg capsules,Oral capsule,Y
 0407010H0AAAQAQ,Paracetamol 500mg soluble tablets,0407010H0AAAMAM,Effervescent tablet,Paracetamol 500mg tablets,Oral tablet,Y
+0407010H0AAAQAQ,Paracetamol 500mg soluble tablets,0407010H0AAAAAA,Effervescent tablet,Paracetamol 500mg capsules,Oral capsule,Y
+0407010H0AAAQAQ,Paracetamol 500mg soluble tablets,0407010H0AADRDR,Effervescent tablet,Paracetamol 500mg oral powder sachets,Oral powder,Y
 0407010H0AAAQAQ,Paracetamol 500mg soluble tablets,0407010H0AADSDS,Effervescent tablet,Paracetamol 500mg effervescent tablets,Effervescent tablet,Y
-0407010H0AAAWAW,Paracetamol 120mg/5ml oral suspension paediatric sugar free,0407010H0AAAJAJ,Oral suspension sugar free,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
 0407010H0AAAWAW,Paracetamol 120mg/5ml oral suspension paediatric sugar free,0407010H0AAAIAI,Oral suspension sugar free,Paracetamol 120mg/5ml oral suspension paediatric,Oral suspension,Y
 0407010H0AAAWAW,Paracetamol 120mg/5ml oral suspension paediatric sugar free,0407010H0AAA7A7,Oral suspension sugar free,Paracetamol 120mg/5ml oral solution paediatric sugar free,Oral solution sugar free,Y
-0407010H0AABGBG,Paracetamol 250mg/5ml oral suspension sugar free,0407010H0AADBDB,Oral suspension sugar free,Paracetamol 250mg/5ml oral solution,Oral solution,Y
-0407010H0AABGBG,Paracetamol 250mg/5ml oral suspension sugar free,0407010H0AADEDE,Oral suspension sugar free,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
+0407010H0AAAWAW,Paracetamol 120mg/5ml oral suspension paediatric sugar free,0407010H0AAAJAJ,Oral suspension sugar free,Paracetamol 120mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
 0407010H0AABGBG,Paracetamol 250mg/5ml oral suspension sugar free,0407010H0AAACAC,Oral suspension sugar free,Paracetamol 250mg/5ml oral suspension,Oral suspension,Y
+0407010H0AABGBG,Paracetamol 250mg/5ml oral suspension sugar free,0407010H0AADEDE,Oral suspension sugar free,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
+0407010H0AABGBG,Paracetamol 250mg/5ml oral suspension sugar free,0407010H0AADBDB,Oral suspension sugar free,Paracetamol 250mg/5ml oral solution,Oral solution,Y
 0407010H0AACPCP,Paracetamol 500mg/5ml oral suspension,0407010H0AAA5A5,Oral suspension,Paracetamol 500mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
 0407010H0AACPCP,Paracetamol 500mg/5ml oral suspension,0407010H0AADPDP,Oral suspension,Paracetamol 500mg/5ml oral solution sugar free,Oral solution sugar free,Y
-0407010H0AADBDB,Paracetamol 250mg/5ml oral solution,0407010H0AADEDE,Oral solution,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
 0407010H0AADBDB,Paracetamol 250mg/5ml oral solution,0407010H0AABGBG,Oral solution,Paracetamol 250mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
 0407010H0AADBDB,Paracetamol 250mg/5ml oral solution,0407010H0AAACAC,Oral solution,Paracetamol 250mg/5ml oral suspension,Oral suspension,Y
-0407010H0AADEDE,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,0407010H0AADBDB,Oral suspension sugar free,Paracetamol 250mg/5ml oral solution,Oral solution,Y
+0407010H0AADBDB,Paracetamol 250mg/5ml oral solution,0407010H0AADEDE,Oral solution,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,Oral suspension sugar free,Y
 0407010H0AADEDE,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,0407010H0AABGBG,Oral suspension sugar free,Paracetamol 250mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
 0407010H0AADEDE,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,0407010H0AAACAC,Oral suspension sugar free,Paracetamol 250mg/5ml oral suspension,Oral suspension,Y
+0407010H0AADEDE,Paracetamol 250mg/5ml oral suspension 5ml sachets sugar free,0407010H0AADBDB,Oral suspension sugar free,Paracetamol 250mg/5ml oral solution,Oral solution,Y
 0407010H0AADKDK,Paracetamol 500mg/50ml solution for infusion vials,0407010H0AADTDT,Solution for infusion,Paracetamol 500mg/50ml solution for infusion bottles,Solution for infusion,Y
 0407010H0AADLDL,Paracetamol 1g tablets,0407010H0AADUDU,Oral tablet,Paracetamol 1g effervescent tablets sugar free,Effervescent tablet sugar free,Y
 0407010H0AADPDP,Paracetamol 500mg/5ml oral solution sugar free,0407010H0AACPCP,Oral solution sugar free,Paracetamol 500mg/5ml oral suspension,Oral suspension,Y
 0407010H0AADPDP,Paracetamol 500mg/5ml oral solution sugar free,0407010H0AAA5A5,Oral solution sugar free,Paracetamol 500mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
-0407010H0AADRDR,Paracetamol 500mg oral powder sachets,0407010H0AAAAAA,Oral powder,Paracetamol 500mg capsules,Oral capsule,Y
 0407010H0AADRDR,Paracetamol 500mg oral powder sachets,0407010H0AAAMAM,Oral powder,Paracetamol 500mg tablets,Oral tablet,Y
 0407010H0AADRDR,Paracetamol 500mg oral powder sachets,0407010H0AAAQAQ,Oral powder,Paracetamol 500mg soluble tablets,Effervescent tablet,Y
+0407010H0AADRDR,Paracetamol 500mg oral powder sachets,0407010H0AAAAAA,Oral powder,Paracetamol 500mg capsules,Oral capsule,Y
 0407010H0AADRDR,Paracetamol 500mg oral powder sachets,0407010H0AADSDS,Oral powder,Paracetamol 500mg effervescent tablets,Effervescent tablet,Y
-0407010H0AADSDS,Paracetamol 500mg effervescent tablets,0407010H0AADRDR,Effervescent tablet,Paracetamol 500mg oral powder sachets,Oral powder,Y
-0407010H0AADSDS,Paracetamol 500mg effervescent tablets,0407010H0AAAAAA,Effervescent tablet,Paracetamol 500mg capsules,Oral capsule,Y
 0407010H0AADSDS,Paracetamol 500mg effervescent tablets,0407010H0AAAMAM,Effervescent tablet,Paracetamol 500mg tablets,Oral tablet,Y
 0407010H0AADSDS,Paracetamol 500mg effervescent tablets,0407010H0AAAQAQ,Effervescent tablet,Paracetamol 500mg soluble tablets,Effervescent tablet,Y
+0407010H0AADSDS,Paracetamol 500mg effervescent tablets,0407010H0AAAAAA,Effervescent tablet,Paracetamol 500mg capsules,Oral capsule,Y
+0407010H0AADSDS,Paracetamol 500mg effervescent tablets,0407010H0AADRDR,Effervescent tablet,Paracetamol 500mg oral powder sachets,Oral powder,Y
 0407010H0AADTDT,Paracetamol 500mg/50ml solution for infusion bottles,0407010H0AADKDK,Solution for infusion,Paracetamol 500mg/50ml solution for infusion vials,Solution for infusion,Y
 0407010H0AADUDU,Paracetamol 1g effervescent tablets sugar free,0407010H0AADLDL,Effervescent tablet sugar free,Paracetamol 1g tablets,Oral tablet,Y
 0407010N0AAACAC,Co-dydramol 10mg/500mg/5ml oral solution,0407010N0AAAGAG,Oral solution,Co-dydramol 10mg/500mg/5ml oral suspension,Oral suspension,Y
@@ -1048,16 +1048,16 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0407020Q0AAGIGI,Morphine 30mg orodispersible tablets sugar free,0407020Q0AADSDS,Orodispersible tablet sugar free,Morphine 30mg capsules,Oral capsule,Y
 0407020V0AAACAC,Pethidine 50mg tablets,0407020V0AABFBF,Oral tablet,Pethidine 50mg capsules,Oral capsule,Y
 0407020V0AABFBF,Pethidine 50mg capsules,0407020V0AAACAC,Oral capsule,Pethidine 50mg tablets,Oral tablet,Y
-0407041R0AAABAB,Rizatriptan 10mg tablets,0407041R0AAADAD,Oral tablet,Rizatriptan 10mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 0407041R0AAABAB,Rizatriptan 10mg tablets,0407041R0AAACAC,Oral tablet,Rizatriptan 10mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+0407041R0AAABAB,Rizatriptan 10mg tablets,0407041R0AAADAD,Oral tablet,Rizatriptan 10mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 0407041R0AAACAC,Rizatriptan 10mg oral lyophilisates sugar free,0407041R0AAABAB,Oral lyophilisate sugar free,Rizatriptan 10mg tablets,Oral tablet,Y
 0407041R0AAACAC,Rizatriptan 10mg oral lyophilisates sugar free,0407041R0AAADAD,Oral lyophilisate sugar free,Rizatriptan 10mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 0407041R0AAADAD,Rizatriptan 10mg orodispersible tablets sugar free,0407041R0AAABAB,Orodispersible tablet sugar free,Rizatriptan 10mg tablets,Oral tablet,Y
 0407041R0AAADAD,Rizatriptan 10mg orodispersible tablets sugar free,0407041R0AAACAC,Orodispersible tablet sugar free,Rizatriptan 10mg oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
-0407041T0AAADAD,Sumatriptan 6mg/0.5ml solution for injection pre-filled syringes with device,0407041T0AAAIAI,Solution for injection,Sumatriptan 6mg/0.5ml solution for injection pre-filled disposable devices,Solution for injection,Y
 0407041T0AAADAD,Sumatriptan 6mg/0.5ml solution for injection pre-filled syringes with device,0407041T0AAAEAE,Solution for injection,Sumatriptan 6mg/0.5ml solution for injection syringe refill,Solution for injection,Y
-0407041T0AAAEAE,Sumatriptan 6mg/0.5ml solution for injection syringe refill,0407041T0AAAIAI,Solution for injection,Sumatriptan 6mg/0.5ml solution for injection pre-filled disposable devices,Solution for injection,Y
+0407041T0AAADAD,Sumatriptan 6mg/0.5ml solution for injection pre-filled syringes with device,0407041T0AAAIAI,Solution for injection,Sumatriptan 6mg/0.5ml solution for injection pre-filled disposable devices,Solution for injection,Y
 0407041T0AAAEAE,Sumatriptan 6mg/0.5ml solution for injection syringe refill,0407041T0AAADAD,Solution for injection,Sumatriptan 6mg/0.5ml solution for injection pre-filled syringes with device,Solution for injection,Y
+0407041T0AAAEAE,Sumatriptan 6mg/0.5ml solution for injection syringe refill,0407041T0AAAIAI,Solution for injection,Sumatriptan 6mg/0.5ml solution for injection pre-filled disposable devices,Solution for injection,Y
 0407041T0AAAIAI,Sumatriptan 6mg/0.5ml solution for injection pre-filled disposable devices,0407041T0AAAEAE,Solution for injection,Sumatriptan 6mg/0.5ml solution for injection syringe refill,Solution for injection,Y
 0407041T0AAAIAI,Sumatriptan 6mg/0.5ml solution for injection pre-filled disposable devices,0407041T0AAADAD,Solution for injection,Sumatriptan 6mg/0.5ml solution for injection pre-filled syringes with device,Solution for injection,Y
 0407041Z0AAAAAA,Zolmitriptan 2.5mg tablets,0407041Z0AAABAB,Oral tablet,Zolmitriptan 2.5mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
@@ -1101,20 +1101,20 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0408010A0AAACAC,Levetiracetam 1g tablets,0408010A0AAAUAU,Oral tablet,Levetiracetam 1g granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
 0408010A0AAAIAI,Levetiracetam 750mg tablets,0408010A0AAASAS,Oral tablet,Levetiracetam 750mg granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
 0408010A0AAAJAJ,Levetiracetam 500mg/5ml solution for infusion vials,0408010A0AAANAN,Solution for infusion,Levetiracetam 500mg/5ml solution for infusion ampoules,Solution for infusion,Y
-0408010A0AAAKAK,Levetiracetam 250mg granules sachets sugar free,0408010A0AAAVAV,Oral granules sugar free,Levetiracetam 250mg granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
 0408010A0AAAKAK,Levetiracetam 250mg granules sachets sugar free,0408010A0AAAAAA,Oral granules sugar free,Levetiracetam 250mg tablets,Oral tablet,Y
-0408010A0AAALAL,Levetiracetam 500mg granules sachets sugar free,0408010A0AAAWAW,Oral granules sugar free,Levetiracetam 500mg granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
+0408010A0AAAKAK,Levetiracetam 250mg granules sachets sugar free,0408010A0AAAVAV,Oral granules sugar free,Levetiracetam 250mg granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
 0408010A0AAALAL,Levetiracetam 500mg granules sachets sugar free,0408010A0AAABAB,Oral granules sugar free,Levetiracetam 500mg tablets,Oral tablet,Y
-0408010A0AAAMAM,Levetiracetam 1g granules sachets sugar free,0408010A0AAAUAU,Oral granules sugar free,Levetiracetam 1g granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
+0408010A0AAALAL,Levetiracetam 500mg granules sachets sugar free,0408010A0AAAWAW,Oral granules sugar free,Levetiracetam 500mg granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
 0408010A0AAAMAM,Levetiracetam 1g granules sachets sugar free,0408010A0AAACAC,Oral granules sugar free,Levetiracetam 1g tablets,Oral tablet,Y
+0408010A0AAAMAM,Levetiracetam 1g granules sachets sugar free,0408010A0AAAUAU,Oral granules sugar free,Levetiracetam 1g granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
 0408010A0AAANAN,Levetiracetam 500mg/5ml solution for infusion ampoules,0408010A0AAAJAJ,Solution for infusion,Levetiracetam 500mg/5ml solution for infusion vials,Solution for infusion,Y
 0408010A0AAASAS,Levetiracetam 750mg granules for oral solution sachets sugar free,0408010A0AAAIAI,Granules for oral solution sugar free,Levetiracetam 750mg tablets,Oral tablet,Y
-0408010A0AAAUAU,Levetiracetam 1g granules for oral solution sachets sugar free,0408010A0AAAMAM,Granules for oral solution sugar free,Levetiracetam 1g granules sachets sugar free,Oral granules sugar free,Y
 0408010A0AAAUAU,Levetiracetam 1g granules for oral solution sachets sugar free,0408010A0AAACAC,Granules for oral solution sugar free,Levetiracetam 1g tablets,Oral tablet,Y
-0408010A0AAAVAV,Levetiracetam 250mg granules for oral solution sachets sugar free,0408010A0AAAKAK,Granules for oral solution sugar free,Levetiracetam 250mg granules sachets sugar free,Oral granules sugar free,Y
+0408010A0AAAUAU,Levetiracetam 1g granules for oral solution sachets sugar free,0408010A0AAAMAM,Granules for oral solution sugar free,Levetiracetam 1g granules sachets sugar free,Oral granules sugar free,Y
 0408010A0AAAVAV,Levetiracetam 250mg granules for oral solution sachets sugar free,0408010A0AAAAAA,Granules for oral solution sugar free,Levetiracetam 250mg tablets,Oral tablet,Y
-0408010A0AAAWAW,Levetiracetam 500mg granules for oral solution sachets sugar free,0408010A0AAALAL,Granules for oral solution sugar free,Levetiracetam 500mg granules sachets sugar free,Oral granules sugar free,Y
+0408010A0AAAVAV,Levetiracetam 250mg granules for oral solution sachets sugar free,0408010A0AAAKAK,Granules for oral solution sugar free,Levetiracetam 250mg granules sachets sugar free,Oral granules sugar free,Y
 0408010A0AAAWAW,Levetiracetam 500mg granules for oral solution sachets sugar free,0408010A0AAABAB,Granules for oral solution sugar free,Levetiracetam 500mg tablets,Oral tablet,Y
+0408010A0AAAWAW,Levetiracetam 500mg granules for oral solution sachets sugar free,0408010A0AAALAL,Granules for oral solution sugar free,Levetiracetam 500mg granules sachets sugar free,Oral granules sugar free,Y
 0408010ADAAADAD,Zonisamide 50mg/5ml oral solution,0408010ADAAAEAE,Oral solution,Zonisamide 50mg/5ml oral suspension,Oral suspension,Y
 0408010ADAAAEAE,Zonisamide 50mg/5ml oral suspension,0408010ADAAADAD,Oral suspension,Zonisamide 50mg/5ml oral solution,Oral solution,Y
 0408010AEAAAAAA,Pregabalin 25mg capsules,0408010AEAAASAS,Oral capsule,Pregabalin 25mg tablets,Oral tablet,Y
@@ -1134,8 +1134,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0408010AEAAAUAU,Pregabalin 100mg tablets,0408010AEAAADAD,Oral tablet,Pregabalin 100mg capsules,Oral capsule,Y
 0408010AEAAAVAV,Pregabalin 200mg tablets,0408010AEAAAFAF,Oral tablet,Pregabalin 200mg capsules,Oral capsule,Y
 0408010AEAAAWAW,Pregabalin 300mg tablets,0408010AEAAAGAG,Oral tablet,Pregabalin 300mg capsules,Oral capsule,Y
-0408010AEAAAXAX,Pregabalin 75mg tablets,0408010AEAAALAL,Oral tablet,Pregabalin 75mg oral powder sachets,Oral powder,Y
 0408010AEAAAXAX,Pregabalin 75mg tablets,0408010AEAAACAC,Oral tablet,Pregabalin 75mg capsules,Oral capsule,Y
+0408010AEAAAXAX,Pregabalin 75mg tablets,0408010AEAAALAL,Oral tablet,Pregabalin 75mg oral powder sachets,Oral powder,Y
 0408010AEAAAYAY,Pregabalin 150mg tablets,0408010AEAAAEAE,Oral tablet,Pregabalin 150mg capsules,Oral capsule,Y
 0408010AEAAAZAZ,Pregabalin 225mg tablets,0408010AEAAAIAI,Oral tablet,Pregabalin 225mg capsules,Oral capsule,Y
 0408010AEAABABA,Pregabalin 75mg/5ml oral suspension,0408010AEAAAHAH,Oral suspension,Pregabalin 75mg/5ml oral solution,Oral solution,Y
@@ -1151,19 +1151,19 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0408010F0AABCBC,Clonazepam 250micrograms/5ml oral solution,0408010F0AADDDD,Oral solution,Clonazepam 250micrograms/5ml oral suspension,Oral suspension,Y
 0408010F0AABEBE,Clonazepam 500micrograms/5ml oral suspension,0408010F0AACQCQ,Oral suspension,Clonazepam 500micrograms/5ml oral solution sugar free,Oral solution sugar free,Y
 0408010F0AABSBS,Clonazepam 2mg/5ml oral suspension,0408010F0AACRCR,Oral suspension,Clonazepam 2mg/5ml oral solution sugar free,Oral solution sugar free,Y
-0408010F0AACACA,Clonazepam 12.5mg/5ml oral suspension,0408010F0AADCDC,Oral suspension,Clonazepam 2.5mg/ml drops,Oral drops,Y
 0408010F0AACACA,Clonazepam 12.5mg/5ml oral suspension,0408010F0AAAAAA,Oral suspension,Clonazepam 2.5mg/ml drops sugar free,Oral drops sugar free,Y
-0408010F0AACACA,Clonazepam 12.5mg/5ml oral solution,0408010F0AADCDC,Oral solution,Clonazepam 2.5mg/ml drops,Oral drops,Y
 0408010F0AACACA,Clonazepam 12.5mg/5ml oral solution,0408010F0AAAAAA,Oral solution,Clonazepam 2.5mg/ml drops sugar free,Oral drops sugar free,Y
+0408010F0AACACA,Clonazepam 12.5mg/5ml oral suspension,0408010F0AADCDC,Oral suspension,Clonazepam 2.5mg/ml drops,Oral drops,Y
+0408010F0AACACA,Clonazepam 12.5mg/5ml oral solution,0408010F0AADCDC,Oral solution,Clonazepam 2.5mg/ml drops,Oral drops,Y
 0408010F0AACQCQ,Clonazepam 500micrograms/5ml oral solution sugar free,0408010F0AABEBE,Oral solution sugar free,Clonazepam 500micrograms/5ml oral suspension,Oral suspension,Y
 0408010F0AACRCR,Clonazepam 2mg/5ml oral solution sugar free,0408010F0AABSBS,Oral solution sugar free,Clonazepam 2mg/5ml oral suspension,Oral suspension,Y
 0408010F0AACYCY,Clonazepam 500microgram oral lyophilisates sugar free,0408010F0AAABAB,Oral lyophilisate sugar free,Clonazepam 500microgram tablets,Oral tablet,Y
 0408010F0AACYCY,Clonazepam 500microgram oral lyophilisates sugar free,0408010F0AACZCZ,Oral lyophilisate sugar free,Clonazepam 500microgram orodispersible tablets,Orodispersible tablet,Y
 0408010F0AACZCZ,Clonazepam 500microgram orodispersible tablets,0408010F0AAABAB,Orodispersible tablet,Clonazepam 500microgram tablets,Oral tablet,Y
 0408010F0AACZCZ,Clonazepam 500microgram orodispersible tablets,0408010F0AACYCY,Orodispersible tablet,Clonazepam 500microgram oral lyophilisates sugar free,Oral lyophilisate sugar free,Y
+0408010F0AADCDC,Clonazepam 2.5mg/ml drops,0408010F0AAAAAA,Oral drops,Clonazepam 2.5mg/ml drops sugar free,Oral drops sugar free,Y
 0408010F0AADCDC,Clonazepam 2.5mg/ml drops,0408010F0AACACA,Oral drops,Clonazepam 12.5mg/5ml oral suspension,Oral suspension,Y
 0408010F0AADCDC,Clonazepam 2.5mg/ml drops,0408010F0AACACA,Oral drops,Clonazepam 12.5mg/5ml oral solution,Oral solution,Y
-0408010F0AADCDC,Clonazepam 2.5mg/ml drops,0408010F0AAAAAA,Oral drops,Clonazepam 2.5mg/ml drops sugar free,Oral drops sugar free,Y
 0408010F0AADDDD,Clonazepam 250micrograms/5ml oral suspension,0408010F0AABCBC,Oral suspension,Clonazepam 250micrograms/5ml oral solution,Oral solution,Y
 0408010G0AAAGAG,Gabapentin 100mg/5ml oral suspension,0408010G0AABIBI,Oral suspension,Gabapentin 100mg/5ml oral solution,Oral solution,Y
 0408010G0AAAQAQ,Gabapentin 250mg/5ml oral solution,0408010G0AABGBG,Oral solution,Gabapentin 50mg/ml oral solution sugar free,Oral solution sugar free,Y
@@ -1201,8 +1201,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0408010W0AABRBR,Sodium valproate 300mg modified-release capsules,0408010W0AAA1A1,Modified-release capsule,Sodium valproate 300mg modified-release tablets,Modified-release tablet,Y
 0408010W0AABSBS,Sodium valproate 500mg modified-release granules sachets sugar free,0408010W0AAA2A2,Modified-release granules sugar free,Sodium valproate 500mg modified-release tablets,Modified-release tablet,Y
 0408010W0AACBCB,Sodium valproate 60mg/5ml oral suspension,0408010W0AABIBI,Oral suspension,Sodium valproate 60mg/5ml oral solution,Oral solution,Y
-0408010X0AAAAAA,Vigabatrin 500mg tablets,0408010X0AABMBM,Oral tablet,Vigabatrin 500mg soluble tablets sugar free,Soluble tablet sugar free,Y
 0408010X0AAAAAA,Vigabatrin 500mg tablets,0408010X0AAAFAF,Oral tablet,Vigabatrin 500mg granules for oral solution sachets sugar free,Granules for oral solution sugar free,Y
+0408010X0AAAAAA,Vigabatrin 500mg tablets,0408010X0AABMBM,Oral tablet,Vigabatrin 500mg soluble tablets sugar free,Soluble tablet sugar free,Y
 0408010X0AAAFAF,Vigabatrin 500mg granules for oral solution sachets sugar free,0408010X0AAAAAA,Granules for oral solution sugar free,Vigabatrin 500mg tablets,Oral tablet,Y
 0408010X0AAAFAF,Vigabatrin 500mg granules for oral solution sachets sugar free,0408010X0AABMBM,Granules for oral solution sugar free,Vigabatrin 500mg soluble tablets sugar free,Soluble tablet sugar free,Y
 0408010X0AABMBM,Vigabatrin 500mg soluble tablets sugar free,0408010X0AAAAAA,Soluble tablet sugar free,Vigabatrin 500mg tablets,Oral tablet,Y
@@ -1254,12 +1254,12 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0410020B0AABABA,Nicotine 2mg medicated chewing gum sugar free,0410020B0AAAYAY,Medicated chewing-gum sugar free,Nicotine 2mg lozenges sugar free,Lozenge sugar free,Y
 0410020B0AABABA,Nicotine 2mg medicated chewing gum sugar free,0410020D0AAAAAA,Medicated chewing-gum sugar free,Nicotine bitartrate 2mg lozenges sugar free,Lozenge sugar free,Y
 0410020B0AABDBD,Nicotine 4mg medicated chewing gum sugar free,0410020B0AAAZAZ,Medicated chewing-gum sugar free,Nicotine 4mg lozenges sugar free,Lozenge sugar free,Y
-0410020D0AAAAAA,Nicotine bitartrate 2mg lozenges sugar free,0410020B0AABABA,Lozenge sugar free,Nicotine 2mg medicated chewing gum sugar free,Medicated chewing-gum sugar free,Y
 0410020D0AAAAAA,Nicotine bitartrate 2mg lozenges sugar free,0410020B0AAAYAY,Lozenge sugar free,Nicotine 2mg lozenges sugar free,Lozenge sugar free,Y
-0410030C0AAAAAA,Methadone 1mg/ml oral solution,0410030C0AAAJAJ,Oral solution,Methadone 1mg/ml oral suspension sugar free,Oral suspension sugar free,Y
+0410020D0AAAAAA,Nicotine bitartrate 2mg lozenges sugar free,0410020B0AABABA,Lozenge sugar free,Nicotine 2mg medicated chewing gum sugar free,Medicated chewing-gum sugar free,Y
 0410030C0AAAAAA,Methadone 1mg/ml oral solution,0410030C0AAAFAF,Oral solution,Methadone 1mg/ml oral solution sugar free,Oral solution sugar free,Y
-0410030C0AAAFAF,Methadone 1mg/ml oral solution sugar free,0410030C0AAAJAJ,Oral solution sugar free,Methadone 1mg/ml oral suspension sugar free,Oral suspension sugar free,Y
+0410030C0AAAAAA,Methadone 1mg/ml oral solution,0410030C0AAAJAJ,Oral solution,Methadone 1mg/ml oral suspension sugar free,Oral suspension sugar free,Y
 0410030C0AAAFAF,Methadone 1mg/ml oral solution sugar free,0410030C0AAAAAA,Oral solution sugar free,Methadone 1mg/ml oral solution,Oral solution,Y
+0410030C0AAAFAF,Methadone 1mg/ml oral solution sugar free,0410030C0AAAJAJ,Oral solution sugar free,Methadone 1mg/ml oral suspension sugar free,Oral suspension sugar free,Y
 0410030C0AAAJAJ,Methadone 1mg/ml oral suspension sugar free,0410030C0AAAAAA,Oral suspension sugar free,Methadone 1mg/ml oral solution,Oral solution,Y
 0410030C0AAAJAJ,Methadone 1mg/ml oral suspension sugar free,0410030C0AAAFAF,Oral suspension sugar free,Methadone 1mg/ml oral solution sugar free,Oral solution sugar free,Y
 0410030C0AAAMAM,Methadone 50mg/5ml oral suspension,0410030C0AABABA,Oral suspension,Methadone 10mg/ml oral solution sugar free,Oral solution sugar free,Y
@@ -1359,12 +1359,12 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0501110C0AABUBU,Metronidazole 50mg/5ml oral suspension,0501110C0AABRBR,Oral suspension,Metronidazole 50mg/5ml oral solution,Oral solution,Y
 0501120L0AAAYAY,Ciprofloxacin 400mg/200ml solution for infusion bottles,0501120L0AABFBF,Solution for infusion,Ciprofloxacin 400mg/200ml infusion bags,Infusion,Y
 0501120L0AABFBF,Ciprofloxacin 400mg/200ml infusion bags,0501120L0AAAYAY,Infusion,Ciprofloxacin 400mg/200ml solution for infusion bottles,Solution for infusion,Y
-0501120X0AAACAC,Levofloxacin 500mg/100ml solution for infusion vials,0501120X0AAAEAE,Solution for infusion,Levofloxacin 500mg/100ml solution for infusion bottles,Solution for infusion,Y
 0501120X0AAACAC,Levofloxacin 500mg/100ml solution for infusion vials,0501120X0AAADAD,Solution for infusion,Levofloxacin 500mg/100ml infusion bags,Infusion,Y
-0501120X0AAADAD,Levofloxacin 500mg/100ml infusion bags,0501120X0AAAEAE,Infusion,Levofloxacin 500mg/100ml solution for infusion bottles,Solution for infusion,Y
+0501120X0AAACAC,Levofloxacin 500mg/100ml solution for infusion vials,0501120X0AAAEAE,Solution for infusion,Levofloxacin 500mg/100ml solution for infusion bottles,Solution for infusion,Y
 0501120X0AAADAD,Levofloxacin 500mg/100ml infusion bags,0501120X0AAACAC,Infusion,Levofloxacin 500mg/100ml solution for infusion vials,Solution for infusion,Y
-0501120X0AAAEAE,Levofloxacin 500mg/100ml solution for infusion bottles,0501120X0AAADAD,Solution for infusion,Levofloxacin 500mg/100ml infusion bags,Infusion,Y
+0501120X0AAADAD,Levofloxacin 500mg/100ml infusion bags,0501120X0AAAEAE,Infusion,Levofloxacin 500mg/100ml solution for infusion bottles,Solution for infusion,Y
 0501120X0AAAEAE,Levofloxacin 500mg/100ml solution for infusion bottles,0501120X0AAACAC,Solution for infusion,Levofloxacin 500mg/100ml solution for infusion vials,Solution for infusion,Y
+0501120X0AAAEAE,Levofloxacin 500mg/100ml solution for infusion bottles,0501120X0AAADAD,Solution for infusion,Levofloxacin 500mg/100ml infusion bags,Infusion,Y
 0501120Y0AAABAB,Moxifloxacin 400mg/250ml solution for infusion bottles,0501120Y0AAACAC,Solution for infusion,Moxifloxacin 400mg/250ml infusion bags,Infusion,Y
 0501120Y0AAACAC,Moxifloxacin 400mg/250ml infusion bags,0501120Y0AAABAB,Infusion,Moxifloxacin 400mg/250ml solution for infusion bottles,Solution for infusion,Y
 0501130R0AAAAAA,Nitrofurantoin 50mg capsules,0501130R0AAADAD,Oral capsule,Nitrofurantoin 50mg tablets,Oral tablet,Y
@@ -1477,15 +1477,15 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0603020G0AAA6A6,Dexamethasone 2mg/5ml oral suspension,0603020G0AABXBX,Oral suspension,Dexamethasone 2mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0603020G0AAA6A6,Dexamethasone 2mg/5ml oral solution,0603020G0AABXBX,Oral solution,Dexamethasone 2mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0603020G0AAADAD,Dexamethasone 2mg tablets,0603020G0AACFCF,Oral tablet,Dexamethasone 2mg soluble tablets sugar free,Soluble tablet sugar free,Y
-0603020G0AABHBH,Dexamethasone 10mg/5ml oral suspension,0603020G0AABZBZ,Oral suspension,Dexamethasone 10mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0603020G0AABHBH,Dexamethasone 10mg/5ml oral solution,0603020G0AABZBZ,Oral solution,Dexamethasone 10mg/5ml oral solution sugar free,Oral solution sugar free,Y
+0603020G0AABHBH,Dexamethasone 10mg/5ml oral suspension,0603020G0AABZBZ,Oral suspension,Dexamethasone 10mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0603020G0AABVBV,Dexamethasone 20mg/5ml oral suspension,0603020G0AACDCD,Oral suspension,Dexamethasone 20mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0603020G0AABVBV,Dexamethasone 20mg/5ml oral solution,0603020G0AACDCD,Oral solution,Dexamethasone 20mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0603020G0AABXBX,Dexamethasone 2mg/5ml oral solution sugar free,0603020G0AAA6A6,Oral solution sugar free,Dexamethasone 2mg/5ml oral suspension,Oral suspension,Y
 0603020G0AABXBX,Dexamethasone 2mg/5ml oral solution sugar free,0603020G0AAA6A6,Oral solution sugar free,Dexamethasone 2mg/5ml oral solution,Oral solution,Y
 0603020G0AABYBY,Dexamethasone 10mg capsules,0603020G0AACLCL,Oral capsule,Dexamethasone 10mg soluble tablets sugar free,Soluble tablet sugar free,Y
-0603020G0AABZBZ,Dexamethasone 10mg/5ml oral solution sugar free,0603020G0AABHBH,Oral solution sugar free,Dexamethasone 10mg/5ml oral suspension,Oral suspension,Y
 0603020G0AABZBZ,Dexamethasone 10mg/5ml oral solution sugar free,0603020G0AABHBH,Oral solution sugar free,Dexamethasone 10mg/5ml oral solution,Oral solution,Y
+0603020G0AABZBZ,Dexamethasone 10mg/5ml oral solution sugar free,0603020G0AABHBH,Oral solution sugar free,Dexamethasone 10mg/5ml oral suspension,Oral suspension,Y
 0603020G0AACDCD,Dexamethasone 20mg/5ml oral solution sugar free,0603020G0AABVBV,Oral solution sugar free,Dexamethasone 20mg/5ml oral suspension,Oral suspension,Y
 0603020G0AACDCD,Dexamethasone 20mg/5ml oral solution sugar free,0603020G0AABVBV,Oral solution sugar free,Dexamethasone 20mg/5ml oral solution,Oral solution,Y
 0603020G0AACFCF,Dexamethasone 2mg soluble tablets sugar free,0603020G0AAADAD,Soluble tablet sugar free,Dexamethasone 2mg tablets,Oral tablet,Y
@@ -1493,8 +1493,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0603020G0AACICI,Dexamethasone 4mg tablets,0603020G0AACHCH,Oral tablet,Dexamethasone 4mg soluble tablets sugar free,Soluble tablet sugar free,Y
 0603020G0AACLCL,Dexamethasone 10mg soluble tablets sugar free,0603020G0AABYBY,Soluble tablet sugar free,Dexamethasone 10mg capsules,Oral capsule,Y
 0603020J0AAA5A5,Hydrocortisone 2.5mg capsules,0603020J0AADCDC,Oral capsule,Hydrocortisone 2.5mg tablets,Oral tablet,Y
-0603020J0AAADAD,Hydrocortisone 10mg tablets,0603020J0AADBDB,Oral tablet,Hydrocortisone 10mg soluble tablets sugar free,Soluble tablet sugar free,Y
 0603020J0AAADAD,Hydrocortisone 10mg tablets,0603020J0AADIDI,Oral tablet,Hydrocortisone 10mg dispersible tablets sugar free,Dispersible tablet sugar free,Y
+0603020J0AAADAD,Hydrocortisone 10mg tablets,0603020J0AADBDB,Oral tablet,Hydrocortisone 10mg soluble tablets sugar free,Soluble tablet sugar free,Y
 0603020J0AAAEAE,Hydrocortisone 20mg tablets,0603020J0AADJDJ,Oral tablet,Hydrocortisone 20mg dispersible tablets sugar free,Dispersible tablet sugar free,Y
 0603020J0AAAJAJ,Hydrocortisone 5mg/5ml oral solution,0603020J0AAAXAX,Oral solution,Hydrocortisone 5mg/5ml oral suspension,Oral suspension,Y
 0603020J0AAAXAX,Hydrocortisone 5mg/5ml oral suspension,0603020J0AAAJAJ,Oral suspension,Hydrocortisone 5mg/5ml oral solution,Oral solution,Y
@@ -1520,11 +1520,11 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0603020M0AAAEAE,Hydrocortisone sodium succinate 100mg powder for solution for injection vials,0603020M0AAAAAA,Powder for solution for injection,Hydrocortisone sodium succinate 100mg powder and solvent for solution for injection vials,Powder and solvent for solution for injection,Y
 0603020T0AAAAAA,Prednisolone 1mg tablets,0603020T0AAATAT,Oral tablet,Prednisolone 1mg gastro-resistant tablets,Gastro-resistant tablet,Y
 0603020T0AAABAB,Prednisolone 2.5mg tablets,0603020T0AAAFAF,Oral tablet,Prednisolone 2.5mg gastro-resistant tablets,Gastro-resistant tablet,Y
-0603020T0AAACAC,Prednisolone 5mg tablets,0603020T0AAAGAG,Oral tablet,Prednisolone 5mg gastro-resistant tablets,Gastro-resistant tablet,Y
 0603020T0AAACAC,Prednisolone 5mg tablets,0603020T0AABTBT,Oral tablet,Prednisolone 5mg soluble tablets sugar free,Soluble tablet sugar free,Y
+0603020T0AAACAC,Prednisolone 5mg tablets,0603020T0AAAGAG,Oral tablet,Prednisolone 5mg gastro-resistant tablets,Gastro-resistant tablet,Y
 0603020T0AAAFAF,Prednisolone 2.5mg gastro-resistant tablets,0603020T0AAABAB,Gastro-resistant tablet,Prednisolone 2.5mg tablets,Oral tablet,Y
-0603020T0AAAGAG,Prednisolone 5mg gastro-resistant tablets,0603020T0AAACAC,Gastro-resistant tablet,Prednisolone 5mg tablets,Oral tablet,Y
 0603020T0AAAGAG,Prednisolone 5mg gastro-resistant tablets,0603020T0AABTBT,Gastro-resistant tablet,Prednisolone 5mg soluble tablets sugar free,Soluble tablet sugar free,Y
+0603020T0AAAGAG,Prednisolone 5mg gastro-resistant tablets,0603020T0AAACAC,Gastro-resistant tablet,Prednisolone 5mg tablets,Oral tablet,Y
 0603020T0AAATAT,Prednisolone 1mg gastro-resistant tablets,0603020T0AAAAAA,Gastro-resistant tablet,Prednisolone 1mg tablets,Oral tablet,Y
 0603020T0AAAZAZ,Prednisolone 5mg/5ml oral suspension,0603020T0AABLBL,Oral suspension,Prednisolone 5mg/5ml oral solution unit dose,Oral solution,Y
 0603020T0AAAZAZ,Prednisolone 5mg/5ml oral solution,0603020T0AABLBL,Oral solution,Prednisolone 5mg/5ml oral solution unit dose,Oral solution,Y
@@ -1554,16 +1554,16 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0605020E0AABWBW,Desmopressin 5micrograms/5ml oral suspension,0605020E0AABSBS,Oral suspension,Desmopressin 5micrograms/5ml oral solution,Oral solution,Y
 0606020A0AAACAC,Alendronic acid 70mg tablets,0606020A0AAAHAH,Oral tablet,Alendronic acid 70mg effervescent tablets sugar free,Effervescent tablet sugar free,Y
 0606020A0AAAHAH,Alendronic acid 70mg effervescent tablets sugar free,0606020A0AAACAC,Effervescent tablet sugar free,Alendronic acid 70mg tablets,Oral tablet,Y
-0606020V0AAACAC,Zoledronic acid 5mg/100ml infusion bottles,0606020V0AAAGAG,Infusion,Zoledronic acid 5mg/100ml infusion bags,Infusion,Y
 0606020V0AAACAC,Zoledronic acid 5mg/100ml infusion bottles,0606020V0AAAFAF,Infusion,Zoledronic acid 5mg/100ml solution for infusion vials,Solution for infusion,Y
-0606020V0AAADAD,Zoledronic acid 4mg/100ml infusion bags,0606020V0AAAEAE,Infusion,Zoledronic acid 4mg/100ml solution for infusion vials,Solution for infusion,Y
+0606020V0AAACAC,Zoledronic acid 5mg/100ml infusion bottles,0606020V0AAAGAG,Infusion,Zoledronic acid 5mg/100ml infusion bags,Infusion,Y
 0606020V0AAADAD,Zoledronic acid 4mg/100ml infusion bottles,0606020V0AAAEAE,Infusion,Zoledronic acid 4mg/100ml solution for infusion vials,Solution for infusion,Y
-0606020V0AAAEAE,Zoledronic acid 4mg/100ml solution for infusion vials,0606020V0AAADAD,Solution for infusion,Zoledronic acid 4mg/100ml infusion bags,Infusion,Y
+0606020V0AAADAD,Zoledronic acid 4mg/100ml infusion bags,0606020V0AAAEAE,Infusion,Zoledronic acid 4mg/100ml solution for infusion vials,Solution for infusion,Y
 0606020V0AAAEAE,Zoledronic acid 4mg/100ml solution for infusion vials,0606020V0AAADAD,Solution for infusion,Zoledronic acid 4mg/100ml infusion bottles,Infusion,Y
-0606020V0AAAFAF,Zoledronic acid 5mg/100ml solution for infusion vials,0606020V0AAAGAG,Solution for infusion,Zoledronic acid 5mg/100ml infusion bags,Infusion,Y
+0606020V0AAAEAE,Zoledronic acid 4mg/100ml solution for infusion vials,0606020V0AAADAD,Solution for infusion,Zoledronic acid 4mg/100ml infusion bags,Infusion,Y
 0606020V0AAAFAF,Zoledronic acid 5mg/100ml solution for infusion vials,0606020V0AAACAC,Solution for infusion,Zoledronic acid 5mg/100ml infusion bottles,Infusion,Y
-0606020V0AAAGAG,Zoledronic acid 5mg/100ml infusion bags,0606020V0AAAFAF,Infusion,Zoledronic acid 5mg/100ml solution for infusion vials,Solution for infusion,Y
+0606020V0AAAFAF,Zoledronic acid 5mg/100ml solution for infusion vials,0606020V0AAAGAG,Solution for infusion,Zoledronic acid 5mg/100ml infusion bags,Infusion,Y
 0606020V0AAAGAG,Zoledronic acid 5mg/100ml infusion bags,0606020V0AAACAC,Infusion,Zoledronic acid 5mg/100ml infusion bottles,Infusion,Y
+0606020V0AAAGAG,Zoledronic acid 5mg/100ml infusion bags,0606020V0AAAFAF,Infusion,Zoledronic acid 5mg/100ml solution for infusion vials,Solution for infusion,Y
 0701030V0AAAAAA,Atosiban 6.75mg/0.9ml solution for injection vials,0701030V0AAACAC,Solution for injection,Atosiban 6.75mg/0.9ml solution for injection ampoules,Solution for infusion,Y
 0701030V0AAACAC,Atosiban 6.75mg/0.9ml solution for injection ampoules,0701030V0AAAAAA,Solution for infusion,Atosiban 6.75mg/0.9ml solution for injection vials,Solution for injection,Y
 0704010A0AAAFAF,Alfuzosin 10mg/5ml oral solution,0704010A0AAAHAH,Oral solution,Alfuzosin 10mg/5ml oral suspension,Oral suspension,Y
@@ -1574,8 +1574,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0704010U0AAAFAF,Tamsulosin 400micrograms/5ml oral suspension,0704010U0AAACAC,Oral suspension,Tamsulosin 400micrograms/5ml oral solution,Oral solution,Y
 0704020ABAAAFAF,Solifenacin 1mg/ml oral suspension sugar free,0704020ABAAAGAG,Oral suspension sugar free,Solifenacin 5mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0704020ABAAAGAG,Solifenacin 5mg/5ml oral solution sugar free,0704020ABAAAFAF,Oral solution sugar free,Solifenacin 1mg/ml oral suspension sugar free,Oral suspension sugar free,Y
-0704020J0AAAFAF,Oxybutynin 2.5mg/5ml oral solution sugar free,0704020J0AAAKAK,Oral solution sugar free,Oxybutynin 2.5mg/5ml oral suspension,Oral suspension,Y
 0704020J0AAAFAF,Oxybutynin 2.5mg/5ml oral solution sugar free,0704020J0AAAZAZ,Oral solution sugar free,Oxybutynin 2.5mg/5ml oral solution,Oral solution,Y
+0704020J0AAAFAF,Oxybutynin 2.5mg/5ml oral solution sugar free,0704020J0AAAKAK,Oral solution sugar free,Oxybutynin 2.5mg/5ml oral suspension,Oral suspension,Y
 0704020J0AAAGAG,Oxybutynin 5mg/5ml oral solution sugar free,0704020J0AAAMAM,Oral solution sugar free,Oxybutynin 5mg/5ml oral solution,Oral solution,Y
 0704020J0AAAGAG,Oxybutynin 5mg/5ml oral solution sugar free,0704020J0AAAMAM,Oral solution sugar free,Oxybutynin 5mg/5ml oral suspension,Oral suspension,Y
 0704020J0AAAKAK,Oxybutynin 2.5mg/5ml oral suspension,0704020J0AAAZAZ,Oral suspension,Oxybutynin 2.5mg/5ml oral solution,Oral solution,Y
@@ -1629,13 +1629,13 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0801050P0AAADAD,Hydroxycarbamide 500mg/5ml oral suspension,0801050P0AAAEAE,Oral suspension,Hydroxycarbamide 500mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0801050P0AAAEAE,Hydroxycarbamide 500mg/5ml oral solution sugar free,0801050P0AAABAB,Oral solution sugar free,Hydroxycarbamide 500mg/5ml oral solution,Oral solution,Y
 0801050P0AAAEAE,Hydroxycarbamide 500mg/5ml oral solution sugar free,0801050P0AAADAD,Oral solution sugar free,Hydroxycarbamide 500mg/5ml oral suspension,Oral suspension,Y
-0802010G0AAAPAP,Azathioprine 50mg/5ml oral solution,0802010G0AACPCP,Oral solution,Azathioprine 10mg/ml oral suspension sugar free,Oral suspension sugar free,Y
 0802010G0AAAPAP,Azathioprine 50mg/5ml oral solution,0802010G0AACHCH,Oral solution,Azathioprine 50mg/5ml oral suspension,Oral suspension,Y
+0802010G0AAAPAP,Azathioprine 50mg/5ml oral solution,0802010G0AACPCP,Oral solution,Azathioprine 10mg/ml oral suspension sugar free,Oral suspension sugar free,Y
 0802010G0AAASAS,Azathioprine 25mg/5ml oral solution,0802010G0AACICI,Oral solution,Azathioprine 25mg/5ml oral suspension,Oral suspension,Y
 0802010G0AAAVAV,Azathioprine 100mg/5ml oral solution,0802010G0AACJCJ,Oral solution,Azathioprine 100mg/5ml oral suspension,Oral suspension,Y
 0802010G0AAAWAW,Azathioprine 20mg/5ml oral solution,0802010G0AACKCK,Oral solution,Azathioprine 20mg/5ml oral suspension,Oral suspension,Y
-0802010G0AACHCH,Azathioprine 50mg/5ml oral suspension,0802010G0AACPCP,Oral suspension,Azathioprine 10mg/ml oral suspension sugar free,Oral suspension sugar free,Y
 0802010G0AACHCH,Azathioprine 50mg/5ml oral suspension,0802010G0AAAPAP,Oral suspension,Azathioprine 50mg/5ml oral solution,Oral solution,Y
+0802010G0AACHCH,Azathioprine 50mg/5ml oral suspension,0802010G0AACPCP,Oral suspension,Azathioprine 10mg/ml oral suspension sugar free,Oral suspension sugar free,Y
 0802010G0AACICI,Azathioprine 25mg/5ml oral suspension,0802010G0AAASAS,Oral suspension,Azathioprine 25mg/5ml oral solution,Oral solution,Y
 0802010G0AACJCJ,Azathioprine 100mg/5ml oral suspension,0802010G0AAAVAV,Oral suspension,Azathioprine 100mg/5ml oral solution,Oral solution,Y
 0802010G0AACKCK,Azathioprine 20mg/5ml oral suspension,0802010G0AAAWAW,Oral suspension,Azathioprine 20mg/5ml oral solution,Oral solution,Y
@@ -1653,15 +1653,15 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0803043N0AAABAB,Octreotide 100micrograms/1ml solution for injection ampoules,0803043N0AAAPAP,Solution for injection,Octreotide 100micrograms/1ml solution for injection pre-filled syringes,Solution for injection,Y
 0803043N0AAACAC,Octreotide 500micrograms/1ml solution for injection ampoules,0803043N0AAAMAM,Solution for injection,Octreotide 500micrograms/1ml solution for injection vials,Solution for injection,Y
 0803043N0AAACAC,Octreotide 500micrograms/1ml solution for injection ampoules,0803043N0AAAQAQ,Solution for injection,Octreotide 500micrograms/1ml solution for injection pre-filled syringes,Solution for injection,Y
-0803043N0AAALAL,Octreotide 100micrograms/1ml solution for injection vials,0803043N0AAAPAP,Solution for injection,Octreotide 100micrograms/1ml solution for injection pre-filled syringes,Solution for injection,Y
 0803043N0AAALAL,Octreotide 100micrograms/1ml solution for injection vials,0803043N0AAABAB,Solution for injection,Octreotide 100micrograms/1ml solution for injection ampoules,Solution for injection,Y
-0803043N0AAAMAM,Octreotide 500micrograms/1ml solution for injection vials,0803043N0AAAQAQ,Solution for injection,Octreotide 500micrograms/1ml solution for injection pre-filled syringes,Solution for injection,Y
+0803043N0AAALAL,Octreotide 100micrograms/1ml solution for injection vials,0803043N0AAAPAP,Solution for injection,Octreotide 100micrograms/1ml solution for injection pre-filled syringes,Solution for injection,Y
 0803043N0AAAMAM,Octreotide 500micrograms/1ml solution for injection vials,0803043N0AAACAC,Solution for injection,Octreotide 500micrograms/1ml solution for injection ampoules,Solution for injection,Y
+0803043N0AAAMAM,Octreotide 500micrograms/1ml solution for injection vials,0803043N0AAAQAQ,Solution for injection,Octreotide 500micrograms/1ml solution for injection pre-filled syringes,Solution for injection,Y
 0803043N0AAANAN,Octreotide 50micrograms/1ml solution for injection pre-filled syringes,0803043N0AAAAAA,Solution for injection,Octreotide 50micrograms/1ml solution for injection ampoules,Solution for injection,Y
-0803043N0AAAPAP,Octreotide 100micrograms/1ml solution for injection pre-filled syringes,0803043N0AAALAL,Solution for injection,Octreotide 100micrograms/1ml solution for injection vials,Solution for injection,Y
 0803043N0AAAPAP,Octreotide 100micrograms/1ml solution for injection pre-filled syringes,0803043N0AAABAB,Solution for injection,Octreotide 100micrograms/1ml solution for injection ampoules,Solution for injection,Y
-0803043N0AAAQAQ,Octreotide 500micrograms/1ml solution for injection pre-filled syringes,0803043N0AAAMAM,Solution for injection,Octreotide 500micrograms/1ml solution for injection vials,Solution for injection,Y
+0803043N0AAAPAP,Octreotide 100micrograms/1ml solution for injection pre-filled syringes,0803043N0AAALAL,Solution for injection,Octreotide 100micrograms/1ml solution for injection vials,Solution for injection,Y
 0803043N0AAAQAQ,Octreotide 500micrograms/1ml solution for injection pre-filled syringes,0803043N0AAACAC,Solution for injection,Octreotide 500micrograms/1ml solution for injection ampoules,Solution for injection,Y
+0803043N0AAAQAQ,Octreotide 500micrograms/1ml solution for injection pre-filled syringes,0803043N0AAAMAM,Solution for injection,Octreotide 500micrograms/1ml solution for injection vials,Solution for injection,Y
 0901011F0AAACAC,Ferrous fumarate 140mg/5ml oral solution,0901011F0AAAIAI,Oral solution,Ferrous fumarate 140mg/5ml oral solution sugar free,Oral solution sugar free,Y
 0901011F0AAAIAI,Ferrous fumarate 140mg/5ml oral solution sugar free,0901011F0AAACAC,Oral solution sugar free,Ferrous fumarate 140mg/5ml oral solution,Oral solution,Y
 0901011P0AABPBP,Ferrous sulfate 60mg/5ml oral suspension,0901011P0AACKCK,Oral suspension,Ferrous sulfate 60mg/5ml oral solution,Oral solution,Y
@@ -1723,40 +1723,40 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0905011K0AAARAR,Calcium gluconate 600mg capsules,0905011K0AAAGAG,Oral capsule,Calcium gluconate 600mg tablets,Oral tablet,Y
 0905013A0AAAEAE,Magnesium aspartate (magnesium 10mmol) granules for oral solution sachets,0905013A0AAAHAH,Granules for oral solution,Magnesium aspartate (magnesium 10mmol) oral powder sachets,Powder for oral solution,Y
 0905013A0AAAEAE,Magnesium aspartate (magnesium 10mmol) granules for oral solution sachets,0905013A0AAAJAJ,Granules for oral solution,Magnesium aspartate (magnesium 10mmol) oral powder sachets sugar free,Oral powder sugar free,Y
-0905013A0AAAHAH,Magnesium aspartate (magnesium 10mmol) oral powder sachets,0905013A0AAAJAJ,Powder for oral solution,Magnesium aspartate (magnesium 10mmol) oral powder sachets sugar free,Oral powder sugar free,Y
 0905013A0AAAHAH,Magnesium aspartate (magnesium 10mmol) oral powder sachets,0905013A0AAAEAE,Powder for oral solution,Magnesium aspartate (magnesium 10mmol) granules for oral solution sachets,Granules for oral solution,Y
-0905013A0AAAJAJ,Magnesium aspartate (magnesium 10mmol) oral powder sachets sugar free,0905013A0AAAHAH,Oral powder sugar free,Magnesium aspartate (magnesium 10mmol) oral powder sachets,Powder for oral solution,Y
+0905013A0AAAHAH,Magnesium aspartate (magnesium 10mmol) oral powder sachets,0905013A0AAAJAJ,Powder for oral solution,Magnesium aspartate (magnesium 10mmol) oral powder sachets sugar free,Oral powder sugar free,Y
 0905013A0AAAJAJ,Magnesium aspartate (magnesium 10mmol) oral powder sachets sugar free,0905013A0AAAEAE,Oral powder sugar free,Magnesium aspartate (magnesium 10mmol) granules for oral solution sachets,Granules for oral solution,Y
-0905013F0AAAGAG,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,0905013G0AADDDD,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,Chewable tablet,Y
+0905013A0AAAJAJ,Magnesium aspartate (magnesium 10mmol) oral powder sachets sugar free,0905013A0AAAHAH,Oral powder sugar free,Magnesium aspartate (magnesium 10mmol) oral powder sachets,Powder for oral solution,Y
 0905013F0AAAGAG,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,0905013G0AAA4A4,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,Oral capsule,Y
 0905013F0AAAGAG,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,0905013G0AAA2A2,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
 0905013F0AAAGAG,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,0905013G0AADEDE,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,Chewable tablet sugar free,Y
-0905013G0AAA2A2,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,0905013G0AADDDD,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,Chewable tablet,Y
-0905013G0AAA2A2,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,0905013F0AAAGAG,Oral tablet,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
+0905013F0AAAGAG,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,0905013G0AADDDD,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,Chewable tablet,Y
 0905013G0AAA2A2,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,0905013G0AAA4A4,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,Oral capsule,Y
 0905013G0AAA2A2,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,0905013G0AADEDE,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,Chewable tablet sugar free,Y
-0905013G0AAA4A4,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,0905013G0AADDDD,Oral capsule,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,Chewable tablet,Y
-0905013G0AAA4A4,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,0905013F0AAAGAG,Oral capsule,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
+0905013G0AAA2A2,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,0905013G0AADDDD,Oral tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,Chewable tablet,Y
+0905013G0AAA2A2,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,0905013F0AAAGAG,Oral tablet,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
 0905013G0AAA4A4,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,0905013G0AAA2A2,Oral capsule,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
 0905013G0AAA4A4,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,0905013G0AADEDE,Oral capsule,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,Chewable tablet sugar free,Y
+0905013G0AAA4A4,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,0905013G0AADDDD,Oral capsule,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,Chewable tablet,Y
+0905013G0AAA4A4,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,0905013F0AAAGAG,Oral capsule,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
 0905013G0AABMBM,Magnesium glycerophosphate (magnesium 48.6mg (2mmol)) capsules,0905013G0AACXCX,Oral capsule,Magnesium glycerophosphate (magnesium 48.6mg (2mmol)) tablets,Oral tablet,Y
 0905013G0AACXCX,Magnesium glycerophosphate (magnesium 48.6mg (2mmol)) tablets,0905013G0AABMBM,Oral tablet,Magnesium glycerophosphate (magnesium 48.6mg (2mmol)) capsules,Oral capsule,Y
-0905013G0AACZCZ,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral suspension,0905013G0AADJDJ,Oral suspension,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution sugar free,Oral solution sugar free,Y
 0905013G0AACZCZ,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral suspension,0905013G0AADCDC,Oral suspension,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution,Oral solution,Y
-0905013G0AADCDC,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution,0905013G0AADJDJ,Oral solution,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution sugar free,Oral solution sugar free,Y
+0905013G0AACZCZ,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral suspension,0905013G0AADJDJ,Oral suspension,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution sugar free,Oral solution sugar free,Y
 0905013G0AADCDC,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution,0905013G0AACZCZ,Oral solution,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral suspension,Oral suspension,Y
-0905013G0AADDDD,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,0905013F0AAAGAG,Chewable tablet,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
+0905013G0AADCDC,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution,0905013G0AADJDJ,Oral solution,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution sugar free,Oral solution sugar free,Y
 0905013G0AADDDD,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,0905013G0AAA4A4,Chewable tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,Oral capsule,Y
 0905013G0AADDDD,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,0905013G0AAA2A2,Chewable tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
 0905013G0AADDDD,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,0905013G0AADEDE,Chewable tablet,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,Chewable tablet sugar free,Y
-0905013G0AADEDE,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,0905013G0AADDDD,Chewable tablet sugar free,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,Chewable tablet,Y
-0905013G0AADEDE,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,0905013F0AAAGAG,Chewable tablet sugar free,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
+0905013G0AADDDD,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,0905013F0AAAGAG,Chewable tablet,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
 0905013G0AADEDE,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,0905013G0AAA4A4,Chewable tablet sugar free,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) capsules,Oral capsule,Y
 0905013G0AADEDE,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,0905013G0AAA2A2,Chewable tablet sugar free,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
-0905013G0AADFDF,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution,0905013G0AADHDH,Oral solution,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral suspension,Oral suspension,Y
+0905013G0AADEDE,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,0905013G0AADDDD,Chewable tablet sugar free,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets,Chewable tablet,Y
+0905013G0AADEDE,Magnesium glycerophosphate (magnesium 97.2mg (4mmol)) chewable tablets sugar free,0905013F0AAAGAG,Chewable tablet sugar free,Magnesium citrate (magnesium 97.2mg (4mmol)) tablets,Oral tablet,Y
 0905013G0AADFDF,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution,0905013G0AADKDK,Oral solution,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution sugar free,Oral solution sugar free,Y
-0905013G0AADHDH,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral suspension,0905013G0AADFDF,Oral suspension,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution,Oral solution,Y
+0905013G0AADFDF,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution,0905013G0AADHDH,Oral solution,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral suspension,Oral suspension,Y
 0905013G0AADHDH,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral suspension,0905013G0AADKDK,Oral suspension,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution sugar free,Oral solution sugar free,Y
+0905013G0AADHDH,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral suspension,0905013G0AADFDF,Oral suspension,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution,Oral solution,Y
 0905013G0AADJDJ,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution sugar free,0905013G0AADCDC,Oral solution sugar free,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution,Oral solution,Y
 0905013G0AADJDJ,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral solution sugar free,0905013G0AACZCZ,Oral solution sugar free,Magnesium glycerophosphate (magnesium 97.2mg/5ml (4mmol/5ml)) oral suspension,Oral suspension,Y
 0905013G0AADKDK,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution sugar free,0905013G0AADFDF,Oral solution sugar free,Magnesium glycerophosphate (magnesium 121.25mg/5ml (5mmol/5ml)) oral solution,Oral solution,Y
@@ -1811,10 +1811,10 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0906026M0AABMBM,Thiamine 100mg/5ml oral solution sugar free,0906026M0AABJBJ,Oral solution sugar free,Thiamine 100mg/5ml oral suspension,Oral suspension,Y
 090602800AACXCX,Pyridoxal phosphate 50mg capsules,090602800AACYCY,Oral capsule,Pyridoxal phosphate 50mg gastro-resistant tablets,Gastro-resistant tablet,Y
 090602800AACYCY,Pyridoxal phosphate 50mg gastro-resistant tablets,090602800AACXCX,Gastro-resistant tablet,Pyridoxal phosphate 50mg capsules,Oral capsule,Y
-0906031C0AAAIAI,Ascorbic acid 500mg tablets,0906031C0AABIBI,Oral tablet,Ascorbic acid 500mg capsules,Oral capsule,Y
 0906031C0AAAIAI,Ascorbic acid 500mg tablets,0906031C0AAALAL,Oral tablet,Ascorbic acid 500mg chewable tablets,Chewable tablet,Y
-0906031C0AAALAL,Ascorbic acid 500mg chewable tablets,0906031C0AABIBI,Chewable tablet,Ascorbic acid 500mg capsules,Oral capsule,Y
+0906031C0AAAIAI,Ascorbic acid 500mg tablets,0906031C0AABIBI,Oral tablet,Ascorbic acid 500mg capsules,Oral capsule,Y
 0906031C0AAALAL,Ascorbic acid 500mg chewable tablets,0906031C0AAAIAI,Chewable tablet,Ascorbic acid 500mg tablets,Oral tablet,Y
+0906031C0AAALAL,Ascorbic acid 500mg chewable tablets,0906031C0AABIBI,Chewable tablet,Ascorbic acid 500mg capsules,Oral capsule,Y
 0906031C0AABIBI,Ascorbic acid 500mg capsules,0906031C0AAAIAI,Oral capsule,Ascorbic acid 500mg tablets,Oral tablet,Y
 0906031C0AABIBI,Ascorbic acid 500mg capsules,0906031C0AAALAL,Oral capsule,Ascorbic acid 500mg chewable tablets,Chewable tablet,Y
 0906040G0AAACAC,"Colecalciferol 3,000unit tablets",0906040G0AADYDY,Oral tablet,"Colecalciferol 3,000unit capsules",Oral capsule,Y
@@ -1832,29 +1832,29 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0906040G0AABABA,"Colecalciferol 2,000unit capsules",0906040G0AADBDB,Oral capsule,"Colecalciferol 2,000unit tablets",Oral tablet,Y
 0906040G0AABABA,"Colecalciferol 2,000unit capsules",0906040G0AADDDD,Oral capsule,"Colecalciferol 2,000unit orodispersible tablets sugar free",Orodispersible tablet sugar free,Y
 0906040G0AABABA,"Colecalciferol 2,000unit capsules",0906040G0AAESES,Oral capsule,"Colecalciferol 2,000unit chewable tablets",Chewable tablet,Y
-0906040G0AABGBG,"Colecalciferol 1,000unit tablets",0906040G0AAEDED,Oral tablet,"Colecalciferol 1,000unit chewable tablets",Chewable tablet,Y
 0906040G0AABGBG,"Colecalciferol 1,000unit tablets",0906040G0AABHBH,Oral tablet,"Colecalciferol 1,000unit capsules",Oral capsule,Y
-0906040G0AABHBH,"Colecalciferol 1,000unit capsules",0906040G0AAEDED,Oral capsule,"Colecalciferol 1,000unit chewable tablets",Chewable tablet,Y
+0906040G0AABGBG,"Colecalciferol 1,000unit tablets",0906040G0AAEDED,Oral tablet,"Colecalciferol 1,000unit chewable tablets",Chewable tablet,Y
 0906040G0AABHBH,"Colecalciferol 1,000unit capsules",0906040G0AABGBG,Oral capsule,"Colecalciferol 1,000unit tablets",Oral tablet,Y
+0906040G0AABHBH,"Colecalciferol 1,000unit capsules",0906040G0AAEDED,Oral capsule,"Colecalciferol 1,000unit chewable tablets",Chewable tablet,Y
 0906040G0AABIBI,Colecalciferol 400unit capsules,0906040G0AAELEL,Oral capsule,Colecalciferol 400unit tablets,Oral tablet,Y
 0906040G0AABMBM,"Colecalciferol 10,000units/ml oral solution",0906040G0AAAPAP,Oral solution,"Colecalciferol 50,000units/5ml oral suspension",Oral suspension,Y
 0906040G0AABMBM,"Colecalciferol 10,000units/ml oral solution",0906040G0AADNDN,Oral solution,"Colecalciferol 10,000units/ml oral drops sugar free",Oral drops sugar free,Y
 0906040G0AABMBM,"Colecalciferol 10,000units/ml oral solution",0906040G0AADPDP,Oral solution,"Colecalciferol 10,000units/ml oral solution sugar free",Oral solution sugar free,Y
 0906040G0AABNBN,"Colecalciferol 5,000units/5ml oral solution",0906040G0AAAXAX,Oral solution,"Colecalciferol 5,000units/5ml oral suspension",Oral suspension,Y
-0906040G0AABSBS,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,0906040G0AAFJFJ,Oral tablet,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets sugar free,Chewable tablet sugar free,Y
 0906040G0AABSBS,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,0906040G0AABYBY,Oral tablet,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets,Chewable tablet,Y
 0906040G0AABSBS,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,0906040G0AACBCB,Oral tablet,Colecalciferol 400unit / Calcium carbonate 1.5g effervescent tablets,Effervescent tablet,Y
+0906040G0AABSBS,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,0906040G0AAFJFJ,Oral tablet,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets sugar free,Chewable tablet sugar free,Y
 0906040G0AABTBT,"Colecalciferol 2,000units/ml oral drops sugar free",0906040G0AAATAT,Oral drops sugar free,"Colecalciferol 10,000units/5ml oral suspension",Oral suspension,Y
 0906040G0AABTBT,"Colecalciferol 2,000units/ml oral drops sugar free",0906040G0AACUCU,Oral drops sugar free,"Colecalciferol 10,000units/5ml oral solution",Oral solution,Y
 0906040G0AABTBT,"Colecalciferol 2,000units/ml oral drops sugar free",0906040G0AAEPEP,Oral drops sugar free,"Colecalciferol 10,000units/5ml oral solution sugar free",Oral solution sugar free,Y
 0906040G0AABUBU,Colecalciferol 200unit / Calcium carbonate 1.25g chewable tablets,0906040G0AAFNFN,Chewable tablet,Colecalciferol 200unit / Calcium carbonate 1.25g chewable tablets sugar free,Chewable tablet sugar free,Y
 0906040G0AABWBW,Colecalciferol 400unit / Calcium carbonate 1.25g chewable tablets,0906040G0AAFIFI,Chewable tablet,Colecalciferol 400unit / Calcium carbonate 1.25g chewable tablets sugar free,Chewable tablet sugar free,Y
+0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets,0906040G0AACBCB,Chewable tablet,Colecalciferol 400unit / Calcium carbonate 1.5g effervescent tablets,Effervescent tablet,Y
 0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets,0906040G0AABSBS,Chewable tablet,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,Oral tablet,Y
 0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets,0906040G0AAFJFJ,Chewable tablet,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets sugar free,Chewable tablet sugar free,Y
-0906040G0AABYBY,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets,0906040G0AACBCB,Chewable tablet,Colecalciferol 400unit / Calcium carbonate 1.5g effervescent tablets,Effervescent tablet,Y
+0906040G0AACBCB,Colecalciferol 400unit / Calcium carbonate 1.5g effervescent tablets,0906040G0AABYBY,Effervescent tablet,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets,Chewable tablet,Y
 0906040G0AACBCB,Colecalciferol 400unit / Calcium carbonate 1.5g effervescent tablets,0906040G0AABSBS,Effervescent tablet,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,Oral tablet,Y
 0906040G0AACBCB,Colecalciferol 400unit / Calcium carbonate 1.5g effervescent tablets,0906040G0AAFJFJ,Effervescent tablet,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets sugar free,Chewable tablet sugar free,Y
-0906040G0AACBCB,Colecalciferol 400unit / Calcium carbonate 1.5g effervescent tablets,0906040G0AABYBY,Effervescent tablet,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets,Chewable tablet,Y
 0906040G0AACJCJ,Colecalciferol 800units/ml oral drops sugar free,0906040G0AAAZAZ,Oral drops sugar free,"Colecalciferol 4,000units/5ml oral suspension",Oral suspension,Y
 0906040G0AACLCL,"Colecalciferol 20,000units/ml oral drops",0906040G0AADGDG,Oral drops,"Colecalciferol 20,000units/ml oral solution",Oral solution,Y
 0906040G0AACNCN,"Colecalciferol 5,000unit tablets",0906040G0AAEAEA,Oral tablet,"Colecalciferol 5,000unit capsules",Oral capsule,Y
@@ -1868,12 +1868,12 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0906040G0AACVCV,"Colecalciferol 40,000unit capsules",0906040G0AAEFEF,Oral capsule,"Colecalciferol 40,000unit tablets",Oral tablet,Y
 0906040G0AACYCY,"Colecalciferol 50,000unit tablets",0906040G0AAEQEQ,Oral tablet,"Colecalciferol 50,000unit capsules",Oral capsule,Y
 0906040G0AADADA,Colecalciferol 200units/drop oral drops sugar free,0906040G0AAFGFG,Oral drops sugar free,Colecalciferol 200units/drop oral drops,Oral drops,Y
+0906040G0AADBDB,"Colecalciferol 2,000unit tablets",0906040G0AABABA,Oral tablet,"Colecalciferol 2,000unit capsules",Oral capsule,Y
 0906040G0AADBDB,"Colecalciferol 2,000unit tablets",0906040G0AADDDD,Oral tablet,"Colecalciferol 2,000unit orodispersible tablets sugar free",Orodispersible tablet sugar free,Y
 0906040G0AADBDB,"Colecalciferol 2,000unit tablets",0906040G0AAESES,Oral tablet,"Colecalciferol 2,000unit chewable tablets",Chewable tablet,Y
-0906040G0AADBDB,"Colecalciferol 2,000unit tablets",0906040G0AABABA,Oral tablet,"Colecalciferol 2,000unit capsules",Oral capsule,Y
+0906040G0AADDDD,"Colecalciferol 2,000unit orodispersible tablets sugar free",0906040G0AABABA,Orodispersible tablet sugar free,"Colecalciferol 2,000unit capsules",Oral capsule,Y
 0906040G0AADDDD,"Colecalciferol 2,000unit orodispersible tablets sugar free",0906040G0AADBDB,Orodispersible tablet sugar free,"Colecalciferol 2,000unit tablets",Oral tablet,Y
 0906040G0AADDDD,"Colecalciferol 2,000unit orodispersible tablets sugar free",0906040G0AAESES,Orodispersible tablet sugar free,"Colecalciferol 2,000unit chewable tablets",Chewable tablet,Y
-0906040G0AADDDD,"Colecalciferol 2,000unit orodispersible tablets sugar free",0906040G0AABABA,Orodispersible tablet sugar free,"Colecalciferol 2,000unit capsules",Oral capsule,Y
 0906040G0AADGDG,"Colecalciferol 20,000units/ml oral solution",0906040G0AACLCL,Oral solution,"Colecalciferol 20,000units/ml oral drops",Oral drops,Y
 0906040G0AADKDK,"Colecalciferol 25,000unit tablets",0906040G0AAEKEK,Oral tablet,"Colecalciferol 25,000unit capsules",Oral capsule,Y
 0906040G0AADNDN,"Colecalciferol 10,000units/ml oral drops sugar free",0906040G0AAAPAP,Oral drops sugar free,"Colecalciferol 50,000units/5ml oral suspension",Oral suspension,Y
@@ -1890,8 +1890,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0906040G0AADYDY,"Colecalciferol 3,000unit capsules",0906040G0AAACAC,Oral capsule,"Colecalciferol 3,000unit tablets",Oral tablet,Y
 0906040G0AAEAEA,"Colecalciferol 5,000unit capsules",0906040G0AACNCN,Oral capsule,"Colecalciferol 5,000unit tablets",Oral tablet,Y
 0906040G0AAECEC,"Colecalciferol 4,000unit capsules",0906040G0AAEEEE,Oral capsule,"Colecalciferol 4,000unit tablets",Oral tablet,Y
-0906040G0AAEDED,"Colecalciferol 1,000unit chewable tablets",0906040G0AABHBH,Chewable tablet,"Colecalciferol 1,000unit capsules",Oral capsule,Y
 0906040G0AAEDED,"Colecalciferol 1,000unit chewable tablets",0906040G0AABGBG,Chewable tablet,"Colecalciferol 1,000unit tablets",Oral tablet,Y
+0906040G0AAEDED,"Colecalciferol 1,000unit chewable tablets",0906040G0AABHBH,Chewable tablet,"Colecalciferol 1,000unit capsules",Oral capsule,Y
 0906040G0AAEEEE,"Colecalciferol 4,000unit tablets",0906040G0AAECEC,Oral tablet,"Colecalciferol 4,000unit capsules",Oral capsule,Y
 0906040G0AAEFEF,"Colecalciferol 40,000unit tablets",0906040G0AACVCV,Oral tablet,"Colecalciferol 40,000unit capsules",Oral capsule,Y
 0906040G0AAEKEK,"Colecalciferol 25,000unit capsules",0906040G0AADKDK,Oral capsule,"Colecalciferol 25,000unit tablets",Oral tablet,Y
@@ -1902,14 +1902,14 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 0906040G0AAEPEP,"Colecalciferol 10,000units/5ml oral solution sugar free",0906040G0AABTBT,Oral solution sugar free,"Colecalciferol 2,000units/ml oral drops sugar free",Oral drops sugar free,Y
 0906040G0AAEPEP,"Colecalciferol 10,000units/5ml oral solution sugar free",0906040G0AACUCU,Oral solution sugar free,"Colecalciferol 10,000units/5ml oral solution",Oral solution,Y
 0906040G0AAEQEQ,"Colecalciferol 50,000unit capsules",0906040G0AACYCY,Oral capsule,"Colecalciferol 50,000unit tablets",Oral tablet,Y
+0906040G0AAESES,"Colecalciferol 2,000unit chewable tablets",0906040G0AABABA,Chewable tablet,"Colecalciferol 2,000unit capsules",Oral capsule,Y
 0906040G0AAESES,"Colecalciferol 2,000unit chewable tablets",0906040G0AADBDB,Chewable tablet,"Colecalciferol 2,000unit tablets",Oral tablet,Y
 0906040G0AAESES,"Colecalciferol 2,000unit chewable tablets",0906040G0AADDDD,Chewable tablet,"Colecalciferol 2,000unit orodispersible tablets sugar free",Orodispersible tablet sugar free,Y
-0906040G0AAESES,"Colecalciferol 2,000unit chewable tablets",0906040G0AABABA,Chewable tablet,"Colecalciferol 2,000unit capsules",Oral capsule,Y
 0906040G0AAFGFG,Colecalciferol 200units/drop oral drops,0906040G0AADADA,Oral drops,Colecalciferol 200units/drop oral drops sugar free,Oral drops sugar free,Y
 0906040G0AAFIFI,Colecalciferol 400unit / Calcium carbonate 1.25g chewable tablets sugar free,0906040G0AABWBW,Chewable tablet sugar free,Colecalciferol 400unit / Calcium carbonate 1.25g chewable tablets,Chewable tablet,Y
-0906040G0AAFJFJ,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets sugar free,0906040G0AABSBS,Chewable tablet sugar free,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,Oral tablet,Y
 0906040G0AAFJFJ,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets sugar free,0906040G0AABYBY,Chewable tablet sugar free,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets,Chewable tablet,Y
 0906040G0AAFJFJ,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets sugar free,0906040G0AACBCB,Chewable tablet sugar free,Colecalciferol 400unit / Calcium carbonate 1.5g effervescent tablets,Effervescent tablet,Y
+0906040G0AAFJFJ,Colecalciferol 400unit / Calcium carbonate 1.5g chewable tablets sugar free,0906040G0AABSBS,Chewable tablet sugar free,Colecalciferol 400unit / Calcium carbonate 1.5g tablets,Oral tablet,Y
 0906040G0AAFNFN,Colecalciferol 200unit / Calcium carbonate 1.25g chewable tablets sugar free,0906040G0AABUBU,Chewable tablet sugar free,Colecalciferol 200unit / Calcium carbonate 1.25g chewable tablets,Chewable tablet,Y
 0906040N0AAAMAM,Ergocalciferol 250microgram tablets,0906040N0AAFNFN,Oral tablet,Ergocalciferol 250microgram capsules,Oral capsule,Y
 0906040N0AADCDC,"Ergocalciferol 1,000units/5ml oral suspension",0906040N0AAFGFG,Oral suspension,"Ergocalciferol 1,000units/5ml oral solution",Oral solution,Y
@@ -1982,16 +1982,16 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 1001010J0AAAAAA,Ibuprofen 200mg capsules,1001010J0AAADAD,Oral capsule,Ibuprofen 200mg tablets,Oral tablet,Y
 1001010J0AAAAAA,Ibuprofen 200mg capsules,1001010J0AABNBN,Oral capsule,Ibuprofen 200mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
 1001010J0AAACAC,Ibuprofen 100mg/5ml oral suspension,1001010J0AABHBH,Oral suspension,Ibuprofen 100mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
-1001010J0AAADAD,Ibuprofen 200mg tablets,1001010J0AAAAAA,Oral tablet,Ibuprofen 200mg capsules,Oral capsule,Y
 1001010J0AAADAD,Ibuprofen 200mg tablets,1001010J0AABNBN,Oral tablet,Ibuprofen 200mg orodispersible tablets sugar free,Orodispersible tablet sugar free,Y
+1001010J0AAADAD,Ibuprofen 200mg tablets,1001010J0AAAAAA,Oral tablet,Ibuprofen 200mg capsules,Oral capsule,Y
 1001010J0AAAEAE,Ibuprofen 400mg tablets,1001010J0AAAUAU,Oral tablet,Ibuprofen 400mg capsules,Oral capsule,Y
 1001010J0AAAFAF,Ibuprofen 600mg tablets,1001010J0AAANAN,Oral tablet,Ibuprofen 600mg effervescent granules sachets,Effervescent granules,Y
 1001010J0AAANAN,Ibuprofen 600mg effervescent granules sachets,1001010J0AAAFAF,Effervescent granules,Ibuprofen 600mg tablets,Oral tablet,Y
 1001010J0AAAUAU,Ibuprofen 400mg capsules,1001010J0AAAEAE,Oral capsule,Ibuprofen 400mg tablets,Oral tablet,Y
 1001010J0AABHBH,Ibuprofen 100mg/5ml oral suspension sugar free,1001010J0AAACAC,Oral suspension sugar free,Ibuprofen 100mg/5ml oral suspension,Oral suspension,Y
 1001010J0AABIBI,Ibuprofen 200mg/5ml oral suspension,1001010J0AABRBR,Oral suspension,Ibuprofen 200mg/5ml oral suspension sugar free,Oral suspension sugar free,Y
-1001010J0AABNBN,Ibuprofen 200mg orodispersible tablets sugar free,1001010J0AAAAAA,Orodispersible tablet sugar free,Ibuprofen 200mg capsules,Oral capsule,Y
 1001010J0AABNBN,Ibuprofen 200mg orodispersible tablets sugar free,1001010J0AAADAD,Orodispersible tablet sugar free,Ibuprofen 200mg tablets,Oral tablet,Y
+1001010J0AABNBN,Ibuprofen 200mg orodispersible tablets sugar free,1001010J0AAAAAA,Orodispersible tablet sugar free,Ibuprofen 200mg capsules,Oral capsule,Y
 1001010J0AABRBR,Ibuprofen 200mg/5ml oral suspension sugar free,1001010J0AABIBI,Oral suspension sugar free,Ibuprofen 200mg/5ml oral suspension,Oral suspension,Y
 1001010K0AAAQAQ,Indometacin 25mg/5ml oral solution,1001010K0AABBBB,Oral solution,Indometacin 25mg/5ml oral suspension,Oral suspension,Y
 1001010K0AABBBB,Indometacin 25mg/5ml oral suspension,1001010K0AAAQAQ,Oral suspension,Indometacin 25mg/5ml oral solution,Oral solution,Y
@@ -2031,8 +2031,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 1001030Y0AAAAAA,Certolizumab pegol 200mg/1ml solution for injection pre-filled syringes,1001030Y0AAACAC,Solution for injection,Certolizumab pegol 200mg/1ml solution for injection cartridges,Solution for injection,Y
 1001030Y0AAABAB,Certolizumab pegol 200mg/1ml solution for injection pre-filled disposable devices,1001030Y0AAAAAA,Solution for injection,Certolizumab pegol 200mg/1ml solution for injection pre-filled syringes,Solution for injection,Y
 1001030Y0AAABAB,Certolizumab pegol 200mg/1ml solution for injection pre-filled disposable devices,1001030Y0AAACAC,Solution for injection,Certolizumab pegol 200mg/1ml solution for injection cartridges,Solution for injection,Y
-1001030Y0AAACAC,Certolizumab pegol 200mg/1ml solution for injection cartridges,1001030Y0AAABAB,Solution for injection,Certolizumab pegol 200mg/1ml solution for injection pre-filled disposable devices,Solution for injection,Y
 1001030Y0AAACAC,Certolizumab pegol 200mg/1ml solution for injection cartridges,1001030Y0AAAAAA,Solution for injection,Certolizumab pegol 200mg/1ml solution for injection pre-filled syringes,Solution for injection,Y
+1001030Y0AAACAC,Certolizumab pegol 200mg/1ml solution for injection cartridges,1001030Y0AAABAB,Solution for injection,Certolizumab pegol 200mg/1ml solution for injection pre-filled disposable devices,Solution for injection,Y
 1001040C0AAALAL,Allopurinol 300mg/5ml oral solution,1001040C0AAAXAX,Oral solution,Allopurinol 300mg/5ml oral suspension,Oral suspension,Y
 1001040C0AAAPAP,Allopurinol 100mg/5ml oral solution,1001040C0AAAWAW,Oral solution,Allopurinol 100mg/5ml oral suspension,Oral suspension,Y
 1001040C0AAAWAW,Allopurinol 100mg/5ml oral suspension,1001040C0AAAPAP,Oral suspension,Allopurinol 100mg/5ml oral solution,Oral solution,Y
@@ -2099,10 +2099,10 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 1106000ADAAACAC,Latanoprost 50micrograms/ml / Timolol 5mg/ml eye drops preservative free,1106000ADAAAAAA,Eye drops preservative free,Latanoprost 50micrograms/ml / Timolol 5mg/ml eye drops,Eye drops,Y
 1106000AFAAAAAA,Bimatoprost 300micrograms/ml eye drops,1106000AFAAADAD,Eye drops,Bimatoprost 300micrograms/ml eye drops preservative free,Eye drops preservative free,Y
 1106000AFAAADAD,Bimatoprost 300micrograms/ml eye drops preservative free,1106000AFAAAAAA,Eye drops preservative free,Bimatoprost 300micrograms/ml eye drops,Eye drops,Y
-1106000AIAAAAAA,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops,1106000AIAAACAC,Eye drops,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops preservative free,Eye drops preservative free,Y
 1106000AIAAAAAA,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops,1106000AIAAABAB,Eye drops,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops 0.4ml unit dose preservative free,Eye drops preservative free,Y
-1106000AIAAABAB,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops 0.4ml unit dose preservative free,1106000AIAAACAC,Eye drops preservative free,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops preservative free,Eye drops preservative free,Y
+1106000AIAAAAAA,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops,1106000AIAAACAC,Eye drops,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops preservative free,Eye drops preservative free,Y
 1106000AIAAABAB,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops 0.4ml unit dose preservative free,1106000AIAAAAAA,Eye drops preservative free,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops,Eye drops,Y
+1106000AIAAABAB,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops 0.4ml unit dose preservative free,1106000AIAAACAC,Eye drops preservative free,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops preservative free,Eye drops preservative free,Y
 1106000AIAAACAC,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops preservative free,1106000AIAAAAAA,Eye drops preservative free,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops,Eye drops,Y
 1106000AIAAACAC,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops preservative free,1106000AIAAABAB,Eye drops preservative free,Bimatoprost 300micrograms/ml / Timolol 5mg/ml eye drops 0.4ml unit dose preservative free,Eye drops preservative free,Y
 1106000B0AAATAT,Acetazolamide 250mg/5ml oral solution,1106000B0AABQBQ,Oral solution,Acetazolamide 250mg/5ml oral suspension,Oral suspension,Y
@@ -2203,8 +2203,8 @@ Code,Name,Alternative code,Formulation,Alternative name,Alternative formulation,
 1501050X0AAAFAF,Rocuronium bromide 100mg/10ml solution for injection ampoules,1501050X0AAABAB,Solution for injection,Rocuronium bromide 100mg/10ml solution for injection vials,Solution for injection,Y
 1502010F0AAAXAX,Cocaine 10% nasal drops,1502010G0AAARAR,Nasal drops,Cocaine 10% spray,Spray,Y
 1502010G0AAAIAI,Cocaine 10% mouthwash,1502010G0AAARAR,Mouthwash,Cocaine 10% spray,Spray,Y
-1502010G0AAARAR,Cocaine 10% spray,1502010F0AAAXAX,Spray,Cocaine 10% nasal drops,Nasal drops,Y
 1502010G0AAARAR,Cocaine 10% spray,1502010G0AAAIAI,Spray,Cocaine 10% mouthwash,Mouthwash,Y
+1502010G0AAARAR,Cocaine 10% spray,1502010F0AAAXAX,Spray,Cocaine 10% nasal drops,Nasal drops,Y
 1902070E0AAABAB,Activated charcoal 300mg tablets,1902070E0AAAMAM,Oral tablet,Activated charcoal 300mg capsules,Oral capsule,Y
 1902070E0AAAMAM,Activated charcoal 300mg capsules,1902070E0AAABAB,Oral capsule,Activated charcoal 300mg tablets,Oral tablet,Y
 190500000AAACAC,Ammonium sulfate 500mg capsules,190500000AABKBK,Oral capsule,Ammonium sulfate 500mg tablets,Oral tablet,Y
