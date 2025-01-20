@@ -65,7 +65,7 @@
     "FROM aggregated_vmps",
     "WHERE special_import_count > 0",
     "AND non_special_non_import_count > 0 -- exclude anything where the VMP BNF codes are associated with none specials/imports",
-    ");",
+    ");"
   ],
   "denominator_type": "list_size",
   "authored_by": "christopher.wood@phc.ox.ac.uk",
