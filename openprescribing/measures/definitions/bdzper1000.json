@@ -38,7 +38,7 @@
     "p.bnf_code NOT LIKE '0401020K0%AQ' AND --Diazepam 10mg/2ml emulsion for injection ampoules \n",
     "p.bnf_code NOT LIKE '0401020K0%AC' AND --Diazepam 10mg/2ml solution for injection ampoules \n",
     "p.bnf_code NOT LIKE '0401020K0%BB' AND --Diazepam 10mg suppositories \n",
-    "p.bnf_code NOT LIKE '0401020V0% AND    --Clorazepate dipotassium \n",
+    "p.bnf_code NOT LIKE '0401020V0%' AND    --Clorazepate dipotassium \n",
     "p.bnf_code NOT LIKE '0401020P0%CH' AND --Lorazepam 2mg/1ml solution for injection ampoules \n",
     "p.bnf_code NOT LIKE '0401020P0%CJ' AND --Lorazepam 2mg/1ml solution for injection vials \n",
     "p.bnf_code NOT LIKE '0401020P0%AA' AND --Lorazepam 4mg/1ml solution for injection ampoules \n",
