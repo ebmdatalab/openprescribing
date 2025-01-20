@@ -5,6 +5,7 @@ SELECT
     rx.bnf_name AS bnf_name,
     rx.bnf_code AS bnf_code, 
     SUM(quantity) AS quantity,
+    SUM(items) AS items, 
     strnt_nmrtr_val, -- strength numerator value from dmd
     strnt_nmrtr_uom, -- strength numerator unit of measurement from dmd
     strnt_dnmtr_val, -- strength denominator value from dmd
