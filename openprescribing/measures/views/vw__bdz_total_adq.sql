@@ -34,10 +34,22 @@ WHERE
     rx.bnf_code NOT LIKE '0401010S0%' AND -- Potassium bromide
     rx.bnf_code NOT LIKE '0401010AC%' AND -- Sodium Oxybate
     rx.bnf_code NOT LIKE '0401010AD%' AND -- Melatonin
-    rx.bnf_code NOT LIKE '0401040%' AND -- Other hypnotics and anxiolytics
+    rx.bnf_code NOT LIKE '0401040%' AND   -- Other hypnotics and anxiolytics
     rx.bnf_code NOT LIKE '0401020K0%AD' AND -- Diazepam_Soln 5mg/2.5ml Rectal Tube
     rx.bnf_code NOT LIKE '0401020K0%AE' AND -- Diazepam_Soln 10mg/2.5ml Rectal Tube
-    rx.bnf_code NOT LIKE '0401020K0%BQ' -- Diazepam_Soln 2.5mg/1.25ml Rectal Tube
+    rx.bnf_code NOT LIKE '0401020K0%BQ' AND -- Diazepam_Soln 2.5mg/1.25ml Rectal Tube
+    rx.bnf_code NOT LIKE '0401020K0%AQ' AND -- Diazepam 10mg/2ml emulsion for injection ampoules
+    rx.bnf_code NOT LIKE '0401020K0%AC' AND -- Diazepam 10mg/2ml solution for injection ampoules
+    rx.bnf_code NOT LIKE '0401020K0%BB' AND -- Diazepam 10mg suppositories
+    rx.bnf_code NOT LIKE '0401020V0%'   AND -- Clorazepate dipotassium
+    rx.bnf_code NOT LIKE '0401020P0%CH' AND -- Lorazepam 2mg/1ml solution for injection ampoules
+    rx.bnf_code NOT LIKE '0401020P0%CJ' AND -- Lorazepam 2mg/1ml solution for injection vials
+    rx.bnf_code NOT LIKE '0401020P0%AA' AND -- Lorazepam 4mg/1ml solution for injection ampoules
+    rx.bnf_code NOT LIKE '0401010B0%AX' AND -- Chloral hydrate 100mg suppositories
+    rx.bnf_code NOT LIKE '0401010B0%BA' AND -- Chloral hydrate 200mg suppositories
+    rx.bnf_code NOT LIKE '0401010B0%AJ' AND -- Chloral hydrate 250mg suppositories
+    rx.bnf_code NOT LIKE '0401010B0%AQ'     -- Chloral hydrate 500mg suppositories
+
 GROUP BY 
     month, 
     rx.bnf_name, 
