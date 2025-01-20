@@ -25,9 +25,7 @@
   "low_is_good": true,
   "numerator_type": "custom",
   "numerator_columns": "SUM(p.total_adq_usage) AS numerator",
-  "numerator_from": [
-    "{measures}.vw__bdz_total_adq p"
-  ],
+  "numerator_from": "{measures}.vw__bdz_total_adq p",
   "numerator_where": [
     "p.bnf_code LIKE '0401%' AND --Hypnotics and Anxiolytics \n",
     "p.bnf_code NOT LIKE '0401010S0%' AND   --Potassium bromide \n",
