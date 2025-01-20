@@ -24,7 +24,7 @@
   "is_cost_based": false,
   "low_is_good": true,
   "numerator_type": "custom",
-  "numerator_columns": "SUM(total_adq_usage)",
+  "numerator_columns": "SUM(total_adq_usage) AS numerator",
   "numerator_from": [
     "{measures}.vw__bdz_total_adq"
   ],
