@@ -1,4 +1,4 @@
-chemical_name,chemical_size,adq,adq_unit
+chemical_name,chemical_code,adq,adq_unit
 Lorazepam,0401020P0,2.5,mg
 Nitrazepam,0401010R0,5.0,mg
 Zopiclone,0401010Z0,7.5,mg
