@@ -7,12 +7,14 @@
   "y_label": "Spend on specials/imported products per 1000 registered patients",
   "why_it_matters": [
     "<p>The <a href='https://www.drugtariff.nhsbsa.nhs.uk/#/00875854-DC/DC00875504/Definitions%20-%20' target='_blank'>Drug Tariff provides the following definitions</a> for specials and imported products:</p>",
-    "<p><b>Specials</b> are unlicensed medicinal products manufactured in the UK for human use which have been specially prepared to meet a prescription ordered for individual patients without the need for the manufacturer to hold a marketing authorisation for the medicinal product concerned.</p>",
-    "<p><b>Imported products</b> are unlicensed medicinal products sourced from outside the UK under an importers licence issued by the MHRA. These products have been specially sourced to meet a prescription ordered for individual patients without the need for the importer to hold a marketing authorisation for the medicinal product concerned.</p>",
+    "<p><i>Specials</i> are unlicensed medicinal products manufactured in the UK for human use which have been specially prepared to meet a prescription ordered for individual patients without the need for the manufacturer to hold a marketing authorisation for the medicinal product concerned.</p>",
+    "<p><i>Imported products</i> are unlicensed medicinal products sourced from outside the UK under an importers licence issued by the MHRA. These products have been specially sourced to meet a prescription ordered for individual patients without the need for the importer to hold a marketing authorisation for the medicinal product concerned.</p>",
     "<p>Both special and imported products have not undergone the same rigorous regulatory requirements and should, therefore, only be used when an appropriate UK-licensed product is unavailable. In addition they are frequently more expensive than licensed alternatives.</p>"
   ],
   "tags": [
-    "core"
+    "core",
+    "safety",
+    "cost"
   ],
   "url": null,
   "is_percentage": false,
@@ -33,7 +35,8 @@
     "GROUP BY",
     "amp.bnf_code",
     "),",
-    "aggregated_vmps AS ( -- subquery to generate counts for each BNF code of specials/import products vs not for VMPs \n",
+    "aggregated_vmps AS (",
+    "-- subquery to generate counts for each BNF code of specials/import products vs not for VMPs \n",
     "SELECT",
     "vmp.bnf_code,",
     "SUM(CASE WHEN (amp.avail_restrict = 6 OR amp.avail_restrict = 4) THEN 1 ELSE 0 END) AS special_import_count, -- count where avail_restrict is either special or import \n",
@@ -73,7 +76,7 @@
   "checked_by": "",
   "date_reviewed": "2025-01-14",
   "next_review": "",
-  "measure_complexity": "medium",
+  "measure_complexity": "high",
   "measure_type": "custom",
   "radar_exclude": false
 }
