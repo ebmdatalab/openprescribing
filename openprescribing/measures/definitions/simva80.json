@@ -1,0 +1,46 @@
+{
+  "name": "simvastatin 80mg",
+  "title": "",
+  "description": "",
+  "numerator_short": "",
+  "denominator_short": "",
+  "y_label": "",
+  "why_it_matters": [
+    ""
+  ],
+  "tags": [
+    "cardiovascular",
+    "core",
+    "efficacy",
+    "nice"
+  ],
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_type": "custom",
+  "numerator_columns": "SUM(p.items) AS numerator",
+ "numerator_from": [
+  "{hscic}.normalised_prescribing p ",
+  "INNER JOIN {dmd}.vmp vmp ON CONCAT(SUBSTR(p.bnf_code,0,9),'AA', SUBSTR(p.bnf_code,-2), SUBSTR(p.bnf_code,-2)) = vmp.bnf_code -- joins prescribing data to vmp table using generic BNF code \n",
+  "INNER JOIN {dmd}.vpi AS vpi ON vmp.id = vpi.vmp -- joins vmp to vpi table to get ingredient strengths (strnt_nmrtr_val) \n",
+  "INNER JOIN {dmd}.ont AS ont ON vmp.id = ont.vmp -- joins vmp to ont table to get formulation codes \n",
+  "INNER JOIN {dmd}.ontformroute AS route ON ont.form = route.cd -- joins ont table to ontform table to get formulation names "
+  ],
+  "numerator_where": [
+  "route.descr LIKE '%.oral' -- selects only oral formulations \n",
+  "AND (LOWER(route.descr) LIKE '%tablet%' OR LOWER(route.descr) LIKE '%capsule%') -- selects only solid dose form oral formulations \n",
+  "AND (vpi.ing = 387584000 AND strnt_nmrtr_val/((COALESCE(strnt_dnmtr_val,1))) >=80) --Simvastatin (strengths 80mg or over) (ing code) \n"
+  ],
+  "denominator_type": 
+    [
+      "list_size"
+  ],
+  "authored_by": "",
+  "checked_by": "",
+  "date_reviewed": "",
+  "next_review": "",
+  "measure_complexity": "medium",
+  "measure_type": "dmd",
+  "radar_exclude": false
+}
