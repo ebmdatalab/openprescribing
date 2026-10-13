@@ -30,12 +30,10 @@
   "numerator_where": [
   "route.descr LIKE '%.oral' -- selects only oral formulations \n",
   "AND (LOWER(route.descr) LIKE '%tablet%' OR LOWER(route.descr) LIKE '%capsule%') -- selects only solid dose form oral formulations \n",
-  "AND (vpi.ing = 387584000 AND strnt_nmrtr_val/((COALESCE(strnt_dnmtr_val,1))) >=80) --Simvastatin (strengths 80mg or over) (ing code) \n"
+  "AND vpi.ing = 387584000", 
+  "AND strnt_nmrtr_val/((COALESCE(strnt_dnmtr_val,1))) >=80 --Simvastatin (strengths 80mg or over) (ing code) \n"
   ],
-  "denominator_type": 
-    [
-      "list_size"
-  ],
+  "denominator_type": "list_size",
   "authored_by": "",
   "checked_by": "",
   "date_reviewed": "",
