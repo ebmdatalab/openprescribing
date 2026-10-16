@@ -39,6 +39,14 @@ devenv:
     uv pip sync requirements.txt requirements.dev.txt
 
 _compile-requirements extension package:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if just --show {{ package }} &>/dev/null; then
+        echo "Error: {{ package }} is a recipe not a package"
+        exit 1
+    fi
+
     uv pip compile \
       --quiet \
       {{ if package == "all" { "--upgrade" } else { "--upgrade-package " + package } }} \
