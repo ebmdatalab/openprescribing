@@ -4,7 +4,7 @@ import tempfile
 import warnings
 from contextlib import contextmanager
 
-import pandas as pd
+import pandas_gbq
 from django.conf import settings
 from django.db.models import fields as model_fields
 from django.db.models.fields import related as related_fields
@@ -223,7 +223,7 @@ class Client(object):
             "dialect": "legacy" if legacy else "standard",
         }
         with exception_sql_printer(sql):
-            return pd.read_gbq(sql, **kwargs)
+            return pandas_gbq.read_gbq(sql, **kwargs)
 
     def upload_model(self, model, table_id=None):
         if table_id is None:
