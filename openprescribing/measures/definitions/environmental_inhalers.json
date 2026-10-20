@@ -1,5 +1,5 @@
 {
-  "name": "Environmental impact of inhalers - Prescribing of inhalers (excluding salbutamol) with higher Global Warming Potential (GWP) propellant",
+  "name": "Prescribing of inhalers (excluding salbutamol) with higher Global Warming Potential (GWP) propellant",
   "title": "",
   "description": "Inhalers with higher Global Warming Potential (GWP) propellant prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol",
   "numerator_short": "Higher GWP inhalers (items)",
@@ -17,7 +17,7 @@
     "<p>The NHS has <a href='https://www.england.nhs.uk/greenernhs/a-net-zero-nhs/' target='_Blank'> committed to reducing its carbon footprint by 80% by 2028 to 2032</a>, ",
     "including a shift to lower carbon inhalers. Dry powder inhalers (DPIs) and other newer types of inhalers like soft ",
     "mist inhalers are less harmful to the environment than traditional metered dose inhalers (MDIs). </p>",
-    "<p>Newer propellants, such as HFO-1234ze and HFA-152a, are considered to have lower GWP than the more traditional propellents, such as HFA-134a and HFA-227ea.  HFO-1234ze containing devices are considered to be ",
+    "<p>Newer propellants, such as HFO-1234ze and HFA-152a, are considered to have lower Global Warming Potential (GWP) than the more traditional propellents, such as HFA-134a and HFA-227ea.  HFO-1234ze containing devices are considered to be ",
     "<a href='https://doi.org/10.1136/thorax-2022-BTSabstracts.66' target='_Blank'>similar to a DPI on a per-dose basis</a>, and HFA-152a has shown to have",
     "a <a href='https://doi.org/10.1136/bmjresp-2025-004036' target='_Blank'>90% reduction in GWP compared with HFA-134a containing devices</a>.  We will add further devices when their Summary of Product Characteristics ",
     "list one of these propellants as an excipient.</p>",
