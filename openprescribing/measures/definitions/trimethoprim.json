@@ -35,8 +35,22 @@
   ],
   "authored_by": "christopher.wood@phc.ox.ac.uk",
   "checked_by": "richard.croker@phc.ox.ac.uk",
-  "date_reviewed": "2023-09-04",
-  "next_review": "2025-09-04",
+  "date_reviewed": "2026-10-21",
+  "next_review": "2026-10-21",
   "measure_complexity": "low",
-  "measure_type": "bnf_code"
-}
+  "measure_type": "bnf_code",
+   "change_log": [
+    {
+    "date": "2017-07-20",
+    "description": "Created measure.",
+    "action_by": "richard.croker@phc.ox.ac.uk",
+    "checked_by": "brian.mackenna@phc.ox.ac.uk"
+  },
+    {
+      "date": "2026-10-21",
+      "description": "Checked measure, including URLs and guidance.",
+      "action_by": "caroline.acuda@phc.ox.ac.uk",
+      "checked_by": "richard.croker@phc.ox.ac.uk"
+      }
+    ]
+  }
