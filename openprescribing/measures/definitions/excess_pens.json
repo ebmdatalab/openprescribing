@@ -58,7 +58,7 @@
     "(bnf_code LIKE '0601023AZ%' -- Tirzepatide",
     "))"
   ],
-"authored_by": "caroline.acuda@phc.ox.ac.uk",
+"authored_by": "richard.croker@phc.ox.ac.uk",
 "checked_by": "christopher.wood@phc.ox.ac.uk",
 "date_reviewed": "2026-09-16",
 "next_review": "2028-09-16",
