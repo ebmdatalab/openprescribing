@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 def _load_json(name):
-    return open("%s/%s.json" % (FIXTURES_BASE, name), "r").read()
+    with open("%s/%s.json" % (FIXTURES_BASE, name), "r") as f:
+        return f.read()
 
 
 class MockApiRequestHandler(BaseHTTPRequestHandler):
