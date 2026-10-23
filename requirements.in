@@ -15,7 +15,9 @@ django-anymail[mailgun]
 django-cors-headers
 django-crispy-forms
 django-dotenv
-django==5.0.14
+# Django 4.2 is the current LTS release. If you update this remember to update
+# the constraints in .github/dependabot.yml
+django>=4.2,<4.3
 djangorestframework
 djangorestframework-csv
 google-api-python-client
@@ -36,12 +38,14 @@ pandas<3
 premailer
 psycopg2-binary
 python-dateutil
+pytz
 raven
 requests-futures
 requests[security]
 scipy
 sqlean.py
-titlecase
+# Changes to the capitalisation rules in later versions break our tests
+titlecase==0.12.0
 xlrd
 
 # test requirements
@@ -58,6 +62,7 @@ django-extensions
 fab-classic
 flake8
 graphviz
+pip-tools
 when-changed
 
 
@@ -67,10 +72,3 @@ seaborn
 lxml
 numpy
 jinja2
-
-# OpenTelemetry
-opentelemetry-sdk
-opentelemetry-instrumentation-django
-opentelemetry-instrumentation-psycopg2
-opentelemetry-instrumentation-sqlite3
-opentelemetry-exporter-otlp-proto-http
